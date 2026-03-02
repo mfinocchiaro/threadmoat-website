@@ -131,8 +131,8 @@ export default function PricingPage() {
         </div>
 
         {/* No Raw Data Note */}
-        <p className="text-center text-sm text-muted-foreground mt-8 max-w-xl mx-auto">
-          Analytics access only. Raw directory data available exclusively via Enterprise engagement.
+        <p className="text-center text-sm text-muted-foreground mt-8 max-w-2xl mx-auto">
+          Self-serve tiers are analytics-only. Dataset access requires Enterprise licensing due to redistribution rights, schema support, and delivery controls. Options include read-only data room access, quarterly snapshots, or full annual licenses with weekly updates.
         </p>
       </section>
 

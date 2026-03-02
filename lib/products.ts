@@ -16,9 +16,7 @@ export const PRODUCTS: Product[] = [
     interval: "month",
     features: [
       "All dashboards + filters + saved views",
-      "Watchlists + alerts (weekly digest email)",
-      "Exports: charts + aggregated tables",
-      "Weekly release notes (\"what changed\")",
+      "Watchlists + alerts (coming soon)",
       "500+ curated company profiles",
     ],
   },
@@ -30,9 +28,7 @@ export const PRODUCTS: Product[] = [
     interval: "year",
     features: [
       "All dashboards + filters + saved views",
-      "Watchlists + alerts (weekly digest email)",
-      "Exports: charts + aggregated tables",
-      "Weekly release notes (\"what changed\")",
+      "Watchlists + alerts (coming soon)",
       "500+ curated company profiles",
       "2 months free",
     ],
