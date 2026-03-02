@@ -57,7 +57,7 @@ export default function LoginPage() {
                 unoptimized
               />
             </Link>
-          </div>>
+          </div>
           <Card>
             <CardHeader>
               <CardTitle className="text-2xl">Login</CardTitle>
