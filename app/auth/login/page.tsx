@@ -1,7 +1,5 @@
 'use client'
-
 import React from "react"
-
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import {
@@ -16,7 +14,6 @@ import { Label } from '@/components/ui/label'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
-
 export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -25,19 +22,18 @@ export default function LoginPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const redirectTo = searchParams.get('redirect') || '/dashboard'
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     const supabase = createClient()
     setIsLoading(true)
     setError(null)
-
     try {
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
       if (error) throw error
+      router.refresh()
       router.push(redirectTo)
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : 'An error occurred')
@@ -45,7 +41,6 @@ export default function LoginPage() {
       setIsLoading(false)
     }
   }
-
   return (
     <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
       <div className="w-full max-w-sm">
@@ -87,7 +82,7 @@ export default function LoginPage() {
                   </Button>
                 </div>
                 <div className="mt-4 text-center text-sm">
-                  Don&apos;t have an account?{' '}
+                  Don't have an account?{' '}
                   <Link
                     href="/auth/sign-up"
                     className="underline underline-offset-4"
