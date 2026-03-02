@@ -16,7 +16,7 @@ export const PRODUCTS: Product[] = [
     interval: "month",
     features: [
       "Unlimited database access",
-      "Real-time threat intelligence",
+      "Real-time thread intelligence",
       "API access",
       "Priority support",
     ],
@@ -29,7 +29,7 @@ export const PRODUCTS: Product[] = [
     interval: "year",
     features: [
       "Unlimited database access",
-      "Real-time threat intelligence",
+      "Real-time thread intelligence",
       "API access",
       "Priority support",
       "2 months free",
@@ -38,5 +38,3 @@ export const PRODUCTS: Product[] = [
 ]
 
 export function getProduct(productId: string): Product | undefined {
-  return PRODUCTS.find((p) => p.id === productId)
-}
