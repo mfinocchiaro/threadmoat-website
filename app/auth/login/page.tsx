@@ -1,5 +1,6 @@
 'use client'
 import React from "react"
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import {
@@ -44,7 +45,19 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
       <div className="w-full max-w-sm">
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-6"
+                    <div className="flex justify-center mb-2">
+            <Link href="/">
+              <Image
+                src="https://threadmoat.vercel.app/finocchiaro-logo.png"
+                alt="ThreadMoat"
+                width={120}
+                height={32}
+                className="h-8 w-auto"
+                unoptimized
+              />
+            </Link>
+          </div>>
           <Card>
             <CardHeader>
               <CardTitle className="text-2xl">Login</CardTitle>
