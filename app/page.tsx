@@ -13,10 +13,10 @@ export default function HomePage() {
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
           <div className="flex items-center gap-2">
             <Image
-              src="https://threadmoat.vercel.app/finocchiaro-logo.png"
+                              src="/logo.png"
               alt="ThreadMoat"
-              width={150}
-              height={40}
+                              width={160}
+                              height={42}
               className="h-10 w-auto"
               unoptimized
             />
