@@ -67,13 +67,20 @@ export async function createSession(userId: string): Promise<{ token: string; ex
 export async function setSessionCookie(token: string, expiresAt?: Date): Promise<void> {
   const expires = expiresAt || new Date(Date.now() + SESSION_DURATION_DAYS * 24 * 60 * 60 * 1000)
   const cookieStore = await cookies()
-  cookieStore.set(SESSION_COOKIE_NAME, token, {
+  
+  console.log('[v0] setSessionCookie called with token:', token.substring(0, 8) + '...')
+  
+  cookieStore.set({
+    name: SESSION_COOKIE_NAME,
+    value: token,
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: true,
     sameSite: 'lax',
     expires: expires,
     path: '/',
   })
+  
+  console.log('[v0] Cookie should be set now')
 }
 
 export async function getSession(): Promise<{ user: User } | null> {
