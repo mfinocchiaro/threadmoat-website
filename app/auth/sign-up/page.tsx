@@ -110,7 +110,7 @@ export default function SignUpPage() {
                 alt="ThreadMoat"
                 width={180}
                 height={48}
-                className="h-12 w-auto"
+                style={{ width: 'auto', height: '48px' }}
                 priority
               />
             </Link>

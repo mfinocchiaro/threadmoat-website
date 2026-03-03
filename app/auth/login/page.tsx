@@ -28,6 +28,8 @@ function LoginForm() {
     setIsLoading(true)
     setError(null)
     
+    console.log('[v0] Starting login for:', email)
+    
     try {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
@@ -35,15 +37,20 @@ function LoginForm() {
         body: JSON.stringify({ email, password }),
       })
 
+      console.log('[v0] Login response status:', response.status)
+      
       const data = await response.json()
+      console.log('[v0] Login response data:', data)
 
       if (!response.ok) {
         throw new Error(data.error || 'Failed to login')
       }
 
+      console.log('[v0] Login successful, redirecting to:', redirectTo)
       router.refresh()
       router.push(redirectTo)
     } catch (error: unknown) {
+      console.log('[v0] Login error:', error)
       setError(error instanceof Error ? error.message : 'An error occurred')
     } finally {
       setIsLoading(false)
