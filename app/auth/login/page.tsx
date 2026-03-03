@@ -48,15 +48,15 @@ function LoginForm() {
         throw new Error(data.error || 'Failed to login')
       }
 
-      console.log('[v0] Login successful, calling router.push')
+      console.log('[v0] Login successful, redirecting now')
       setSuccess(true)
-      // Small delay to ensure cookie is set before navigation
-      await new Promise(resolve => setTimeout(resolve, 100))
-      window.location.href = redirectTo
+      setIsLoading(false)
+      // Use replace to avoid back button going to login
+      window.location.replace(redirectTo)
+      return // Stop execution here
     } catch (error: unknown) {
       console.log('[v0] Login error caught:', error)
       setError(error instanceof Error ? error.message : 'An error occurred')
-    } finally {
       setIsLoading(false)
     }
   }
