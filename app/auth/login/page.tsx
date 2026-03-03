@@ -28,22 +28,31 @@ function LoginForm() {
     setIsLoading(true)
     setError(null)
     
+    console.log('[v0] Login attempt started for:', email)
+    console.log('[v0] Will redirect to:', redirectTo)
+    
     try {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
+        credentials: 'include',
       })
 
+      console.log('[v0] Response status:', response.status)
       const data = await response.json()
+      console.log('[v0] Response data:', JSON.stringify(data))
 
       if (!response.ok) {
         throw new Error(data.error || 'Failed to login')
       }
 
+      console.log('[v0] Login successful, calling router.push')
       router.refresh()
       router.push(redirectTo)
+      console.log('[v0] router.push called')
     } catch (error: unknown) {
+      console.log('[v0] Login error caught:', error)
       setError(error instanceof Error ? error.message : 'An error occurred')
     } finally {
       setIsLoading(false)
