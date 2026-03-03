@@ -10,9 +10,12 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode
 }) {
+  console.log('[v0] Dashboard layout: checking user session...')
   const user = await getCurrentUser()
+  console.log('[v0] Dashboard layout: user =', user ? user.email : 'null')
 
   if (!user) {
+    console.log('[v0] Dashboard layout: no user, redirecting to login')
     redirect("/auth/login?redirect=/dashboard")
   }
 

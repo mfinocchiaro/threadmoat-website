@@ -80,6 +80,8 @@ export async function getSession(): Promise<{ user: User } | null> {
   const cookieStore = await cookies()
   const token = cookieStore.get(SESSION_COOKIE_NAME)?.value
   
+  console.log('[v0] getSession: token exists =', !!token)
+  
   if (!token) return null
   
   const result = await sql`
@@ -87,6 +89,8 @@ export async function getSession(): Promise<{ user: User } | null> {
     JOIN sessions s ON s.user_id = u.id
     WHERE s.token = ${token} AND s.expires_at > NOW()
   `
+  
+  console.log('[v0] getSession: query result count =', result.length)
   
   if (!result[0]) return null
   
