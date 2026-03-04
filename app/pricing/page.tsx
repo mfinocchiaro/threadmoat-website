@@ -10,7 +10,7 @@ const ANALYTICS_FEATURES = [
   "All dashboards + filters + saved views",
   "Watchlists + alerts (weekly digest email)",
   "Exports: charts + aggregated tables (no directory dump)",
-  "Weekly release notes (\u201cwhat changed\u201d)",
+      "Weekly release notes ('what changed')",
 ]
 
 const ENTERPRISE_FEATURES = [
