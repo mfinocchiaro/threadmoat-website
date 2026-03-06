@@ -33,16 +33,16 @@ export function InvestorStatsChart({ data, className }: InvestorStatsChartProps)
   const containerRef = useRef<HTMLDivElement>(null)
   const [viewMode, setViewMode] = useState<ViewMode>("byCategory")
   const [sortBy, setSortBy] = useState<"totalFunding" | "count" | "avgScore">("totalFunding")
-  const [topN, setTopN] = useState<number>(20)
+  const [topN, setTopN] = useState<number>(10)
 
   useEffect(() => {
     if (!svgRef.current || !containerRef.current || data.length === 0) return
 
     const container = containerRef.current
     const width = container.clientWidth || 800
-    const margin = { top: 30, right: 120, bottom: 100, left: 220 }
-    const barHeight = 28
-    const barPad = 6
+    const margin = { top: 30, right: 140, bottom: 100, left: 280 }
+    const barHeight = 36
+    const barPad = 8
 
     // Build groups
     const groupMap = new Map<string, BarEntry>()
@@ -101,8 +101,9 @@ export function InvestorStatsChart({ data, className }: InvestorStatsChartProps)
       .padding(0.2)
 
     const COLORS = [
-      "#3b82f6", "#8b5cf6", "#10b981", "#f59e0b",
-      "#ef4444", "#06b6d4", "#ec4899", "#14b8a6",
+      "#2E6DB4", "#8FB3E8", "#2BBFB3", "#D45500",
+      "#F4B400", "#F2B38B", "#D642A6", "#7EC8E3",
+      "#0B7A20", "#7A3FD1", "#7C3AED",
     ]
     const colorScale = d3.scaleOrdinal(COLORS).domain(entries.map((d) => d.label))
 
@@ -134,8 +135,9 @@ export function InvestorStatsChart({ data, className }: InvestorStatsChartProps)
           })
       )
       .selectAll("text")
-      .attr("fill", "#94a3b8")
-      .attr("font-size", 10)
+      .attr("fill", "#1e293b")
+      .attr("font-size", 14)
+      .attr("font-weight", "600")
       .attr("transform", "rotate(-30)")
       .style("text-anchor", "end")
 
@@ -145,8 +147,9 @@ export function InvestorStatsChart({ data, className }: InvestorStatsChartProps)
     g.append("g")
       .call(d3.axisLeft(yScale).tickSize(0))
       .selectAll("text")
-      .attr("fill", "#e2e8f0")
-      .attr("font-size", 11)
+      .attr("fill", "#0f172a")
+      .attr("font-size", 18)
+      .attr("font-weight", "600")
       .each(function () {
         const el = d3.select(this)
         const text = el.text()
@@ -203,8 +206,9 @@ export function InvestorStatsChart({ data, className }: InvestorStatsChartProps)
       .attr("y", (d) => (yScale(d.label) ?? 0) + yScale.bandwidth() / 2)
       .attr("x", (d) => xScale(d[sortBy]) + 6)
       .attr("dominant-baseline", "middle")
-      .attr("fill", "#94a3b8")
-      .attr("font-size", 10)
+      .attr("fill", "#1e293b")
+      .attr("font-size", 14)
+      .attr("font-weight", "600")
       .text((d) => {
         if (sortBy === "totalFunding") return formatCurrency(d[sortBy])
         if (sortBy === "avgScore") return d[sortBy].toFixed(2)
@@ -254,8 +258,7 @@ export function InvestorStatsChart({ data, className }: InvestorStatsChartProps)
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="10">Top 10</SelectItem>
-              <SelectItem value="20">Top 20</SelectItem>
-              <SelectItem value="30">Top 30</SelectItem>
+              <SelectItem value="25">Top 25</SelectItem>
               <SelectItem value="50">Top 50</SelectItem>
             </SelectContent>
           </Select>

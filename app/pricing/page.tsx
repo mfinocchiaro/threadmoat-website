@@ -1,7 +1,7 @@
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import { Check, Calendar, Database, Phone } from "lucide-react"
+import { Check, Calendar, Database, Phone, MapPin, CalendarDays } from "lucide-react"
 
 // Update this date each week after the Monday refresh
 const LAST_UPDATED = "March 3, 2026"
@@ -10,7 +10,8 @@ const ANALYTICS_FEATURES = [
   "All dashboards + filters + saved views",
   "Watchlists + alerts",
   "Exports: charts + aggregated tables (no directory dump)",
-  "One 30-minute personalized briefing every two months",
+  "30-minute one-on-one briefings, bi-monthly on demand",
+  "Weekly release notes (\u201cwhat changed\u201d)",
 ]
 
 const ENTERPRISE_FEATURES = [
@@ -62,6 +63,42 @@ export default function PricingPage() {
         </div>
       </header>
 
+      {/* Threaded! Conference Banner */}
+      <div className="bg-[#2a2344] border-b border-purple-800/40">
+        <div className="container mx-auto px-4 py-3 flex flex-wrap items-center justify-center gap-4 sm:gap-6">
+          <Image
+            src="/threaded-logo.jpg"
+            alt="Threaded! Conference"
+            width={140}
+            height={40}
+            className="h-8 w-auto rounded"
+            unoptimized
+          />
+          <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-sm text-purple-100">
+            <span className="flex items-center gap-1.5">
+              <MapPin className="h-3.5 w-3.5 text-purple-300" />
+              <strong>Warwick, UK</strong>
+              <span className="text-purple-300 mx-1">&middot;</span>
+              <CalendarDays className="h-3.5 w-3.5 text-purple-300" />
+              Mar 25
+            </span>
+            <span className="hidden sm:flex items-center gap-1.5">
+              <MapPin className="h-3.5 w-3.5 text-purple-300" />
+              <strong>Miami, FL</strong>
+              <span className="text-purple-300 mx-1">&middot;</span>
+              <CalendarDays className="h-3.5 w-3.5 text-purple-300" />
+              Apr 13
+            </span>
+          </div>
+          <a
+            href="mailto:fino@demystifyingplm.com?subject=Threaded!%20Conference"
+            className="rounded-full bg-purple-600 hover:bg-purple-500 px-4 py-1.5 text-xs font-semibold text-white transition-colors"
+          >
+            Register Now!
+          </a>
+        </div>
+      </div>
+
       {/* Hero */}
       <section className="container mx-auto px-4 py-20 text-center">
         <div className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-muted/50 px-4 py-1.5 text-sm text-muted-foreground mb-6">
@@ -99,7 +136,7 @@ export default function PricingPage() {
                 <span className="text-muted-foreground">/yr</span>
               </div>
               <div className="text-sm text-muted-foreground">
-                Annual commitment &mdash; monthly billing available
+                Billed annually
               </div>
             </div>
             <ul className="mt-8 flex-1 space-y-3">
@@ -151,13 +188,13 @@ export default function PricingPage() {
         <div className="container mx-auto px-4 py-20">
           <h2 className="text-center text-2xl font-bold mb-2">See what you get</h2>
           <p className="text-center text-muted-foreground mb-12 max-w-xl mx-auto">
-            Sample dashboard views from the platform.
+            Sample dashboard views and analyst briefing outputs.
           </p>
           <div className="grid gap-6 md:grid-cols-3 max-w-5xl mx-auto">
             {[
               { label: "Funding Stage Distribution", desc: "Bar chart of companies by round (Seed → Series D+)" },
               { label: "Discipline Breakdown", desc: "CAD / CAM / PLM / ERP / Industrial AI by headcount and funding" },
-              { label: "Personalized Briefings", desc: "30-minute analyst briefing every two months, tailored to your investment focus" },
+              { label: "Bi-Monthly Briefing", desc: "30-minute one-on-one analyst call covering portfolio-relevant market moves and emerging signals" },
             ].map(sample => (
               <div
                 key={sample.label}

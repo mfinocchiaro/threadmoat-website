@@ -9,6 +9,7 @@ import {
   Settings, TrendingUp, TreePine, Wind, Radar, Flame, Clock,
   SlidersHorizontal, BoxSelect, Activity, MoveRight, Type,
   Link2, ScatterChart, BarChart3, RefreshCw, Users, GridIcon, FileText, Eye,
+  Compass,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -19,6 +20,7 @@ const NAV_ITEMS = [
 ];
 
 const VIZ_ITEMS = [
+  { href: "/dashboard/landscape-intro", icon: Compass,          label: "Investment Landscape" },
   { href: "/dashboard/quadrant",       icon: GitBranch,        label: "Magic Quadrant" },
   { href: "/dashboard/bubbles",        icon: Circle,           label: "Bubble Chart" },
   { href: "/dashboard/network",        icon: Network,          label: "Network Graph" },
@@ -43,6 +45,7 @@ const VIZ_ITEMS = [
   { href: "/dashboard/marimekko",      icon: BarChart3,        label: "Marimekko" },
   { href: "/dashboard/spiral",         icon: TrendingUp,       label: "Spiral Timeline" },
   { href: "/dashboard/investor-stats", icon: Users,            label: "Investor Stats" },
+  { href: "/dashboard/financial-heatmap", icon: Flame,          label: "Financial Heatmap" },
   { href: "/dashboard/correlation",    icon: GridIcon,         label: "Correlation Matrix" },
   { href: "/dashboard/reports",        icon: FileText,         label: "Report Generator" },
   { href: "/dashboard/investor-views", icon: Eye,              label: "Investor Views" },

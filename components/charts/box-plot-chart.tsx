@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from "react"
 import * as d3 from "d3"
 import { Company, formatCurrency } from "@/lib/company-data"
+import { getInvestmentColor } from "@/lib/investment-colors"
 import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 
@@ -104,7 +105,7 @@ export function BoxPlotChart({ data, className }: BoxPlotChartProps) {
       return [{ category, q1, median, q3, min: whiskerMin, max: whiskerMax, outlierPoints, count: values.length }]
     })
 
-    const colorScale = d3.scaleOrdinal(d3.schemeTableau10).domain(categories)
+    const colorScale = (cat: string) => getInvestmentColor(cat)
 
     const svg = d3.select(svgRef.current)
     svg.selectAll("*").remove()

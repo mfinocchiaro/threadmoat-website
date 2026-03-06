@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from "react"
 import * as d3 from "d3"
 import { Company, formatCurrency } from "@/lib/company-data"
+import { getInvestmentColor } from "@/lib/investment-colors"
 import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 
@@ -59,7 +60,7 @@ export function ParallelCoordsChart({ data, className }: ParallelCoordsChartProp
     const metrics = METRIC_PRESETS[preset]
     const validData = data.filter((d) => d.name && d.weightedScore > 0)
 
-    const colorScale = d3.scaleOrdinal(d3.schemeTableau10)
+    const colorScale = (il: string) => getInvestmentColor(il)
 
     // Build y scales
     const yScales: Record<string, d3.ScaleLinear<number, number>> = {}

@@ -3,7 +3,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { ArrowRight, Database, Users, TrendingUp, Mail, CheckCircle2 } from "lucide-react"
+import { ArrowRight, Database, Users, TrendingUp, Mail, CheckCircle2, MapPin, CalendarDays } from "lucide-react"
 
 export default function HomePage() {
   return (
@@ -38,6 +38,42 @@ export default function HomePage() {
         </div>
       </header>
 
+      {/* Threaded! Conference Banner */}
+      <div className="bg-[#2a2344] border-b border-purple-800/40">
+        <div className="container mx-auto px-4 py-3 flex flex-wrap items-center justify-center gap-4 sm:gap-6">
+          <Image
+            src="/threaded-logo.jpg"
+            alt="Threaded! Conference"
+            width={140}
+            height={40}
+            className="h-8 w-auto rounded"
+            unoptimized
+          />
+          <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-sm text-purple-100">
+            <span className="flex items-center gap-1.5">
+              <MapPin className="h-3.5 w-3.5 text-purple-300" />
+              <strong>Warwick, UK</strong>
+              <span className="text-purple-300 mx-1">&middot;</span>
+              <CalendarDays className="h-3.5 w-3.5 text-purple-300" />
+              Mar 25
+            </span>
+            <span className="hidden sm:flex items-center gap-1.5">
+              <MapPin className="h-3.5 w-3.5 text-purple-300" />
+              <strong>Miami, FL</strong>
+              <span className="text-purple-300 mx-1">&middot;</span>
+              <CalendarDays className="h-3.5 w-3.5 text-purple-300" />
+              Apr 13
+            </span>
+          </div>
+          <a
+            href="mailto:fino@demystifyingplm.com?subject=Threaded!%20Conference"
+            className="rounded-full bg-purple-600 hover:bg-purple-500 px-4 py-1.5 text-xs font-semibold text-white transition-colors"
+          >
+            Register Now!
+          </a>
+        </div>
+      </div>
+
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-24 text-center">
         <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 text-sm text-primary mb-8">
@@ -50,7 +86,7 @@ export default function HomePage() {
         </h1>
         <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg text-muted-foreground">
           Leverage 35+ years of market expertise, exclusive access to 500+ startups, and warm
-          introductions to 100+ founders to build your portfolio with tomorrow&apos;s unicorns.
+          introductions to 150+ founders to build your portfolio with tomorrow&apos;s unicorns.
         </p>
         <div className="mt-10 flex items-center justify-center gap-4">
           <Link href="/dashboard">
@@ -88,7 +124,7 @@ export default function HomePage() {
           <div className="grid grid-cols-3 gap-8 max-w-2xl mx-auto mt-16 text-center">
             <div><p className="text-4xl font-bold text-primary">35+</p><p className="text-sm text-muted-foreground mt-1">Years of Market Experience</p></div>
             <div><p className="text-4xl font-bold text-primary">500+</p><p className="text-sm text-muted-foreground mt-1">Startups in Database</p></div>
-            <div><p className="text-4xl font-bold text-primary">&gt;150</p><p className="text-sm text-muted-foreground mt-1">Warm Founder Introductions</p></div>
+            <div><p className="text-4xl font-bold text-primary">~150</p><p className="text-sm text-muted-foreground mt-1">Warm Founder Introductions</p></div>
           </div>
         </div>
       </section>

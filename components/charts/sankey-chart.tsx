@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from "react"
 import * as d3 from "d3"
 import { Company } from "@/lib/company-data"
+import { getInvestmentColor } from "@/lib/investment-colors"
 import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 
@@ -173,8 +174,6 @@ export function SankeyChart({ data, className }: SankeyChartProps) {
     if (nodes.length === 0) return
 
     const { nodes: laidOutNodes, linkData } = layoutSankey(nodes, links, width, height)
-    const colorScale = d3.scaleOrdinal(d3.schemeTableau10)
-
     // Draw links
     const linkG = svg.append("g")
     linkData.forEach((l) => {
@@ -190,7 +189,7 @@ export function SankeyChart({ data, className }: SankeyChartProps) {
         .append("path")
         .attr("d", `M${sx},${sy} C${mx},${sy} ${mx},${ty} ${tx},${ty}`)
         .attr("fill", "none")
-        .attr("stroke", colorScale(String(sn.layer)))
+        .attr("stroke", getInvestmentColor(sn.name))
         .attr("stroke-width", Math.max(1, l.width))
         .attr("stroke-opacity", 0.35)
         .on("mouseover", function () {
@@ -209,7 +208,7 @@ export function SankeyChart({ data, className }: SankeyChartProps) {
         .attr("y", n.y0!)
         .attr("width", (n.x1! - n.x0!))
         .attr("height", Math.max(1, n.y1! - n.y0!))
-        .attr("fill", colorScale(String(n.layer)))
+        .attr("fill", getInvestmentColor(n.name))
         .attr("fill-opacity", 0.9)
         .on("mouseover", (event) => {
           if (!tooltipRef.current) return

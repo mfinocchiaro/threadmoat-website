@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/select"
 import { Card } from "@/components/ui/card"
 import { RotateCcw } from "lucide-react"
+import { getInvestmentColor } from "@/lib/investment-colors"
 
 interface QuadrantChartProps {
   data: Company[]
@@ -91,8 +92,6 @@ export function QuadrantChart({ data, className }: QuadrantChartProps) {
       .domain([0, d3.max(chartData, d => d._val) || 1])
       .range([5, 30])
 
-    const colorScale = d3.scaleOrdinal(d3.schemeCategory10)
-
     const midX = innerWidth / 2
     const midY = innerHeight / 2
 
@@ -132,7 +131,7 @@ export function QuadrantChart({ data, className }: QuadrantChartProps) {
 
     nodes.append("circle")
       .attr("r", d => radiusScale(d._val))
-      .attr("fill", d => colorScale(d.investmentList || "Other"))
+      .attr("fill", d => getInvestmentColor(d.investmentList || "Other"))
       .attr("fill-opacity", 0.7)
       .attr("stroke", "#fff")
       .attr("stroke-width", 1.5)

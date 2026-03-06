@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from "react"
 import * as d3 from "d3"
 import { Company, formatCurrency } from "@/lib/company-data"
+import { getInvestmentColor } from "@/lib/investment-colors"
 import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 
@@ -72,8 +73,6 @@ export function SlopeChart({ data, className }: SlopeChartProps) {
       .sort((a, b) => (b[rightMetric] as number) - (a[rightMetric] as number))
       .slice(0, topN)
 
-    const colorScale = d3.scaleOrdinal(d3.schemeTableau10)
-
     const svg = d3.select(svgRef.current)
     svg.selectAll("*").remove()
     svg.attr("width", width).attr("height", height)
@@ -114,7 +113,7 @@ export function SlopeChart({ data, className }: SlopeChartProps) {
       .attr("y1", (d) => leftScale(d[leftMetric] as number))
       .attr("x2", innerWidth)
       .attr("y2", (d) => rightScale(d[rightMetric] as number))
-      .attr("stroke", (d) => colorScale(d.investmentList || "Other"))
+      .attr("stroke", (d) => getInvestmentColor(d.investmentList || "Other"))
       .attr("stroke-width", 2)
       .attr("opacity", 0.6)
       .style("cursor", "pointer")
@@ -145,8 +144,8 @@ export function SlopeChart({ data, className }: SlopeChartProps) {
       .attr("cx", 0)
       .attr("cy", (d) => leftScale(d[leftMetric] as number))
       .attr("r", 4)
-      .attr("fill", (d) => colorScale(d.investmentList || "Other"))
-      .attr("stroke", (d) => colorScale(d.investmentList || "Other"))
+      .attr("fill", (d) => getInvestmentColor(d.investmentList || "Other"))
+      .attr("stroke", (d) => getInvestmentColor(d.investmentList || "Other"))
 
     // Right points
     g.selectAll<SVGCircleElement, Company>(".right-point")
@@ -156,8 +155,8 @@ export function SlopeChart({ data, className }: SlopeChartProps) {
       .attr("cx", innerWidth)
       .attr("cy", (d) => rightScale(d[rightMetric] as number))
       .attr("r", 4)
-      .attr("fill", (d) => colorScale(d.investmentList || "Other"))
-      .attr("stroke", (d) => colorScale(d.investmentList || "Other"))
+      .attr("fill", (d) => getInvestmentColor(d.investmentList || "Other"))
+      .attr("stroke", (d) => getInvestmentColor(d.investmentList || "Other"))
 
     // Labels for top 10
     if (showLabels) {

@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from "react"
 import * as d3 from "d3"
 import { Company } from "@/lib/company-data"
+import { getInvestmentColor, INVESTMENT_COLOR_PALETTE } from "@/lib/investment-colors"
 import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 
@@ -72,7 +73,7 @@ export function RadarChart({ data, className }: RadarChartProps) {
 
     const radius = Math.min(width, height) / 2 - 80
     const g = svg.append("g").attr("transform", `translate(${width / 2},${height / 2})`)
-    const colorScale = d3.scaleOrdinal(d3.schemeTableau10).domain(items.map((i) => i.name))
+    const colorScale = d3.scaleOrdinal(INVESTMENT_COLOR_PALETTE).domain(items.map((i) => i.name))
     const angleSlice = (Math.PI * 2) / METRICS.length
     const maxValue = 5
 
@@ -194,7 +195,7 @@ export function RadarChart({ data, className }: RadarChartProps) {
               <div key={name} className="flex items-center gap-1 text-xs text-muted-foreground">
                 <div
                   className="w-3 h-3 rounded-sm"
-                  style={{ background: d3.schemeTableau10[i % 10] }}
+                  style={{ background: INVESTMENT_COLOR_PALETTE[i % INVESTMENT_COLOR_PALETTE.length] }}
                 />
                 {name}
               </div>

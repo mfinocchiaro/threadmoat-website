@@ -9,6 +9,7 @@ import {
   GitBranch, Circle, Network, Sun, BarChart2, LayoutGrid, Table2, Map, GitCompare,
   Layers, Workflow, Radar, Grid, Clock, Sliders, BoxSelect, TrendingUp, Activity,
   Cloud, Disc, ScatterChart, LayoutTemplate, Orbit, Users, Grid3x3, FileBarChart, Eye,
+  Compass,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -19,6 +20,7 @@ import { cn } from '@/lib/utils'
 import type { Session } from 'next-auth'
 
 const VIZ_LINKS = [
+  { href: '/dashboard/landscape-intro', icon: Compass,   label: 'Investment Landscape' },
   { href: '/dashboard/quadrant',       icon: GitBranch,  label: 'Magic Quadrant' },
   { href: '/dashboard/bubbles',        icon: Circle,     label: 'Bubble Chart' },
   { href: '/dashboard/network',        icon: Network,    label: 'Network Graph' },
@@ -42,6 +44,7 @@ const VIZ_LINKS = [
   { href: '/dashboard/marimekko',      icon: LayoutTemplate,  label: 'Marimekko' },
   { href: '/dashboard/spiral',         icon: Orbit,           label: 'Spiral Timeline' },
   { href: '/dashboard/investor-stats', icon: Users,           label: 'Investor Stats' },
+  { href: '/dashboard/financial-heatmap', icon: Grid3x3,       label: 'Financial Heatmap' },
   { href: '/dashboard/correlation',    icon: Grid3x3,         label: 'Correlation' },
   { href: '/dashboard/reports',        icon: FileBarChart,    label: 'Reports' },
   { href: '/dashboard/investor-views', icon: Eye,             label: 'Investor Views' },
