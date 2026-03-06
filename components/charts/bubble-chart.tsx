@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
+import { getInvestmentColor } from "@/lib/investment-colors"
 
 interface BubbleChartProps {
   data: Company[]
@@ -71,8 +72,6 @@ export function BubbleChart({ data, className }: BubbleChartProps) {
       .domain(d3.extent(validData, d => d[sizeMetric] as number) as [number, number])
       .range([4, 40])
 
-    const colorScale = d3.scaleOrdinal(d3.schemeTableau10)
-
     g.append("g")
       .attr("transform", `translate(0,${innerHeight})`)
       .call(d3.axisBottom(xScale).ticks(5, isXLog ? "~s" : "n"))
@@ -117,7 +116,7 @@ export function BubbleChart({ data, className }: BubbleChartProps) {
       .attr("cx", d => xScale(d[xAxisMetric] as number))
       .attr("cy", d => yScale(d[yAxisMetric] as number))
       .attr("r", d => sizeScale((d[sizeMetric] as number) || 0))
-      .attr("fill", d => colorScale(d.investmentList))
+      .attr("fill", d => getInvestmentColor(d.investmentList || "Other"))
       .attr("fill-opacity", 0.7)
       .attr("stroke", "hsl(var(--background))")
       .attr("stroke-width", 1)

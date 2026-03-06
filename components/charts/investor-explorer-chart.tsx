@@ -24,6 +24,13 @@ import {
 } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 import { ChevronDown, ChevronRight, Search, ArrowUpDown } from "lucide-react"
+import { getInvestmentColor } from "@/lib/investment-colors"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 
 interface InvestorExplorerChartProps {
   data: Company[]
@@ -217,11 +224,19 @@ export function InvestorExplorerChart({ data, className }: InvestorExplorerChart
                   <TableCell className="text-right font-mono text-sm">{inv.startupCount}</TableCell>
                   <TableCell>
                     <div className="flex flex-wrap gap-1 max-w-[300px]">
-                      {inv.investmentLists.slice(0, 3).map((list) => (
-                        <Badge key={list} variant="secondary" className="text-[10px] px-1.5 py-0">
-                          {list.length > 25 ? list.slice(0, 23) + "…" : list}
-                        </Badge>
-                      ))}
+                      {inv.investmentLists.slice(0, 3).map((list) => {
+                        const color = getInvestmentColor(list)
+                        return (
+                          <Badge
+                            key={list}
+                            variant="secondary"
+                            className="text-[10px] px-1.5 py-0 border"
+                            style={{ backgroundColor: color + "20", color, borderColor: color + "40" }}
+                          >
+                            {list.length > 25 ? list.slice(0, 23) + "…" : list}
+                          </Badge>
+                        )
+                      })}
                       {inv.investmentLists.length > 3 && (
                         <Badge variant="outline" className="text-[10px] px-1.5 py-0">
                           +{inv.investmentLists.length - 3}
@@ -247,67 +262,74 @@ export function InvestorExplorerChart({ data, className }: InvestorExplorerChart
         </Table>
       </ScrollArea>
 
-      {/* Expanded detail panel */}
-      {expandedInvestor && (() => {
-        const inv = filtered.find((i) => i.name === expandedInvestor)
-        if (!inv) return null
+      {/* Expanded detail dialog */}
+      {(() => {
+        const inv = expandedInvestor ? filtered.find((i) => i.name === expandedInvestor) : null
         return (
-          <div className="border border-primary/30 bg-primary/5 rounded-xl p-4 space-y-3">
-            <div className="flex items-start justify-between">
-              <div>
-                <h3 className="font-semibold text-lg">{inv.name}</h3>
-                <p className="text-sm text-muted-foreground">
-                  {inv.startupCount} startup{inv.startupCount !== 1 ? "s" : ""} &middot;{" "}
-                  {formatCurrency(inv.totalFunding)} total funding &middot; Avg score: {inv.avgScore.toFixed(2)}
-                </p>
-              </div>
-              <button
-                onClick={(e) => { e.stopPropagation(); setExpandedInvestor(null) }}
-                className="text-xs text-muted-foreground hover:text-foreground"
-              >
-                Close
-              </button>
-            </div>
+          <Dialog open={!!inv} onOpenChange={() => setExpandedInvestor(null)}>
+            <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
+              {inv && (
+                <>
+                  <DialogHeader>
+                    <DialogTitle className="text-lg">{inv.name}</DialogTitle>
+                    <p className="text-sm text-muted-foreground">
+                      {inv.startupCount} startup{inv.startupCount !== 1 ? "s" : ""} &middot;{" "}
+                      {formatCurrency(inv.totalFunding)} total funding &middot; Avg score: {inv.avgScore.toFixed(2)}
+                    </p>
+                  </DialogHeader>
 
-            {/* Investment Lists */}
-            <div>
-              <p className="text-xs font-semibold uppercase text-muted-foreground mb-1.5">Investment Lists Covered</p>
-              <div className="flex flex-wrap gap-1.5">
-                {inv.investmentLists.map((list) => (
-                  <Badge key={list} variant="secondary" className="text-xs">
-                    {list}
-                  </Badge>
-                ))}
-                {inv.investmentLists.length === 0 && (
-                  <span className="text-xs text-muted-foreground">None specified</span>
-                )}
-              </div>
-            </div>
-
-            {/* Startups */}
-            <div>
-              <p className="text-xs font-semibold uppercase text-muted-foreground mb-1.5">Portfolio Companies</p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-                {inv.startups
-                  .sort((a, b) => (b.weightedScore || 0) - (a.weightedScore || 0))
-                  .map((c) => (
-                    <div key={c.id} className="bg-background/60 border border-border/40 rounded-lg p-2.5 space-y-0.5">
-                      <div className="flex justify-between items-start">
-                        <span className="font-semibold text-xs">{c.name}</span>
-                        <span className="text-xs font-bold text-primary">{c.weightedScore?.toFixed(1) || "—"}</span>
-                      </div>
-                      <div className="text-[11px] text-muted-foreground">
-                        {c.investmentList || "N/A"} &middot; {c.country || "Unknown"}
-                      </div>
-                      <div className="text-[11px] text-muted-foreground">
-                        {c.latestFundingRound || c.startupLifecyclePhase || "N/A"} &middot;{" "}
-                        {formatCurrency(c.totalFunding)}
+                  <div className="space-y-4 mt-2">
+                    {/* Investment Lists */}
+                    <div>
+                      <p className="text-xs font-semibold uppercase text-muted-foreground mb-1.5">Investment Lists Covered</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {inv.investmentLists.map((list) => {
+                          const color = getInvestmentColor(list)
+                          return (
+                            <Badge
+                              key={list}
+                              variant="secondary"
+                              className="text-xs border"
+                              style={{ backgroundColor: color + "20", color, borderColor: color + "40" }}
+                            >
+                              {list}
+                            </Badge>
+                          )
+                        })}
+                        {inv.investmentLists.length === 0 && (
+                          <span className="text-xs text-muted-foreground">None specified</span>
+                        )}
                       </div>
                     </div>
-                  ))}
-              </div>
-            </div>
-          </div>
+
+                    {/* Startups */}
+                    <div>
+                      <p className="text-xs font-semibold uppercase text-muted-foreground mb-1.5">Portfolio Companies</p>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                        {inv.startups
+                          .sort((a, b) => (b.weightedScore || 0) - (a.weightedScore || 0))
+                          .map((c) => (
+                            <div key={c.id} className="bg-muted border border-border rounded-lg p-2.5 space-y-0.5">
+                              <div className="flex justify-between items-start">
+                                <span className="font-semibold text-xs">{c.name}</span>
+                                <span className="text-xs font-bold text-primary">{c.weightedScore?.toFixed(1) || "—"}</span>
+                              </div>
+                              <div className="text-[11px] text-muted-foreground">
+                                {c.investmentList || "N/A"} &middot; {c.country || "Unknown"}
+                              </div>
+                              <div className="text-[11px] text-muted-foreground">
+                                {c.latestFundingRound || c.startupLifecyclePhase || "N/A"} &middot;{" "}
+                                {formatCurrency(c.totalFunding)}
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
+            </DialogContent>
+          </Dialog>
         )
       })()}
     </div>

@@ -5,6 +5,7 @@ import * as d3 from "d3"
 import { Company, formatCurrency } from "@/lib/company-data"
 import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
+import { getInvestmentColor } from "@/lib/investment-colors"
 
 type HierarchyMode = "investment-subcat" | "mfg-industry" | "country-investment"
 type MetricKey = "totalFunding" | "headcount" | "estimatedMarketValue" | "weightedScore"
@@ -107,7 +108,6 @@ export function TreemapChart({ data, className }: TreemapChartProps) {
     const height = containerRef.current.clientHeight
     if (!width || !height) return
 
-    const colorScale = d3.scaleOrdinal(d3.schemeTableau10)
     const svg = d3.select(svgRef.current)
     svg.selectAll("*").remove()
     svg.attr("width", width).attr("height", height)
@@ -161,7 +161,7 @@ export function TreemapChart({ data, className }: TreemapChartProps) {
           : d.parent?.parent
             ? d.parent.parent.data.name
             : d.parent?.data.name ?? ""
-        return colorScale(colorTarget)
+        return getInvestmentColor(colorTarget || "Other")
       })
       .attr("stroke", "#fff")
       .attr("stroke-width", 0.5)

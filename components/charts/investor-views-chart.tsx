@@ -140,9 +140,9 @@ function ResultModal({ view, companies, open, onClose }: ResultModalProps) {
         </DialogHeader>
         <div className="space-y-4 text-sm">
           <p className="text-muted-foreground text-xs">{view.description}</p>
-          <div className="bg-emerald-950/40 border border-emerald-800/40 rounded-lg p-3">
-            <span className="text-xs font-semibold uppercase text-emerald-400 mr-2">Action</span>
-            <span className="text-xs">{view.action}</span>
+          <div className="bg-blue-950/50 border border-blue-800/40 rounded-lg p-3">
+            <span className="text-xs font-semibold uppercase text-blue-300 mr-2">Action</span>
+            <span className="text-xs text-slate-200">{view.action}</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-xs text-muted-foreground">{results.length} companies shown (top of filtered set)</span>
@@ -319,9 +319,9 @@ export function InvestorViewsChart({ data, className }: InvestorViewsChartProps)
             <div className="font-semibold text-sm leading-snug">{view.title}</div>
             <span className="text-xs font-mono bg-muted/60 px-2 py-0.5 rounded w-fit">{view.chart}</span>
             <p className="text-xs text-muted-foreground flex-1 leading-relaxed">{view.description}</p>
-            <div className="bg-emerald-950/40 border border-emerald-800/40 rounded p-2 text-xs">
-              <span className="font-semibold text-emerald-400 uppercase text-[10px] tracking-wide mr-1.5">Action</span>
-              {view.action}
+            <div className="bg-blue-950/50 border border-blue-800/40 rounded p-2 text-xs">
+              <span className="font-semibold text-blue-300 uppercase text-[10px] tracking-wide mr-1.5">Action</span>
+              <span className="text-slate-200">{view.action}</span>
             </div>
             <Button
               size="sm"

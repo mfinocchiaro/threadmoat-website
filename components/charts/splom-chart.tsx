@@ -33,8 +33,9 @@ const ALL_COLUMNS: Column[] = [
 ]
 
 const COLORS = [
-  "#3b82f6", "#8b5cf6", "#10b981", "#f59e0b",
-  "#ef4444", "#06b6d4", "#ec4899", "#14b8a6",
+  "#2E6DB4", "#8FB3E8", "#2BBFB3", "#D45500",
+  "#F4B400", "#F2B38B", "#D642A6", "#7EC8E3",
+  "#0B7A20", "#7A3FD1", "#7C3AED",
 ]
 
 export function SplomChart({ data, className }: SplomChartProps) {

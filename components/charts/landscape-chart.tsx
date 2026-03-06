@@ -4,6 +4,7 @@ import React, { useMemo, useState, useRef, useCallback, useEffect } from "react"
 import { Company, formatCurrency } from "@/lib/company-data";
 import { useFilter } from "@/contexts/filter-context";
 import { cn, normalizeLogoName } from "@/lib/utils";
+import { getInvestmentColor } from "@/lib/investment-colors";
 import { X, ExternalLink, ArrowLeft } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -47,14 +48,18 @@ const THEN_BY_FIELDS: Record<ThenByField, { label: string; accessor: (c: Company
     subsegment: { label: "Subsegment", accessor: c => c.subsegment || "Uncategorized" },
 };
 
-// 12-color palette — first 6 match original investmentList colors
-const COLOR_PALETTE = [
-    "#3b82f6", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899", "#06b6d4",
-    "#ef4444", "#84cc16", "#f97316", "#6366f1", "#14b8a6", "#e879f9",
+// Fallback palette for non-investmentList groupings (country, discipline, etc.)
+const FALLBACK_PALETTE = [
+    "#2E6DB4", "#8FB3E8", "#2BBFB3", "#D45500", "#F4B400", "#F2B38B",
+    "#D642A6", "#7EC8E3", "#0B7A20", "#7A3FD1", "#7C3AED", "#64748b",
 ];
 
-function getGroupColor(index: number): string {
-    return COLOR_PALETTE[index % COLOR_PALETTE.length];
+function getGroupColor(groupName: string, index: number, groupBy: string): string {
+    // When grouped by Investment List, use the canonical Airtable colors
+    if (groupBy === "investmentList") {
+        return getInvestmentColor(groupName);
+    }
+    return FALLBACK_PALETTE[index % FALLBACK_PALETTE.length];
 }
 
 // ---------- Rich hover card ----------
@@ -341,7 +346,7 @@ export function LandscapeChart({ data, className }: LandscapeChartProps) {
         const sortedMacros = Object.keys(groups).sort();
         return sortedMacros.map((macro, idx) => ({
             title: macro,
-            color: getGroupColor(idx),
+            color: getGroupColor(macro, idx, groupBy),
             subcategories: Object.keys(groups[macro]).sort().map(sub => ({
                 title: sub,
                 companies: groups[macro][sub].sort((a, b) => b.totalFunding - a.totalFunding),

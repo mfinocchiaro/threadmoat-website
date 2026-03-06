@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState, useMemo } from "react"
 import * as d3 from "d3"
 import { Company } from "@/lib/company-data"
+import { getInvestmentColor } from "@/lib/investment-colors"
 import {
   Select,
   SelectContent,
@@ -121,7 +122,6 @@ export function SunburstChart({ data, className }: SunburstChartProps) {
       .sort((a, b) => (b.value || 0) - (a.value || 0))
     partition(root)
 
-    const color = d3.scaleOrdinal(d3.schemeCategory10)
     const arc = d3.arc<d3.HierarchyRectangularNode<any>>()
       .startAngle(d => d.x0)
       .endAngle(d => d.x1)
@@ -138,7 +138,7 @@ export function SunburstChart({ data, className }: SunburstChartProps) {
       .attr("fill", d => {
         let node = d
         while (node.depth > 1 && node.parent) node = node.parent
-        return color(node.data.name)
+        return getInvestmentColor(node.data.name)
       })
       .attr("fill-opacity", d => (d.children ? 0.8 : 0.6))
       .attr("stroke", "var(--background)")

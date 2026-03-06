@@ -56,22 +56,7 @@ const HUB_COORDS: Record<string, [number, number]> = {
   "Cyprus":          [35.1264, 33.4299],
 };
 
-// ---------- Category colours (match vizera palette) ----------
-const CATEGORY_COLORS: Record<string, string> = {
-  "Design Intelligence":          "#3b82f6",
-  "Manufacturing Intelligence":   "#10b981",
-  "Supply Chain Intelligence":    "#f59e0b",
-  "Service Intelligence":         "#8b5cf6",
-  "Operating Intelligence":       "#ec4899",
-  "Lifecycle Intelligence":       "#06b6d4",
-};
-
-function getCategoryColor(cat: string): string {
-  const key = Object.keys(CATEGORY_COLORS).find(k =>
-    cat?.includes(k.replace(/^\d+-/, "")) || cat?.toLowerCase().includes(k.toLowerCase())
-  );
-  return key ? CATEGORY_COLORS[key] : "#64748b";
-}
+import { getInvestmentColor as getCategoryColor } from "@/lib/investment-colors";
 
 // ---------- Strip emoji flag characters ----------
 function stripEmoji(str: string): string {

@@ -13,16 +13,16 @@ interface PeriodicTableProps {
 }
 
 const INVESTMENT_COLORS: Record<string, string> = {
-    "01": "#0E5FB4",
-    "02": "#9BC5F9",
-    "03": "#C7DBF9",
-    "04": "#FCD966",
-    "05": "#D74F13",
-    "06": "#F79F71",
-    "07": "#F9C6D9",
-    "08": "#29B6F6",
-    "09": "#009613",
-    "10": "#666A6D",
+    "01": "#2E6DB4",
+    "02": "#8FB3E8",
+    "03": "#2BBFB3",
+    "04": "#F4B400",
+    "05": "#D45500",
+    "06": "#F2B38B",
+    "07": "#D642A6",
+    "08": "#7EC8E3",
+    "09": "#0B7A20",
+    "10": "#7A3FD1",
     default: "#64748b",
 };
 
@@ -175,7 +175,7 @@ export function PeriodicTable({ data, compact = false }: PeriodicTableProps) {
             return { key, values: sorted.slice(0, limit) };
         });
 
-        const colorScaleOrdinal = d3.scaleOrdinal(d3.schemeCategory10);
+        const colorScaleOrdinal = d3.scaleOrdinal(["#2E6DB4","#8FB3E8","#2BBFB3","#D45500","#F4B400","#F2B38B","#D642A6","#7EC8E3","#0B7A20","#7A3FD1"]);
 
         const mainGrid = d3.select(containerRef.current)
             .append("div")

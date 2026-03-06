@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from "react"
 import * as d3 from "d3"
 import { Company, formatCurrency } from "@/lib/company-data"
+import { getInvestmentColor } from "@/lib/investment-colors"
 import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 
@@ -23,11 +24,6 @@ interface CategorySummary {
 
 interface CategoryModal {
   summary: CategorySummary
-}
-
-function getInvestmentColor(key: string): string {
-  const scale = d3.scaleOrdinal(d3.schemeTableau10)
-  return scale(key)
 }
 
 export function DistributionChart({ data, className }: DistributionChartProps) {

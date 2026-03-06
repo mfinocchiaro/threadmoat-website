@@ -11,30 +11,7 @@ interface ChordChartProps {
   className?: string
 }
 
-const CATEGORY_COLORS: Record<string, string> = {
-  "Design Intelligence": "#3b82f6",
-  "Simulation & Analysis": "#8b5cf6",
-  "Manufacturing Intelligence": "#10b981",
-  "Supply Chain & Procurement": "#f59e0b",
-  "PLM Platforms": "#ef4444",
-  "Quality & Compliance": "#06b6d4",
-  "Sustainability & ESG": "#ec4899",
-  "AI Infrastructure": "#14b8a6",
-  "Digital Twin": "#6366f1",
-  "Service & MRO": "#84cc16",
-}
-
-function getColor(name: string, index: number, investmentLists: string[]): string {
-  if (investmentLists.includes(name)) {
-    const stripped = name.replace(/^\d+-/, "").trim()
-    for (const [key, color] of Object.entries(CATEGORY_COLORS)) {
-      if (stripped.toLowerCase().includes(key.toLowerCase())) return color
-    }
-    const palette = Object.values(CATEGORY_COLORS)
-    return palette[index % palette.length]
-  }
-  return "#64748b"
-}
+import { getInvestmentColor } from "@/lib/investment-colors"
 
 export function ChordChart({ data, className }: ChordChartProps) {
   const svgRef = useRef<SVGSVGElement>(null)
@@ -108,8 +85,8 @@ export function ChordChart({ data, className }: ChordChartProps) {
     group
       .append("path")
       .attr("class", "chord-group-path")
-      .attr("fill", (d) => getColor(names[d.index], d.index, investmentLists))
-      .attr("stroke", (d) => d3.color(getColor(names[d.index], d.index, investmentLists))?.darker().toString() ?? "#000")
+      .attr("fill", (d) => getInvestmentColor(names[d.index]))
+      .attr("stroke", (d) => d3.color(getInvestmentColor(names[d.index]))?.darker().toString() ?? "#000")
       .attr("d", arc)
       .style("cursor", "pointer")
       .on("mouseover", function (event, d) {
@@ -157,9 +134,9 @@ export function ChordChart({ data, className }: ChordChartProps) {
       .join("path")
       .attr("class", "ribbon-path")
       .attr("d", ribbon as never)
-      .attr("fill", (d) => getColor(names[d.source.index], d.source.index, investmentLists))
+      .attr("fill", (d) => getInvestmentColor(names[d.source.index]))
       .attr("stroke", (d) =>
-        d3.color(getColor(names[d.source.index], d.source.index, investmentLists))?.darker().toString() ?? "#000"
+        d3.color(getInvestmentColor(names[d.source.index]))?.darker().toString() ?? "#000"
       )
       .style("cursor", "pointer")
       .on("mouseover", function (event, d) {
