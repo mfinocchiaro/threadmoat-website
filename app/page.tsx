@@ -108,10 +108,10 @@ export default function HomePage() {
           <p className="text-center text-muted-foreground mb-12">Select the option that best describes you</p>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 max-w-5xl mx-auto">
             {[
-              { title: "Established Software Company", desc: "Engineering software, PLM, or Industrial AI vendor" },
-              { title: "Startups & Scaleups", desc: "Engineering software, PLM, or Industrial AI startup" },
-              { title: "VC or PE Firm", desc: "Investment firm seeking opportunities in industrial tech" },
-              { title: "Manufacturing Company", desc: "Seeking to implement an AI strategy leveraging startup innovation" },
+              { title: "ISVs", desc: "Engineering software, PLM, or Industrial AI company" },
+              { title: "Startup", desc: "Engineering software, PLM, or Industrial AI startup" },
+              { title: "VC or PE Firm", desc: "Investment firm seeking opportunities" },
+              { title: "OEM / Manufacturer", desc: "Find the right startup to fill workflow gaps and give your engineers a competitive edge" },
             ].map((org) => (
               <Card key={org.title} className="cursor-pointer hover:border-primary/50 transition-colors">
                 <CardContent className="pt-6">
@@ -121,10 +121,11 @@ export default function HomePage() {
               </Card>
             ))}
           </div>
-          <div className="grid grid-cols-3 gap-8 max-w-2xl mx-auto mt-16 text-center">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-3xl mx-auto mt-16 text-center">
             <div><p className="text-4xl font-bold text-primary">35+</p><p className="text-sm text-muted-foreground mt-1">Years of Market Experience</p></div>
             <div><p className="text-4xl font-bold text-primary">500+</p><p className="text-sm text-muted-foreground mt-1">Startups in Database</p></div>
             <div><p className="text-4xl font-bold text-primary">~150</p><p className="text-sm text-muted-foreground mt-1">Warm Founder Introductions</p></div>
+            <Link href="/landscape" className="hover:opacity-80 transition-opacity"><p className="text-4xl font-bold text-primary">10</p><p className="text-sm text-muted-foreground mt-1 underline underline-offset-2">Investment Domains</p></Link>
           </div>
         </div>
       </section>
@@ -206,7 +207,8 @@ export default function HomePage() {
               </Card>
             ))}
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-8 max-w-4xl mx-auto mt-16 text-center">
+          <div className="grid grid-cols-3 md:grid-cols-6 gap-6 max-w-5xl mx-auto mt-16 text-center">
+            <div><p className="text-3xl font-bold text-primary">Bootstrap</p><p className="text-xs text-muted-foreground mt-1">Self-Funded Niche</p></div>
             <div><p className="text-3xl font-bold text-primary">Pre-Seed</p><p className="text-xs text-muted-foreground mt-1">Emerging</p></div>
             <div><p className="text-3xl font-bold text-primary">Seed</p><p className="text-xs text-muted-foreground mt-1">Seed Stage</p></div>
             <div><p className="text-3xl font-bold text-primary">Series A</p><p className="text-xs text-muted-foreground mt-1">Early Stage</p></div>
