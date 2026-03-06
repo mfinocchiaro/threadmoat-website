@@ -49,9 +49,10 @@ export function InvestorStatsChart({ data, className }: InvestorStatsChartProps)
 
     data.forEach((company) => {
       let keys: string[] = []
+      const EXCLUDED = ["bootstrapped", "angel funded", "undisclosed", "unknown", "n a", "n/a"]
       if (viewMode === "byInvestor") {
-        keys = company.investors ?? []
-        if (keys.length === 0) keys = ["Unknown"]
+        keys = (company.investors ?? []).filter((inv) => !EXCLUDED.includes(inv.toLowerCase().trim()))
+        if (keys.length === 0) return
       } else if (viewMode === "byCategory") {
         keys = [(company.investmentList || "Other").replace(/^\d+-/, "").trim()]
       } else if (viewMode === "byCountry") {

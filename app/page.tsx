@@ -21,9 +21,10 @@ export default function HomePage() {
               unoptimized
             />
           </div>
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="flex items-center gap-8">
             <a href="#services" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Services</a>
             <a href="#expertise" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Expertise</a>
+            <Link href="/about" className="text-sm text-muted-foreground hover:text-foreground transition-colors">About</Link>
             <a href="#contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Contact</a>
           </nav>
           <div className="flex items-center gap-3">
@@ -67,13 +68,14 @@ export default function HomePage() {
       {/* Organization Selector */}
       <section className="border-t border-border/40 bg-muted/30" id="services">
         <div className="container mx-auto px-4 py-16">
-          <h2 className="text-center text-3xl font-bold mb-4">Tell us about your organization</h2>
+          <h2 className="text-center text-3xl font-bold mb-4">Tailored results for all profiles</h2>
           <p className="text-center text-muted-foreground mb-12">Select the option that best describes you</p>
-          <div className="grid gap-6 md:grid-cols-3 max-w-4xl mx-auto">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 max-w-5xl mx-auto">
             {[
-              { title: "Established Company", desc: "Engineering software, PLM, or Industrial AI company" },
-              { title: "Startup", desc: "Engineering software, PLM, or Industrial AI startup" },
-              { title: "VC or PE Firm", desc: "Investment firm seeking opportunities" },
+              { title: "Established Software Company", desc: "Engineering software, PLM, or Industrial AI vendor" },
+              { title: "Startups & Scaleups", desc: "Engineering software, PLM, or Industrial AI startup" },
+              { title: "VC or PE Firm", desc: "Investment firm seeking opportunities in industrial tech" },
+              { title: "Manufacturing Company", desc: "Seeking to implement an AI strategy leveraging startup innovation" },
             ].map((org) => (
               <Card key={org.title} className="cursor-pointer hover:border-primary/50 transition-colors">
                 <CardContent className="pt-6">
@@ -86,7 +88,7 @@ export default function HomePage() {
           <div className="grid grid-cols-3 gap-8 max-w-2xl mx-auto mt-16 text-center">
             <div><p className="text-4xl font-bold text-primary">35+</p><p className="text-sm text-muted-foreground mt-1">Years of Market Experience</p></div>
             <div><p className="text-4xl font-bold text-primary">500+</p><p className="text-sm text-muted-foreground mt-1">Startups in Database</p></div>
-            <div><p className="text-4xl font-bold text-primary">~100</p><p className="text-sm text-muted-foreground mt-1">Warm Founder Introductions</p></div>
+            <div><p className="text-4xl font-bold text-primary">&gt;150</p><p className="text-sm text-muted-foreground mt-1">Warm Founder Introductions</p></div>
           </div>
         </div>
       </section>
@@ -110,7 +112,7 @@ export default function HomePage() {
             {
               icon: <Users className="h-6 w-6" />,
               title: "Founder Introductions",
-              desc: "Leverage our extensive network to secure warm introductions to nearly 100 founders.",
+              desc: "Leverage our extensive network to secure warm introductions to over 150 founders.",
               features: ["Pre-vetted founder relationships", "Facilitated meetings", "Ongoing relationship management"],
             },
             {
@@ -205,6 +207,7 @@ export default function HomePage() {
           <p>© {new Date().getFullYear()} Finocchiaro Consulting / ThreadMoat. All rights reserved.</p>
           <div className="flex gap-4">
             <Link href="/pricing" className="hover:text-foreground">Pricing</Link>
+            <Link href="/about" className="hover:text-foreground">About</Link>
             <Link href="/auth/login" className="hover:text-foreground">Sign In</Link>
           </div>
         </div>

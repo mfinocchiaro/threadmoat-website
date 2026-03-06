@@ -26,9 +26,12 @@ function InvestorStatsInner() {
   return (
     <div className="space-y-4">
       <div>
-        <h1 className="text-2xl font-bold">Investor Statistics</h1>
+        <div className="flex items-center gap-3">
+          <h1 className="text-2xl font-bold">Investor Statistics</h1>
+          <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">Founders Only</span>
+        </div>
         <p className="text-muted-foreground text-sm mt-1">
-          Explore investors, their portfolio companies, investment list coverage, and funding distribution.
+          Explore investors, their portfolio companies, investment list coverage, and funding distribution. Bootstrapped, angel funded, and undisclosed investors are excluded.
         </p>
       </div>
       {isLoading ? (
