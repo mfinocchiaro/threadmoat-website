@@ -8,9 +8,9 @@ const LAST_UPDATED = "March 3, 2026"
 
 const ANALYTICS_FEATURES = [
   "All dashboards + filters + saved views",
-  "Watchlists + alerts (weekly digest email)",
+  "Watchlists + alerts",
   "Exports: charts + aggregated tables (no directory dump)",
-      "Weekly release notes ('what changed')",
+  "One 30-minute personalized briefing every two months",
 ]
 
 const ENTERPRISE_FEATURES = [
@@ -45,14 +45,20 @@ export default function PricingPage() {
               unoptimized
             />
           </Link>
-          <nav className="flex items-center gap-4">
+          <nav className="flex items-center gap-8">
+            <Link href="/#services" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Services</Link>
+            <Link href="/#expertise" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Expertise</Link>
+            <Link href="/about" className="text-sm text-muted-foreground hover:text-foreground transition-colors">About</Link>
+            <Link href="/#contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Contact</Link>
+          </nav>
+          <div className="flex items-center gap-3">
             <Link href="/auth/login">
-              <Button variant="ghost">Sign In</Button>
+              <Button variant="ghost" size="sm">Sign In</Button>
             </Link>
             <Link href="/auth/sign-up">
-              <Button>Get Started</Button>
+              <Button size="sm">Get Started</Button>
             </Link>
-          </nav>
+          </div>
         </div>
       </header>
 
@@ -89,15 +95,11 @@ export default function PricingPage() {
             </div>
             <div className="mt-6 space-y-1">
               <div>
-                <span className="text-4xl font-bold">$199</span>
-                <span className="text-muted-foreground">/mo</span>
+                <span className="text-4xl font-bold">$4,999</span>
+                <span className="text-muted-foreground">/yr</span>
               </div>
               <div className="text-sm text-muted-foreground">
-                or{" "}
-                <span className="font-medium text-foreground">$1,999/yr</span>
-                <span className="ml-2 rounded-full bg-primary/10 px-2 py-0.5 text-xs text-primary">
-                  save ~$389
-                </span>
+                Annual commitment &mdash; monthly billing available
               </div>
             </div>
             <ul className="mt-8 flex-1 space-y-3">
@@ -108,12 +110,9 @@ export default function PricingPage() {
                 </li>
               ))}
             </ul>
-            <div className="mt-8 space-y-3">
+            <div className="mt-8">
               <Link href="/auth/sign-up">
-                <Button className="w-full">Get started — $199/mo</Button>
-              </Link>
-              <Link href="/auth/sign-up?plan=annual">
-                <Button variant="outline" className="w-full">Get started — $1,999/yr</Button>
+                <Button className="w-full">Get started — $4,999/yr</Button>
               </Link>
             </div>
           </div>
@@ -152,13 +151,13 @@ export default function PricingPage() {
         <div className="container mx-auto px-4 py-20">
           <h2 className="text-center text-2xl font-bold mb-2">See what you get</h2>
           <p className="text-center text-muted-foreground mb-12 max-w-xl mx-auto">
-            Sample dashboard views and the weekly "Market Moves" digest.
+            Sample dashboard views from the platform.
           </p>
           <div className="grid gap-6 md:grid-cols-3 max-w-5xl mx-auto">
             {[
               { label: "Funding Stage Distribution", desc: "Bar chart of companies by round (Seed → Series D+)" },
               { label: "Discipline Breakdown", desc: "CAD / CAM / PLM / ERP / Industrial AI by headcount and funding" },
-              { label: "Weekly Market Moves", desc: "\"3 Series B rounds closed this week; 2 new entrants in Generative CAD\"" },
+              { label: "Personalized Briefings", desc: "30-minute analyst briefing every two months, tailored to your investment focus" },
             ].map(sample => (
               <div
                 key={sample.label}

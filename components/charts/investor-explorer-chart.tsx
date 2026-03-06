@@ -51,10 +51,14 @@ export function InvestorExplorerChart({ data, className }: InvestorExplorerChart
   const investors = useMemo(() => {
     const map = new Map<string, InvestorRow>()
 
+    const EXCLUDED_INVESTORS = ["bootstrapped", "angel funded", "undisclosed", "unknown", "n a", "n/a"]
+
     data.forEach((company) => {
       if (!company.investors || company.investors.length === 0) return
 
-      company.investors.forEach((investor) => {
+      company.investors
+        .filter((inv) => !EXCLUDED_INVESTORS.includes(inv.toLowerCase().trim()))
+        .forEach((investor) => {
         const existing = map.get(investor)
         if (existing) {
           existing.startups.push(company)

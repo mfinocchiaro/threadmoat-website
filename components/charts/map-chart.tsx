@@ -18,7 +18,7 @@ interface MapChartProps {
 
 // Stable coordinates for hubs with unreliable GeoJSON feature matching
 const HUB_COORDINATES: Record<string, [number, number]> = {
-  Bay Area: [-122.4194, 37.7749],
+  "Bay Area": [-122.4194, 37.7749],
   "New York": [-74.006, 40.7128],
   Denver: [-104.9903, 39.7392],
   "Los Angeles": [-118.2437, 34.0522],
