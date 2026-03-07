@@ -10,14 +10,15 @@ import "./periodic-table.css";
 interface PeriodicTableProps {
     data: Company[];
     compact?: boolean;
+    preview?: boolean;
 }
 
 const INVESTMENT_COLORS: Record<string, string> = {
     "01": "#2E6DB4",
     "02": "#8FB3E8",
     "03": "#2BBFB3",
-    "04": "#F4B400",
-    "05": "#D45500",
+    "04": "#D45500",
+    "05": "#F4B400",
     "06": "#F2B38B",
     "07": "#D642A6",
     "08": "#7EC8E3",
@@ -32,8 +33,8 @@ const getInvestmentCategoryID = (investmentList: string): string => {
     if (list.includes("design") || list.includes("cad")) return "01";
     if (list.includes("extreme") || list.includes("cae") || list.includes("cfd") || list.includes("fea")) return "02";
     if (list.includes("adaptive") || list.includes("cam") || list.includes("cnc")) return "03";
-    if (list.includes("factory") || list.includes("mes") || list.includes("iiot")) return "04";
-    if (list.includes("cognitive") || list.includes("plm") || list.includes("mbse")) return "05";
+    if (list.includes("cognitive") || list.includes("plm") || list.includes("mbse")) return "04";
+    if (list.includes("factory") || list.includes("mes") || list.includes("iiot")) return "05";
     if (list.includes("augmented") || list.includes("mom") || list.includes("mro")) return "06";
     if (list.includes("supply chain") || list.includes("scm")) return "07";
     if (list.includes("bim") || list.includes("aec")) return "08";
@@ -86,7 +87,7 @@ const getBroadFunding = (round: string): string => {
     return round;
 };
 
-export function PeriodicTable({ data, compact = false }: PeriodicTableProps) {
+export function PeriodicTable({ data, compact = false, preview = false }: PeriodicTableProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const [groupBy, setGroupBy] = useState<"investment" | "discipline" | "lifecycle" | "subsegment">("investment");
     const [sortBy, setSortBy] = useState<"score" | "valuation" | "funding" | "headcount" | "name">("score");
@@ -96,7 +97,7 @@ export function PeriodicTable({ data, compact = false }: PeriodicTableProps) {
     const [showCountry, setShowCountry] = useState(true);
     const [showCompanyNames, setShowCompanyNames] = useState(true);
     const [selectedElement, setSelectedElement] = useState<Company | null>(null);
-    const [activeMode, setActiveMode] = useState<"global" | "linkedin" | "custom">("global");
+    const [activeMode, setActiveMode] = useState<"global" | "linkedin" | "custom">(preview ? "linkedin" : "global");
     const [customList, setCustomList] = useState<string[]>([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [pasteText, setPasteText] = useState("");
@@ -171,7 +172,7 @@ export function PeriodicTable({ data, compact = false }: PeriodicTableProps) {
                     default: return 0;
                 }
             });
-            const limit = activeMode === "custom" ? 999 : 15;
+            const limit = preview ? 10 : activeMode === "custom" ? 999 : 15;
             return { key, values: sorted.slice(0, limit) };
         });
 
@@ -196,7 +197,7 @@ export function PeriodicTable({ data, compact = false }: PeriodicTableProps) {
 
                 displayValues.forEach((company: Company) => {
                     const categoryID = getInvestmentCategoryID(company.investmentList || "");
-                    const isDarkText = ["02", "03", "04", "06", "07"].includes(categoryID);
+                    const isDarkText = ["02", "03", "05", "06", "07"].includes(categoryID);
 
                     const element = elementsContainer.append("div")
                         .attr("class", `pt-element ${isDarkText ? "pt-contrast-dark" : ""}`)
@@ -209,7 +210,7 @@ export function PeriodicTable({ data, compact = false }: PeriodicTableProps) {
                                 default: return getInvestmentColor(company.investmentList);
                             }
                         })
-                        .on("click", () => setSelectedElement(company));
+                        .on("click", () => { if (!preview) setSelectedElement(company); });
 
                     if (activeMode !== "linkedin") {
                         element.append("div").attr("class", "pt-score").text(company.weightedScore || "—");
@@ -307,7 +308,7 @@ export function PeriodicTable({ data, compact = false }: PeriodicTableProps) {
             )}
 
             {/* Controls */}
-            <div className={cn("filter-bar grid grid-cols-3 gap-0 border-b border-border", compact && "grid-cols-1 border-0")}>
+            {!preview && <div className={cn("filter-bar grid grid-cols-3 gap-0 border-b border-border", compact && "grid-cols-1 border-0")}>
                 {/* Layout */}
                 <div className="border-r border-border p-4 bg-blue-500/5">
                     <h3 className="text-xs font-semibold uppercase mb-3 text-muted-foreground">Layout</h3>
@@ -489,7 +490,7 @@ export function PeriodicTable({ data, compact = false }: PeriodicTableProps) {
                         </div>
                     </div>
                 )}
-            </div>
+            </div>}
 
             {/* Table */}
             <div className={`flex-1 overflow-auto p-6 size-${elementSize}`}>
@@ -497,7 +498,7 @@ export function PeriodicTable({ data, compact = false }: PeriodicTableProps) {
             </div>
 
             {/* Detail panel */}
-            {selectedElement && (
+            {!preview && selectedElement && (
                 <div className="fixed right-5 top-48 w-80 bg-card border border-border rounded-xl p-5 shadow-2xl z-50">
                     <button onClick={() => setSelectedElement(null)} className="absolute top-3 right-3 text-muted-foreground hover:text-foreground text-xl">×</button>
                     <div className="flex items-center gap-3 mb-4">
