@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Plus, X, ArrowRight } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -28,17 +28,19 @@ function CompareInner() {
   const { companies: allCompanies, isLoading, hasThesis } = useThesisGatedData()
   const [selected, setSelected] = useState<string[]>([])
   const [search, setSearch] = useState("")
-  const [hasPreSelected, setHasPreSelected] = useState(false)
+  const preSelected = useRef(false)
 
   // Pre-select top 3 by score once data loads
-  if (allCompanies.length > 0 && !hasPreSelected) {
-    const top3 = [...allCompanies]
-      .sort((a, b) => (b.weightedScore || 0) - (a.weightedScore || 0))
-      .slice(0, 3)
-      .map(c => c.id)
-    setSelected(top3)
-    setHasPreSelected(true)
-  }
+  useEffect(() => {
+    if (allCompanies.length > 0 && !preSelected.current) {
+      preSelected.current = true
+      const top3 = [...allCompanies]
+        .sort((a, b) => (b.weightedScore || 0) - (a.weightedScore || 0))
+        .slice(0, 3)
+        .map(c => c.id)
+      setSelected(top3)
+    }
+  }, [allCompanies])
 
   const suggestions = allCompanies
     .filter(c => !selected.includes(c.id) && c.name.toLowerCase().includes(search.toLowerCase()))
