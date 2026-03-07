@@ -202,7 +202,7 @@ export function SunburstChart({ data, className, preview = false }: SunburstChar
           </div>
         </div>
       )}
-      <div ref={containerRef} className={`flex-1 w-full min-h-0 relative overflow-hidden bg-background ${preview ? "h-[450px]" : ""}`}>
+      <div ref={containerRef} className="flex-1 w-full min-h-0 relative overflow-hidden bg-background h-full">
         <svg ref={svgRef} className="w-full h-full block" />
         {(!data || data.length === 0) && (
           <div className="absolute inset-0 flex items-center justify-center text-muted-foreground">

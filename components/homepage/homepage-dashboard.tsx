@@ -4,7 +4,7 @@ import { useMemo } from "react"
 import dynamic from "next/dynamic"
 import { Company, formatCurrency } from "@/lib/company-data"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { PeriodicTable } from "@/components/charts/periodic-table"
+import { NetworkGraph } from "@/components/charts/network-graph"
 import { SunburstChart } from "@/components/charts/sunburst-chart"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Lock } from "lucide-react"
@@ -79,6 +79,13 @@ export function HomepageDashboard({ data }: { data: Company[] }) {
           </Card>
         </div>
 
+        {/* Network Graph — preview mode: no controls, no drill-down */}
+        <div className="mb-6">
+          <ChartCard title="Ecosystem Network" subtitle={`${data.length} companies across ${investmentLists} investment domains`}>
+            <NetworkGraph data={data} className="min-h-[420px]" preview />
+          </ChartCard>
+        </div>
+
         {/* Global Map — preview mode: counts + top 3 names only, no drill-down */}
         <div className="mb-6">
           <ChartCard title="Global Startup Footprint" subtitle={`${data.length} companies across ${countries} countries`}>
@@ -86,17 +93,10 @@ export function HomepageDashboard({ data }: { data: Company[] }) {
           </ChartCard>
         </div>
 
-        {/* Periodic Table — all lists, top 8 per category, canonical order, no config */}
-        <div className="mb-6">
-          <ChartCard title="Top Startups by Investment Domain" subtitle="Top 8 ranked companies per domain">
-            <PeriodicTable data={data} compact preview />
-          </ChartCard>
-        </div>
-
         {/* Sunburst — preview mode: no controls, max 5 names per slice */}
         <div className="mb-6">
           <ChartCard title="Ecosystem Structure" subtitle="Investment domains by funding round">
-            <SunburstChart data={data} preview />
+            <SunburstChart data={data} className="min-h-[650px]" preview />
           </ChartCard>
         </div>
 
