@@ -172,9 +172,18 @@ export function PeriodicTable({ data, compact = false, preview = false }: Period
                     default: return 0;
                 }
             });
-            const limit = preview ? 10 : activeMode === "custom" ? 999 : 15;
+            const limit = preview ? 8 : activeMode === "custom" ? 999 : 15;
             return { key, values: sorted.slice(0, limit) };
         });
+
+        // Sort groups by canonical investment list order
+        if (groupBy === "investment") {
+            sortedGroups.sort((a, b) => {
+                const idA = getInvestmentCategoryID(a.key);
+                const idB = getInvestmentCategoryID(b.key);
+                return idA.localeCompare(idB);
+            });
+        }
 
         const colorScaleOrdinal = d3.scaleOrdinal(["#2E6DB4","#8FB3E8","#2BBFB3","#D45500","#F4B400","#F2B38B","#D642A6","#7EC8E3","#0B7A20","#7A3FD1"]);
 
