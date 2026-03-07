@@ -312,14 +312,14 @@ function ScoreWeightSliders({ thesis, onChange }: { thesis: VCThesis; onChange: 
           <div className="flex items-center justify-between">
             <Label className="text-sm">{dim.label}</Label>
             <span className="text-xs text-muted-foreground tabular-nums w-6 text-right">
-              {weights[dim.key] ?? 5}
+              {weights[dim.key] ?? 3}
             </span>
           </div>
           <Slider
             min={0}
-            max={10}
+            max={5}
             step={1}
-            value={[weights[dim.key] ?? 5]}
+            value={[weights[dim.key] ?? 3]}
             onValueChange={([val]) =>
               onChange({
                 ...thesis,

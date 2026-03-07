@@ -54,6 +54,32 @@ export interface Company {
   weightedScore: number
 }
 
+export interface Investor {
+  id: string
+  name: string
+  startupNames: string[]
+  startupCount: number
+  investmentLists: string[]
+  linkedInProfile: string
+  email: string
+  notes: string
+  contacts: string
+  investorType: string
+}
+
+export async function loadInvestorData(): Promise<Investor[]> {
+  try {
+    const response = await fetch('/api/investors')
+    const result = await response.json()
+    if (result.success) return result.data
+    console.error('Failed to load investors:', result.error)
+    return []
+  } catch (error) {
+    console.error('Error loading investor data:', error)
+    return []
+  }
+}
+
 export async function loadCompanyData(): Promise<Company[]> {
   try {
     const response = await fetch('/api/companies')

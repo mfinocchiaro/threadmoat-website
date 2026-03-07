@@ -1,27 +1,19 @@
 "use client"
 
-import { useEffect, useState, useMemo } from "react"
-import { Company, loadCompanyData } from "@/lib/company-data"
-import { FilterProvider, useFilter } from "@/contexts/filter-context"
+import { useMemo } from "react"
+import { useThesisGatedData } from "@/hooks/use-thesis-gated-data"
+import { VizPageShell } from "@/components/dashboard/viz-page-shell"
+import { FocusPrompt } from "@/components/dashboard/focus-prompt"
 import { VizFilterBar } from "@/components/viz-filter-bar"
 import { FinancialHeatmapChart } from "@/components/charts/financial-heatmap-chart"
 import { Skeleton } from "@/components/ui/skeleton"
 
 function FinancialHeatmapInner() {
-  const [companies, setCompanies] = useState<Company[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const { filterCompany } = useFilter()
-
-  useEffect(() => {
-    loadCompanyData().then((data) => {
-      setCompanies(data)
-      setIsLoading(false)
-    })
-  }, [])
+  const { companies, filtered, isLoading, hasThesis } = useThesisGatedData()
 
   const filteredNames = useMemo(() => {
-    return new Set(companies.filter(filterCompany).map((c) => c.name))
-  }, [companies, filterCompany])
+    return new Set(filtered.map((c) => c.name))
+  }, [filtered])
 
   return (
     <div className="space-y-4">
@@ -33,6 +25,8 @@ function FinancialHeatmapInner() {
       </div>
       {isLoading ? (
         <Skeleton className="h-[600px] rounded-xl" />
+      ) : !hasThesis ? (
+        <FocusPrompt label="Set Focus" description="Configure your thesis on the main dashboard to unlock this visualization." />
       ) : (
         <>
           <VizFilterBar companies={companies} />
@@ -45,8 +39,8 @@ function FinancialHeatmapInner() {
 
 export default function FinancialHeatmapPage() {
   return (
-    <FilterProvider>
+    <VizPageShell>
       <FinancialHeatmapInner />
-    </FilterProvider>
+    </VizPageShell>
   )
 }

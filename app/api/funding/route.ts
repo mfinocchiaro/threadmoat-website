@@ -31,7 +31,7 @@ export async function GET() {
   }
 
   try {
-    const csvPath = path.join(process.cwd(), 'public', 'data', 'Startups-Funding.csv')
+    const csvPath = path.join(process.cwd(), 'public', 'data', 'Startups-Financial Health.csv')
     let csvContent = await fs.readFile(csvPath, 'utf-8')
 
     if (csvContent.charCodeAt(0) === 0xFEFF) {

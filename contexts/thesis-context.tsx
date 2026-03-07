@@ -51,7 +51,6 @@ export type OEMCoverage = "commercial" | "customized" | "homegrown" | "none"
 
 export interface OEMThesis {
   coverageMap: Record<string, OEMCoverage>  // keyed by subcategory
-  operatingModelFilters: string[]
 }
 
 export type ThesisType = "founder" | "vc" | "isv" | "oem"
@@ -142,13 +141,13 @@ interface ThesisContextType {
 // ── Defaults ───────────────────────────────────────────────
 
 const DEFAULT_SCORE_WEIGHTS: Record<ScoreDimensionKey, number> = {
-  marketOpportunity: 5,
-  teamExecution: 5,
-  techDifferentiation: 5,
-  fundingEfficiency: 5,
-  growthMetrics: 5,
-  industryImpact: 5,
-  competitiveMoat: 5,
+  marketOpportunity: 3,
+  teamExecution: 3,
+  techDifferentiation: 3,
+  fundingEfficiency: 3,
+  growthMetrics: 3,
+  industryImpact: 3,
+  competitiveMoat: 3,
 }
 
 const DEFAULT_VC: VCThesis = {
@@ -170,7 +169,6 @@ const DEFAULT_ISV: ISVThesis = {
 
 const DEFAULT_OEM: OEMThesis = {
   coverageMap: {},
-  operatingModelFilters: [],
 }
 
 // ── Scoring helpers ────────────────────────────────────────
@@ -260,8 +258,8 @@ function scoreVC(company: Company, thesis: VCThesis): number {
     let weightedSum = 0
     for (const dim of SCORE_DIMENSIONS) {
       const companyVal = (company[dim.key as keyof Company] as number) || 0
-      const weight = weights[dim.key] ?? 5
-      weightedSum += (companyVal / 10) * (weight / 10)
+      const weight = weights[dim.key] ?? 3
+      weightedSum += (companyVal / 5) * (weight / 5)
     }
     score += (weightedSum / SCORE_DIMENSIONS.length) * 35
   } else {
@@ -292,16 +290,6 @@ function scoreISV(company: Company, thesis: ISVThesis): { score: number; label: 
 }
 
 function scoreOEM(company: Company, thesis: OEMThesis): { score: number; label: string } {
-  // If operating model filters are set, exclude non-matching companies
-  const opFilters = thesis.operatingModelFilters ?? []
-  if (opFilters.length > 0) {
-    const companyTags = company.operatingModelTags || []
-    const hasMatch = opFilters.some(f =>
-      companyTags.some(t => t.toLowerCase() === f.toLowerCase())
-    )
-    if (!hasMatch) return { score: 0, label: "Filtered Out" }
-  }
-
   // Match on subcategory first, fall back to investment list for legacy configs
   const coverage = thesis.coverageMap[company.subcategories] ?? thesis.coverageMap[company.investmentList]
   if (!coverage || coverage === "none") {

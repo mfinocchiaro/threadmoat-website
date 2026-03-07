@@ -1,9 +1,12 @@
 "use client"
 
-import { useEffect, useState, useMemo } from "react"
+import { useMemo } from "react"
 import Link from "next/link"
-import { Company, loadCompanyData, formatCurrency } from "@/lib/company-data"
+import { Company, formatCurrency } from "@/lib/company-data"
 import { INVESTMENT_LIST_COLORS } from "@/lib/investment-colors"
+import { useThesisGatedData } from "@/hooks/use-thesis-gated-data"
+import { VizPageShell } from "@/components/dashboard/viz-page-shell"
+import { FocusPrompt } from "@/components/dashboard/focus-prompt"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Card } from "@/components/ui/card"
 import { ArrowRight } from "lucide-react"
@@ -75,16 +78,8 @@ interface DomainStats {
   icon: string
 }
 
-export default function LandscapeIntroPage() {
-  const [companies, setCompanies] = useState<Company[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-
-  useEffect(() => {
-    loadCompanyData().then((data) => {
-      setCompanies(data)
-      setIsLoading(false)
-    })
-  }, [])
+function LandscapeIntroInner() {
+  const { companies, isLoading, hasThesis } = useThesisGatedData()
 
   const domains = useMemo(() => {
     const grouped = new Map<string, Company[]>()
@@ -149,6 +144,22 @@ export default function LandscapeIntroPage() {
             <Skeleton key={i} className="h-64 rounded-xl" />
           ))}
         </div>
+      </div>
+    )
+  }
+
+  if (!hasThesis) {
+    return (
+      <div className="space-y-8">
+        <div className="max-w-3xl">
+          <h1 className="text-3xl font-bold tracking-tight">Investment Landscape</h1>
+          <p className="text-muted-foreground mt-3 text-base leading-relaxed">
+            ThreadMoat maps the engineering software ecosystem across ten domains spanning design,
+            simulation, manufacturing, operations, supply chain, AEC, robotics, and research systems.
+            Each startup is categorized within one primary investment domain.
+          </p>
+        </div>
+        <FocusPrompt label="Set Focus" description="Configure your thesis on the main dashboard to unlock this visualization." />
       </div>
     )
   }
@@ -288,5 +299,13 @@ export default function LandscapeIntroPage() {
         </Link>
       </div>
     </div>
+  )
+}
+
+export default function LandscapeIntroPage() {
+  return (
+    <VizPageShell>
+      <LandscapeIntroInner />
+    </VizPageShell>
   )
 }
