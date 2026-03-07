@@ -26,14 +26,14 @@ CREATE TABLE IF NOT EXISTS profiles (
   created_at       TIMESTAMPTZ DEFAULT now()
 );
 
--- Subscriptions (Stripe)
+-- Subscriptions (Stripe + coupon trials)
 CREATE TABLE IF NOT EXISTS subscriptions (
   id                     UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id                UUID        NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   stripe_customer_id     TEXT,
   stripe_subscription_id TEXT,
+  product_id             TEXT        NOT NULL DEFAULT 'none',
   status                 TEXT        NOT NULL DEFAULT 'inactive',
-  plan                   TEXT        DEFAULT 'free',
   current_period_start   TIMESTAMPTZ,
   current_period_end     TIMESTAMPTZ,
   created_at             TIMESTAMPTZ DEFAULT now(),

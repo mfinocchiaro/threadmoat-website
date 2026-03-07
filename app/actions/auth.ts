@@ -84,10 +84,16 @@ export async function registerUser(data: RegisterData): Promise<ActionResult> {
       if (!coupon) return { success: false, error: 'Invalid or expired invite code' }
     }
 
-    // --- Check for existing account (generic message to prevent enumeration) ---
-    const existing = await sql`SELECT id FROM users WHERE email = ${email}`
-    if (existing.length > 0)
-      return { success: false, error: 'Unable to create account. Please try again or sign in.' }
+    // --- Check for existing account ---
+    const existing = await sql`SELECT id, email_verified FROM users WHERE email = ${email}`
+    if (existing.length > 0) {
+      if (existing[0].email_verified) {
+        // Verified account exists — generic message to prevent enumeration
+        return { success: false, error: 'Unable to create account. Please try again or sign in.' }
+      }
+      // Unverified account from a failed previous attempt — clean it up so they can retry
+      await sql`DELETE FROM users WHERE id = ${existing[0].id as string}`
+    }
 
     const passwordHash = await bcrypt.hash(password, 12)
 

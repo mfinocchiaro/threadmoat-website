@@ -32,6 +32,7 @@ export async function validateCoupon(code: string): Promise<Coupon | null> {
 export async function redeemCoupon(couponId: string, userId: string, durationDays: number) {
   const now = new Date()
   const periodEnd = new Date(now.getTime() + durationDays * 24 * 60 * 60 * 1000)
+  const productId = 'coupon_trial'
 
   // Increment usage
   await sql`
@@ -41,9 +42,10 @@ export async function redeemCoupon(couponId: string, userId: string, durationDay
   // Create subscription with trialing status
   await sql`
     INSERT INTO subscriptions (user_id, product_id, status, current_period_start, current_period_end)
-    VALUES (${userId}, 'coupon_trial', 'trialing', ${now.toISOString()}, ${periodEnd.toISOString()})
+    VALUES (${userId}, ${productId}, ${'trialing'}, ${now.toISOString()}, ${periodEnd.toISOString()})
     ON CONFLICT (user_id) DO UPDATE SET
-      status = 'trialing',
+      product_id = EXCLUDED.product_id,
+      status = EXCLUDED.status,
       current_period_start = EXCLUDED.current_period_start,
       current_period_end = EXCLUDED.current_period_end,
       updated_at = NOW()
