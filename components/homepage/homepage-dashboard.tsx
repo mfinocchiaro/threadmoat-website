@@ -82,7 +82,7 @@ export function HomepageDashboard({ data }: { data: Company[] }) {
         {/* Network Graph — preview mode: no controls, no drill-down */}
         <div className="mb-6">
           <ChartCard title="Ecosystem Network" subtitle={`${data.length} companies across ${investmentLists} investment domains`}>
-            <NetworkGraph data={data} className="min-h-[420px]" preview />
+            <NetworkGraph data={data} className="h-[450px]" preview />
           </ChartCard>
         </div>
 
