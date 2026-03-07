@@ -17,6 +17,7 @@ import { RotateCcw } from "lucide-react"
 interface NetworkGraphProps {
   data: Company[]
   className?: string
+  preview?: boolean
 }
 
 interface Node extends d3.SimulationNodeDatum {
@@ -31,7 +32,7 @@ interface Link extends d3.SimulationLinkDatum<Node> {
   target: string | Node
 }
 
-export function NetworkGraph({ data, className }: NetworkGraphProps) {
+export function NetworkGraph({ data, className, preview = false }: NetworkGraphProps) {
   const svgRef = useRef<SVGSVGElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const [primaryType, setPrimaryType] = useState<string>("mfg")
@@ -149,7 +150,9 @@ export function NetworkGraph({ data, className }: NetworkGraphProps) {
       .selectAll("g")
       .data(graphData.nodes)
       .join("g")
-      .call(
+
+    if (!preview) {
+      node.call(
         d3.drag<SVGGElement, Node>()
           .on("start", (event, d) => {
             if (!event.active) simulation.alphaTarget(0.3).restart()
@@ -163,17 +166,20 @@ export function NetworkGraph({ data, className }: NetworkGraphProps) {
             d.fy = null
           }) as any
       )
+    }
 
     node.append("circle")
       .attr("r", d => d.type === "company" ? radiusScale(d.val) : 8)
       .attr("fill", getNodeColor)
       .attr("stroke", "#fff")
       .attr("stroke-width", 1.5)
-      .style("cursor", "pointer")
-      .on("mouseover", function () { d3.select(this).attr("stroke", "var(--primary)").attr("stroke-width", 3) })
-      .on("mouseout", function () { d3.select(this).attr("stroke", "#fff").attr("stroke-width", 1.5) })
+      .style("cursor", preview ? "default" : "pointer")
+      .on("mouseover", function () { if (!preview) d3.select(this).attr("stroke", "var(--primary)").attr("stroke-width", 3) })
+      .on("mouseout", function () { if (!preview) d3.select(this).attr("stroke", "#fff").attr("stroke-width", 1.5) })
 
-    node.append("text")
+    // In preview mode, only show labels for non-company nodes (categories/hubs)
+    node.filter(d => preview ? d.type !== "company" : true)
+      .append("text")
       .text(d => d.id)
       .attr("x", d => (d.type === "company" ? radiusScale(d.val) : 8) + 5)
       .attr("y", 3)
@@ -182,7 +188,7 @@ export function NetworkGraph({ data, className }: NetworkGraphProps) {
       .style("pointer-events", "none")
       .style("opacity", d => d.type === "company" ? 0.8 : 1)
 
-    node.append("title").text(d => `${d.id}\n${d.type}`)
+    if (!preview) node.append("title").text(d => `${d.id}\n${d.type}`)
 
     simulation.on("tick", () => {
       link
@@ -205,7 +211,8 @@ export function NetworkGraph({ data, className }: NetworkGraphProps) {
   }
 
   return (
-    <Card className={`flex flex-col h-[calc(100vh-8rem)] ${className ?? ""}`}>
+    <Card className={`flex flex-col ${preview ? "min-h-[420px]" : "h-[calc(100vh-8rem)]"} ${className ?? ""}`}>
+      {!preview && (
       <div className="p-4 border-b flex flex-wrap gap-4 items-center justify-between bg-card">
         <div className="flex flex-wrap gap-4 items-center">
           <div className="space-y-1">
@@ -248,6 +255,7 @@ export function NetworkGraph({ data, className }: NetworkGraphProps) {
           Reset View
         </Button>
       </div>
+      )}
       <div ref={containerRef} className="flex-1 w-full min-h-0 relative overflow-hidden bg-background border-b">
         <svg ref={svgRef} className="w-full h-full block" />
         {data.length === 0 && (
@@ -256,9 +264,11 @@ export function NetworkGraph({ data, className }: NetworkGraphProps) {
           </div>
         )}
       </div>
-      <p className="px-4 py-2 text-[10px] text-muted-foreground/60 text-right">
-        Moat Map inspired by Blake Courter — thank you for the idea and encouragement.
-      </p>
+      {!preview && (
+        <p className="px-4 py-2 text-[10px] text-muted-foreground/60 text-right">
+          Moat Map inspired by Blake Courter — thank you for the idea and encouragement.
+        </p>
+      )}
     </Card>
   )
 }
