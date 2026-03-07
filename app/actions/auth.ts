@@ -130,7 +130,8 @@ export async function registerUser(data: RegisterData): Promise<ActionResult> {
     return { success: true }
   } catch (err) {
     console.error('[registerUser]', err)
-    return { success: false, error: 'An unexpected error occurred. Please try again.' }
+    const msg = err instanceof Error ? err.message : String(err)
+    return { success: false, error: `Registration failed: ${msg}` }
   }
 }
 
