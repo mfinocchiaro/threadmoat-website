@@ -22,6 +22,11 @@ export function ISVDashboard({ data, isLoading }: { data: Company[]; isLoading: 
     const hasThesis = activeThesis === "isv";
     const scored = useMemo(() => scoreCompanies(data), [scoreCompanies, data]);
 
+    // When thesis is active, show only whitespace + adjacent (not already covered)
+    const displayData = hasThesis
+        ? scored.filter(r => r.label !== "Covered").map(r => r.company)
+        : filtered;
+
     const whitespace = useMemo(() => scored.filter(r => r.label === "Whitespace"), [scored]);
     const adjacent = useMemo(() => scored.filter(r => r.label === "Adjacent"), [scored]);
     const covered = useMemo(() => scored.filter(r => r.label === "Covered"), [scored]);
@@ -85,23 +90,23 @@ export function ISVDashboard({ data, isLoading }: { data: Company[]; isLoading: 
             <div className="grid lg:grid-cols-7 gap-6">
                 <div className="lg:col-span-4">
                     <WidgetCard title="Ecosystem Connectivity" subtitle="Strategic partnership mapping" href="/dashboard/network">
-                        <NetworkGraph data={filtered} className="min-h-[500px]" />
+                        <NetworkGraph data={displayData} className="min-h-[500px]" />
                     </WidgetCard>
                 </div>
                 <div className="lg:col-span-3">
                     <WidgetCard title="Platform Positioning" subtitle="Momentum vs execution dynamics" href="/dashboard/quadrant">
-                        <QuadrantChart data={filtered} className="min-h-[500px]" />
+                        <QuadrantChart data={displayData} className="min-h-[500px]" />
                     </WidgetCard>
                 </div>
             </div>
 
             <div className="grid md:grid-cols-3 gap-6">
                 <WidgetCard title="Market Taxonomy" subtitle="Investment List distribution" href="/dashboard/sunburst">
-                    <SunburstChart data={filtered} className="min-h-[400px]" />
+                    <SunburstChart data={displayData} className="min-h-[400px]" />
                 </WidgetCard>
                 <div className="md:col-span-2">
                     <WidgetCard title="Intelligence Master List" subtitle="Complete company metrics breakdown" href="/dashboard/periodic-table">
-                        <PeriodicTable data={filtered} compact={true} />
+                        <PeriodicTable data={displayData} compact={true} />
                     </WidgetCard>
                 </div>
             </div>
