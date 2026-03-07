@@ -258,7 +258,7 @@ function scoreVC(company: Company, thesis: VCThesis): number {
     let weightedSum = 0
     for (const dim of SCORE_DIMENSIONS) {
       const companyVal = (company[dim.key as keyof Company] as number) || 0
-      const weight = weights[dim.key] ?? 3
+      const weight = Math.min(weights[dim.key] ?? 3, 5)
       weightedSum += (companyVal / 5) * (weight / 5)
     }
     score += (weightedSum / SCORE_DIMENSIONS.length) * 35
@@ -266,7 +266,7 @@ function scoreVC(company: Company, thesis: VCThesis): number {
     score += 35
   }
 
-  return Math.round(score)
+  return Math.min(Math.round(score), 100)
 }
 
 function scoreISV(company: Company, thesis: ISVThesis): { score: number; label: string } {
