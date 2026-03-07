@@ -103,13 +103,15 @@ export function VCStep({ thesis, onChange, companies, variant = "investor" }: VC
 
   const categoryTags = useMemo(() => {
     const counts: Record<string, number> = {}
+    const selectedLists = thesis.investmentLists ?? []
     for (const c of companies) {
+      if (selectedLists.length > 0 && !selectedLists.includes(c.investmentList)) continue
       for (const tag of c.categoryTags || []) {
         counts[tag] = (counts[tag] || 0) + 1
       }
     }
     return Object.entries(counts).sort((a, b) => b[1] - a[1]) as [string, number][]
-  }, [companies])
+  }, [companies, thesis.investmentLists])
 
   const operatingModelTags = useMemo(() => {
     const counts: Record<string, number> = {}
@@ -135,13 +137,13 @@ export function VCStep({ thesis, onChange, companies, variant = "investor" }: VC
         /* ── FOUNDER: Competitive landscape focus ── */
         <>
           <p className="text-xs text-muted-foreground">
-            Define your competitive space. Select your sector and subcategory to find direct competitors,
+            Define your competitive space. Select your investment list and subcategory to find direct competitors,
             then refine by what they do and how they operate.
           </p>
 
           {/* Sector (Investment List) */}
           <section>
-            <h4 className="text-sm font-medium mb-2">Your Sector</h4>
+            <h4 className="text-sm font-medium mb-2">Your Investment List</h4>
             <CheckboxGrid
               items={investmentLists}
               selected={thesis.investmentLists ?? []}
@@ -249,7 +251,7 @@ export function VCStep({ thesis, onChange, companies, variant = "investor" }: VC
 
           {/* Sectors */}
           <section>
-            <h4 className="text-sm font-medium mb-2">Sectors</h4>
+            <h4 className="text-sm font-medium mb-2">Investment Lists</h4>
             <CheckboxGrid
               items={investmentLists}
               selected={thesis.investmentLists ?? []}
@@ -307,28 +309,33 @@ function ScoreWeightSliders({ thesis, onChange }: { thesis: VCThesis; onChange: 
   const weights = thesis.scoreWeights ?? {}
   return (
     <div className="space-y-4">
-      {SCORE_DIMENSIONS.map(dim => (
-        <div key={dim.key} className="space-y-1">
-          <div className="flex items-center justify-between">
-            <Label className="text-sm">{dim.label}</Label>
-            <span className="text-xs text-muted-foreground tabular-nums w-6 text-right">
-              {weights[dim.key] ?? 3}
-            </span>
+      {SCORE_DIMENSIONS.map(dim => {
+        // Clamp legacy 0-10 values to 0-5 range
+        const raw = weights[dim.key] ?? 4
+        const clamped = Math.min(raw, 5)
+        return (
+          <div key={dim.key} className="space-y-1">
+            <div className="flex items-center justify-between">
+              <Label className="text-sm">{dim.label}</Label>
+              <span className="text-xs text-muted-foreground tabular-nums w-6 text-right">
+                {clamped}
+              </span>
+            </div>
+            <Slider
+              min={0}
+              max={5}
+              step={0.5}
+              value={[clamped]}
+              onValueChange={([val]) =>
+                onChange({
+                  ...thesis,
+                  scoreWeights: { ...weights, [dim.key]: val },
+                })
+              }
+            />
           </div>
-          <Slider
-            min={0}
-            max={5}
-            step={1}
-            value={[weights[dim.key] ?? 3]}
-            onValueChange={([val]) =>
-              onChange({
-                ...thesis,
-                scoreWeights: { ...weights, [dim.key]: val },
-              })
-            }
-          />
-        </div>
-      ))}
+        )
+      })}
     </div>
   )
 }
