@@ -94,22 +94,22 @@ export default function SignUpPage() {
     }
 
     setIsLoading(true)
-    try {
-      await registerUser({
-        fullName: form.fullName,
-        email: form.email,
-        password: form.password,
-        company: form.company,
-        title: form.title,
-        profileType: form.profileType,
-        phone: form.phone || undefined,
-        linkedinUrl: form.linkedinUrl || undefined,
-        companySize: (form.companySize as RegisterData['companySize']) || undefined,
-        inviteCode: form.inviteCode || undefined,
-      })
+    const result = await registerUser({
+      fullName: form.fullName,
+      email: form.email,
+      password: form.password,
+      company: form.company,
+      title: form.title,
+      profileType: form.profileType,
+      phone: form.phone || undefined,
+      linkedinUrl: form.linkedinUrl || undefined,
+      companySize: (form.companySize as RegisterData['companySize']) || undefined,
+      inviteCode: form.inviteCode || undefined,
+    })
+    if (result.success) {
       router.push('/auth/sign-up-success')
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
+    } else {
+      setError(result.error)
       setIsLoading(false)
     }
   }

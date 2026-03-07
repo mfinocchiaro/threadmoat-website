@@ -23,10 +23,8 @@ export default function SignUpSuccessPage() {
     if (!email) return
     setIsLoading(true)
     try {
-      await resendVerificationEmail(email)
-      setResent(true)
-    } catch {
-      // silent — don't reveal if email exists
+      const result = await resendVerificationEmail(email)
+      if (result.success) setResent(true)
     } finally {
       setIsLoading(false)
     }

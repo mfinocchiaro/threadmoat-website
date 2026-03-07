@@ -27,10 +27,12 @@ export default function ForgotPasswordPage() {
     setIsLoading(true)
 
     try {
-      await requestPasswordReset(email)
-      setSent(true)
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
+      const result = await requestPasswordReset(email)
+      if (result.success) {
+        setSent(true)
+      } else {
+        setError(result.error)
+      }
     } finally {
       setIsLoading(false)
     }

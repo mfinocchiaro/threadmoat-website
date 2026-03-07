@@ -66,10 +66,12 @@ function ResetPasswordContent() {
 
     setIsLoading(true)
     try {
-      await resetPassword(token, password)
-      setDone(true)
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
+      const result = await resetPassword(token, password)
+      if (result.success) {
+        setDone(true)
+      } else {
+        setError(result.error)
+      }
     } finally {
       setIsLoading(false)
     }
