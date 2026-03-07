@@ -1,4 +1,4 @@
-// Company data types and utilities — ported from Vizera
+// Company data types and utilities
 
 export interface Company {
   id: string
