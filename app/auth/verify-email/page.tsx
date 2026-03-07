@@ -25,12 +25,14 @@ function VerifyEmailContent() {
       setErrorMsg('Missing verification token')
       return
     }
-    verifyEmail(token)
-      .then(() => setStatus('success'))
-      .catch((err: Error) => {
+    verifyEmail(token).then((result) => {
+      if (result.success) {
+        setStatus('success')
+      } else {
         setStatus('error')
-        setErrorMsg(err.message)
-      })
+        setErrorMsg(result.error)
+      }
+    })
   }, [token])
 
   return (
