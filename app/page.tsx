@@ -98,12 +98,12 @@ export default async function HomePage() {
           introductions to 150+ founders to build your portfolio with tomorrow&apos;s unicorns.
         </p>
         <div className="mt-10 flex items-center justify-center gap-4">
-          <a href="#preview">
+          <Link href="/auth/login">
             <Button size="lg" className="gap-2">
               <Database className="h-5 w-5" />
               See Analytics
             </Button>
-          </a>
+          </Link>
           <Link href="/pricing">
             <Button size="lg" variant="outline">View Pricing</Button>
           </Link>

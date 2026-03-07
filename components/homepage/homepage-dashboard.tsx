@@ -1,15 +1,11 @@
 "use client"
 
+import { useMemo } from "react"
 import dynamic from "next/dynamic"
 import { Company, formatCurrency } from "@/lib/company-data"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { NetworkGraph } from "@/components/charts/network-graph"
-import { SunburstChart } from "@/components/charts/sunburst-chart"
-import { BubbleChart } from "@/components/charts/bubble-chart"
-import { QuadrantChart } from "@/components/charts/quadrant-chart"
-import { TreemapChart } from "@/components/charts/treemap-chart"
 import { PeriodicTable } from "@/components/charts/periodic-table"
-import { BarChart } from "@/components/charts/bar-chart"
+import { SunburstChart } from "@/components/charts/sunburst-chart"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Lock } from "lucide-react"
 import Link from "next/link"
@@ -20,8 +16,6 @@ const MapChart = dynamic(
   () => import("@/components/charts/map-chart").then(m => m.MapChart),
   { ssr: false, loading: () => <Skeleton className="w-full h-full min-h-[450px] rounded-lg" /> }
 )
-
-const MAX_TABLE_ITEMS = 50
 
 function ChartCard({ title, subtitle, children, className }: {
   title: string
@@ -44,10 +38,6 @@ export function HomepageDashboard({ data }: { data: Company[] }) {
   const totalFunding = data.reduce((sum, c) => sum + (c.totalFunding || 0), 0)
   const countries = new Set(data.map(c => c.country).filter(Boolean)).size
   const investmentLists = new Set(data.map(c => c.investmentList).filter(Boolean)).size
-
-  const tableData = data
-    .sort((a, b) => (b.weightedScore || 0) - (a.weightedScore || 0))
-    .slice(0, MAX_TABLE_ITEMS)
 
   return (
     <FilterProvider>
@@ -89,60 +79,35 @@ export function HomepageDashboard({ data }: { data: Company[] }) {
           </Card>
         </div>
 
-        {/* Row 1: Global Map */}
+        {/* Global Map — preview mode: counts + top 3 names only, no drill-down */}
         <div className="mb-6">
           <ChartCard title="Global Startup Footprint" subtitle={`${data.length} companies across ${countries} countries`}>
-            <MapChart data={data} className="h-[450px]" />
+            <MapChart data={data} className="h-[450px]" preview />
           </ChartCard>
         </div>
 
-        {/* Row 2: Network + Sunburst */}
-        <div className="grid md:grid-cols-2 gap-6 mb-6">
-          <ChartCard title="Ecosystem Network" subtitle={`${data.length} companies`}>
-            <NetworkGraph data={data} className="min-h-[420px]" />
-          </ChartCard>
-          <ChartCard title="Market Taxonomy" subtitle="Investment domains and subcategories">
-            <SunburstChart data={data} className="min-h-[420px]" />
+        {/* Periodic Table — all lists, top 8 per category, canonical order, no config */}
+        <div className="mb-6">
+          <ChartCard title="Top Startups by Investment Domain" subtitle="Top 8 ranked companies per domain">
+            <PeriodicTable data={data} compact preview />
           </ChartCard>
         </div>
 
-        {/* Row 3: Bubbles + Quadrant */}
-        <div className="grid md:grid-cols-2 gap-6 mb-6">
-          <ChartCard title="Funding Distribution" subtitle="Total funding by company">
-            <BubbleChart data={data} className="h-[400px]" />
-          </ChartCard>
-          <ChartCard title="Competitive Positioning" subtitle="Technology vs market opportunity">
-            <QuadrantChart data={data} className="h-[400px]" />
+        {/* Sunburst — preview mode: no controls, max 5 names per slice */}
+        <div className="mb-6">
+          <ChartCard title="Ecosystem Structure" subtitle="Investment domains by funding round">
+            <SunburstChart data={data} preview />
           </ChartCard>
         </div>
 
-        {/* Row 4: Bar Chart + Treemap */}
-        <div className="grid md:grid-cols-2 gap-6 mb-6">
-          <ChartCard title="Startup Distribution" subtitle="Companies per investment domain">
-            <BarChart data={data} className="h-[400px]" />
-          </ChartCard>
-          <ChartCard title="Market Segments" subtitle="Relative sizing by company count">
-            <TreemapChart data={data} className="h-[400px]" />
-          </ChartCard>
-        </div>
-
-        {/* Row 5: Periodic Table (capped) */}
-        <div className="mb-6 relative">
-          <ChartCard
-            title="Enterprise Recon List"
-            subtitle={`Showing top ${MAX_TABLE_ITEMS} of ${data.length} companies by weighted score`}
-          >
-            <PeriodicTable data={tableData} compact={true} />
-          </ChartCard>
-          {/* Fade overlay with CTA */}
-          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-muted/80 to-transparent rounded-b-lg flex items-end justify-center pb-4">
-            <Link href="/auth/login">
-              <Button size="sm" variant="secondary" className="gap-2 shadow-lg">
-                <Lock className="h-3.5 w-3.5" />
-                Sign in to explore all {data.length} companies
-              </Button>
-            </Link>
-          </div>
+        {/* CTA */}
+        <div className="text-center">
+          <Link href="/auth/login">
+            <Button size="lg" variant="secondary" className="gap-2 shadow-lg">
+              <Lock className="h-4 w-4" />
+              Sign in to unlock full analytics on all {data.length} companies
+            </Button>
+          </Link>
         </div>
       </div>
     </section>

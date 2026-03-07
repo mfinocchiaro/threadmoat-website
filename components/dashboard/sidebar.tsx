@@ -14,6 +14,7 @@ import {
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useThesisOptional } from "@/contexts/thesis-context";
 
 const NAV_ITEMS = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard", exact: true },
@@ -95,6 +96,14 @@ function NavLink({ href, icon: Icon, label, collapsed, exact }: {
 }
 
 export function Sidebar({ collapsed, onToggle }: SidebarProps) {
+  const thesis = useThesisOptional();
+  const hasThesis = !!thesis?.activeThesis;
+
+  // Before thesis is set, only show Investment Landscape
+  const visibleVizItems = hasThesis
+    ? VIZ_ITEMS
+    : VIZ_ITEMS.filter(item => item.href === "/dashboard/landscape-intro");
+
   return (
     <TooltipProvider>
       <aside
@@ -134,7 +143,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
             )}
             {collapsed && <div className="my-2 border-t border-border" />}
 
-            {VIZ_ITEMS.map(item => (
+            {visibleVizItems.map(item => (
               <NavLink key={item.href} {...item} collapsed={collapsed} />
             ))}
           </nav>

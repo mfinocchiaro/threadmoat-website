@@ -14,6 +14,7 @@ import { RotateCcw } from "lucide-react";
 interface MapChartProps {
   data: Company[];
   className?: string;
+  preview?: boolean;
 }
 
 // Stable coordinates for hubs with unreliable GeoJSON feature matching
@@ -68,7 +69,7 @@ const COUNTRY_ISO: Record<string, string> = {
   Ireland: "ie",
 };
 
-export function MapChart({ data = [], className }: MapChartProps) {
+export function MapChart({ data = [], className, preview = false }: MapChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const zoomRef = useRef<any>(null);
@@ -259,6 +260,7 @@ export function MapChart({ data = [], className }: MapChartProps) {
   };
 
   const handleHubClick = (d: any) => {
+    if (preview) return;
     if (d.companies.length === 1) {
       setSelectedCompany(d.companies[0]);
       setDialogOpen(true);
@@ -307,6 +309,7 @@ export function MapChart({ data = [], className }: MapChartProps) {
         d3.select(this).attr("fill", "#1e293b");
       })
       .on("click", (event: MouseEvent, d: any) => {
+        if (preview) return;
         event.stopPropagation();
         const country = canonicalCountry(d.properties?.name);
         setSelectedCountry(country || null);
@@ -323,17 +326,23 @@ export function MapChart({ data = [], className }: MapChartProps) {
         .style("cursor", "pointer")
         .on("mouseover", (event, d: any) => {
           const iso = COUNTRY_ISO[d.countryForFlag] || "un";
+          const previewNames = preview && d.companies.length > 0
+            ? `<div style="margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,0.1);font-size:10px;opacity:0.8">${
+                d.companies.slice(0, 3).map((c: Company) => c.name).join(", ")
+              }${d.companies.length > 3 ? ` +${d.companies.length - 3} more` : ""}</div>`
+            : "";
+          const detailRows = preview ? "" : `
+              <span>Funding:</span><span style="text-align:right;font-weight:700">${formatCurrency(d.funding)}</span>
+              <span>Headcount:</span><span style="text-align:right;font-weight:700">${d.headcount.toLocaleString()}</span>
+              <span>Avg Score:</span><span style="text-align:right;font-weight:700">${(d.score / d.count).toFixed(1)}</span>`;
           tooltip.style("visibility", "visible").html(`
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.1)">
               <img src="https://flagcdn.com/w40/${iso}.png" width="20" style="border-radius:2px" />
               <strong style="font-size:14px">${d.name}</strong>
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;font-size:11px;opacity:0.9">
-              <span>Companies:</span><span style="text-align:right;font-weight:700">${d.count}</span>
-              <span>Funding:</span><span style="text-align:right;font-weight:700">${formatCurrency(d.funding)}</span>
-              <span>Headcount:</span><span style="text-align:right;font-weight:700">${d.headcount.toLocaleString()}</span>
-              <span>Avg Score:</span><span style="text-align:right;font-weight:700">${(d.score / d.count).toFixed(1)}</span>
-            </div>
+              <span>Startups:</span><span style="text-align:right;font-weight:700">${d.count}</span>${detailRows}
+            </div>${previewNames}
           `);
         })
         .on("mousemove", (event) => {
@@ -407,17 +416,21 @@ export function MapChart({ data = [], className }: MapChartProps) {
         </Button>
       </div>
 
-      <HubDetailsDialog
-        hubName={selectedHub?.name || ""}
-        companies={selectedHub?.companies || []}
-        open={hubDialogOpen}
-        onOpenChange={setHubDialogOpen}
-        onSelectCompany={(company) => {
-          setSelectedCompany(company);
-          setDialogOpen(true);
-        }}
-      />
-      <CompanyDetailsDialog company={selectedCompany} open={dialogOpen} onOpenChange={setDialogOpen} />
+      {!preview && (
+        <>
+          <HubDetailsDialog
+            hubName={selectedHub?.name || ""}
+            companies={selectedHub?.companies || []}
+            open={hubDialogOpen}
+            onOpenChange={setHubDialogOpen}
+            onSelectCompany={(company) => {
+              setSelectedCompany(company);
+              setDialogOpen(true);
+            }}
+          />
+          <CompanyDetailsDialog company={selectedCompany} open={dialogOpen} onOpenChange={setDialogOpen} />
+        </>
+      )}
 
       <div
         id="map-tooltip"

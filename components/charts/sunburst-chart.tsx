@@ -16,6 +16,7 @@ import { Card } from "@/components/ui/card"
 interface SunburstChartProps {
   data: Company[]
   className?: string
+  preview?: boolean
 }
 
 function getIndustrySegment(c: Company) {
@@ -58,7 +59,7 @@ function formatValue(val: number) {
   return `$${val}`
 }
 
-export function SunburstChart({ data, className }: SunburstChartProps) {
+export function SunburstChart({ data, className, preview = false }: SunburstChartProps) {
   const svgRef = useRef<SVGSVGElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const [slicerType, setSlicerType] = useState("investment-list")
@@ -74,8 +75,9 @@ export function SunburstChart({ data, className }: SunburstChartProps) {
 
     topGroups.forEach((groupData, groupName) => {
       let groupChildren: any[] = []
+      const leafLimit = preview ? 5 : Infinity
       if (secondaryType === "none") {
-        groupChildren = groupData.map(c => ({ name: c.name, value: Math.max(c.totalFunding || 0, 500_000) }))
+        groupChildren = groupData.slice(0, leafLimit).map(c => ({ name: c.name, value: Math.max(c.totalFunding || 0, 500_000) }))
       } else if (secondaryType === "specific-industry") {
         const subMap = new Map<string, Company[]>()
         groupData.forEach(c => {
@@ -84,17 +86,19 @@ export function SunburstChart({ data, className }: SunburstChartProps) {
           subMap.get(primary)!.push(c)
         })
         subMap.forEach((companies, ind) => {
+          const limited = companies.slice(0, leafLimit)
           groupChildren.push({
             name: ind,
-            children: companies.map(c => ({ name: c.name, value: Math.max(c.totalFunding || 0, 500_000) })),
+            children: limited.map(c => ({ name: c.name, value: Math.max(c.totalFunding || 0, 500_000) })),
           })
         })
       } else {
         const bucketMap = d3.group(groupData, d => getMetricBucket(d, secondaryType))
         bucketMap.forEach((companies, bucketName) => {
+          const limited = companies.slice(0, leafLimit)
           groupChildren.push({
             name: bucketName,
-            children: companies.map(c => ({ name: c.name, value: Math.max(c.totalFunding || 0, 500_000) })),
+            children: limited.map(c => ({ name: c.name, value: Math.max(c.totalFunding || 0, 500_000) })),
           })
         })
       }
@@ -168,35 +172,37 @@ export function SunburstChart({ data, className }: SunburstChartProps) {
       })
   }, [hierarchyData])
 
-  return (
-    <Card className={`flex flex-col h-[calc(100vh-8rem)] ${className ?? ""}`}>
-      <div className="p-4 border-b flex flex-wrap gap-4 items-center bg-card">
-        <div className="space-y-1">
-          <label className="text-xs font-medium text-muted-foreground">Primary Group</label>
-          <Select value={slicerType} onValueChange={setSlicerType}>
-            <SelectTrigger className="w-[180px] h-8"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="investment-list">Investment List</SelectItem>
-              <SelectItem value="industry-segment">Industry Segment</SelectItem>
-            </SelectContent>
-          </Select>
+  const content = (
+    <>
+      {!preview && (
+        <div className="p-4 border-b flex flex-wrap gap-4 items-center bg-card">
+          <div className="space-y-1">
+            <label className="text-xs font-medium text-muted-foreground">Primary Group</label>
+            <Select value={slicerType} onValueChange={setSlicerType}>
+              <SelectTrigger className="w-[180px] h-8"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="investment-list">Investment List</SelectItem>
+                <SelectItem value="industry-segment">Industry Segment</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-1">
+            <label className="text-xs font-medium text-muted-foreground">Secondary Group</label>
+            <Select value={secondaryType} onValueChange={setSecondaryType}>
+              <SelectTrigger className="w-[180px] h-8"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="funding-round">Funding Round</SelectItem>
+                <SelectItem value="total-funding">Total Funding</SelectItem>
+                <SelectItem value="weighted-score">Weighted Score</SelectItem>
+                <SelectItem value="country">Country</SelectItem>
+                <SelectItem value="specific-industry">Specific Industry</SelectItem>
+                <SelectItem value="none">None (Maximize Leaf)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
-        <div className="space-y-1">
-          <label className="text-xs font-medium text-muted-foreground">Secondary Group</label>
-          <Select value={secondaryType} onValueChange={setSecondaryType}>
-            <SelectTrigger className="w-[180px] h-8"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="funding-round">Funding Round</SelectItem>
-              <SelectItem value="total-funding">Total Funding</SelectItem>
-              <SelectItem value="weighted-score">Weighted Score</SelectItem>
-              <SelectItem value="country">Country</SelectItem>
-              <SelectItem value="specific-industry">Specific Industry</SelectItem>
-              <SelectItem value="none">None (Maximize Leaf)</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-      <div ref={containerRef} className="flex-1 w-full min-h-0 relative overflow-hidden bg-background">
+      )}
+      <div ref={containerRef} className={`flex-1 w-full min-h-0 relative overflow-hidden bg-background ${preview ? "h-[450px]" : ""}`}>
         <svg ref={svgRef} className="w-full h-full block" />
         {(!data || data.length === 0) && (
           <div className="absolute inset-0 flex items-center justify-center text-muted-foreground">
@@ -204,6 +210,16 @@ export function SunburstChart({ data, className }: SunburstChartProps) {
           </div>
         )}
       </div>
+    </>
+  )
+
+  if (preview) {
+    return <div className={`flex flex-col ${className ?? ""}`}>{content}</div>
+  }
+
+  return (
+    <Card className={`flex flex-col h-[calc(100vh-8rem)] ${className ?? ""}`}>
+      {content}
     </Card>
   )
 }
