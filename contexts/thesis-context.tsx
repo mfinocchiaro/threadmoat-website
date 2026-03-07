@@ -141,13 +141,13 @@ interface ThesisContextType {
 // ── Defaults ───────────────────────────────────────────────
 
 const DEFAULT_SCORE_WEIGHTS: Record<ScoreDimensionKey, number> = {
-  marketOpportunity: 3,
-  teamExecution: 3,
-  techDifferentiation: 3,
-  fundingEfficiency: 3,
-  growthMetrics: 3,
-  industryImpact: 3,
-  competitiveMoat: 3,
+  marketOpportunity: 4,
+  teamExecution: 4,
+  techDifferentiation: 4,
+  fundingEfficiency: 4,
+  growthMetrics: 4,
+  industryImpact: 4,
+  competitiveMoat: 4,
 }
 
 const DEFAULT_VC: VCThesis = {
@@ -258,7 +258,7 @@ function scoreVC(company: Company, thesis: VCThesis): number {
     let weightedSum = 0
     for (const dim of SCORE_DIMENSIONS) {
       const companyVal = (company[dim.key as keyof Company] as number) || 0
-      const weight = Math.min(weights[dim.key] ?? 3, 5)
+      const weight = Math.min(weights[dim.key] ?? 4, 5)
       weightedSum += (companyVal / 5) * (weight / 5)
     }
     score += (weightedSum / SCORE_DIMENSIONS.length) * 35
