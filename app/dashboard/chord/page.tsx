@@ -1,25 +1,14 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { Company, loadCompanyData } from "@/lib/company-data"
-import { FilterProvider, useFilter } from "@/contexts/filter-context"
+import { VizPageShell } from "@/components/dashboard/viz-page-shell"
+import { FocusPrompt } from "@/components/dashboard/focus-prompt"
+import { useThesisGatedData } from "@/hooks/use-thesis-gated-data"
 import { VizFilterBar } from "@/components/viz-filter-bar"
 import { ChordChart } from "@/components/charts/chord-chart"
 import { Skeleton } from "@/components/ui/skeleton"
 
 function ChordInner() {
-  const [companies, setCompanies] = useState<Company[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const { filterCompany } = useFilter()
-
-  useEffect(() => {
-    loadCompanyData().then((data) => {
-      setCompanies(data)
-      setIsLoading(false)
-    })
-  }, [])
-
-  const filtered = companies.filter(filterCompany)
+  const { companies, filtered, isLoading, hasThesis } = useThesisGatedData()
 
   return (
     <div className="space-y-4">
@@ -31,6 +20,8 @@ function ChordInner() {
       </div>
       {isLoading ? (
         <Skeleton className="h-[680px] rounded-xl" />
+      ) : !hasThesis ? (
+        <FocusPrompt label="Set Focus" description="Configure your thesis on the main dashboard to unlock this visualization." />
       ) : (
         <>
           <VizFilterBar companies={companies} />
@@ -43,8 +34,8 @@ function ChordInner() {
 
 export default function ChordPage() {
   return (
-    <FilterProvider>
+    <VizPageShell>
       <ChordInner />
-    </FilterProvider>
+    </VizPageShell>
   )
 }

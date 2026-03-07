@@ -1,9 +1,9 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useMemo, useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
-import type { Company } from "@/lib/company-data"
-import { formatCurrency } from "@/lib/company-data"
+import type { Company, Investor } from "@/lib/company-data"
+import { formatCurrency, loadInvestorData } from "@/lib/company-data"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -44,6 +44,9 @@ interface InvestorRow {
   investmentLists: string[]
   totalFunding: number
   avgScore: number
+  investorType: string
+  linkedInProfile: string
+  contacts: string
 }
 
 type SortField = "startupCount" | "totalFunding" | "avgScore" | "name"
@@ -54,6 +57,20 @@ export function InvestorExplorerChart({ data, className }: InvestorExplorerChart
   const [sortAsc, setSortAsc] = useState(false)
   const [expandedInvestor, setExpandedInvestor] = useState<string | null>(null)
   const [minStartups, setMinStartups] = useState("1")
+  const [investorTypeFilter, setInvestorTypeFilter] = useState("all")
+  const [investorCsv, setInvestorCsv] = useState<Investor[]>([])
+
+  useEffect(() => {
+    loadInvestorData().then(setInvestorCsv)
+  }, [])
+
+  const investorLookup = useMemo(() => {
+    const map = new Map<string, Investor>()
+    for (const inv of investorCsv) {
+      map.set(inv.name.toLowerCase(), inv)
+    }
+    return map
+  }, [investorCsv])
 
   const investors = useMemo(() => {
     const map = new Map<string, InvestorRow>()
@@ -75,6 +92,7 @@ export function InvestorExplorerChart({ data, className }: InvestorExplorerChart
             existing.investmentLists.push(company.investmentList)
           }
         } else {
+          const csvRow = investorLookup.get(investor.toLowerCase())
           map.set(investor, {
             name: investor,
             startups: [company],
@@ -82,6 +100,9 @@ export function InvestorExplorerChart({ data, className }: InvestorExplorerChart
             totalFunding: company.totalFunding || 0,
             investmentLists: company.investmentList ? [company.investmentList] : [],
             avgScore: 0,
+            investorType: csvRow?.investorType || "",
+            linkedInProfile: csvRow?.linkedInProfile || "",
+            contacts: csvRow?.contacts || "",
           })
         }
       })
@@ -94,7 +115,12 @@ export function InvestorExplorerChart({ data, className }: InvestorExplorerChart
     })
 
     return Array.from(map.values())
-  }, [data])
+  }, [data, investorLookup])
+
+  const investorTypes = useMemo(() => {
+    const types = new Set(investors.map(i => i.investorType).filter(Boolean))
+    return Array.from(types).sort()
+  }, [investors])
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase().trim()
@@ -103,13 +129,14 @@ export function InvestorExplorerChart({ data, className }: InvestorExplorerChart
     return investors
       .filter((inv) => inv.startupCount >= min)
       .filter((inv) => !q || inv.name.toLowerCase().includes(q))
+      .filter((inv) => investorTypeFilter === "all" || inv.investorType === investorTypeFilter)
       .sort((a, b) => {
         if (sortField === "name") {
           return sortAsc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)
         }
         return sortAsc ? a[sortField] - b[sortField] : b[sortField] - a[sortField]
       })
-  }, [investors, search, sortField, sortAsc, minStartups])
+  }, [investors, search, sortField, sortAsc, minStartups, investorTypeFilter])
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -181,6 +208,22 @@ export function InvestorExplorerChart({ data, className }: InvestorExplorerChart
             </SelectContent>
           </Select>
         </div>
+        {investorTypes.length > 0 && (
+          <div className="space-y-1">
+            <Label className="text-xs text-muted-foreground">Type</Label>
+            <Select value={investorTypeFilter} onValueChange={setInvestorTypeFilter}>
+              <SelectTrigger className="w-44 h-9 text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Types</SelectItem>
+                {investorTypes.map(t => (
+                  <SelectItem key={t} value={t}>{t}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
       </div>
 
       {/* Table */}
@@ -195,6 +238,7 @@ export function InvestorExplorerChart({ data, className }: InvestorExplorerChart
               <TableHead className="text-right">
                 <SortHeader field="startupCount">Startups</SortHeader>
               </TableHead>
+              <TableHead>Type</TableHead>
               <TableHead>Investment Lists</TableHead>
               <TableHead className="text-right">
                 <SortHeader field="totalFunding">Total Funding</SortHeader>
@@ -220,8 +264,21 @@ export function InvestorExplorerChart({ data, className }: InvestorExplorerChart
                       <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-foreground" />
                     )}
                   </TableCell>
-                  <TableCell className="font-medium text-sm">{inv.name}</TableCell>
+                  <TableCell className="font-medium text-sm">
+                    {inv.linkedInProfile ? (
+                      <a href={inv.linkedInProfile} target="_blank" rel="noopener noreferrer" className="hover:text-primary hover:underline" onClick={(e) => e.stopPropagation()}>
+                        {inv.name}
+                      </a>
+                    ) : inv.name}
+                  </TableCell>
                   <TableCell className="text-right font-mono text-sm">{inv.startupCount}</TableCell>
+                  <TableCell>
+                    {inv.investorType && (
+                      <Badge variant="outline" className="text-[10px] px-1.5 py-0 whitespace-nowrap">
+                        {inv.investorType}
+                      </Badge>
+                    )}
+                  </TableCell>
                   <TableCell>
                     <div className="flex flex-wrap gap-1 max-w-[300px]">
                       {inv.investmentLists.slice(0, 3).map((list) => {
@@ -253,7 +310,7 @@ export function InvestorExplorerChart({ data, className }: InvestorExplorerChart
             })}
             {filtered.length === 0 && (
               <TableRow>
-                <TableCell colSpan={6} className="text-center text-muted-foreground py-12">
+                <TableCell colSpan={7} className="text-center text-muted-foreground py-12">
                   No investors match your search.
                 </TableCell>
               </TableRow>
@@ -271,10 +328,20 @@ export function InvestorExplorerChart({ data, className }: InvestorExplorerChart
               {inv && (
                 <>
                   <DialogHeader>
-                    <DialogTitle className="text-lg">{inv.name}</DialogTitle>
+                    <DialogTitle className="text-lg flex items-center gap-2">
+                      {inv.linkedInProfile ? (
+                        <a href={inv.linkedInProfile} target="_blank" rel="noopener noreferrer" className="hover:text-primary hover:underline">
+                          {inv.name}
+                        </a>
+                      ) : inv.name}
+                      {inv.investorType && (
+                        <Badge variant="outline" className="text-xs font-normal">{inv.investorType}</Badge>
+                      )}
+                    </DialogTitle>
                     <p className="text-sm text-muted-foreground">
                       {inv.startupCount} startup{inv.startupCount !== 1 ? "s" : ""} &middot;{" "}
                       {formatCurrency(inv.totalFunding)} total funding &middot; Avg score: {inv.avgScore.toFixed(2)}
+                      {inv.contacts && <> &middot; Contact: {inv.contacts}</>}
                     </p>
                   </DialogHeader>
 

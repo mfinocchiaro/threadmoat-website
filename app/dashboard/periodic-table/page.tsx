@@ -1,24 +1,13 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { Company, loadCompanyData } from "@/lib/company-data"
-import { FilterProvider, useFilter } from "@/contexts/filter-context"
+import { VizPageShell } from "@/components/dashboard/viz-page-shell"
+import { FocusPrompt } from "@/components/dashboard/focus-prompt"
+import { useThesisGatedData } from "@/hooks/use-thesis-gated-data"
 import { PeriodicTable } from "@/components/charts/periodic-table"
 import { Skeleton } from "@/components/ui/skeleton"
 
 function PeriodicTableInner() {
-  const [companies, setCompanies] = useState<Company[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const { filterCompany } = useFilter()
-
-  useEffect(() => {
-    loadCompanyData().then(data => {
-      setCompanies(data)
-      setIsLoading(false)
-    })
-  }, [])
-
-  const filtered = companies.filter(filterCompany)
+  const { filtered, isLoading, hasThesis } = useThesisGatedData()
 
   if (isLoading) {
     return (
@@ -33,6 +22,14 @@ function PeriodicTableInner() {
     )
   }
 
+  if (!hasThesis) {
+    return (
+      <div className="p-8 space-y-4">
+        <FocusPrompt label="Set Focus" description="Configure your thesis on the main dashboard to unlock this visualization." />
+      </div>
+    )
+  }
+
   return (
     <div className="flex flex-col" style={{ height: "calc(100vh - 80px)" }}>
       <PeriodicTable data={filtered} />
@@ -42,8 +39,8 @@ function PeriodicTableInner() {
 
 export default function PeriodicTablePage() {
   return (
-    <FilterProvider>
+    <VizPageShell>
       <PeriodicTableInner />
-    </FilterProvider>
+    </VizPageShell>
   )
 }

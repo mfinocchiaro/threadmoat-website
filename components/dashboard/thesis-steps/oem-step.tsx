@@ -30,27 +30,22 @@ interface InvestmentGroupInfo {
   name: string
   count: number
   subcategories: SubcategoryInfo[]
-  operatingModelTags: string[]
 }
 
-/** Build the two-level hierarchy: investment group -> subcategories, plus operating model tags per group */
+/** Build the two-level hierarchy: investment group -> subcategories */
 function buildHierarchy(companies: Company[]): InvestmentGroupInfo[] {
-  const groups = new Map<string, { count: number; subcats: Map<string, number>; tags: Set<string> }>()
+  const groups = new Map<string, { count: number; subcats: Map<string, number> }>()
 
   for (const c of companies) {
     const il = c.investmentList || "Unknown"
     if (!groups.has(il)) {
-      groups.set(il, { count: 0, subcats: new Map(), tags: new Set() })
+      groups.set(il, { count: 0, subcats: new Map() })
     }
     const g = groups.get(il)!
     g.count++
 
     const subcat = c.subcategories || "General"
     g.subcats.set(subcat, (g.subcats.get(subcat) || 0) + 1)
-
-    for (const tag of c.operatingModelTags || []) {
-      g.tags.add(tag)
-    }
   }
 
   return Array.from(groups.entries())
@@ -61,23 +56,7 @@ function buildHierarchy(companies: Company[]): InvestmentGroupInfo[] {
       subcategories: Array.from(data.subcats.entries())
         .sort((a, b) => b[1] - a[1])
         .map(([n, c]) => ({ name: n, count: c })),
-      operatingModelTags: Array.from(data.tags).sort(),
     }))
-}
-
-/** Collect the top N most frequent operating model tags across all companies */
-function getTopOperatingModelTags(companies: Company[], limit = 12): string[] {
-  const counts = new Map<string, number>()
-  for (const c of companies) {
-    for (const tag of c.operatingModelTags || []) {
-      const normalized = tag.trim()
-      if (normalized) counts.set(normalized, (counts.get(normalized) || 0) + 1)
-    }
-  }
-  return Array.from(counts.entries())
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, limit)
-    .map(([tag]) => tag)
 }
 
 function getCoverageIndicator(coverage: OEMCoverage | undefined): string {
@@ -100,18 +79,7 @@ function getGroupCoverageSummary(group: InvestmentGroupInfo, coverageMap: Record
 
 export function OEMStep({ thesis, onChange, companies }: OEMStepProps) {
   const hierarchy = useMemo(() => buildHierarchy(companies), [companies])
-  const topTags = useMemo(() => getTopOperatingModelTags(companies), [companies])
   const [openGroups, setOpenGroups] = useState<string[]>([])
-
-  const activeFilters = thesis.operatingModelFilters || []
-
-  function toggleOpModelFilter(tag: string) {
-    const current = thesis.operatingModelFilters || []
-    const next = current.includes(tag)
-      ? current.filter(t => t !== tag)
-      : [...current, tag]
-    onChange({ ...thesis, operatingModelFilters: next })
-  }
 
   function setCoverage(subcategory: string, value: OEMCoverage) {
     onChange({
@@ -136,39 +104,6 @@ export function OEMStep({ thesis, onChange, companies }: OEMStepProps) {
           surface replacement candidates. Uncovered areas show as coverage gaps.
         </p>
       </div>
-
-      {/* Operating Model Tag Toggles */}
-      {topTags.length > 0 && (
-        <div className="space-y-2">
-          <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Operating Model Filter</h4>
-          <div className="flex flex-wrap gap-1.5">
-            {topTags.map(tag => {
-              const active = activeFilters.includes(tag)
-              return (
-                <button
-                  key={tag}
-                  onClick={() => toggleOpModelFilter(tag)}
-                  className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors border ${
-                    active
-                      ? "bg-primary text-primary-foreground border-primary"
-                      : "bg-transparent text-muted-foreground border-border hover:bg-muted/50"
-                  }`}
-                >
-                  {tag}
-                </button>
-              )
-            })}
-          </div>
-          {activeFilters.length > 0 && (
-            <button
-              onClick={() => onChange({ ...thesis, operatingModelFilters: [] })}
-              className="text-xs text-muted-foreground hover:text-foreground underline"
-            >
-              Clear filters
-            </button>
-          )}
-        </div>
-      )}
 
       {/* Two-level Accordion: Investment Group -> Subcategories */}
       <Accordion type="multiple" value={openGroups} onValueChange={setOpenGroups}>

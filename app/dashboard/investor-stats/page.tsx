@@ -1,8 +1,8 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { Company, loadCompanyData } from "@/lib/company-data"
-import { FilterProvider, useFilter } from "@/contexts/filter-context"
+import { useThesisGatedData } from "@/hooks/use-thesis-gated-data"
+import { VizPageShell } from "@/components/dashboard/viz-page-shell"
+import { FocusPrompt } from "@/components/dashboard/focus-prompt"
 import { VizFilterBar } from "@/components/viz-filter-bar"
 import { InvestorStatsChart } from "@/components/charts/investor-stats-chart"
 import { InvestorExplorerChart } from "@/components/charts/investor-explorer-chart"
@@ -10,18 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 function InvestorStatsInner() {
-  const [companies, setCompanies] = useState<Company[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const { filterCompany } = useFilter()
-
-  useEffect(() => {
-    loadCompanyData().then((data) => {
-      setCompanies(data)
-      setIsLoading(false)
-    })
-  }, [])
-
-  const filtered = companies.filter(filterCompany)
+  const { companies, filtered, isLoading, hasThesis } = useThesisGatedData()
 
   return (
     <div className="space-y-4">
@@ -36,6 +25,8 @@ function InvestorStatsInner() {
       </div>
       {isLoading ? (
         <Skeleton className="h-[600px] rounded-xl" />
+      ) : !hasThesis ? (
+        <FocusPrompt label="Set Focus" description="Configure your thesis on the main dashboard to unlock this visualization." />
       ) : (
         <>
           <VizFilterBar companies={companies} />
@@ -59,8 +50,8 @@ function InvestorStatsInner() {
 
 export default function InvestorStatsPage() {
   return (
-    <FilterProvider>
+    <VizPageShell>
       <InvestorStatsInner />
-    </FilterProvider>
+    </VizPageShell>
   )
 }

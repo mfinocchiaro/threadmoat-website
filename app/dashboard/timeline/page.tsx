@@ -1,25 +1,14 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { Company, loadCompanyData } from "@/lib/company-data"
-import { FilterProvider, useFilter } from "@/contexts/filter-context"
+import { VizPageShell } from "@/components/dashboard/viz-page-shell"
+import { FocusPrompt } from "@/components/dashboard/focus-prompt"
+import { useThesisGatedData } from "@/hooks/use-thesis-gated-data"
 import { VizFilterBar } from "@/components/viz-filter-bar"
 import { TimelineChart } from "@/components/charts/timeline-chart"
 import { Skeleton } from "@/components/ui/skeleton"
 
 function TimelineInner() {
-  const [companies, setCompanies] = useState<Company[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const { filterCompany } = useFilter()
-
-  useEffect(() => {
-    loadCompanyData().then((data) => {
-      setCompanies(data)
-      setIsLoading(false)
-    })
-  }, [])
-
-  const filtered = companies.filter(filterCompany)
+  const { companies, filtered, isLoading, hasThesis } = useThesisGatedData()
 
   return (
     <div className="space-y-4">
@@ -29,7 +18,9 @@ function TimelineInner() {
           Number of AI PLM startups founded per year. Click any bar to explore the companies founded that year.
         </p>
       </div>
-      {isLoading ? (
+      {!hasThesis ? (
+        <FocusPrompt label="Set Focus" description="Configure your thesis on the main dashboard to unlock this visualization." />
+      ) : isLoading ? (
         <Skeleton className="h-[600px] rounded-xl" />
       ) : (
         <>
@@ -43,8 +34,8 @@ function TimelineInner() {
 
 export default function TimelinePage() {
   return (
-    <FilterProvider>
+    <VizPageShell>
       <TimelineInner />
-    </FilterProvider>
+    </VizPageShell>
   )
 }
