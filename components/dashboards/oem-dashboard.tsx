@@ -23,6 +23,11 @@ export function OEMDashboard({ data, isLoading }: { data: Company[]; isLoading: 
     const hasThesis = activeThesis === "oem";
     const scored = useMemo(() => scoreCompanies(data), [scoreCompanies, data]);
 
+    // When thesis is active, widgets show only scored/relevant companies
+    const displayData = hasThesis
+        ? scored.filter(r => r.label !== "Filtered Out" && r.label !== "Commercial").map(r => r.company)
+        : filtered;
+
     const replacementCandidates = useMemo(() => scored.filter(r => r.label === "Replacement Candidate"), [scored]);
     const coverageGaps = useMemo(() => scored.filter(r => r.label === "Coverage Gap"), [scored]);
 
@@ -133,19 +138,19 @@ export function OEMDashboard({ data, isLoading }: { data: Company[]; isLoading: 
             )}
 
             <div className="grid md:grid-cols-3 gap-6">
-                <WidgetCard title="Ecosystem Network" subtitle="Industry & segment connectivity" className="md:col-span-1" href="/dashboard/network">
-                    <NetworkGraph data={filtered} className="min-h-[400px]" />
+                <WidgetCard title="Ecosystem Network" subtitle={hasThesis ? `${displayData.length} relevant companies` : "Industry & segment connectivity"} className="md:col-span-1" href="/dashboard/network">
+                    <NetworkGraph data={displayData} className="min-h-[400px]" />
                 </WidgetCard>
-                <WidgetCard title="Market Breakdown" subtitle="Investment List hierarchy" className="md:col-span-1" href="/dashboard/sunburst">
-                    <SunburstChart data={filtered} className="min-h-[400px]" />
+                <WidgetCard title="Market Breakdown" subtitle={hasThesis ? `${displayData.length} relevant companies` : "Investment List hierarchy"} className="md:col-span-1" href="/dashboard/sunburst">
+                    <SunburstChart data={displayData} className="min-h-[400px]" />
                 </WidgetCard>
-                <WidgetCard title="Competitive Dynamics" subtitle="Momentum vs execution score" className="md:col-span-1" href="/dashboard/quadrant">
-                    <QuadrantChart data={filtered} className="min-h-[400px]" />
+                <WidgetCard title="Competitive Dynamics" subtitle={hasThesis ? `${displayData.length} relevant companies` : "Momentum vs execution score"} className="md:col-span-1" href="/dashboard/quadrant">
+                    <QuadrantChart data={displayData} className="min-h-[400px]" />
                 </WidgetCard>
             </div>
 
-            <WidgetCard title="Enterprise Recon List" subtitle="Detailed metrics for all tracked ecosystem players" href="/dashboard/periodic-table">
-                <PeriodicTable data={filtered} compact={true} />
+            <WidgetCard title="Enterprise Recon List" subtitle={hasThesis ? `${displayData.length} relevant companies` : "Detailed metrics for all tracked ecosystem players"} href="/dashboard/periodic-table">
+                <PeriodicTable data={displayData} compact={true} />
             </WidgetCard>
         </div>
     );
