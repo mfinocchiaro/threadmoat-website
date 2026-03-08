@@ -32,9 +32,6 @@ const ParallelCoordsChart = dynamic(() => import("@/components/charts/parallel-c
 const SpiralTimelineChart = dynamic(() => import("@/components/charts/spiral-timeline-chart").then(m => m.SpiralTimelineChart), {
     ssr: false, loading: () => <Skeleton className="w-full min-h-[400px] rounded-lg" />,
 });
-const SlopeChart = dynamic(() => import("@/components/charts/slope-chart").then(m => m.SlopeChart), {
-    ssr: false, loading: () => <Skeleton className="w-full min-h-[400px] rounded-lg" />,
-});
 const BoxPlotChart = dynamic(() => import("@/components/charts/box-plot-chart").then(m => m.BoxPlotChart), {
     ssr: false, loading: () => <Skeleton className="w-full min-h-[400px] rounded-lg" />,
 });
@@ -53,9 +50,6 @@ const WordcloudChart = dynamic(() => import("@/components/charts/wordcloud-chart
 const ChordChart = dynamic(() => import("@/components/charts/chord-chart").then(m => m.ChordChart), {
     ssr: false, loading: () => <Skeleton className="w-full min-h-[400px] rounded-lg" />,
 });
-const SplomChart = dynamic(() => import("@/components/charts/splom-chart").then(m => m.SplomChart), {
-    ssr: false, loading: () => <Skeleton className="w-full min-h-[400px] rounded-lg" />,
-});
 const TreemapChart = dynamic(() => import("@/components/charts/treemap-chart").then(m => m.TreemapChart), {
     ssr: false, loading: () => <Skeleton className="w-full min-h-[400px] rounded-lg" />,
 });
@@ -70,14 +64,12 @@ const WIDGET_RENDERERS: Record<string, (data: Company[], filteredNames: Set<stri
     "investor-explorer":  (d) => <InvestorExplorerChart data={d} className="min-h-[400px]" />,
     "parallel-coords":    (d) => <ParallelCoordsChart data={d} className="min-h-[400px]" />,
     "spiral-timeline":    (d) => <SpiralTimelineChart data={d} className="min-h-[400px]" />,
-    "slope-chart":        (d) => <SlopeChart data={d} className="min-h-[400px]" />,
     "box-plot":           (d) => <BoxPlotChart data={d} className="min-h-[400px]" />,
     "distribution":       (d) => <DistributionChart data={d} className="min-h-[400px]" />,
     "heatmap":            (d) => <HeatmapChart data={d} className="min-h-[400px]" />,
     "marimekko":          (d) => <MarimekkoChart data={d} className="min-h-[400px]" />,
     "wordcloud":          (d) => <WordcloudChart data={d} className="min-h-[400px]" />,
     "chord":              (d) => <ChordChart data={d} className="min-h-[400px]" />,
-    "splom":              (d) => <SplomChart data={d} className="min-h-[400px]" />,
     "treemap":            (d) => <TreemapChart data={d} className="min-h-[400px]" />,
 };
 

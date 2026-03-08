@@ -34,14 +34,12 @@ export const ADMIN_WIDGETS: WidgetDef[] = [
   { id: "investor-explorer",   label: "Investor Explorer",      scenarios: [], adminOnly: true },
   { id: "parallel-coords",     label: "Parallel Coordinates",   scenarios: [], adminOnly: true },
   { id: "spiral-timeline",     label: "Spiral Timeline",        scenarios: [], adminOnly: true },
-  { id: "slope-chart",         label: "Slope Chart",            scenarios: [], adminOnly: true },
   { id: "box-plot",            label: "Box Plot",               scenarios: [], adminOnly: true },
   { id: "distribution",        label: "Distribution Analysis",  scenarios: [], adminOnly: true },
   { id: "heatmap",             label: "Heatmap",                scenarios: [], adminOnly: true },
   { id: "marimekko",           label: "Marimekko Chart",        scenarios: [], adminOnly: true },
   { id: "wordcloud",           label: "Word Cloud",             scenarios: [], adminOnly: true },
   { id: "chord",               label: "Chord Diagram",          scenarios: [], adminOnly: true },
-  { id: "splom",               label: "SPLOM",                  scenarios: [], adminOnly: true },
   { id: "treemap",             label: "Treemap",                scenarios: [], adminOnly: true },
 ];
 
