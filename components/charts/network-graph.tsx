@@ -202,15 +202,20 @@ export function NetworkGraph({ data, className, preview = false }: NetworkGraphP
       .force("center", d3.forceCenter(width / 2, height / 2).strength(0.05))
       .force("collide", d3.forceCollide<Node>().radius(d => (d.type === "company" ? radiusScale(d.val) : 10) + 5))
 
+    // Detect dark mode for link contrast
+    const isDark = document.documentElement.classList.contains("dark")
+    const primaryLinkColor = isDark ? "#94a3b8" : "#334155"
+    const secondaryLinkColor = isDark ? "#64748b" : "#64748b"
+
     // Links — styled by kind (primary = solid thicker, secondary = dashed thinner)
     const link = g.append("g")
       .selectAll("line")
       .data(graphData.links)
       .join("line")
-      .attr("stroke", (d: Link) => d.kind === "primary" ? "#64748b" : "#94a3b8")
-      .attr("stroke-opacity", (d: Link) => d.kind === "primary" ? 0.35 : 0.15)
-      .attr("stroke-width", (d: Link) => d.kind === "primary" ? 1.5 : 0.75)
-      .attr("stroke-dasharray", (d: Link) => d.kind === "secondary" ? "3,3" : "none")
+      .attr("stroke", (d: Link) => d.kind === "primary" ? primaryLinkColor : secondaryLinkColor)
+      .attr("stroke-opacity", (d: Link) => d.kind === "primary" ? 0.5 : 0.3)
+      .attr("stroke-width", (d: Link) => d.kind === "primary" ? 2 : 1)
+      .attr("stroke-dasharray", (d: Link) => d.kind === "secondary" ? "4,3" : "none")
 
     const node = g.append("g")
       .selectAll("g")
@@ -401,11 +406,11 @@ export function NetworkGraph({ data, className, preview = false }: NetworkGraphP
             <span className="text-[9px] text-muted-foreground/50 mx-1">|</span>
             {/* Line styles */}
             <div className="flex items-center gap-1">
-              <svg width="16" height="6"><line x1="0" y1="3" x2="16" y2="3" stroke="#64748b" strokeWidth="1.5" /></svg>
+              <svg width="16" height="6"><line x1="0" y1="3" x2="16" y2="3" className="stroke-slate-700 dark:stroke-slate-400" strokeWidth="2" /></svg>
               <span className="text-[9px] text-muted-foreground">Primary</span>
             </div>
             <div className="flex items-center gap-1">
-              <svg width="16" height="6"><line x1="0" y1="3" x2="16" y2="3" stroke="#94a3b8" strokeWidth="0.75" strokeDasharray="3,3" /></svg>
+              <svg width="16" height="6"><line x1="0" y1="3" x2="16" y2="3" className="stroke-slate-500" strokeWidth="1" strokeDasharray="4,3" /></svg>
               <span className="text-[9px] text-muted-foreground">Secondary</span>
             </div>
             <span className="text-[9px] text-muted-foreground/50 mx-1">|</span>
