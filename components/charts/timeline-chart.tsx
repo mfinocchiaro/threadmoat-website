@@ -49,7 +49,7 @@ export function TimelineChart({ data, className }: TimelineChartProps) {
     svg.attr("width", width).attr("height", height)
 
     if (aggregatedData.length === 0) {
-      svg.append("text").attr("x", width / 2).attr("y", height / 2).attr("text-anchor", "middle").attr("fill", "#94a3b8").text("No data matches the current filters")
+      svg.append("text").attr("x", width / 2).attr("y", height / 2).attr("text-anchor", "middle").attr("fill", "hsl(var(--muted-foreground))").text("No data matches the current filters")
       return
     }
 
@@ -65,24 +65,24 @@ export function TimelineChart({ data, className }: TimelineChartProps) {
       .selectAll("text")
       .attr("transform", "rotate(-45)")
       .style("text-anchor", "end")
-      .attr("fill", "#94a3b8")
+      .attr("fill", "hsl(var(--muted-foreground))")
 
     // Y axis
-    g.append("g").call(d3.axisLeft(yScale)).selectAll("text").attr("fill", "#94a3b8")
+    g.append("g").call(d3.axisLeft(yScale)).selectAll("text").attr("fill", "hsl(var(--muted-foreground))")
 
     // Axis labels
-    g.append("text").attr("x", innerWidth / 2).attr("y", innerHeight + 50).attr("text-anchor", "middle").attr("fill", "#64748b").attr("font-size", "11px").text("Year Founded")
-    g.append("text").attr("transform", "rotate(-90)").attr("x", -innerHeight / 2).attr("y", -42).attr("text-anchor", "middle").attr("fill", "#64748b").attr("font-size", "11px").text("Number of Companies")
+    g.append("text").attr("x", innerWidth / 2).attr("y", innerHeight + 50).attr("text-anchor", "middle").attr("fill", "hsl(var(--muted-foreground))").attr("font-size", "11px").text("Year Founded")
+    g.append("text").attr("transform", "rotate(-90)").attr("x", -innerHeight / 2).attr("y", -42).attr("text-anchor", "middle").attr("fill", "hsl(var(--muted-foreground))").attr("font-size", "11px").text("Number of Companies")
 
     // Title
-    svg.append("text").attr("x", width / 2).attr("y", 20).attr("text-anchor", "middle").attr("fill", "#f1f5f9").attr("font-size", "14px").attr("font-weight", "600").text("AI PLM Startups Founded Per Year")
+    svg.append("text").attr("x", width / 2).attr("y", 20).attr("text-anchor", "middle").attr("fill", "hsl(var(--foreground))").attr("font-size", "14px").attr("font-weight", "600").text("AI PLM Startups Founded Per Year")
 
     // Grid
     g.append("g")
       .attr("class", "grid")
       .call(d3.axisLeft(yScale).tickSize(-innerWidth).tickFormat(() => ""))
       .selectAll("line")
-      .attr("stroke", "#334155")
+      .attr("stroke", "hsl(var(--border))")
       .attr("stroke-dasharray", "2,2")
 
     g.select(".grid .domain").remove()
@@ -96,11 +96,11 @@ export function TimelineChart({ data, className }: TimelineChartProps) {
       .attr("y", (d) => yScale(d.count))
       .attr("width", xScale.bandwidth())
       .attr("height", (d) => innerHeight - yScale(d.count))
-      .attr("fill", "#3b82f6")
+      .attr("fill", "hsl(var(--primary))")
       .attr("rx", 2)
       .style("cursor", "pointer")
       .on("mouseover", function (event, d) {
-        d3.select(this).attr("fill", "#2563eb")
+        d3.select(this).attr("fill", "hsl(var(--primary) / 0.8)")
         if (!tooltipRef.current) return
         tooltipRef.current.style.visibility = "visible"
         tooltipRef.current.style.top = `${event.pageY - 10}px`
@@ -113,7 +113,7 @@ export function TimelineChart({ data, className }: TimelineChartProps) {
         tooltipRef.current.style.left = `${event.pageX + 10}px`
       })
       .on("mouseout", function () {
-        d3.select(this).attr("fill", "#3b82f6")
+        d3.select(this).attr("fill", "hsl(var(--primary))")
         if (tooltipRef.current) tooltipRef.current.style.visibility = "hidden"
       })
       .on("click", (_, d) => {
