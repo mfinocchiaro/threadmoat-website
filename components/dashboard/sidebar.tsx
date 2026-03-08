@@ -88,11 +88,21 @@ const BOTTOM_ITEMS = [
   { href: "/dashboard/settings", icon: Settings, label: "Settings" },
 ];
 
+// Admin-only viz items — hidden from regular users
+const ADMIN_VIZ_HREFS = new Set([
+  "/dashboard/investor-stats",
+  "/dashboard/financial-heatmap",
+  "/dashboard/correlation",
+  "/dashboard/reports",
+  "/dashboard/investor-views",
+])
+
 interface SidebarProps {
   collapsed: boolean;
   onToggle: () => void;
   onSelectScenario?: (key: string) => void;
   activeScenario?: string;
+  isAdmin?: boolean;
 }
 
 function NavLink({ href, icon: Icon, label, collapsed, exact }: {
@@ -129,13 +139,15 @@ function NavLink({ href, icon: Icon, label, collapsed, exact }: {
   return link;
 }
 
-export function Sidebar({ collapsed, onToggle, onSelectScenario, activeScenario }: SidebarProps) {
+export function Sidebar({ collapsed, onToggle, onSelectScenario, activeScenario, isAdmin = false }: SidebarProps) {
   const thesis = useThesisOptional();
   const hasThesis = !!thesis?.activeThesis;
   const [focusMenuOpen, setFocusMenuOpen] = useState(false);
 
-  // Always show all viz items below Investment Landscape
-  const visibleVizItems = VIZ_ITEMS;
+  // Hide admin-only viz items from non-admin users
+  const visibleVizItems = isAdmin
+    ? VIZ_ITEMS
+    : VIZ_ITEMS.filter(item => !ADMIN_VIZ_HREFS.has(item.href));
 
   const activeScenarioData = FOCUS_SCENARIOS.find(s => s.key === activeScenario);
 

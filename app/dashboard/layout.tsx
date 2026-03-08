@@ -65,6 +65,7 @@ export default async function DashboardLayout({
       user={user}
       profile={profile}
       initialScenario={profile?.profile_type}
+      isAdmin={isAdmin}
     >
       {children}
     </DashboardLayoutClient>
