@@ -104,29 +104,25 @@ export function StartupDashboard({ data, isLoading, isAdmin = false }: { data: C
                 </WidgetCard>
             )}
 
-            {hasThesis && filtered.length > 0 && (
-                <>
-                    {show("landscape") && (
-                        <WidgetCard title="Competitive Landscape" subtitle={`${filtered.length} competitors`}>
-                            <LandscapeChart data={filtered} className="min-h-[500px]" />
-                        </WidgetCard>
-                    )}
-                    {show("periodic-table") && (
-                        <WidgetCard title="Periodic Table" subtitle={`${filtered.length} competitors`}>
-                            <PeriodicTable data={filtered} compact={true} />
-                        </WidgetCard>
-                    )}
-                    {show("quadrant") && (
-                        <WidgetCard title="Competitive Quadrant" subtitle="Market momentum vs execution">
-                            <QuadrantChart data={filtered} className="h-[500px]" />
-                        </WidgetCard>
-                    )}
-                    {show("bar") && (
-                        <WidgetCard title="Top Rankings" subtitle={`Top from ${filtered.length} competitors`}>
-                            <BarChart data={filtered} />
-                        </WidgetCard>
-                    )}
-                </>
+            {hasThesis && filtered.length > 0 && show("landscape") && (
+                <WidgetCard title="Competitive Landscape" subtitle={`${filtered.length} competitors`}>
+                    <LandscapeChart data={filtered} className="min-h-[500px]" />
+                </WidgetCard>
+            )}
+            {hasThesis && filtered.length > 0 && show("periodic-table") && (
+                <WidgetCard title="Periodic Table" subtitle={`${filtered.length} competitors`}>
+                    <PeriodicTable data={filtered} compact={true} />
+                </WidgetCard>
+            )}
+            {hasThesis && filtered.length > 0 && show("quadrant") && (
+                <WidgetCard title="Competitive Quadrant" subtitle="Market momentum vs execution">
+                    <QuadrantChart data={filtered} className="h-[500px]" />
+                </WidgetCard>
+            )}
+            {hasThesis && filtered.length > 0 && show("bar") && (
+                <WidgetCard title="Top Rankings" subtitle={`Top from ${filtered.length} competitors`}>
+                    <BarChart data={filtered} />
+                </WidgetCard>
             )}
 
             {isAdmin && <AdminAnalyticsSection data={data} filtered={filtered} enabledWidgets={enabled} />}

@@ -130,29 +130,25 @@ export function VCDashboard({ data, isLoading, isAdmin = false }: { data: Compan
                 </WidgetCard>
             )}
 
-            {hasThesis && filtered.length > 0 && (
-                <>
-                    {show("map") && (
-                        <WidgetCard title="Global Deal Flow" subtitle={`${filtered.length} companies`}>
-                            <MapChart data={filtered} className="min-h-[500px]" />
-                        </WidgetCard>
-                    )}
-                    {show("bubble") && (
-                        <WidgetCard title="Funding Distribution" subtitle={`${filtered.length} thesis matches`}>
-                            <BubbleChart data={filtered} className="h-[500px]" />
-                        </WidgetCard>
-                    )}
-                    {show("quadrant") && (
-                        <WidgetCard title="Competitive Positioning" subtitle={`${filtered.length} thesis matches`}>
-                            <QuadrantChart data={filtered} className="h-[500px]" />
-                        </WidgetCard>
-                    )}
-                    {show("periodic-table") && (
-                        <WidgetCard title="Intelligence Master List" subtitle={`${filtered.length} thesis matches`}>
-                            <PeriodicTable data={filtered} compact={true} />
-                        </WidgetCard>
-                    )}
-                </>
+            {hasThesis && filtered.length > 0 && show("map") && (
+                <WidgetCard title="Global Deal Flow" subtitle={`${filtered.length} companies`}>
+                    <MapChart data={filtered} className="min-h-[500px]" />
+                </WidgetCard>
+            )}
+            {hasThesis && filtered.length > 0 && show("bubble") && (
+                <WidgetCard title="Funding Distribution" subtitle={`${filtered.length} thesis matches`}>
+                    <BubbleChart data={filtered} className="h-[500px]" />
+                </WidgetCard>
+            )}
+            {hasThesis && filtered.length > 0 && show("quadrant") && (
+                <WidgetCard title="Competitive Positioning" subtitle={`${filtered.length} thesis matches`}>
+                    <QuadrantChart data={filtered} className="h-[500px]" />
+                </WidgetCard>
+            )}
+            {hasThesis && filtered.length > 0 && show("periodic-table") && (
+                <WidgetCard title="Intelligence Master List" subtitle={`${filtered.length} thesis matches`}>
+                    <PeriodicTable data={filtered} compact={true} />
+                </WidgetCard>
             )}
 
             {isAdmin && <AdminAnalyticsSection data={data} filtered={filtered} enabledWidgets={enabled} />}

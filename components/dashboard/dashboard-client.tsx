@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, startTransition } from "react"
 import { Company, loadCompanyData } from "@/lib/company-data"
 import { FilterProvider } from "@/contexts/filter-context"
 import { ThesisProvider } from "@/contexts/thesis-context"
@@ -27,7 +27,7 @@ function ScenarioPicker({ onSelect }: { onSelect: (key: string) => void }) {
         {FOCUS_SCENARIOS.map(s => {
           const Icon = s.icon
           return (
-            <button key={s.key} onClick={() => onSelect(s.key)} className="text-left">
+            <button key={s.key} onClick={() => startTransition(() => onSelect(s.key))} className="text-left">
               <Card className="hover:border-primary/50 hover:bg-muted/30 transition-colors cursor-pointer h-full">
                 <CardHeader className="pb-2">
                   <div className="rounded-md bg-primary/10 p-2 text-primary w-fit mb-2"><Icon className="size-6" /></div>

@@ -111,24 +111,20 @@ export function OEMDashboard({ data, isLoading, isAdmin = false }: { data: Compa
                 </WidgetCard>
             )}
 
-            {hasThesis && filtered.length > 0 && (
-                <>
-                    {show("sunburst") && (
-                        <WidgetCard title="Market Breakdown" subtitle={`${filtered.length} companies`}>
-                            <SunburstChart data={filtered} className="min-h-[500px]" />
-                        </WidgetCard>
-                    )}
-                    {show("quadrant") && (
-                        <WidgetCard title="Competitive Dynamics" subtitle={`${filtered.length} companies`}>
-                            <QuadrantChart data={filtered} className="min-h-[500px]" />
-                        </WidgetCard>
-                    )}
-                    {show("periodic-table") && (
-                        <WidgetCard title="Enterprise Recon List" subtitle={`${filtered.length} companies`}>
-                            <PeriodicTable data={filtered} compact={true} />
-                        </WidgetCard>
-                    )}
-                </>
+            {hasThesis && filtered.length > 0 && show("sunburst") && (
+                <WidgetCard title="Market Breakdown" subtitle={`${filtered.length} companies`}>
+                    <SunburstChart data={filtered} className="min-h-[500px]" />
+                </WidgetCard>
+            )}
+            {hasThesis && filtered.length > 0 && show("quadrant") && (
+                <WidgetCard title="Competitive Dynamics" subtitle={`${filtered.length} companies`}>
+                    <QuadrantChart data={filtered} className="min-h-[500px]" />
+                </WidgetCard>
+            )}
+            {hasThesis && filtered.length > 0 && show("periodic-table") && (
+                <WidgetCard title="Enterprise Recon List" subtitle={`${filtered.length} companies`}>
+                    <PeriodicTable data={filtered} compact={true} />
+                </WidgetCard>
             )}
 
             {isAdmin && <AdminAnalyticsSection data={data} filtered={filtered} enabledWidgets={enabled} />}
