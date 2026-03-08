@@ -18,12 +18,14 @@ export function SidebarShell({
   children,
   onSelectScenario,
   activeScenario,
+  isAdmin = false,
 }: {
   user: Session["user"];
   profile?: Profile;
   children: React.ReactNode;
   onSelectScenario?: (key: string) => void;
   activeScenario?: string;
+  isAdmin?: boolean;
 }) {
   const [collapsed, setCollapsed] = useState(false);
 
@@ -47,6 +49,7 @@ export function SidebarShell({
         onToggle={toggle}
         onSelectScenario={onSelectScenario}
         activeScenario={activeScenario}
+        isAdmin={isAdmin}
       />
       <div className="flex flex-1 flex-col overflow-hidden">
         <TopBar user={user} profile={profile} />

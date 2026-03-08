@@ -3,21 +3,18 @@
 import { useEffect, useState } from "react"
 import { Company, loadCompanyData } from "@/lib/company-data"
 import { FilterProvider } from "@/contexts/filter-context"
-import { ThesisProvider, PROFILE_THESIS_CONFIG } from "@/contexts/thesis-context"
+import { ThesisProvider } from "@/contexts/thesis-context"
 import { useScenario } from "@/contexts/scenario-context"
 import { StartupDashboard } from "@/components/dashboards/startup-dashboard"
 import { VCDashboard } from "@/components/dashboards/vc-dashboard"
 import { OEMDashboard } from "@/components/dashboards/oem-dashboard"
 import { ISVDashboard } from "@/components/dashboards/isv-dashboard"
-import { ThesisPanel } from "@/components/dashboard/thesis-panel"
 import { ThesisResults } from "@/components/dashboard/thesis-results"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
-import { Rocket, TrendingUp, Building2, Layers, Focus, Settings2 } from "lucide-react"
+import { Rocket, TrendingUp, Building2, Layers } from "lucide-react"
 import { FOCUS_SCENARIOS } from "@/components/dashboard/sidebar"
 import { LayoutProvider } from "@/contexts/layout-context"
-import { WidgetPicker } from "@/components/dashboard/widget-picker"
+import { ConfigPanel } from "@/components/dashboard/config-panel"
 
 function ScenarioPicker({ onSelect }: { onSelect: (key: string) => void }) {
   return (
@@ -58,33 +55,18 @@ function DashboardInner({ companies, isLoading, profileType, onSelectProfile, is
   onSelectProfile: (p: string) => void
   isAdmin: boolean
 }) {
-  const [thesisPanelOpen, setThesisPanelOpen] = useState(false)
-  const [widgetPickerOpen, setWidgetPickerOpen] = useState(false)
-
   if (!profileType) {
     return <ScenarioPicker onSelect={onSelectProfile} />
   }
-
-  const config = profileType ? PROFILE_THESIS_CONFIG[profileType] : undefined
 
   const scenarioData = FOCUS_SCENARIOS.find(s => s.key === profileType)
 
   return (
     <>
-      <div className="flex items-center justify-between mb-4">
+      <div className="mb-4">
         <h2 className="text-lg font-semibold">
           {scenarioData?.label ?? "Dashboard"}
         </h2>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={() => setWidgetPickerOpen(true)}>
-            <Settings2 className="mr-2 h-4 w-4" />
-            Customize
-          </Button>
-          <Button variant="outline" size="sm" onClick={() => setThesisPanelOpen(true)}>
-            <Focus className="mr-2 h-4 w-4" />
-            {config?.buttonText ?? "Configure Filters"}
-          </Button>
-        </div>
       </div>
 
       <ThesisResults companies={companies} />
@@ -94,18 +76,9 @@ function DashboardInner({ companies, isLoading, profileType, onSelectProfile, is
       {profileType === "oem_enterprise" && <OEMDashboard data={companies} isLoading={isLoading} isAdmin={isAdmin} />}
       {profileType === "isv_platform" && <ISVDashboard data={companies} isLoading={isLoading} isAdmin={isAdmin} />}
 
-      <ThesisPanel
-        open={thesisPanelOpen}
-        onOpenChange={setThesisPanelOpen}
+      <ConfigPanel
         companies={companies}
         profileType={profileType}
-        isAdmin={false}
-      />
-
-      <WidgetPicker
-        open={widgetPickerOpen}
-        onOpenChange={setWidgetPickerOpen}
-        scenario={profileType}
         isAdmin={isAdmin}
       />
     </>
