@@ -8,6 +8,7 @@ import { VizPageShell } from "@/components/dashboard/viz-page-shell"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Card } from "@/components/ui/card"
 import { ArrowRight } from "lucide-react"
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recharts"
 
 // Domain descriptions and representative icons
 const DOMAIN_META: Record<string, { description: string; icon: string }> = {
@@ -74,6 +75,63 @@ interface DomainStats {
   countries: number
   description: string
   icon: string
+}
+
+const FUNDING_COLORS: Record<string, string> = {
+  "Bootstrap": "#6b7280",
+  "Pre-Seed": "#a78bfa",
+  "Seed": "#818cf8",
+  "Series A": "#60a5fa",
+  "Series B": "#34d399",
+  "Series C": "#fbbf24",
+  "Series D+": "#f87171",
+  "IPO": "#fb923c",
+  "Other": "#94a3b8",
+}
+
+function DonutByFunding({ companies }: { companies: Company[] }) {
+  const data = useMemo(() => {
+    const counts = new Map<string, number>()
+    for (const c of companies) {
+      const round = c.latestFundingRound || "Other"
+      counts.set(round, (counts.get(round) || 0) + 1)
+    }
+    return Array.from(counts.entries())
+      .map(([name, value]) => ({ name, value, pct: ((value / companies.length) * 100).toFixed(1) }))
+      .sort((a, b) => b.value - a.value)
+  }, [companies])
+
+  return (
+    <ResponsiveContainer width="100%" height={300}>
+      <PieChart>
+        <Pie data={data} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={60} outerRadius={110} paddingAngle={2} label={({ name, pct }) => `${name} ${pct}%`} labelLine={false} style={{ fontSize: 10 }}>
+          {data.map(d => <Cell key={d.name} fill={FUNDING_COLORS[d.name] || "#94a3b8"} />)}
+        </Pie>
+        <Tooltip formatter={(value: number) => [`${value} companies`, "Count"]} />
+      </PieChart>
+    </ResponsiveContainer>
+  )
+}
+
+function DonutByDomain({ domains }: { domains: { name: string; color: string; count: number }[] }) {
+  const total = domains.reduce((s, d) => s + d.count, 0)
+  const data = domains.map(d => ({
+    name: d.name.replace(/\s*\(.*?\)\s*/g, ""),
+    value: d.count,
+    pct: ((d.count / total) * 100).toFixed(1),
+    color: d.color,
+  }))
+
+  return (
+    <ResponsiveContainer width="100%" height={300}>
+      <PieChart>
+        <Pie data={data} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={60} outerRadius={110} paddingAngle={2} label={({ name, pct }) => `${name} ${pct}%`} labelLine={false} style={{ fontSize: 10 }}>
+          {data.map(d => <Cell key={d.name} fill={d.color} />)}
+        </Pie>
+        <Tooltip formatter={(value: number) => [`${value} companies`, "Count"]} />
+      </PieChart>
+    </ResponsiveContainer>
+  )
 }
 
 function LandscapeIntroInner() {
@@ -198,8 +256,20 @@ function LandscapeIntroInner() {
         ))}
       </div>
 
+      {/* Donut Charts — Funding Level + Investment List */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card className="p-6">
+          <h3 className="text-sm font-semibold mb-4">Startups by Funding Level</h3>
+          <DonutByFunding companies={companies} />
+        </Card>
+        <Card className="p-6">
+          <h3 className="text-sm font-semibold mb-4">Startups by Investment Domain</h3>
+          <DonutByDomain domains={domains} />
+        </Card>
+      </div>
+
       {/* Domain cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6">
         {domains.map((d) => (
           <Card
             key={d.name}
