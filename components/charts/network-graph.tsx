@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState, useMemo } from "react"
 import * as d3 from "d3"
 import { Company } from "@/lib/company-data"
+import { getInvestmentColor } from "@/lib/investment-colors"
 import { Button } from "@/components/ui/button"
 import {
   Select,
@@ -20,10 +21,14 @@ interface NetworkGraphProps {
   preview?: boolean
 }
 
+type NodeType = "company" | "mfg" | "investment" | "industry" | "country" | "subsegment" | "category" | "subcategory"
+
 interface Node extends d3.SimulationNodeDatum {
   id: string
-  type: "company" | "mfg" | "investment" | "industry" | "country" | "subsegment"
+  type: NodeType
   val: number
+  moat: number
+  investmentList?: string
   data?: Company
 }
 
@@ -32,25 +37,36 @@ interface Link extends d3.SimulationLinkDatum<Node> {
   target: string | Node
 }
 
+// Hub node colors by type (non-company nodes)
+const HUB_COLORS: Record<string, string> = {
+  mfg: "#f59e0b",
+  investment: "#14b8a6",
+  industry: "#8b5cf6",
+  country: "#ec4899",
+  subsegment: "#10b981",
+  category: "#f97316",
+  subcategory: "#06b6d4",
+}
+
 export function NetworkGraph({ data, className, preview = false }: NetworkGraphProps) {
   const svgRef = useRef<SVGSVGElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
-  const [primaryType, setPrimaryType] = useState<string>("mfg")
-  const [secondaryType, setSecondaryType] = useState<string>("industry")
+  const [primaryType, setPrimaryType] = useState<string>("investment")
+  const [secondaryType, setSecondaryType] = useState<string>("category")
   const [metric, setMetric] = useState<string>("headcount")
 
   const graphData = useMemo(() => {
-    if (!data || data.length === 0) return { nodes: [], links: [], maxVal: 1 }
+    if (!data || data.length === 0) return { nodes: [], links: [], maxVal: 1, maxMoat: 5 }
 
     const nodes: Node[] = []
     const links: Link[] = []
     const nodeMap = new Map<string, boolean>()
 
-    const addNode = (id: string, type: Node["type"]) => {
+    const addNode = (id: string, type: NodeType) => {
       if (!id) return
       if (!nodeMap.has(id)) {
         nodeMap.set(id, true)
-        nodes.push({ id, type, val: 1 })
+        nodes.push({ id, type, val: 1, moat: 0 })
       }
     }
 
@@ -66,13 +82,23 @@ export function NetworkGraph({ data, className, preview = false }: NetworkGraphP
 
     const values = data.map(d => getMetricValue(d))
     const maxVal = Math.max(...values, 1)
+    const moats = data.map(d => d.competitiveMoat || 0)
+    const maxMoat = Math.max(...moats, 1)
 
     data.forEach(d => {
       if (!nodeMap.has(d.name)) {
         nodeMap.set(d.name, true)
-        nodes.push({ id: d.name, type: "company", val: getMetricValue(d), data: d })
+        nodes.push({
+          id: d.name,
+          type: "company",
+          val: getMetricValue(d),
+          moat: d.competitiveMoat || 0,
+          investmentList: d.investmentList,
+          data: d,
+        })
       }
 
+      // Primary linkage
       if (primaryType === "mfg" && d.manufacturingType) {
         addNode(d.manufacturingType, "mfg")
         links.push({ source: d.name, target: d.manufacturingType })
@@ -82,6 +108,7 @@ export function NetworkGraph({ data, className, preview = false }: NetworkGraphP
         links.push({ source: d.name, target: invList })
       }
 
+      // Secondary linkage
       if (secondaryType === "industry") {
         ;(d.industriesServed || []).slice(0, 3).forEach(ind => {
           addNode(ind, "industry")
@@ -93,10 +120,21 @@ export function NetworkGraph({ data, className, preview = false }: NetworkGraphP
       } else if (secondaryType === "subsegment" && d.subsegment) {
         addNode(d.subsegment, "subsegment")
         links.push({ source: d.name, target: d.subsegment })
+      } else if (secondaryType === "category") {
+        ;(d.categoryTags || []).slice(0, 3).forEach(tag => {
+          const trimmed = tag.trim()
+          if (trimmed) {
+            addNode(trimmed, "category")
+            links.push({ source: d.name, target: trimmed })
+          }
+        })
+      } else if (secondaryType === "subcategory" && d.subcategories) {
+        addNode(d.subcategories, "subcategory")
+        links.push({ source: d.name, target: d.subcategories })
       }
     })
 
-    return { nodes, links, maxVal }
+    return { nodes, links, maxVal, maxMoat }
   }, [data, primaryType, secondaryType, metric])
 
   useEffect(() => {
@@ -120,16 +158,18 @@ export function NetworkGraph({ data, className, preview = false }: NetworkGraphP
       .domain([0, graphData.maxVal])
       .range([4, metric === "weightedScore" ? 15 : 25])
 
+    // Moat → border width: 0 moat = 1px, 5 moat = 4px
+    const moatScale = d3.scaleLinear()
+      .domain([0, 5])
+      .range([1, 4])
+      .clamp(true)
+
     const getNodeColor = (d: Node) => {
-      switch (d.type) {
-        case "company": return "#3b82f6"
-        case "mfg": return "#f59e0b"
-        case "investment": return "#14b8a6"
-        case "industry": return "#8b5cf6"
-        case "country": return "#ec4899"
-        case "subsegment": return "#10b981"
-        default: return "#64748b"
+      if (d.type === "company") {
+        // Color by investment list using canonical palette
+        return d.investmentList ? getInvestmentColor(d.investmentList) : "#64748b"
       }
+      return HUB_COLORS[d.type] ?? "#64748b"
     }
 
     const simulation = d3.forceSimulation<Node>(graphData.nodes)
@@ -171,11 +211,22 @@ export function NetworkGraph({ data, className, preview = false }: NetworkGraphP
     node.append("circle")
       .attr("r", d => d.type === "company" ? radiusScale(d.val) : 8)
       .attr("fill", getNodeColor)
-      .attr("stroke", "#fff")
-      .attr("stroke-width", 1.5)
+      .attr("stroke", d => d.type === "company" ? "#fff" : "#fff")
+      .attr("stroke-width", d => d.type === "company" ? moatScale(d.moat) : 1.5)
+      .attr("stroke-opacity", d => d.type === "company" ? 0.9 : 1)
       .style("cursor", preview ? "default" : "pointer")
-      .on("mouseover", function () { if (!preview) d3.select(this).attr("stroke", "var(--primary)").attr("stroke-width", 3) })
-      .on("mouseout", function () { if (!preview) d3.select(this).attr("stroke", "#fff").attr("stroke-width", 1.5) })
+      .on("mouseover", function (_, d) {
+        if (!preview) {
+          d3.select(this).attr("stroke", "var(--primary)").attr("stroke-width", 3)
+        }
+      })
+      .on("mouseout", function (_, d) {
+        if (!preview) {
+          d3.select(this)
+            .attr("stroke", "#fff")
+            .attr("stroke-width", d.type === "company" ? moatScale(d.moat) : 1.5)
+        }
+      })
 
     // In preview mode, only show labels for non-company nodes (categories/hubs)
     node.filter(d => preview ? d.type !== "company" : true)
@@ -188,7 +239,16 @@ export function NetworkGraph({ data, className, preview = false }: NetworkGraphP
       .style("pointer-events", "none")
       .style("opacity", d => d.type === "company" ? 0.8 : 1)
 
-    if (!preview) node.append("title").text(d => `${d.id}\n${d.type}`)
+    if (!preview) {
+      node.append("title").text(d => {
+        if (d.type === "company" && d.data) {
+          const c = d.data
+          const moatLabel = c.competitiveMoat ? `Moat: ${c.competitiveMoat}/5` : ""
+          return `${d.id}\n${c.investmentList || ""}\n${moatLabel}`.trim()
+        }
+        return `${d.id}\n${d.type}`
+      })
+    }
 
     simulation.on("tick", () => {
       link
@@ -228,20 +288,22 @@ export function NetworkGraph({ data, className, preview = false }: NetworkGraphP
             </Select>
           </div>
           <div className="space-y-1">
-            <label className="text-xs font-medium text-muted-foreground">Primary Node</label>
+            <label className="text-xs font-medium text-muted-foreground">Primary Cluster</label>
             <Select value={primaryType} onValueChange={setPrimaryType}>
-              <SelectTrigger className="w-[160px] h-8"><SelectValue /></SelectTrigger>
+              <SelectTrigger className="w-[170px] h-8"><SelectValue /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="mfg">Manufacturing Type</SelectItem>
                 <SelectItem value="investment">Investment List</SelectItem>
+                <SelectItem value="mfg">Manufacturing Type</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div className="space-y-1">
-            <label className="text-xs font-medium text-muted-foreground">Secondary Node</label>
+            <label className="text-xs font-medium text-muted-foreground">Secondary Link</label>
             <Select value={secondaryType} onValueChange={setSecondaryType}>
-              <SelectTrigger className="w-[160px] h-8"><SelectValue /></SelectTrigger>
+              <SelectTrigger className="w-[170px] h-8"><SelectValue /></SelectTrigger>
               <SelectContent>
+                <SelectItem value="category">Capability Tags</SelectItem>
+                <SelectItem value="subcategory">Subcategory</SelectItem>
                 <SelectItem value="industry">Industries Served</SelectItem>
                 <SelectItem value="country">Country</SelectItem>
                 <SelectItem value="subsegment">Subsegment</SelectItem>
@@ -265,9 +327,10 @@ export function NetworkGraph({ data, className, preview = false }: NetworkGraphP
         )}
       </div>
       {!preview && (
-        <p className="px-4 py-2 text-[10px] text-muted-foreground/60 text-right">
-          Moat Map inspired by Blake Courter — thank you for the idea and encouragement.
-        </p>
+        <div className="px-4 py-2 flex items-center justify-between text-[10px] text-muted-foreground/60">
+          <span>Node color = investment list &middot; Border thickness = competitive moat score</span>
+          <span>Moat Map inspired by Blake Courter</span>
+        </div>
       )}
     </Card>
   )
