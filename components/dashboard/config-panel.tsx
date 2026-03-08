@@ -19,9 +19,10 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Separator } from "@/components/ui/separator"
 import {
   Settings2, Focus, X, ChevronLeft, Save, Trash2, BookOpen,
-  RotateCcw, Shield, Check, Loader2,
+  RotateCcw, Shield, Check, Loader2, Rocket, TrendingUp, Building2, Layers,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { FOCUS_SCENARIOS } from "@/components/dashboard/sidebar"
 
 interface SavedThesisEntry {
   id: string
@@ -40,6 +41,7 @@ interface ConfigPanelProps {
   companies: Company[]
   profileType?: string
   isAdmin: boolean
+  onSelectScenario?: (key: string) => void
 }
 
 function profileToThesisType(profileType?: string): ThesisType {
@@ -52,7 +54,7 @@ function getConfig(profileType?: string): ProfileThesisConfig {
   return PROFILE_THESIS_CONFIG["vc_investor"]
 }
 
-export function ConfigPanel({ companies, profileType, isAdmin }: ConfigPanelProps) {
+export function ConfigPanel({ companies, profileType, isAdmin, onSelectScenario }: ConfigPanelProps) {
   const [open, setOpen] = useState(false)
   const {
     vcThesis, isvThesis, oemThesis,
@@ -240,6 +242,37 @@ export function ConfigPanel({ companies, profileType, isAdmin }: ConfigPanelProp
             <X className="size-4" />
           </button>
         </div>
+
+        {/* Scenario switcher */}
+        {onSelectScenario && (
+          <div className="px-4 pt-3 shrink-0">
+            <h3 className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+              Research Focus
+            </h3>
+            <div className="grid grid-cols-2 gap-1.5">
+              {FOCUS_SCENARIOS.map(s => {
+                const Icon = s.icon
+                const isActive = profileType === s.key
+                return (
+                  <button
+                    key={s.key}
+                    onClick={() => onSelectScenario(s.key)}
+                    className={cn(
+                      "flex items-center gap-2 rounded-md px-2.5 py-2 text-left transition-colors text-xs",
+                      isActive
+                        ? "bg-primary/10 text-primary font-medium ring-1 ring-primary/20"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    )}
+                  >
+                    <Icon className="size-3.5 shrink-0" />
+                    <span className="truncate">{s.shortLabel}</span>
+                  </button>
+                )
+              })}
+            </div>
+            <Separator className="mt-3" />
+          </div>
+        )}
 
         {/* Tabs for Thesis / Layout */}
         <Tabs defaultValue="thesis" className="flex-1 flex flex-col min-h-0">
