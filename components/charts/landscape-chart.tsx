@@ -474,7 +474,7 @@ export function LandscapeChart({ data, className }: LandscapeChartProps) {
                                             return (
                                                 <div
                                                     key={company.id}
-                                                    className="relative w-8 h-8 bg-slate-100 border border-slate-200 overflow-hidden cursor-pointer hover:z-50 hover:scale-110 hover:shadow-md hover:border-primary transition-all duration-150 rounded-sm"
+                                                    className="relative w-8 h-8 bg-muted border border-border overflow-hidden cursor-pointer hover:z-50 hover:scale-110 hover:shadow-md hover:border-primary transition-all duration-150 rounded-sm"
                                                     onMouseEnter={e => showHover(company, e)}
                                                     onMouseLeave={hideHover}
                                                     onDoubleClick={() => { if (company.url) window.open(company.url, "_blank", "noopener,noreferrer"); }}
@@ -488,7 +488,7 @@ export function LandscapeChart({ data, className }: LandscapeChartProps) {
                                                             (e.currentTarget.nextSibling as HTMLElement).style.display = "flex";
                                                         }}
                                                     />
-                                                    <span className="hidden w-full h-full items-center justify-center text-[7px] font-bold text-slate-700 leading-none select-none">
+                                                    <span className="hidden w-full h-full items-center justify-center text-[7px] font-bold text-foreground leading-none select-none">
                                                         {initials}
                                                     </span>
                                                 </div>

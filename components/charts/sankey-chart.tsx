@@ -236,7 +236,7 @@ export function SankeyChart({ data, className }: SankeyChartProps) {
           .attr("dy", "0.35em")
           .attr("text-anchor", anchor)
           .attr("font-size", "10px")
-          .attr("fill", "#cbd5e1")
+          .attr("fill", "hsl(var(--foreground))")
           .text(n.name.length > 18 ? n.name.slice(0, 16) + "…" : n.name)
       }
     })
@@ -254,7 +254,7 @@ export function SankeyChart({ data, className }: SankeyChartProps) {
           .attr("text-anchor", "middle")
           .attr("font-size", "11px")
           .attr("font-weight", "600")
-          .attr("fill", "#64748b")
+          .attr("fill", "hsl(var(--muted-foreground))")
           .attr("text-transform", "uppercase")
           .text(stage.toUpperCase())
       })

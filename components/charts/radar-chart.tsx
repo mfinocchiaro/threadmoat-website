@@ -66,7 +66,7 @@ export function RadarChart({ data, className }: RadarChartProps) {
         .attr("x", width / 2)
         .attr("y", height / 2)
         .attr("text-anchor", "middle")
-        .attr("fill", "#94a3b8")
+        .attr("fill", "hsl(var(--muted-foreground))")
         .text("Select companies from the list to compare")
       return
     }
@@ -82,7 +82,7 @@ export function RadarChart({ data, className }: RadarChartProps) {
       g.append("circle")
         .attr("r", (radius / 5) * level)
         .attr("fill", "none")
-        .attr("stroke", "#334155")
+        .attr("stroke", "hsl(var(--border))")
         .attr("stroke-dasharray", "2,2")
     }
 
@@ -94,7 +94,7 @@ export function RadarChart({ data, className }: RadarChartProps) {
         .attr("y1", 0)
         .attr("x2", Math.cos(angle) * radius)
         .attr("y2", Math.sin(angle) * radius)
-        .attr("stroke", "#475569")
+        .attr("stroke", "hsl(var(--border))")
         .attr("stroke-width", 1)
 
       g.append("text")
@@ -103,7 +103,7 @@ export function RadarChart({ data, className }: RadarChartProps) {
         .attr("text-anchor", "middle")
         .attr("dominant-baseline", "middle")
         .attr("font-size", "11px")
-        .attr("fill", "#94a3b8")
+        .attr("fill", "hsl(var(--muted-foreground))")
         .text(metric.label)
     })
 
