@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState, useMemo } from "react"
 import * as d3 from "d3"
 import { Company } from "@/lib/company-data"
-import { getInvestmentColor } from "@/lib/investment-colors"
+import { getInvestmentColor, INVESTMENT_LIST_COLORS } from "@/lib/investment-colors"
 import { Button } from "@/components/ui/button"
 import {
   Select,
@@ -22,6 +22,7 @@ interface NetworkGraphProps {
 }
 
 type NodeType = "company" | "mfg" | "investment" | "industry" | "country" | "subsegment" | "category" | "subcategory"
+type LinkKind = "primary" | "secondary"
 
 interface Node extends d3.SimulationNodeDatum {
   id: string
@@ -35,6 +36,7 @@ interface Node extends d3.SimulationNodeDatum {
 interface Link extends d3.SimulationLinkDatum<Node> {
   source: string | Node
   target: string | Node
+  kind: LinkKind
 }
 
 // Hub node colors by type (non-company nodes)
@@ -48,22 +50,43 @@ const HUB_COLORS: Record<string, string> = {
   subcategory: "#06b6d4",
 }
 
+// Human-readable labels for hub types
+const HUB_LABELS: Record<string, string> = {
+  mfg: "Manufacturing Type",
+  investment: "Investment List",
+  industry: "Industry",
+  country: "Country",
+  subsegment: "Subsegment",
+  category: "Capability Tag",
+  subcategory: "Subcategory",
+}
+
+// Normalize common manufacturing type variants
+function normalizeMfgType(raw: string): string {
+  const trimmed = raw.trim()
+  if (trimmed === "Dicrete Manufacturing" || trimmed === "Discrete") return "Discrete Manufacturing"
+  if (trimmed === "Process Manufacturing") return "Process Industries"
+  return trimmed
+}
+
 export function NetworkGraph({ data, className, preview = false }: NetworkGraphProps) {
   const svgRef = useRef<SVGSVGElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const [primaryType, setPrimaryType] = useState<string>("investment")
-  const [secondaryType, setSecondaryType] = useState<string>("category")
+  const [secondaryType, setSecondaryType] = useState<string>("subcategory")
   const [metric, setMetric] = useState<string>("headcount")
 
   const graphData = useMemo(() => {
-    if (!data || data.length === 0) return { nodes: [], links: [], maxVal: 1, maxMoat: 5 }
+    if (!data || data.length === 0) return { nodes: [], links: [], maxVal: 1, hubTypes: new Set<NodeType>() }
 
     const nodes: Node[] = []
     const links: Link[] = []
     const nodeMap = new Map<string, boolean>()
+    const hubTypes = new Set<NodeType>()
 
     const addNode = (id: string, type: NodeType) => {
       if (!id) return
+      hubTypes.add(type)
       if (!nodeMap.has(id)) {
         nodeMap.set(id, true)
         nodes.push({ id, type, val: 1, moat: 0 })
@@ -82,8 +105,6 @@ export function NetworkGraph({ data, className, preview = false }: NetworkGraphP
 
     const values = data.map(d => getMetricValue(d))
     const maxVal = Math.max(...values, 1)
-    const moats = data.map(d => d.competitiveMoat || 0)
-    const maxMoat = Math.max(...moats, 1)
 
     data.forEach(d => {
       if (!nodeMap.has(d.name)) {
@@ -100,41 +121,45 @@ export function NetworkGraph({ data, className, preview = false }: NetworkGraphP
 
       // Primary linkage
       if (primaryType === "mfg" && d.manufacturingType) {
-        addNode(d.manufacturingType, "mfg")
-        links.push({ source: d.name, target: d.manufacturingType })
+        // Split comma-separated manufacturing types into individual links
+        const types = d.manufacturingType.split(",").map(t => normalizeMfgType(t)).filter(Boolean)
+        types.forEach(mfgType => {
+          addNode(mfgType, "mfg")
+          links.push({ source: d.name, target: mfgType, kind: "primary" })
+        })
       } else if (primaryType === "investment" && d.investmentList) {
         const invList = d.investmentList.replace(/^\d+-/, "").trim()
         addNode(invList, "investment")
-        links.push({ source: d.name, target: invList })
+        links.push({ source: d.name, target: invList, kind: "primary" })
       }
 
       // Secondary linkage
       if (secondaryType === "industry") {
         ;(d.industriesServed || []).slice(0, 3).forEach(ind => {
           addNode(ind, "industry")
-          links.push({ source: d.name, target: ind })
+          links.push({ source: d.name, target: ind, kind: "secondary" })
         })
       } else if (secondaryType === "country" && d.country) {
         addNode(d.country, "country")
-        links.push({ source: d.name, target: d.country })
+        links.push({ source: d.name, target: d.country, kind: "secondary" })
       } else if (secondaryType === "subsegment" && d.subsegment) {
         addNode(d.subsegment, "subsegment")
-        links.push({ source: d.name, target: d.subsegment })
+        links.push({ source: d.name, target: d.subsegment, kind: "secondary" })
       } else if (secondaryType === "category") {
         ;(d.categoryTags || []).slice(0, 3).forEach(tag => {
           const trimmed = tag.trim()
           if (trimmed) {
             addNode(trimmed, "category")
-            links.push({ source: d.name, target: trimmed })
+            links.push({ source: d.name, target: trimmed, kind: "secondary" })
           }
         })
       } else if (secondaryType === "subcategory" && d.subcategories) {
         addNode(d.subcategories, "subcategory")
-        links.push({ source: d.name, target: d.subcategories })
+        links.push({ source: d.name, target: d.subcategories, kind: "secondary" })
       }
     })
 
-    return { nodes, links, maxVal, maxMoat }
+    return { nodes, links, maxVal, hubTypes }
   }, [data, primaryType, secondaryType, metric])
 
   useEffect(() => {
@@ -166,7 +191,6 @@ export function NetworkGraph({ data, className, preview = false }: NetworkGraphP
 
     const getNodeColor = (d: Node) => {
       if (d.type === "company") {
-        // Color by investment list using canonical palette
         return d.investmentList ? getInvestmentColor(d.investmentList) : "#64748b"
       }
       return HUB_COLORS[d.type] ?? "#64748b"
@@ -178,13 +202,15 @@ export function NetworkGraph({ data, className, preview = false }: NetworkGraphP
       .force("center", d3.forceCenter(width / 2, height / 2).strength(0.05))
       .force("collide", d3.forceCollide<Node>().radius(d => (d.type === "company" ? radiusScale(d.val) : 10) + 5))
 
+    // Links — styled by kind (primary = solid thicker, secondary = dashed thinner)
     const link = g.append("g")
       .selectAll("line")
       .data(graphData.links)
       .join("line")
-      .attr("stroke", "#94a3b8")
-      .attr("stroke-opacity", 0.2)
-      .attr("stroke-width", 1)
+      .attr("stroke", (d: Link) => d.kind === "primary" ? "#64748b" : "#94a3b8")
+      .attr("stroke-opacity", (d: Link) => d.kind === "primary" ? 0.35 : 0.15)
+      .attr("stroke-width", (d: Link) => d.kind === "primary" ? 1.5 : 0.75)
+      .attr("stroke-dasharray", (d: Link) => d.kind === "secondary" ? "3,3" : "none")
 
     const node = g.append("g")
       .selectAll("g")
@@ -211,11 +237,11 @@ export function NetworkGraph({ data, className, preview = false }: NetworkGraphP
     node.append("circle")
       .attr("r", d => d.type === "company" ? radiusScale(d.val) : 8)
       .attr("fill", getNodeColor)
-      .attr("stroke", d => d.type === "company" ? "#fff" : "#fff")
+      .attr("stroke", "#fff")
       .attr("stroke-width", d => d.type === "company" ? moatScale(d.moat) : 1.5)
       .attr("stroke-opacity", d => d.type === "company" ? 0.9 : 1)
       .style("cursor", preview ? "default" : "pointer")
-      .on("mouseover", function (_, d) {
+      .on("mouseover", function () {
         if (!preview) {
           d3.select(this).attr("stroke", "var(--primary)").attr("stroke-width", 3)
         }
@@ -270,6 +296,31 @@ export function NetworkGraph({ data, className, preview = false }: NetworkGraphP
       .call(d3.zoom<SVGSVGElement, unknown>().transform as any, d3.zoomIdentity)
   }
 
+  // Build legend items from active hub types + investment list colors
+  const legendItems = useMemo(() => {
+    const items: { color: string; label: string; shape: "circle" | "line-solid" | "line-dashed" | "border" }[] = []
+
+    // Hub node types currently in use
+    graphData.hubTypes.forEach(type => {
+      if (HUB_COLORS[type]) {
+        items.push({ color: HUB_COLORS[type], label: HUB_LABELS[type] ?? type, shape: "circle" })
+      }
+    })
+
+    return items
+  }, [graphData.hubTypes])
+
+  // Investment list colors for the company node legend
+  const investmentLegend = useMemo(() => {
+    return Object.entries(INVESTMENT_LIST_COLORS)
+      .filter(([key]) => key !== "VC")
+      .map(([label, color]) => {
+        // Shorten labels for the legend
+        const short = label.replace(/\s*\(.*\)/, "")
+        return { color, label: short }
+      })
+  }, [])
+
   return (
     <Card className={`flex flex-col ${preview ? "min-h-[420px]" : "h-[calc(100vh-8rem)]"} ${className ?? ""}`}>
       {!preview && (
@@ -302,8 +353,8 @@ export function NetworkGraph({ data, className, preview = false }: NetworkGraphP
             <Select value={secondaryType} onValueChange={setSecondaryType}>
               <SelectTrigger className="w-[170px] h-8"><SelectValue /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="category">Capability Tags</SelectItem>
                 <SelectItem value="subcategory">Subcategory</SelectItem>
+                <SelectItem value="category">Capability Tags</SelectItem>
                 <SelectItem value="industry">Industries Served</SelectItem>
                 <SelectItem value="country">Country</SelectItem>
                 <SelectItem value="subsegment">Subsegment</SelectItem>
@@ -327,9 +378,49 @@ export function NetworkGraph({ data, className, preview = false }: NetworkGraphP
         )}
       </div>
       {!preview && (
-        <div className="px-4 py-2 flex items-center justify-between text-[10px] text-muted-foreground/60">
-          <span>Node color = investment list &middot; Border thickness = competitive moat score</span>
-          <span>Moat Map inspired by Blake Courter</span>
+        <div className="px-3 py-2 border-t bg-card space-y-1.5">
+          {/* Investment list color legend */}
+          <div className="flex flex-wrap gap-x-3 gap-y-1 items-center">
+            <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider shrink-0">Companies</span>
+            {investmentLegend.map(({ color, label }) => (
+              <div key={label} className="flex items-center gap-1">
+                <span className="inline-block w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: color }} />
+                <span className="text-[9px] text-muted-foreground whitespace-nowrap">{label}</span>
+              </div>
+            ))}
+          </div>
+          {/* Hub node + link legend */}
+          <div className="flex flex-wrap gap-x-3 gap-y-1 items-center">
+            <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider shrink-0">Clusters</span>
+            {legendItems.map(({ color, label }) => (
+              <div key={label} className="flex items-center gap-1">
+                <span className="inline-block w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: color }} />
+                <span className="text-[9px] text-muted-foreground whitespace-nowrap">{label}</span>
+              </div>
+            ))}
+            <span className="text-[9px] text-muted-foreground/50 mx-1">|</span>
+            {/* Line styles */}
+            <div className="flex items-center gap-1">
+              <svg width="16" height="6"><line x1="0" y1="3" x2="16" y2="3" stroke="#64748b" strokeWidth="1.5" /></svg>
+              <span className="text-[9px] text-muted-foreground">Primary</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <svg width="16" height="6"><line x1="0" y1="3" x2="16" y2="3" stroke="#94a3b8" strokeWidth="0.75" strokeDasharray="3,3" /></svg>
+              <span className="text-[9px] text-muted-foreground">Secondary</span>
+            </div>
+            <span className="text-[9px] text-muted-foreground/50 mx-1">|</span>
+            {/* Moat border */}
+            <div className="flex items-center gap-1">
+              <svg width="32" height="12">
+                <circle cx="6" cy="6" r="4.5" fill="#64748b" stroke="#fff" strokeWidth="1" />
+                <circle cx="20" cy="6" r="4.5" fill="#64748b" stroke="#fff" strokeWidth="3.5" />
+              </svg>
+              <span className="text-[9px] text-muted-foreground">Border = moat</span>
+            </div>
+          </div>
+          <div className="text-right">
+            <span className="text-[9px] text-muted-foreground/40">Moat Map inspired by Blake Courter</span>
+          </div>
         </div>
       )}
     </Card>

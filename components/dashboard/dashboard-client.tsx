@@ -80,6 +80,7 @@ function DashboardInner({ companies, isLoading, profileType, onSelectProfile, is
         companies={companies}
         profileType={profileType}
         isAdmin={isAdmin}
+        onSelectScenario={onSelectProfile}
       />
     </>
   )
