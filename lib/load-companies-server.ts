@@ -3,6 +3,12 @@ import { promises as fs } from 'fs'
 import path from 'path'
 import type { Company } from './company-data'
 
+const JUNK_VALUES = new Set(['n/a', 'n a', 'na', 'unknown', 'none', 'null', '-', '—'])
+function cleanField(value: string | undefined): string {
+  const v = (value || '').trim()
+  return JUNK_VALUES.has(v.toLowerCase()) ? '' : v
+}
+
 function parseCurrency(value: string | undefined): number {
   if (!value) return 0
   const cleaned = value.replace(/[$,\s]/g, '')
@@ -53,7 +59,7 @@ export async function loadCompaniesFromCSV(): Promise<Company[]> {
     strengths: row['Strengths'] || '',
     weaknesses: row['Weaknesses'] || '',
     discipline: row['Discipline'] || '',
-    lifecyclePhase: row['Lifecycle Phase'] || '',
+    lifecyclePhase: cleanField(row['Lifecycle Phase']),
     workflowSegment: row['Workflow Segment'] || '',
     subsegment: row['Subsegment'] || '',
     sectorFocus: row['Sector Focus'] || '',

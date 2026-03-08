@@ -19,6 +19,7 @@ import { useState } from "react";
 
 const NAV_ITEMS = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard", exact: true },
+  { href: "/dashboard/explore", icon: Eye, label: "Free Explorer", exact: true },
 ];
 
 export const FOCUS_SCENARIOS = [

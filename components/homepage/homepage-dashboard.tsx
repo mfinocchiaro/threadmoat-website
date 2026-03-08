@@ -5,7 +5,6 @@ import dynamic from "next/dynamic"
 import { Company, formatCurrency } from "@/lib/company-data"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { NetworkGraph } from "@/components/charts/network-graph"
-import { SunburstChart } from "@/components/charts/sunburst-chart"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Lock } from "lucide-react"
 import Link from "next/link"
@@ -92,13 +91,6 @@ export function HomepageDashboard({ data }: { data: Company[] }) {
             <div className="h-[500px] rounded-lg overflow-hidden bg-black">
               <GlobeChart data={data} />
             </div>
-          </ChartCard>
-        </div>
-
-        {/* Sunburst — preview mode: no controls, max 5 names per slice */}
-        <div className="mb-6">
-          <ChartCard title="Ecosystem Structure" subtitle="Investment domains by funding round">
-            <SunburstChart data={data} className="h-[650px]" preview />
           </ChartCard>
         </div>
 
