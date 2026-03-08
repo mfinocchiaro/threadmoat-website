@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 
-type DimensionKey = "investmentList" | "country" | "subsegment" | "lifecyclePhase"
+type DimensionKey = "investmentList" | "country" | "subsegment" | "lifecyclePhase" | "latestFundingRound"
 type MetricKey = "count" | "totalFunding" | "avgScore"
 
 interface MarimekkoChartProps {
@@ -22,14 +22,40 @@ interface MarimekkoChartProps {
   className?: string
 }
 
+const FUNDING_ROUND_ORDER = [
+  "Pre-Seed", "Seed", "Angel Round", "Grants", "Series A", "Series B",
+  "Series C", "Series D", "Series E", "Series F",
+  "Corporate Venture", "Bootstrapped", "Undisclosed or unknown",
+]
+
 function normalizeKey(val: string | undefined, dim: DimensionKey): string {
-  if (!val) return "Unknown"
+  if (!val) return dim === "latestFundingRound" ? "Undisclosed or unknown" : "Unknown"
   if (dim === "investmentList") return val.replace(/^\d+-/, "").trim()
   return val.trim()
 }
 
 function getDimLabel(dim: DimensionKey): string {
-  return { investmentList: "Investment List", country: "Country", subsegment: "Subsegment", lifecyclePhase: "Lifecycle Phase" }[dim]
+  return {
+    investmentList: "Investment List",
+    country: "Country",
+    subsegment: "Subsegment",
+    lifecyclePhase: "Lifecycle Phase",
+    latestFundingRound: "Funding Round",
+  }[dim]
+}
+
+function sortCategories(cats: string[], dim: DimensionKey, totals: Map<string, number>): string[] {
+  if (dim === "latestFundingRound") {
+    return cats.sort((a, b) => {
+      const ai = FUNDING_ROUND_ORDER.indexOf(a)
+      const bi = FUNDING_ROUND_ORDER.indexOf(b)
+      if (ai === -1 && bi === -1) return (totals.get(b) ?? 0) - (totals.get(a) ?? 0)
+      if (ai === -1) return 1
+      if (bi === -1) return -1
+      return ai - bi
+    })
+  }
+  return cats.sort((a, b) => (totals.get(b) ?? 0) - (totals.get(a) ?? 0))
 }
 
 function getMetricLabel(m: MetricKey): string {
@@ -102,8 +128,8 @@ export function MarimekkoChart({ data, className }: MarimekkoChartProps) {
 
     if (grandTotal === 0) return
 
-    const widthCats = Array.from(widthTotals.keys()).sort((a, b) => widthTotals.get(b)! - widthTotals.get(a)!).slice(0, 14)
-    const heightCats = Array.from(heightTotals.keys()).sort((a, b) => heightTotals.get(b)! - heightTotals.get(a)!).slice(0, 12)
+    const widthCats = sortCategories(Array.from(widthTotals.keys()), widthDim, widthTotals).slice(0, 14)
+    const heightCats = sortCategories(Array.from(heightTotals.keys()), heightDim, heightTotals).slice(0, 12)
 
     // Cells
     interface Cell {
@@ -287,6 +313,7 @@ export function MarimekkoChart({ data, className }: MarimekkoChartProps) {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="investmentList">Investment List</SelectItem>
+              <SelectItem value="latestFundingRound">Funding Round</SelectItem>
               <SelectItem value="country">Country</SelectItem>
               <SelectItem value="subsegment">Subsegment</SelectItem>
               <SelectItem value="lifecyclePhase">Lifecycle Phase</SelectItem>
@@ -301,6 +328,7 @@ export function MarimekkoChart({ data, className }: MarimekkoChartProps) {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="investmentList">Investment List</SelectItem>
+              <SelectItem value="latestFundingRound">Funding Round</SelectItem>
               <SelectItem value="country">Country</SelectItem>
               <SelectItem value="subsegment">Subsegment</SelectItem>
               <SelectItem value="lifecyclePhase">Lifecycle Phase</SelectItem>

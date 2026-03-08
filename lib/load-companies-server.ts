@@ -79,7 +79,7 @@ export async function loadCompaniesFromCSV(): Promise<Company[]> {
     subcategories: row['Subcategories'] || '',
     companyGroup: row['Company Group'] || '',
     startupLifecyclePhase: row['Startup Lifecycle Phase'] || '',
-    latestFundingRound: row['Latest Funding Round'] || '',
+    latestFundingRound: row['Latest Funding Round']?.trim() || 'Undisclosed or unknown',
     fundingYear: parseInt(row['Lastest Funding Event Year']) || parseInt(row['Latest Funding Event Year']) || 0,
     lastFundingAmount: parseCurrency(row['Latest Event Funding Amount']),
     totalFunding: parseCurrency(row['Total Current Known Funding Level']),
@@ -91,7 +91,7 @@ export async function loadCompaniesFromCSV(): Promise<Company[]> {
         .split(/[\n,]+/)
         .map(t => t.trim())
         .filter(t => t && ![
-          'Undisclosed', 'Unknown or Undisclosed', 'Unknown', 'N A', 'N/A', 'None',
+          'Undisclosed', 'Unknown or Undisclosed', 'Undisclosed or unknown', 'Unknown', 'N A', 'N/A', 'None',
           'Bootstrapped', 'Boostrapped', 'Self-funded', 'Self-Funded',
           'No publicly disclosed investors found.', 'No publicly disclosed investors found',
           'Angel investors',
