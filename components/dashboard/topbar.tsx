@@ -1,7 +1,8 @@
 "use client";
 
 import { signOut } from "next-auth/react";
-import { LogOut, Settings } from "lucide-react";
+import { useTheme } from "next-themes";
+import { LogOut, Settings, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
@@ -32,6 +33,7 @@ interface TopBarProps {
 }
 
 export function TopBar({ user, profile, onEditThesis }: TopBarProps) {
+  const { theme, setTheme } = useTheme();
   const initials = profile?.full_name
     ? profile.full_name.split(" ").filter(Boolean).slice(0, 2).map(n => n[0].toUpperCase()).join("")
     : user?.email?.[0].toUpperCase() ?? "?";
@@ -46,6 +48,16 @@ export function TopBar({ user, profile, onEditThesis }: TopBarProps) {
     <header className="sticky top-0 z-40 flex h-14 items-center justify-end gap-3 border-b border-border/40 bg-background/80 backdrop-blur-sm px-4">
       {onEditThesis && <ThesisIndicator onEditThesis={onEditThesis} />}
       <div className="flex-1" />
+      <Button
+        variant="ghost"
+        size="icon"
+        className="h-8 w-8"
+        onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+        aria-label="Toggle theme"
+      >
+        <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+        <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+      </Button>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="icon" className="rounded-full">
