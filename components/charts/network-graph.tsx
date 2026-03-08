@@ -31,6 +31,8 @@ interface Node extends d3.SimulationNodeDatum {
   val: number
   moat: number
   investmentList?: string
+  revenueB?: number   // incumbents: revenue in $B for gravity-well sizing
+  vendor?: string     // incumbents: parent vendor name
   data?: Company
 }
 
@@ -82,7 +84,7 @@ export function NetworkGraph({ data, className, preview = false }: NetworkGraphP
   const [secondaryType, setSecondaryType] = useState<string>("subcategory")
   const [metric, setMetric] = useState<string>("headcount")
   const [showIncumbents, setShowIncumbents] = useState(false)
-  const [incumbents, setIncumbents] = useState<Array<{id: string; vendor: string; category: string}>>([])
+  const [incumbents, setIncumbents] = useState<Array<{id: string; vendor: string; product: string; category: string; revenueB?: number}>>([])
   const [searchQuery, setSearchQuery] = useState("")
 
   // Refs for imperative D3 updates (search highlight, annotation, zoom)
@@ -182,18 +184,35 @@ export function NetworkGraph({ data, className, preview = false }: NetworkGraphP
     })
 
     if (showIncumbents) {
+      // Build category → incumbents map so startups link to their category's incumbents
+      const catToIncIds = new Map<string, string[]>()
+
       incumbents.forEach(inc => {
-        const id = `★ ${inc.id}`
+        const id = `☆ ${inc.vendor}: ${inc.product}`
+        const catLabel = inc.category.replace(/^\d+-/, '').trim()
         if (!nodeMap.has(id)) {
           nodeMap.set(id, true)
-          nodes.push({ id, type: 'incumbent', val: 30, moat: 5 })
+          nodes.push({ id, type: 'incumbent', val: Math.round((inc.revenueB ?? 0.1) * 100), moat: 5, revenueB: inc.revenueB ?? 0.1, vendor: inc.vendor })
           hubTypes.add('incumbent')
         }
-        // Link to matching investment category hub if it exists
-        const catLabel = inc.category.replace(/^\d+-/, '').trim()
+        // Link incumbent → category hub (if investment primary view)
         if (primaryType === 'investment' && nodeMap.has(catLabel)) {
           links.push({ source: id, target: catLabel, kind: 'primary' })
         }
+        // Track for startup → incumbent links
+        const existing = catToIncIds.get(catLabel) ?? []
+        existing.push(id)
+        catToIncIds.set(catLabel, existing)
+      })
+
+      // Link each startup to the incumbents in its investment category
+      data.forEach(d => {
+        const catLabel = (d.investmentList ?? '').replace(/^\d+-/, '').trim()
+        const incIds = catToIncIds.get(catLabel) ?? []
+        // Cap at 2 incumbents per startup to avoid visual overload
+        incIds.slice(0, 2).forEach(incId => {
+          links.push({ source: d.name, target: incId, kind: 'secondary' })
+        })
       })
     }
 
@@ -256,6 +275,12 @@ export function NetworkGraph({ data, className, preview = false }: NetworkGraphP
       .domain([0, graphData.maxVal])
       .range([4, metric === "weightedScore" ? 15 : 25])
 
+    // Incumbents sized by revenue ($B) — min 28px, max 72px to act as true gravity wells
+    const incumbentRadiusScale = d3.scaleSqrt()
+      .domain([0, 1.5])
+      .range([28, 72])
+      .clamp(true)
+
     // Moat → border width: 0 moat = 1px, 5 moat = 4px
     const moatScale = d3.scaleLinear()
       .domain([0, 5])
@@ -273,7 +298,11 @@ export function NetworkGraph({ data, className, preview = false }: NetworkGraphP
       .force("link", d3.forceLink<Node, Link>(graphData.links).id((d: Node) => d.id).distance(80).strength(0.5))
       .force("charge", d3.forceManyBody().strength(-200))
       .force("center", d3.forceCenter(width / 2, height / 2).strength(0.05))
-      .force("collide", d3.forceCollide<Node>().radius(d => (d.type === "company" ? radiusScale(d.val) : 10) + 5))
+      .force("collide", d3.forceCollide<Node>().radius(d => {
+        if (d.type === "company") return radiusScale(d.val) + 5
+        if (d.type === "incumbent") return incumbentRadiusScale(d.revenueB ?? 0.1) + 10
+        return 15
+      }))
 
     // Detect dark mode for link contrast
     const isDark = document.documentElement.classList.contains("dark")
@@ -314,12 +343,30 @@ export function NetworkGraph({ data, className, preview = false }: NetworkGraphP
       )
     }
 
+    const getNodeRadius = (d: Node) => {
+      if (d.type === "company") return radiusScale(d.val)
+      if (d.type === "incumbent") return incumbentRadiusScale(d.revenueB ?? 0.1)
+      return 8
+    }
+
     node.append("circle")
-      .attr("r", d => d.type === "company" ? radiusScale(d.val) : 8)
+      .attr("r", getNodeRadius)
       .attr("fill", getNodeColor)
-      .attr("stroke", "#fff")
-      .attr("stroke-width", d => d.type === "company" ? moatScale(d.moat) : 1.5)
+      .attr("stroke", d => d.type === "incumbent" ? "#fff" : "#fff")
+      .attr("stroke-width", d => d.type === "company" ? moatScale(d.moat) : d.type === "incumbent" ? 3 : 1.5)
       .attr("stroke-opacity", d => d.type === "company" ? 0.9 : 1)
+      .attr("fill-opacity", d => d.type === "incumbent" ? 0.25 : 1)
+
+    // Outer ring for incumbents (shows market territory boundary)
+    node.filter(d => d.type === "incumbent")
+      .append("circle")
+      .attr("r", d => incumbentRadiusScale(d.revenueB ?? 0.1) + 6)
+      .attr("fill", "none")
+      .attr("stroke", "#dc2626")
+      .attr("stroke-width", 1.5)
+      .attr("stroke-dasharray", "4,3")
+      .attr("stroke-opacity", 0.5)
+      .attr("pointer-events", "none")
       .style("cursor", preview ? "default" : "pointer")
       .on("mouseover", function () {
         if (!preview) {
@@ -337,8 +384,8 @@ export function NetworkGraph({ data, className, preview = false }: NetworkGraphP
     // In preview mode, only show labels for non-company nodes (categories/hubs)
     node.filter(d => preview ? d.type !== "company" : true)
       .append("text")
-      .text(d => d.id)
-      .attr("x", d => (d.type === "company" ? radiusScale(d.val) : 8) + 5)
+      .text(d => d.type === "incumbent" ? (d.vendor ?? d.id) : d.id)
+      .attr("x", d => getNodeRadius(d) + 5)
       .attr("y", 3)
       .style("font-size", "10px")
       .style("fill", "var(--foreground)")
