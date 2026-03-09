@@ -1,13 +1,31 @@
 import { auth } from '@/auth'
 import { NextResponse } from 'next/server'
 
-export default auth(req => {
-  // Redirect unauthenticated users away from dashboard routes
-  if (!req.auth && req.nextUrl.pathname.startsWith('/dashboard')) {
-    const loginUrl = new URL('/auth/login', req.nextUrl.origin)
-    loginUrl.searchParams.set('redirect', req.nextUrl.pathname)
-    return NextResponse.redirect(loginUrl)
+export default auth((req) => {
+  const { pathname } = req.nextUrl
+
+  // Allow auth routes, public API (webhooks), and static assets
+  if (
+    pathname.startsWith('/auth/') ||
+    pathname.startsWith('/api/auth/') ||
+    pathname.startsWith('/api/webhooks/')
+  ) {
+    return NextResponse.next()
   }
+
+  // Protect dashboard and API routes — reject/redirect unauthenticated users
+  if (pathname.startsWith('/dashboard') || pathname.startsWith('/api/')) {
+    if (!req.auth?.user) {
+      if (pathname.startsWith('/api/')) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      }
+      const loginUrl = new URL('/auth/login', req.nextUrl.origin)
+      loginUrl.searchParams.set('redirect', pathname)
+      return NextResponse.redirect(loginUrl)
+    }
+  }
+
+  return NextResponse.next()
 })
 
 export const config = {

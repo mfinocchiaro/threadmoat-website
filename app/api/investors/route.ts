@@ -54,7 +54,7 @@ export async function GET() {
     return NextResponse.json({ success: true, count: investors.length, data: investors })
   } catch (error) {
     return NextResponse.json(
-      { success: false, error: 'Failed to load investor data', details: error instanceof Error ? error.message : 'Unknown error' },
+      { success: false, error: 'Failed to load investor data' },
       { status: 500 }
     )
   }

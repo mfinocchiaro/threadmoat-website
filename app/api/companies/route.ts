@@ -13,7 +13,7 @@ export async function GET() {
     return NextResponse.json({ success: true, count: companies.length, data: companies })
   } catch (error) {
     return NextResponse.json(
-      { success: false, error: 'Failed to load company data', details: error instanceof Error ? error.message : 'Unknown error' },
+      { success: false, error: 'Failed to load company data' },
       { status: 500 }
     )
   }

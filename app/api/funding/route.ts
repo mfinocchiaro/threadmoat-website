@@ -122,7 +122,7 @@ export async function GET() {
     return NextResponse.json({ success: true, count: funding.length, data: funding })
   } catch (error) {
     return NextResponse.json(
-      { success: false, error: 'Failed to load funding data', details: error instanceof Error ? error.message : 'Unknown error' },
+      { success: false, error: 'Failed to load funding data' },
       { status: 500 }
     )
   }

@@ -26,13 +26,18 @@ export async function POST(req: NextRequest) {
 
   let body: { layout: Record<string, string[]> };
   try {
-    body = await req.json();
+    const raw = await req.text();
+    if (raw.length > 102_400) {
+      return NextResponse.json({ error: "Payload too large" }, { status: 413 });
+    }
+    body = JSON.parse(raw);
     if (!body.layout || typeof body.layout !== "object") throw new Error("bad shape");
     // Validate: each value must be a string array
     for (const [, v] of Object.entries(body.layout)) {
       if (!Array.isArray(v) || v.some(x => typeof x !== "string")) throw new Error("bad shape");
     }
-  } catch {
+  } catch (e) {
+    if (e instanceof SyntaxError) return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
     return NextResponse.json({ error: "Invalid input" }, { status: 400 });
   }
 
