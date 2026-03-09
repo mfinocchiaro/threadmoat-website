@@ -95,22 +95,35 @@ const CUSTOMER_DOMAINS: Record<string, string> = {
  * Tries exact match first, then case-insensitive, then prefix/contains matching
  * to handle variants like "BMW Group" → "BMW", "Siemens AG" → "Siemens".
  */
+/**
+ * Resolve a domain for a customer name, then return a Google favicon URL.
+ * Google's favicon service (s2/favicons) is free, reliable, and returns
+ * high-resolution brand icons for all well-known domains.
+ */
 export function getCustomerLogoUrl(name: string, size = 80): string | null {
+  const domain = resolveDomain(name)
+  if (!domain) return null
+  // Round up to nearest supported size (16, 32, 48, 64, 128, 256)
+  const sz = size <= 32 ? 32 : size <= 64 ? 64 : size <= 128 ? 128 : 256
+  return `https://www.google.com/s2/favicons?domain=${domain}&sz=${sz}`
+}
+
+function resolveDomain(name: string): string | null {
   // 1. Exact match
-  if (CUSTOMER_DOMAINS[name]) return `https://logo.clearbit.com/${CUSTOMER_DOMAINS[name]}?size=${size}`
+  if (CUSTOMER_DOMAINS[name]) return CUSTOMER_DOMAINS[name]
 
   const nameLower = name.toLowerCase().trim()
 
   // 2. Case-insensitive exact match
   for (const [key, domain] of Object.entries(CUSTOMER_DOMAINS)) {
-    if (key.toLowerCase() === nameLower) return `https://logo.clearbit.com/${domain}?size=${size}`
+    if (key.toLowerCase() === nameLower) return domain
   }
 
-  // 3. Prefix match — known brand is a prefix of the customer name (e.g., "Siemens AG" starts with "Siemens")
+  // 3. Prefix match — "Siemens AG" → "Siemens"
   for (const [key, domain] of Object.entries(CUSTOMER_DOMAINS)) {
     const keyLower = key.toLowerCase()
     if (nameLower.startsWith(keyLower) && (nameLower.length === keyLower.length || /[\s\-,.]/.test(nameLower[keyLower.length]))) {
-      return `https://logo.clearbit.com/${domain}?size=${size}`
+      return domain
     }
   }
 

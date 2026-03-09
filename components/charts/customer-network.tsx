@@ -156,19 +156,36 @@ export function CustomerNetwork({ data, className }: { data: Company[]; classNam
 
     customerNodes.append("circle")
       .attr("r", d => rScale((d as CustomerNode).count))
-      .attr("fill", "hsl(var(--card))")
+      .attr("fill", "hsl(var(--muted))")
       .attr("stroke", "hsl(var(--primary))")
       .attr("stroke-width", 2)
 
-    // Logo images (with fallback to text)
+    // Logo images — always render initials text first as fallback, then overlay image.
+    // This way even if the image fails to load, something is always visible.
     customerNodes.each(function (d) {
       const node = d3.select(this)
       const r = rScale((d as CustomerNode).count)
       const logoUrl = getCustomerLogoUrl(d.name, Math.round(r * 3))
 
+      // Always: initials label (shown when no logo or logo fails)
+      const initials = d.name
+        .split(/[\s&,\-]+/)
+        .filter(Boolean)
+        .slice(0, 2)
+        .map(w => w[0].toUpperCase())
+        .join("")
+      const textEl = node.append("text")
+        .text(initials)
+        .attr("text-anchor", "middle")
+        .attr("dominant-baseline", "central")
+        .attr("font-size", Math.max(9, Math.min(14, r / 2)))
+        .attr("font-weight", "700")
+        .attr("fill", "hsl(var(--foreground))")
+        .attr("pointer-events", "none")
+
       if (logoUrl) {
-        const imgSize = r * 1.4
-        node.append("image")
+        const imgSize = r * 1.6
+        const img = node.append("image")
           .attr("href", logoUrl)
           .attr("x", -imgSize / 2)
           .attr("y", -imgSize / 2)
@@ -177,26 +194,13 @@ export function CustomerNetwork({ data, className }: { data: Company[]; classNam
           .attr("clip-path", `url(#clip-${d.id.replace(/[^a-zA-Z0-9]/g, "_")})`)
           .attr("pointer-events", "none")
           .attr("preserveAspectRatio", "xMidYMid meet")
-          .on("error", function () {
-            // Logo failed to load — show text instead
-            d3.select(this).remove()
-            node.append("text")
-              .text(d.name.length > r / 3 ? d.name.slice(0, Math.floor(r / 3)) + "…" : d.name)
-              .attr("text-anchor", "middle")
-              .attr("dy", "0.35em")
-              .attr("font-size", Math.max(8, Math.min(12, r / 2.5)))
-              .attr("fill", "hsl(var(--foreground))")
-              .attr("pointer-events", "none")
-          })
-      } else {
-        // No logo mapping — text label
-        node.append("text")
-          .text(d.name.length > r / 3 ? d.name.slice(0, Math.floor(r / 3)) + "…" : d.name)
-          .attr("text-anchor", "middle")
-          .attr("dy", "0.35em")
-          .attr("font-size", Math.max(8, Math.min(12, r / 2.5)))
-          .attr("fill", "hsl(var(--foreground))")
-          .attr("pointer-events", "none")
+
+        // If image loads → hide the text initials
+        const imgNode = img.node() as SVGImageElement | null
+        if (imgNode) {
+          imgNode.onload = () => textEl.attr("display", "none")
+          imgNode.onerror = () => img.remove()
+        }
       }
     })
 
