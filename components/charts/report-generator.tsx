@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
-import { Sparkles, ChevronRight } from "lucide-react"
+import { Sparkles, ChevronRight, X, Plus } from "lucide-react"
 import { getCustomerLogoUrl, parseKnownCustomers } from "@/lib/customer-logos"
 
 interface ReportGeneratorProps {
@@ -483,6 +483,379 @@ function IntelligenceReportTab({ data }: { data: Company[] }) {
   )
 }
 
+// ─── Scenario Report Generator ────────────────────────────────────────────────
+
+const SCENARIOS = [
+  {
+    value: "strongest-moat",
+    label: "Which startup has the strongest competitive moat?",
+    scoreKey: "competitiveMoat" as keyof Company,
+    justKey: "competitiveMoatJustification" as keyof Company,
+    narrative: (companies: Company[]) => {
+      const ranked = [...companies].sort((a, b) => b.competitiveMoat - a.competitiveMoat)
+      const winner = ranked[0]
+      return [
+        `## COMPETITIVE MOAT ANALYSIS`,
+        `Comparing ${companies.map(c => c.name).join(", ")} on defensive positioning, differentiation, and market lock-in.`,
+        ``,
+        `## VERDICT`,
+        `**${winner.name}** leads with a Competitive Moat score of ${winner.competitiveMoat.toFixed(1)}/5.`,
+        winner.competitiveMoatJustification ? winner.competitiveMoatJustification : "",
+        ``,
+        `## RANKING`,
+        ...ranked.map((c, i) => [
+          `${i + 1}. **${c.name}** — ${score5(c.competitiveMoat)}`,
+          c.competitiveMoatJustification ? `   ${c.competitiveMoatJustification}` : "",
+          c.differentiationTags?.length ? `   Tags: ${c.differentiationTags.join(", ")}` : "",
+        ].filter(Boolean).join("\n")),
+      ].filter(Boolean).join("\n")
+    },
+  },
+  {
+    value: "best-acquisition",
+    label: "Which would make the best acquisition target?",
+    scoreKey: "weightedScore" as keyof Company,
+    justKey: "strengths" as keyof Company,
+    narrative: (companies: Company[]) => {
+      // Acquisition value = weighted score + funding efficiency + market opportunity
+      const ranked = [...companies].sort((a, b) =>
+        (b.weightedScore * 0.4 + b.fundingEfficiency * 0.3 + b.marketOpportunity * 0.3) -
+        (a.weightedScore * 0.4 + a.fundingEfficiency * 0.3 + a.marketOpportunity * 0.3)
+      )
+      const winner = ranked[0]
+      return [
+        `## ACQUISITION TARGET ANALYSIS`,
+        `Evaluating ${companies.map(c => c.name).join(", ")} on overall score, funding efficiency, and market opportunity.`,
+        ``,
+        `## VERDICT`,
+        `**${winner.name}** scores highest on acquisition attractiveness (weighted score ${winner.weightedScore?.toFixed(2)}, funding efficiency ${winner.fundingEfficiency.toFixed(1)}/5, market opportunity ${winner.marketOpportunity.toFixed(1)}/5).`,
+        winner.strengths ? `Key value driver: ${winner.strengths}` : "",
+        ``,
+        `## RANKING`,
+        ...ranked.map((c, i) => {
+          const acqScore = (c.weightedScore * 0.4 + c.fundingEfficiency * 0.3 + c.marketOpportunity * 0.3).toFixed(2)
+          return [
+            `${i + 1}. **${c.name}** — Acq. Score ${acqScore}  |  Funding: ${formatCurrency(c.totalFunding)}  |  Revenue: ${formatCurrency(c.estimatedRevenue)}`,
+            c.weaknesses ? `   Risk: ${c.weaknesses}` : "",
+          ].filter(Boolean).join("\n")
+        }),
+      ].filter(Boolean).join("\n")
+    },
+  },
+  {
+    value: "enterprise-adoption",
+    label: "Which is best positioned for enterprise adoption?",
+    scoreKey: "industryImpact" as keyof Company,
+    justKey: "industryImpactJustification" as keyof Company,
+    narrative: (companies: Company[]) => {
+      const ranked = [...companies].sort((a, b) =>
+        (b.industryImpact * 0.4 + b.teamExecution * 0.35 + b.growthMetrics * 0.25) -
+        (a.industryImpact * 0.4 + a.teamExecution * 0.35 + a.growthMetrics * 0.25)
+      )
+      const winner = ranked[0]
+      return [
+        `## ENTERPRISE ADOPTION READINESS`,
+        `Evaluating ${companies.map(c => c.name).join(", ")} on industry impact, team execution, and growth signals.`,
+        ``,
+        `## VERDICT`,
+        `**${winner.name}** is best positioned for enterprise adoption (Industry Impact ${winner.industryImpact.toFixed(1)}/5, Team & Execution ${winner.teamExecution.toFixed(1)}/5).`,
+        winner.industryImpactJustification ? winner.industryImpactJustification : "",
+        winner.industriesServed?.length ? `Enterprise markets: ${winner.industriesServed.join(", ")}` : "",
+        ``,
+        `## RANKING`,
+        ...ranked.map((c, i) => [
+          `${i + 1}. **${c.name}** — Industry Impact ${score5(c.industryImpact)}`,
+          c.knownCustomers ? `   Customers: ${c.knownCustomers}` : "",
+          c.industryImpactJustification ? `   ${c.industryImpactJustification}` : "",
+        ].filter(Boolean).join("\n")),
+      ].filter(Boolean).join("\n")
+    },
+  },
+  {
+    value: "series-b",
+    label: "Which is likeliest to reach Series B in 12 months?",
+    scoreKey: "growthMetrics" as keyof Company,
+    justKey: "growthMetricsJustification" as keyof Company,
+    narrative: (companies: Company[]) => {
+      const GROWTH_ROUNDS = ["Pre-Seed", "Seed", "Series A"]
+      const ranked = [...companies].sort((a, b) =>
+        (b.growthMetrics * 0.4 + b.fundingEfficiency * 0.3 + b.teamExecution * 0.3) -
+        (a.growthMetrics * 0.4 + a.fundingEfficiency * 0.3 + a.teamExecution * 0.3)
+      )
+      const winner = ranked[0]
+      return [
+        `## SERIES B READINESS ANALYSIS`,
+        `Evaluating ${companies.map(c => c.name).join(", ")} on growth metrics, funding efficiency, and team execution.`,
+        ``,
+        `## VERDICT`,
+        `**${winner.name}** has the strongest trajectory toward Series B (Growth ${winner.growthMetrics.toFixed(1)}/5, Funding Efficiency ${winner.fundingEfficiency.toFixed(1)}/5).`,
+        winner.growthMetricsJustification ? winner.growthMetricsJustification : "",
+        ``,
+        `## RANKING`,
+        ...ranked.map((c, i) => {
+          const stageNote = GROWTH_ROUNDS.includes(c.latestFundingRound) ? "✓ Pre-Series B stage" : `Current: ${c.latestFundingRound || "N/A"}`
+          return [
+            `${i + 1}. **${c.name}** — ${stageNote}`,
+            `   Growth ${score5(c.growthMetrics)}  |  Efficiency ${score5(c.fundingEfficiency)}  |  Team ${score5(c.teamExecution)}`,
+            c.growthMetricsJustification ? `   ${c.growthMetricsJustification}` : "",
+          ].filter(Boolean).join("\n")
+        }),
+      ].filter(Boolean).join("\n")
+    },
+  },
+  {
+    value: "incumbent-threat",
+    label: "Which poses the greatest threat to PLM incumbents?",
+    scoreKey: "techDifferentiation" as keyof Company,
+    justKey: "techDifferentiationJustification" as keyof Company,
+    narrative: (companies: Company[]) => {
+      const ranked = [...companies].sort((a, b) =>
+        (b.techDifferentiation * 0.4 + b.competitiveMoat * 0.35 + b.marketOpportunity * 0.25) -
+        (a.techDifferentiation * 0.4 + a.competitiveMoat * 0.35 + a.marketOpportunity * 0.25)
+      )
+      const winner = ranked[0]
+      return [
+        `## INCUMBENT DISRUPTION THREAT ANALYSIS`,
+        `Evaluating ${companies.map(c => c.name).join(", ")} on tech differentiation, competitive moat, and market opportunity.`,
+        ``,
+        `## VERDICT`,
+        `**${winner.name}** poses the greatest threat to PLM incumbents (Tech Diff. ${winner.techDifferentiation.toFixed(1)}/5, Competitive Moat ${winner.competitiveMoat.toFixed(1)}/5).`,
+        winner.techDifferentiationJustification ? winner.techDifferentiationJustification : "",
+        winner.differentiationTags?.length ? `Disruption vectors: ${winner.differentiationTags.join(", ")}` : "",
+        ``,
+        `## RANKING`,
+        ...ranked.map((c, i) => [
+          `${i + 1}. **${c.name}** — Tech Diff. ${score5(c.techDifferentiation)}  |  Moat ${score5(c.competitiveMoat)}`,
+          c.techDifferentiationJustification ? `   ${c.techDifferentiationJustification}` : "",
+          c.operatingModelTags?.length ? `   Model: ${c.operatingModelTags.join(", ")}` : "",
+        ].filter(Boolean).join("\n")),
+      ].filter(Boolean).join("\n")
+    },
+  },
+  {
+    value: "best-team",
+    label: "Which has the strongest team and execution?",
+    scoreKey: "teamExecution" as keyof Company,
+    justKey: "teamExecutionJustification" as keyof Company,
+    narrative: (companies: Company[]) => {
+      const ranked = [...companies].sort((a, b) => b.teamExecution - a.teamExecution)
+      const winner = ranked[0]
+      return [
+        `## TEAM & EXECUTION ANALYSIS`,
+        `Comparing ${companies.map(c => c.name).join(", ")} on leadership quality, hiring velocity, and operational execution.`,
+        ``,
+        `## VERDICT`,
+        `**${winner.name}** leads on team strength with a score of ${winner.teamExecution.toFixed(1)}/5.`,
+        winner.teamExecutionJustification ? winner.teamExecutionJustification : "",
+        ``,
+        `## RANKING`,
+        ...ranked.map((c, i) => [
+          `${i + 1}. **${c.name}** — ${score5(c.teamExecution)}`,
+          `   Headcount: ${c.headcount?.toLocaleString() ?? "N/A"}  |  Stage: ${c.startupLifecyclePhase || "N/A"}`,
+          c.teamExecutionJustification ? `   ${c.teamExecutionJustification}` : "",
+        ].filter(Boolean).join("\n")),
+      ].filter(Boolean).join("\n")
+    },
+  },
+]
+
+function generateScenarioReport(companies: Company[], scenarioValue: string): string {
+  const scenario = SCENARIOS.find(s => s.value === scenarioValue)
+  if (!scenario || companies.length < 2) return ""
+
+  const sep = "─".repeat(60)
+  const names = companies.map(c => c.name).join("  ·  ")
+
+  // Comparison table
+  const tableHeader = ["METRIC", ...companies.map(c => c.name.slice(0, 14).padEnd(14))].join("  ")
+  const tableRows = [
+    ["Weighted Score", ...companies.map(c => String(c.weightedScore?.toFixed(2) ?? "N/A").padEnd(14))].join("  "),
+    ["Market Opp.", ...companies.map(c => String(c.marketOpportunity?.toFixed(1) ?? "N/A").padEnd(14))].join("  "),
+    ["Team & Exec.", ...companies.map(c => String(c.teamExecution?.toFixed(1) ?? "N/A").padEnd(14))].join("  "),
+    ["Tech Diff.", ...companies.map(c => String(c.techDifferentiation?.toFixed(1) ?? "N/A").padEnd(14))].join("  "),
+    ["Funding Eff.", ...companies.map(c => String(c.fundingEfficiency?.toFixed(1) ?? "N/A").padEnd(14))].join("  "),
+    ["Growth", ...companies.map(c => String(c.growthMetrics?.toFixed(1) ?? "N/A").padEnd(14))].join("  "),
+    ["Industry Impact", ...companies.map(c => String(c.industryImpact?.toFixed(1) ?? "N/A").padEnd(14))].join("  "),
+    ["Comp. Moat", ...companies.map(c => String(c.competitiveMoat?.toFixed(1) ?? "N/A").padEnd(14))].join("  "),
+    [sep],
+    ["Total Funding", ...companies.map(c => formatCurrency(c.totalFunding).slice(0, 14).padEnd(14))].join("  "),
+    ["Est. Revenue", ...companies.map(c => formatCurrency(c.estimatedRevenue).slice(0, 14).padEnd(14))].join("  "),
+    ["Headcount", ...companies.map(c => String(c.headcount?.toLocaleString() ?? "N/A").padEnd(14))].join("  "),
+    ["Round", ...companies.map(c => (c.latestFundingRound || "N/A").slice(0, 14).padEnd(14))].join("  "),
+  ]
+
+  return [
+    `COMPARATIVE SCENARIO REPORT`,
+    sep,
+    `QUESTION: ${scenario.label}`,
+    `COMPANIES: ${names}`,
+    sep,
+    ``,
+    `## COMPARISON TABLE`,
+    tableHeader,
+    "─".repeat(tableHeader.length),
+    ...tableRows,
+    ``,
+    scenario.narrative(companies),
+  ].join("\n")
+}
+
+function ScenarioReportTab({ data }: { data: Company[] }) {
+  const [selected, setSelected] = useState<Company[]>([])
+  const [scenario, setScenario] = useState(SCENARIOS[0].value)
+  const [companySearch, setCompanySearch] = useState("")
+  const [showSuggestions, setShowSuggestions] = useState(false)
+  const [reportOutput, setReportOutput] = useState<string | null>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  const suggestions = useMemo(() => {
+    if (!companySearch.trim()) return []
+    const q = companySearch.toLowerCase()
+    return data
+      .filter(c => c.name.toLowerCase().includes(q) && !selected.find(s => s.id === c.id))
+      .slice(0, 8)
+  }, [data, companySearch, selected])
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setShowSuggestions(false)
+      }
+    }
+    document.addEventListener("mousedown", handler)
+    return () => document.removeEventListener("mousedown", handler)
+  }, [])
+
+  const addCompany = (c: Company) => {
+    if (selected.length >= 5) return
+    setSelected(prev => [...prev, c])
+    setCompanySearch("")
+    setShowSuggestions(false)
+    setReportOutput(null)
+  }
+
+  const removeCompany = (id: string) => {
+    setSelected(prev => prev.filter(c => c.id !== id))
+    setReportOutput(null)
+  }
+
+  const generate = () => {
+    if (selected.length < 2) return
+    setReportOutput(generateScenarioReport(selected, scenario))
+  }
+
+  return (
+    <div className="space-y-5">
+      {/* Scenario picker */}
+      <div className="flex flex-col gap-1">
+        <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Scenario Question</label>
+        <Select value={scenario} onValueChange={v => { setScenario(v); setReportOutput(null) }}>
+          <SelectTrigger className="h-9 max-w-xl">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {SCENARIOS.map(s => (
+              <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Company multi-select */}
+      <div className="flex flex-col gap-1">
+        <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          Select 2–5 Startups {selected.length > 0 && <span className="text-primary">({selected.length} selected)</span>}
+        </label>
+
+        {/* Chips */}
+        {selected.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 mb-1">
+            {selected.map(c => (
+              <span
+                key={c.id}
+                className="inline-flex items-center gap-1 rounded-full bg-primary/15 border border-primary/30 px-2.5 py-1 text-xs font-medium text-primary"
+              >
+                {c.name}
+                <button onClick={() => removeCompany(c.id)} className="hover:text-red-400 transition-colors">
+                  <X className="h-3 w-3" />
+                </button>
+              </span>
+            ))}
+          </div>
+        )}
+
+        {/* Search input */}
+        {selected.length < 5 && (
+          <div className="relative max-w-sm" ref={containerRef}>
+            <Input
+              placeholder="Search and add a startup..."
+              value={companySearch}
+              onChange={e => {
+                setCompanySearch(e.target.value)
+                setShowSuggestions(true)
+                setReportOutput(null)
+              }}
+              onFocus={() => { if (companySearch) setShowSuggestions(true) }}
+              className="h-9 pr-8"
+            />
+            <Plus className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+            {showSuggestions && suggestions.length > 0 && (
+              <div className="absolute z-50 top-full mt-1 w-full bg-popover border border-border rounded-lg shadow-xl overflow-hidden">
+                {suggestions.map(c => (
+                  <button
+                    key={c.id}
+                    className="w-full text-left px-3 py-2 text-sm hover:bg-muted flex items-center justify-between gap-2"
+                    onMouseDown={() => addCompany(c)}
+                  >
+                    <span>{c.name}</span>
+                    <span className="text-xs text-muted-foreground shrink-0">{c.investmentList?.replace(/\(.*\)/, "").trim()}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Generate button */}
+      <Button
+        onClick={generate}
+        disabled={selected.length < 2}
+        className="gap-2"
+      >
+        <Sparkles className="h-4 w-4" />
+        Generate Scenario Report
+        {selected.length < 2 && <span className="text-xs opacity-60 ml-1">(select at least 2)</span>}
+      </Button>
+
+      {/* Output */}
+      {reportOutput && (
+        <div className="rounded-xl border border-border bg-muted/30 p-5">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2 text-sm font-semibold">
+              <ChevronRight className="h-4 w-4 text-primary" />
+              Scenario Report
+              <span className="text-muted-foreground font-normal">— {SCENARIOS.find(s => s.value === scenario)?.label}</span>
+            </div>
+            <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => navigator.clipboard.writeText(reportOutput)}>
+              Copy
+            </Button>
+          </div>
+          <pre className="text-xs leading-relaxed font-mono whitespace-pre-wrap text-foreground/90 overflow-x-auto">
+            {reportOutput}
+          </pre>
+        </div>
+      )}
+
+      {!reportOutput && (
+        <div className="rounded-xl border border-dashed border-border/50 h-48 flex items-center justify-center text-muted-foreground text-sm">
+          {selected.length < 2 ? "Add at least 2 startups to compare" : "Click Generate Scenario Report to continue"}
+        </div>
+      )}
+    </div>
+  )
+}
+
 // ─── Main Export ──────────────────────────────────────────────────────────────
 
 export function ReportGenerator({ data, className }: ReportGeneratorProps) {
@@ -506,10 +879,15 @@ export function ReportGenerator({ data, className }: ReportGeneratorProps) {
         <TabsList className="mb-4">
           <TabsTrigger value="ic-memos">IC Memos</TabsTrigger>
           <TabsTrigger value="intelligence">Intelligence Reports</TabsTrigger>
+          <TabsTrigger value="scenario">Scenario Reports</TabsTrigger>
         </TabsList>
 
         <TabsContent value="intelligence">
           <IntelligenceReportTab data={data} />
+        </TabsContent>
+
+        <TabsContent value="scenario">
+          <ScenarioReportTab data={data} />
         </TabsContent>
 
         <TabsContent value="ic-memos">
