@@ -16,6 +16,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useThesisOptional } from "@/contexts/thesis-context";
 import { useState } from "react";
+import { FREE_TIER_PATHS } from "@/lib/free-tier";
+import { Lock } from "lucide-react";
 
 const NAV_ITEMS = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard", exact: true },
@@ -106,10 +108,11 @@ interface SidebarProps {
   onSelectScenario?: (key: string) => void;
   activeScenario?: string;
   isAdmin?: boolean;
+  isFreeUser?: boolean;
 }
 
-function NavLink({ href, icon: Icon, label, collapsed, exact }: {
-  href: string; icon: React.ElementType; label: string; collapsed: boolean; exact?: boolean;
+function NavLink({ href, icon: Icon, label, collapsed, exact, locked }: {
+  href: string; icon: React.ElementType; label: string; collapsed: boolean; exact?: boolean; locked?: boolean;
 }) {
   const pathname = usePathname();
   const isActive = exact ? pathname === href : pathname.startsWith(href);
@@ -121,12 +124,19 @@ function NavLink({ href, icon: Icon, label, collapsed, exact }: {
         "flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors",
         isActive
           ? "bg-primary/10 text-primary font-medium"
-          : "text-muted-foreground hover:bg-muted hover:text-foreground",
+          : locked
+            ? "text-muted-foreground/40 hover:bg-muted/50 hover:text-muted-foreground/60"
+            : "text-muted-foreground hover:bg-muted hover:text-foreground",
         collapsed && "justify-center px-2"
       )}
     >
       <Icon className="h-4 w-4 shrink-0" />
-      {!collapsed && <span className="truncate">{label}</span>}
+      {!collapsed && (
+        <>
+          <span className="truncate flex-1">{label}</span>
+          {locked && <Lock className="h-3 w-3 shrink-0 text-muted-foreground/40" />}
+        </>
+      )}
     </Link>
   );
 
@@ -134,7 +144,9 @@ function NavLink({ href, icon: Icon, label, collapsed, exact }: {
     return (
       <Tooltip delayDuration={0}>
         <TooltipTrigger asChild>{link}</TooltipTrigger>
-        <TooltipContent side="right" className="text-xs">{label}</TooltipContent>
+        <TooltipContent side="right" className="text-xs">
+          {label}{locked ? " (Pro)" : ""}
+        </TooltipContent>
       </Tooltip>
     );
   }
@@ -142,7 +154,7 @@ function NavLink({ href, icon: Icon, label, collapsed, exact }: {
   return link;
 }
 
-export function Sidebar({ collapsed, onToggle, onSelectScenario, activeScenario, isAdmin = false }: SidebarProps) {
+export function Sidebar({ collapsed, onToggle, onSelectScenario, activeScenario, isAdmin = false, isFreeUser = false }: SidebarProps) {
   const thesis = useThesisOptional();
   const hasThesis = !!thesis?.activeThesis;
   const [focusMenuOpen, setFocusMenuOpen] = useState(false);
@@ -260,7 +272,7 @@ export function Sidebar({ collapsed, onToggle, onSelectScenario, activeScenario,
             {collapsed && <div className="my-2 border-t border-border" />}
 
             {visibleVizItems.map(item => (
-              <NavLink key={item.href} {...item} collapsed={collapsed} />
+              <NavLink key={item.href} {...item} collapsed={collapsed} locked={isFreeUser && !FREE_TIER_PATHS.has(item.href)} />
             ))}
 
             {/* Admin-only section */}

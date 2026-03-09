@@ -1,13 +1,20 @@
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import { Check, Calendar, Database, Phone, MapPin, CalendarDays } from "lucide-react"
+import { Check, Calendar, Database, Phone, MapPin, CalendarDays, Eye } from "lucide-react"
 
 // Update this date each week after the Monday refresh
 const LAST_UPDATED = "March 3, 2026"
 
+const FREE_FEATURES = [
+  "Network Graph — interactive relationship mapping",
+  "Investment Landscape — 10 domains, category breakdown",
+  "Globe Explorer — geographic distribution view",
+  "Updated weekly with the full dataset",
+]
+
 const ANALYTICS_FEATURES = [
-  "All dashboards + filters + saved views",
+  "All 20+ dashboards + filters + saved views",
   "Watchlists + alerts",
   "Exports: charts + aggregated tables (no directory dump)",
   "30-minute one-on-one briefings, bi-monthly on demand",
@@ -121,7 +128,39 @@ export default function PricingPage() {
 
       {/* Pricing Cards */}
       <section className="container mx-auto px-4 pb-24">
-        <div className="mx-auto grid max-w-4xl gap-8 md:grid-cols-2">
+        <div className="mx-auto grid max-w-6xl gap-8 md:grid-cols-3">
+
+          {/* Free — Explorer */}
+          <div className="flex flex-col rounded-lg border border-border/40 bg-card p-8">
+            <div className="flex items-start justify-between">
+              <div>
+                <h3 className="text-xl font-semibold">Explorer</h3>
+                <p className="mt-1 text-sm text-muted-foreground">Free forever</p>
+              </div>
+              <Eye className="h-5 w-5 text-muted-foreground mt-1" />
+            </div>
+            <div className="mt-6 space-y-1">
+              <div>
+                <span className="text-4xl font-bold">$0</span>
+              </div>
+              <div className="text-sm text-muted-foreground">
+                No credit card required
+              </div>
+            </div>
+            <ul className="mt-8 flex-1 space-y-3">
+              {FREE_FEATURES.map(f => (
+                <li key={f} className="flex items-start gap-2">
+                  <Check className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                  <span className="text-sm">{f}</span>
+                </li>
+              ))}
+            </ul>
+            <div className="mt-8">
+              <Link href="/auth/sign-up">
+                <Button variant="outline" className="w-full">Sign up free</Button>
+              </Link>
+            </div>
+          </div>
 
           {/* Analytics — Self-serve */}
           <div className="flex flex-col rounded-lg border border-primary/40 bg-card p-8 shadow-sm">

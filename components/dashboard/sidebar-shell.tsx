@@ -19,6 +19,7 @@ export function SidebarShell({
   onSelectScenario,
   activeScenario,
   isAdmin = false,
+  isFreeUser = false,
 }: {
   user: Session["user"];
   profile?: Profile;
@@ -26,6 +27,7 @@ export function SidebarShell({
   onSelectScenario?: (key: string) => void;
   activeScenario?: string;
   isAdmin?: boolean;
+  isFreeUser?: boolean;
 }) {
   const [collapsed, setCollapsed] = useState(false);
 
@@ -50,6 +52,7 @@ export function SidebarShell({
         onSelectScenario={onSelectScenario}
         activeScenario={activeScenario}
         isAdmin={isAdmin}
+        isFreeUser={isFreeUser}
       />
       <div className="flex flex-1 flex-col overflow-hidden">
         <TopBar user={user} profile={profile} />
