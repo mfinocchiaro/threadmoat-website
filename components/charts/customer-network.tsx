@@ -1,12 +1,14 @@
 "use client"
 
-import { useEffect, useRef, useState, useMemo } from "react"
+import { useEffect, useRef, useState, useMemo, useDeferredValue } from "react"
 import * as d3 from "d3"
 import { Company } from "@/lib/company-data"
 import { getInvestmentColor } from "@/lib/investment-colors"
 import { getCustomerLogoUrl, parseKnownCustomers } from "@/lib/customer-logos"
 import { cn } from "@/lib/utils"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Input } from "@/components/ui/input"
+import { Search, X } from "lucide-react"
 
 interface CustomerNode {
   id: string
@@ -48,6 +50,18 @@ export function CustomerNetwork({ data, className }: { data: Company[]; classNam
   const svgRef = useRef<SVGSVGElement>(null)
   const tooltipRef = useRef<HTMLDivElement>(null)
   const [minCount, setMinCount] = useState("1")
+  const [searchQuery, setSearchQuery] = useState("")
+  const deferredQuery = useDeferredValue(searchQuery)
+
+  // Refs to live D3 selections — updated each time the effect re-runs
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const startupNodesRef = useRef<any>(null)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const customerNodesRef = useRef<any>(null)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const linkRef = useRef<any>(null)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const simLinksRef = useRef<any[]>([])
   const [filterInvestment, setFilterInvestment] = useState("all")
   const [filterMfgType, setFilterMfgType] = useState("all")
   const [filterSubsegment, setFilterSubsegment] = useState("all")
@@ -363,6 +377,12 @@ export function CustomerNetwork({ data, className }: { data: Company[]; classNam
       hideTooltip()
     })
 
+    // Store live selections for imperative search highlighting
+    startupNodesRef.current = startupNodes
+    customerNodesRef.current = customerNodes
+    linkRef.current = link
+    simLinksRef.current = simLinks
+
     simulation.on("tick", () => {
       link
         .attr("x1", d => (d.source as any).x)
@@ -391,10 +411,110 @@ export function CustomerNetwork({ data, className }: { data: Company[]; classNam
     return () => { simulation.stop() }
   }, [nodes, links])
 
+  // Imperative search highlight — runs on query change OR when nodes change (filter reset)
+  useEffect(() => {
+    const startupSel = startupNodesRef.current
+    const customerSel = customerNodesRef.current
+    const linkSel = linkRef.current
+    const simLinks = simLinksRef.current
+    if (!startupSel || !customerSel || !linkSel) return
+
+    const q = deferredQuery.trim().toLowerCase()
+
+    if (!q) {
+      startupSel.attr("opacity", 1).attr("stroke", "#0f172a").attr("stroke-width", 1).attr("r", 5)
+      customerSel.select("circle").attr("opacity", 1).attr("stroke-width", 2)
+      linkSel.attr("stroke-opacity", 0.55).attr("stroke", "#94a3b8").attr("stroke-width", 1.5)
+      return
+    }
+
+    // Matching startup IDs
+    const matchedIds = new Set<string>()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    startupSel.each((d: any) => { if (d.name.toLowerCase().includes(q)) matchedIds.add(d.id) })
+
+    // Customer IDs connected to any matching startup
+    const connectedCustomerIds = new Set<string>()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    for (const l of simLinks) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const srcId = (l.source as any).id ?? l.source
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const tgtId = (l.target as any).id ?? l.target
+      if (matchedIds.has(tgtId)) connectedCustomerIds.add(srcId)
+      if (matchedIds.has(srcId)) connectedCustomerIds.add(tgtId)
+    }
+
+    startupSel
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .attr("opacity", (d: any) => matchedIds.has(d.id) ? 1 : 0.07)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .attr("stroke", (d: any) => matchedIds.has(d.id) ? "#fbbf24" : "#0f172a")
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .attr("stroke-width", (d: any) => matchedIds.has(d.id) ? 2.5 : 1)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .attr("r", (d: any) => matchedIds.has(d.id) ? 7 : 5)
+
+    customerSel.select("circle")
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .attr("opacity", (d: any) => connectedCustomerIds.has(d.id) ? 1 : 0.12)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .attr("stroke-width", (d: any) => connectedCustomerIds.has(d.id) ? 3 : 2)
+
+    linkSel
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .attr("stroke-opacity", (l: any) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const s = (l.source as any).id ?? l.source
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const t = (l.target as any).id ?? l.target
+        return (matchedIds.has(s) || matchedIds.has(t)) ? 0.9 : 0.04
+      })
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .attr("stroke", (l: any) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const s = (l.source as any).id ?? l.source
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const t = (l.target as any).id ?? l.target
+        return (matchedIds.has(s) || matchedIds.has(t)) ? "#fbbf24" : "#94a3b8"
+      })
+      .attr("stroke-width", 1.5)
+  }, [deferredQuery, nodes])
+
+  const searchMatchCount = useMemo(() => {
+    const q = deferredQuery.trim().toLowerCase()
+    if (!q) return 0
+    return nodes.filter(n => n.type === "startup" && (n as StartupNode).name.toLowerCase().includes(q)).length
+  }, [deferredQuery, nodes])
+
   return (
     <div className={cn("relative", className)}>
       {/* Controls */}
       <div className="absolute top-3 left-3 z-10 flex flex-wrap items-end gap-3 bg-card/90 backdrop-blur rounded-md border border-border px-3 py-2 max-w-[calc(100%-1.5rem)]">
+        {/* Startup search */}
+        <div className="space-y-1">
+          <label className="text-xs font-medium text-muted-foreground">Search startup</label>
+          <div className="relative w-44">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+            <Input
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              placeholder="Find startup…"
+              className="h-8 text-xs pl-8 pr-7"
+            />
+            {searchQuery && (
+              <button onClick={() => setSearchQuery("")} className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
+          </div>
+          {searchQuery && (
+            <p className="text-[10px] text-muted-foreground">
+              {searchMatchCount} match{searchMatchCount !== 1 ? "es" : ""}
+            </p>
+          )}
+        </div>
+
         <div className="space-y-1">
           <label className="text-xs font-medium text-muted-foreground">Min. Startups</label>
           <Select value={minCount} onValueChange={setMinCount}>
