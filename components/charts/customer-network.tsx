@@ -131,9 +131,9 @@ export function CustomerNetwork({ data, className }: { data: Company[]; classNam
       .selectAll("line")
       .data(simLinks)
       .join("line")
-      .attr("stroke", "hsl(var(--border))")
-      .attr("stroke-opacity", 0.3)
-      .attr("stroke-width", 1)
+      .attr("stroke", "#94a3b8")
+      .attr("stroke-opacity", 0.55)
+      .attr("stroke-width", 1.5)
 
     // Customer nodes
     const customerNodes = g.append("g")
@@ -217,6 +217,31 @@ export function CustomerNetwork({ data, className }: { data: Company[]; classNam
         .on("end", (e, d) => { if (!e.active) simulation.alphaTarget(0); d.fx = null; d.fy = null })
       )
 
+    // Selection state (closure-local, imperative)
+    let selectedId: string | null = null
+
+    function applySelection(id: string | null) {
+      selectedId = id
+      if (id === null) {
+        startupNodes.attr("opacity", 1)
+        customerNodes.select("circle").attr("stroke-width", 2).attr("opacity", 1)
+        link.attr("stroke-opacity", 0.55)
+      } else {
+        const connected = new Set(
+          simLinks
+            .filter(l => (l.source as any).id === id || (l.target as any).id === id)
+            .map(l => { const s = l.source as any, t = l.target as any; return s.id === id ? t.id : s.id })
+        )
+        startupNodes.attr("opacity", n => connected.has((n as any).id) ? 1 : 0.08)
+        customerNodes.select("circle")
+          .attr("stroke-width", n => (n as any).id === id ? 3 : 2)
+          .attr("opacity", n => (n as any).id === id ? 1 : 0.2)
+        link.attr("stroke-opacity", l =>
+          (l.source as any).id === id || (l.target as any).id === id ? 0.85 : 0.04
+        )
+      }
+    }
+
     // Tooltips
     const tooltip = d3.select(tooltipRef.current)
 
@@ -251,8 +276,27 @@ export function CustomerNetwork({ data, className }: { data: Company[]; classNam
       })
       .on("mouseout", () => {
         hideTooltip()
-        startupNodes.attr("opacity", 1)
-        link.attr("stroke-opacity", 0.3)
+        if (selectedId === null) {
+          startupNodes.attr("opacity", 1)
+          link.attr("stroke-opacity", 0.55)
+        }
+      })
+      .on("click", (e, d) => {
+        e.stopPropagation()
+        const id = (d as any).id
+        applySelection(selectedId === id ? null : id)
+        if (selectedId !== null) {
+          const node = d as any
+          if (node.x !== undefined && node.y !== undefined) {
+            const scale = 2.2
+            const tx = width / 2 - scale * node.x
+            const ty = height / 2 - scale * node.y
+            svg.transition().duration(600).call(
+              zoom.transform,
+              d3.zoomIdentity.translate(tx, ty).scale(scale)
+            )
+          }
+        }
       })
 
     startupNodes
@@ -268,9 +312,22 @@ export function CustomerNetwork({ data, className }: { data: Company[]; classNam
       })
       .on("mouseout", () => {
         hideTooltip()
-        customerNodes.select("circle").attr("opacity", 1)
-        link.attr("stroke-opacity", 0.3)
+        if (selectedId === null) {
+          customerNodes.select("circle").attr("opacity", 1)
+          link.attr("stroke-opacity", 0.55)
+        }
       })
+      .on("click", (e, d) => {
+        e.stopPropagation()
+        const sn = d as StartupNode
+        showTooltip(e, `<strong style="font-size:13px">${sn.name}</strong><br/><span style="font-size:11px;opacity:.7">${sn.investmentList || ""}</span>${sn.headcount ? `<br/><span style="font-size:11px">Headcount: ${sn.headcount}</span>` : ""}`)
+      })
+
+    // Click background → clear selection
+    svg.on("click", () => {
+      applySelection(null)
+      hideTooltip()
+    })
 
     simulation.on("tick", () => {
       link

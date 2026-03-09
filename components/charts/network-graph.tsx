@@ -401,7 +401,7 @@ export function NetworkGraph({ data, className, preview = false }: NetworkGraphP
     // In preview mode, only show labels for non-company nodes (categories/hubs)
     node.filter(d => preview ? d.type !== "company" : true)
       .append("text")
-      .text(d => d.type === "incumbent" ? (d.vendor ?? d.id) : d.id)
+      .text(d => d.type === "incumbent" ? d.id.replace(/^☆\s*/, "") : d.id)
       .attr("x", d => getNodeRadius(d) + 5)
       .attr("y", 3)
       .style("font-size", "10px")
@@ -574,7 +574,7 @@ export function NetworkGraph({ data, className, preview = false }: NetworkGraphP
             <label className="text-xs font-medium text-muted-foreground">Metric Sizing</label>
             <Select value={metric} onValueChange={v => startTransition(() => setMetric(v))}>
               <SelectTrigger className="w-[140px] h-8"><SelectValue /></SelectTrigger>
-              <SelectContent>
+              <SelectContent container={cardRef.current ?? undefined}>
                 <SelectItem value="headcount">Headcount</SelectItem>
                 <SelectItem value="totalFunding">Total Funding</SelectItem>
                 <SelectItem value="estimatedValue">Market Value</SelectItem>
@@ -586,7 +586,7 @@ export function NetworkGraph({ data, className, preview = false }: NetworkGraphP
             <label className="text-xs font-medium text-muted-foreground">Primary Cluster</label>
             <Select value={primaryType} onValueChange={v => startTransition(() => setPrimaryType(v))}>
               <SelectTrigger className="w-[170px] h-8"><SelectValue /></SelectTrigger>
-              <SelectContent>
+              <SelectContent container={cardRef.current ?? undefined}>
                 <SelectItem value="investment">Investment List</SelectItem>
                 <SelectItem value="mfg">Manufacturing Type</SelectItem>
               </SelectContent>
@@ -596,7 +596,7 @@ export function NetworkGraph({ data, className, preview = false }: NetworkGraphP
             <label className="text-xs font-medium text-muted-foreground">Secondary Link</label>
             <Select value={secondaryType} onValueChange={v => startTransition(() => setSecondaryType(v))}>
               <SelectTrigger className="w-[170px] h-8"><SelectValue /></SelectTrigger>
-              <SelectContent>
+              <SelectContent container={cardRef.current ?? undefined}>
                 <SelectItem value="subcategory">Subcategory</SelectItem>
                 <SelectItem value="category">Capability Tags</SelectItem>
                 <SelectItem value="industry">Industries Served</SelectItem>
