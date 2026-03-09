@@ -49,7 +49,7 @@ function nameToColor(name: string): string {
 export function CustomerNetwork({ data, className }: { data: Company[]; className?: string }) {
   const svgRef = useRef<SVGSVGElement>(null)
   const tooltipRef = useRef<HTMLDivElement>(null)
-  const [minCount, setMinCount] = useState("1")
+  const [minCount, setMinCount] = useState("3")
   const [searchQuery, setSearchQuery] = useState("")
   const deferredQuery = useDeferredValue(searchQuery)
 
