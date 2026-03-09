@@ -52,18 +52,21 @@ export default async function DashboardLayout({
     || adminEmails.includes(userEmail)
     || adminEmails.includes(baseEmail)
 
+  let hasSubscription = false
   if (!isAdmin) {
-    let hasSubscription = false
     try {
       const subscription = await getUserSubscription(userId)
       hasSubscription = subscription.hasActiveSubscription
     } catch {
       // DB unavailable
     }
-    if (!hasSubscription) {
-      return <Paywall user={user} />
-    }
+  } else {
+    hasSubscription = true
   }
+
+  // Free users get the dashboard chrome (sidebar, topbar) but only access free pages
+  // Paid pages show an inline upgrade prompt via FreeUserGuard
+  const isFreeUser = !isAdmin && !hasSubscription
 
   return (
     <DashboardLayoutClient
@@ -71,6 +74,7 @@ export default async function DashboardLayout({
       profile={profile}
       initialScenario={profile?.profile_type}
       isAdmin={isAdmin}
+      isFreeUser={isFreeUser}
     >
       {children}
     </DashboardLayoutClient>
