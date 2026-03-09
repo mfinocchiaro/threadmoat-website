@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useMemo } from "react"
 import * as d3 from "d3"
 import { Company } from "@/lib/company-data"
 import { getInvestmentColor } from "@/lib/investment-colors"
+import { getCustomerLogoUrl } from "@/lib/customer-logos"
 import { cn } from "@/lib/utils"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
@@ -175,27 +176,57 @@ export function CustomerNetwork({ data, className }: { data: Company[]; classNam
         .on("end", (e, d) => { if (!e.active) simulation.alphaTarget(0); d.fx = null; d.fy = null })
       )
 
+    // Clip paths for circular logo masking
+    customerNodes.append("clipPath")
+      .attr("id", d => `clip-${d.id.replace(/[^a-zA-Z0-9]/g, "_")}`)
+      .append("circle")
+      .attr("r", d => rScale((d as CustomerNode).count) - 3)
+
     customerNodes.append("circle")
       .attr("r", d => rScale((d as CustomerNode).count))
-      .attr("fill", "hsl(var(--primary) / 0.15)")
+      .attr("fill", "hsl(var(--card))")
       .attr("stroke", "hsl(var(--primary))")
       .attr("stroke-width", 2)
 
-    customerNodes.append("text")
-      .text(d => d.name)
-      .attr("text-anchor", "middle")
-      .attr("dy", "0.35em")
-      .attr("font-size", d => Math.max(8, Math.min(12, rScale((d as CustomerNode).count) / 2.5)))
-      .attr("fill", "hsl(var(--foreground))")
-      .attr("pointer-events", "none")
-      .each(function (d) {
-        const r = rScale((d as CustomerNode).count)
-        const text = d3.select(this)
-        const name = d.name
-        if (name.length * 4 > r * 2) {
-          text.text(name.slice(0, Math.floor(r / 3)) + "…")
-        }
-      })
+    // Logo images (with fallback to text)
+    customerNodes.each(function (d) {
+      const node = d3.select(this)
+      const r = rScale((d as CustomerNode).count)
+      const logoUrl = getCustomerLogoUrl(d.name, Math.round(r * 3))
+
+      if (logoUrl) {
+        const imgSize = r * 1.4
+        node.append("image")
+          .attr("href", logoUrl)
+          .attr("x", -imgSize / 2)
+          .attr("y", -imgSize / 2)
+          .attr("width", imgSize)
+          .attr("height", imgSize)
+          .attr("clip-path", `url(#clip-${d.id.replace(/[^a-zA-Z0-9]/g, "_")})`)
+          .attr("pointer-events", "none")
+          .attr("preserveAspectRatio", "xMidYMid meet")
+          .on("error", function () {
+            // Logo failed to load — show text instead
+            d3.select(this).remove()
+            node.append("text")
+              .text(d.name.length > r / 3 ? d.name.slice(0, Math.floor(r / 3)) + "…" : d.name)
+              .attr("text-anchor", "middle")
+              .attr("dy", "0.35em")
+              .attr("font-size", Math.max(8, Math.min(12, r / 2.5)))
+              .attr("fill", "hsl(var(--foreground))")
+              .attr("pointer-events", "none")
+          })
+      } else {
+        // No logo mapping — text label
+        node.append("text")
+          .text(d.name.length > r / 3 ? d.name.slice(0, Math.floor(r / 3)) + "…" : d.name)
+          .attr("text-anchor", "middle")
+          .attr("dy", "0.35em")
+          .attr("font-size", Math.max(8, Math.min(12, r / 2.5)))
+          .attr("fill", "hsl(var(--foreground))")
+          .attr("pointer-events", "none")
+      }
+    })
 
     // Startup nodes
     const startupNodes = g.append("g")
