@@ -68,6 +68,7 @@ export default function SignUpPage() {
     inviteCode: '',
   })
   const [termsAccepted, setTermsAccepted] = useState(false)
+  const [termsError, setTermsError] = useState(false)
   const [marketingConsent, setMarketingConsent] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -87,7 +88,7 @@ export default function SignUpPage() {
       return
     }
     if (!termsAccepted) {
-      setError('You must accept the Terms of Service and Privacy Policy to continue')
+      setTermsError(true)
       return
     }
     if (!passwordStrong) {
@@ -306,26 +307,32 @@ export default function SignUpPage() {
 
                   {/* GDPR checkboxes */}
                   <div className="flex flex-col gap-3 pt-1">
-                    <label className="flex items-start gap-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        className="mt-0.5 h-4 w-4 shrink-0 accent-primary"
-                        checked={termsAccepted}
-                        onChange={e => setTermsAccepted(e.target.checked)}
-                        required
-                      />
-                      <span className="text-sm text-muted-foreground">
-                        I agree to the{' '}
-                        <Link href="/terms" className="underline underline-offset-4 text-foreground" target="_blank">
-                          Terms of Service
-                        </Link>{' '}
-                        and{' '}
-                        <Link href="/privacy" className="underline underline-offset-4 text-foreground" target="_blank">
-                          Privacy Policy
-                        </Link>
-                        <span className="text-red-500 ml-0.5">*</span>
-                      </span>
-                    </label>
+                    <div className="flex flex-col gap-1">
+                      <label className={`flex items-start gap-2 cursor-pointer rounded-md p-1.5 -m-1.5 transition-colors ${termsError ? 'bg-red-50 dark:bg-red-950/30' : ''}`}>
+                        <input
+                          type="checkbox"
+                          className="mt-0.5 h-4 w-4 shrink-0 accent-primary"
+                          checked={termsAccepted}
+                          onChange={e => { setTermsAccepted(e.target.checked); if (e.target.checked) setTermsError(false) }}
+                        />
+                        <span className="text-sm text-muted-foreground">
+                          I agree to the{' '}
+                          <Link href="/terms" className="underline underline-offset-4 text-foreground" target="_blank">
+                            Terms of Service
+                          </Link>{' '}
+                          and{' '}
+                          <Link href="/privacy" className="underline underline-offset-4 text-foreground" target="_blank">
+                            Privacy Policy
+                          </Link>
+                          <span className="text-red-500 ml-0.5">*</span>
+                        </span>
+                      </label>
+                      {termsError && (
+                        <p className="text-xs text-red-500 pl-6">
+                          Please accept the Terms of Service and Privacy Policy to create your account.
+                        </p>
+                      )}
+                    </div>
 
                     <label className="flex items-start gap-2 cursor-pointer">
                       <input

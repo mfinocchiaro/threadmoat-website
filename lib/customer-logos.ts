@@ -32,6 +32,11 @@ const CUSTOMER_DOMAINS: Record<string, string> = {
   "BAE Systems": "baesystems.com",
   "SpaceX": "spacex.com",
   "US Air Force": "af.mil",
+  "US Army": "army.mil",
+  "US Navy": "navy.mil",
+  "US DoD": "defense.gov",
+  "DARPA": "darpa.mil",
+  "NATO": "nato.int",
 
   // Industrial / Manufacturing
   "Siemens": "siemens.com",

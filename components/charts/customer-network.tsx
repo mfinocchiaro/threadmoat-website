@@ -25,6 +25,9 @@ interface StartupNode {
   name: string
   investmentList: string
   headcount: number
+  manufacturingType: string
+  subcategories: string
+  industriesServed: string[]
   x?: number
   y?: number
   fx?: number | null
@@ -34,17 +37,40 @@ interface StartupNode {
 type GraphNode = CustomerNode | StartupNode
 type GraphLink = { source: string; target: string }
 
+// Deterministic color from company name — avoids CSS variable issues in SVG
+function nameToColor(name: string): string {
+  let h = 0
+  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) & 0xffff
+  return `hsl(${h % 360}, 55%, 42%)`
+}
+
 export function CustomerNetwork({ data, className }: { data: Company[]; className?: string }) {
   const svgRef = useRef<SVGSVGElement>(null)
   const tooltipRef = useRef<HTMLDivElement>(null)
-  const [minCount, setMinCount] = useState("3")
+  const [minCount, setMinCount] = useState("1")
+  const [filterInvestment, setFilterInvestment] = useState("all")
+  const [filterMfgType, setFilterMfgType] = useState("all")
+  const [filterSubsegment, setFilterSubsegment] = useState("all")
+  const [filterIndustry, setFilterIndustry] = useState("all")
+
+  // Filter option lists derived from full dataset
+  const investmentOptions = useMemo(() => [...new Set(data.map(d => d.investmentList).filter(Boolean))].sort(), [data])
+  const mfgTypeOptions = useMemo(() => [...new Set(data.map(d => d.manufacturingType).filter(Boolean))].sort(), [data])
+  const subsegmentOptions = useMemo(() => [...new Set(data.map(d => d.subcategories).filter(Boolean))].sort(), [data])
+  const industryOptions = useMemo(() => [...new Set(data.flatMap(d => d.industriesServed ?? []).filter(Boolean))].sort(), [data])
 
   const { nodes, links, customerCount } = useMemo(() => {
     const threshold = parseInt(minCount)
-    const customerMap = new Map<string, Set<string>>() // customer → set of startup names
+    const customerMap = new Map<string, Set<string>>() // customer → set of startup ids
     const startupCustomers = new Map<string, { company: Company; customers: string[] }>()
 
     for (const company of data) {
+      // Apply filters
+      if (filterInvestment !== "all" && company.investmentList !== filterInvestment) continue
+      if (filterMfgType !== "all" && company.manufacturingType !== filterMfgType) continue
+      if (filterSubsegment !== "all" && company.subcategories !== filterSubsegment) continue
+      if (filterIndustry !== "all" && !(company.industriesServed ?? []).includes(filterIndustry)) continue
+
       const customers = parseKnownCustomers(company.knownCustomers)
       if (customers.length === 0) continue
       startupCustomers.set(company.id, { company, customers })
@@ -83,11 +109,14 @@ export function CustomerNetwork({ data, className }: { data: Company[]; classNam
         name: company.name,
         investmentList: company.investmentList,
         headcount: company.headcount,
+        manufacturingType: company.manufacturingType,
+        subcategories: company.subcategories,
+        industriesServed: company.industriesServed ?? [],
       })
     }
 
     return { nodes, links, customerCount: validCustomers.size }
-  }, [data, minCount])
+  }, [data, minCount, filterInvestment, filterMfgType, filterSubsegment, filterIndustry])
 
   useEffect(() => {
     if (!svgRef.current || nodes.length === 0) return
@@ -156,9 +185,10 @@ export function CustomerNetwork({ data, className }: { data: Company[]; classNam
 
     customerNodes.append("circle")
       .attr("r", d => rScale((d as CustomerNode).count))
-      .attr("fill", "hsl(var(--muted))")
-      .attr("stroke", "hsl(var(--primary))")
+      .attr("fill", d => nameToColor(d.name))
+      .attr("stroke", "#fff")
       .attr("stroke-width", 2)
+      .attr("stroke-opacity", 0.4)
 
     // Logo images — always render initials text first as fallback, then overlay image.
     // This way even if the image fails to load, something is always visible.
@@ -180,7 +210,7 @@ export function CustomerNetwork({ data, className }: { data: Company[]; classNam
         .attr("dominant-baseline", "central")
         .attr("font-size", Math.max(9, Math.min(14, r / 2)))
         .attr("font-weight", "700")
-        .attr("fill", "hsl(var(--foreground))")
+        .attr("fill", "#ffffff")
         .attr("pointer-events", "none")
 
       if (logoUrl) {
@@ -364,12 +394,13 @@ export function CustomerNetwork({ data, className }: { data: Company[]; classNam
   return (
     <div className={cn("relative", className)}>
       {/* Controls */}
-      <div className="absolute top-3 left-3 z-10 flex items-center gap-3 bg-card/90 backdrop-blur rounded-md border border-border px-3 py-2">
+      <div className="absolute top-3 left-3 z-10 flex flex-wrap items-end gap-3 bg-card/90 backdrop-blur rounded-md border border-border px-3 py-2 max-w-[calc(100%-1.5rem)]">
         <div className="space-y-1">
           <label className="text-xs font-medium text-muted-foreground">Min. Startups</label>
           <Select value={minCount} onValueChange={setMinCount}>
-            <SelectTrigger className="w-[90px] h-8"><SelectValue /></SelectTrigger>
+            <SelectTrigger className="w-[72px] h-8"><SelectValue /></SelectTrigger>
             <SelectContent>
+              <SelectItem value="1">1+</SelectItem>
               <SelectItem value="2">2+</SelectItem>
               <SelectItem value="3">3+</SelectItem>
               <SelectItem value="4">4+</SelectItem>
@@ -377,7 +408,60 @@ export function CustomerNetwork({ data, className }: { data: Company[]; classNam
             </SelectContent>
           </Select>
         </div>
-        <div className="text-xs text-muted-foreground">
+
+        {investmentOptions.length > 0 && (
+          <div className="space-y-1">
+            <label className="text-xs font-medium text-muted-foreground">Investment List</label>
+            <Select value={filterInvestment} onValueChange={setFilterInvestment}>
+              <SelectTrigger className="w-[160px] h-8"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All</SelectItem>
+                {investmentOptions.map(v => <SelectItem key={v} value={v}>{v.replace(/^\d+-/, '')}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+
+        {mfgTypeOptions.length > 0 && (
+          <div className="space-y-1">
+            <label className="text-xs font-medium text-muted-foreground">Mfg. Type</label>
+            <Select value={filterMfgType} onValueChange={setFilterMfgType}>
+              <SelectTrigger className="w-[150px] h-8"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All</SelectItem>
+                {mfgTypeOptions.map(v => <SelectItem key={v} value={v}>{v}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+
+        {subsegmentOptions.length > 0 && (
+          <div className="space-y-1">
+            <label className="text-xs font-medium text-muted-foreground">Subsegment</label>
+            <Select value={filterSubsegment} onValueChange={setFilterSubsegment}>
+              <SelectTrigger className="w-[150px] h-8"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All</SelectItem>
+                {subsegmentOptions.map(v => <SelectItem key={v} value={v}>{v}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+
+        {industryOptions.length > 0 && (
+          <div className="space-y-1">
+            <label className="text-xs font-medium text-muted-foreground">Industry</label>
+            <Select value={filterIndustry} onValueChange={setFilterIndustry}>
+              <SelectTrigger className="w-[150px] h-8"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All</SelectItem>
+                {industryOptions.map(v => <SelectItem key={v} value={v}>{v}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+
+        <div className="text-xs text-muted-foreground pb-1">
           {customerCount} customers &middot; {nodes.filter(n => n.type === "startup").length} startups
         </div>
       </div>
