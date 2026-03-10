@@ -61,6 +61,27 @@ def fetch_all_records(table: str, view: str) -> list[dict]:
     return records
 
 
+def flatten_value(v: object) -> str:
+    """Flatten Airtable field values to plain strings.
+
+    Airtable computed/AI fields return dicts like:
+      {'state': 'generated', 'isStale': False, 'value': 'Insight Partners'}
+    Linked-record fields return lists of strings or dicts.
+    Everything else is coerced to str.
+    """
+    if isinstance(v, dict):
+        return str(v.get("value", ""))
+    if isinstance(v, list):
+        parts = []
+        for item in v:
+            if isinstance(item, dict):
+                parts.append(str(item.get("value", item.get("name", ""))))
+            else:
+                parts.append(str(item))
+        return ", ".join(parts)
+    return str(v) if v is not None else ""
+
+
 def records_to_csv(records: list[dict], path: str) -> None:
     """Write a list of Airtable records to a CSV file."""
     if not records:
@@ -81,7 +102,8 @@ def records_to_csv(records: list[dict], path: str) -> None:
         writer = csv.DictWriter(f, fieldnames=all_fields, extrasaction="ignore")
         writer.writeheader()
         for rec in records:
-            writer.writerow(rec.get("fields", {}))
+            flat = {k: flatten_value(v) for k, v in rec.get("fields", {}).items()}
+            writer.writerow(flat)
 
     print(f"  Wrote {len(records)} rows → {path}")
 
