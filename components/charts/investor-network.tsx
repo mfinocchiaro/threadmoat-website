@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useMemo, useDeferredValue } from "react"
 import * as d3 from "d3"
 import { getInvestmentColor } from "@/lib/investment-colors"
+import { getInvestorLogoUrl } from "@/lib/investor-logos"
 import { cn } from "@/lib/utils"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
@@ -190,22 +191,61 @@ export function InvestorNetwork({ className }: { className?: string }) {
         .on("end", (e, d) => { if (!e.active) simulation.alphaTarget(0); d.fx = null; d.fy = null })
       )
 
+    // Clip paths for logo masking
+    investorNodes.append("clipPath")
+      .attr("id", d => `inv-clip-${d.id.replace(/[^a-zA-Z0-9]/g, "_")}`)
+      .append("circle")
+      .attr("r", d => rScale((d as unknown as InvestorNode).count) - 2)
+
     investorNodes.append("circle")
       .attr("r", d => rScale((d as unknown as InvestorNode).count))
-      .attr("fill", d => investorTypeColor((d as unknown as InvestorNode).investorType))
-      .attr("stroke", "#1e293b")
+      .attr("fill", d => getInvestorLogoUrl(d.name) ? "#1e293b" : investorTypeColor((d as unknown as InvestorNode).investorType))
+      .attr("stroke", d => getInvestorLogoUrl(d.name) ? "#94a3b8" : "#1e293b")
       .attr("stroke-width", 2)
-      .attr("fill-opacity", 0.85)
+      .attr("fill-opacity", 0.92)
 
-    // Initials label
-    investorNodes.append("text")
-      .text(d => d.name.split(/[\s&,\-]+/).filter(Boolean).slice(0, 2).map(w => w[0].toUpperCase()).join(""))
-      .attr("text-anchor", "middle")
-      .attr("dominant-baseline", "central")
-      .attr("font-size", d => Math.max(8, Math.min(13, rScale((d as unknown as InvestorNode).count) / 2.2)))
-      .attr("font-weight", "700")
-      .attr("fill", "#ffffff")
-      .attr("pointer-events", "none")
+    // Initials + logo (same pattern as customer-network)
+    investorNodes.each(function(d) {
+      const node = d3.select(this)
+      const inv = d as unknown as InvestorNode
+      const r = rScale(inv.count)
+      const logoUrl = getInvestorLogoUrl(inv.name, Math.round(r * 3))
+
+      const initials = inv.name
+        .split(/[\s&,\-]+/)
+        .filter(Boolean)
+        .slice(0, 2)
+        .map(w => w[0].toUpperCase())
+        .join("")
+
+      const textEl = node.append("text")
+        .text(initials)
+        .attr("text-anchor", "middle")
+        .attr("dominant-baseline", "central")
+        .attr("font-size", Math.max(8, Math.min(13, r / 2.2)))
+        .attr("font-weight", "700")
+        .attr("fill", "#ffffff")
+        .attr("pointer-events", "none")
+
+      if (logoUrl) {
+        const imgSize = r * 1.6
+        const img = node.append("image")
+          .attr("href", logoUrl)
+          .attr("x", -imgSize / 2)
+          .attr("y", -imgSize / 2)
+          .attr("width", imgSize)
+          .attr("height", imgSize)
+          .attr("clip-path", `url(#inv-clip-${d.id.replace(/[^a-zA-Z0-9]/g, "_")})`)
+          .attr("pointer-events", "none")
+          .attr("preserveAspectRatio", "xMidYMid meet")
+
+        const imgNode = img.node() as SVGImageElement | null
+        if (imgNode) {
+          imgNode.onload = () => textEl.attr("display", "none")
+          imgNode.onerror = () => img.remove()
+        }
+      }
+    })
 
     // Startup nodes
     const startupNodes = g.append("g")
@@ -257,7 +297,11 @@ export function InvestorNetwork({ className }: { className?: string }) {
     investorNodes
       .on("mouseover", (e, d) => {
         const inv = d as unknown as InvestorNode
-        showTooltip(e, `<div style="display:flex;align-items:center;gap:8px"><div style="width:30px;height:30px;border-radius:50%;background:${investorTypeColor(inv.investorType)};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0">${inv.name.split(/[\s&]+/).map(w => w[0]?.toUpperCase() ?? "").slice(0, 2).join("")}</div><div><strong style="font-size:13px">${inv.name}</strong><br/><span style="font-size:11px;opacity:.7">${inv.count} startup${inv.count > 1 ? "s" : ""} · ${inv.investorType || "Unknown"}</span></div></div>`)
+        const logoUrl = getInvestorLogoUrl(inv.name, 40)
+        const logoHtml = logoUrl
+          ? `<img src="${logoUrl}" alt="${inv.name}" style="width:28px;height:28px;object-fit:contain;border-radius:4px;border:1px solid rgba(255,255,255,.15);background:#fff;padding:2px;flex-shrink:0" onerror="this.style.display='none'" />`
+          : `<div style="width:28px;height:28px;border-radius:50%;background:${investorTypeColor(inv.investorType)};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0">${inv.name.split(/[\s&]+/).map(w => w[0]?.toUpperCase() ?? "").slice(0, 2).join("")}</div>`
+        showTooltip(e, `<div style="display:flex;align-items:center;gap:8px">${logoHtml}<div><strong style="font-size:13px">${inv.name}</strong><br/><span style="font-size:11px;opacity:.7">${inv.count} startup${inv.count > 1 ? "s" : ""} · ${inv.investorType || "Unknown"}</span></div></div>`)
         const connected = new Set(simLinks.filter(l => (l.source as any).id === d.id || (l.target as any).id === d.id).map(l => { const s = l.source as any, t = l.target as any; return s.id === d.id ? t.id : s.id })) // eslint-disable-line @typescript-eslint/no-explicit-any
         startupNodes.attr("opacity", n => connected.has((n as any).id) ? 1 : 0.08) // eslint-disable-line @typescript-eslint/no-explicit-any
         link.attr("stroke-opacity", l => (l.source as any).id === d.id || (l.target as any).id === d.id ? 0.6 : 0.04) // eslint-disable-line @typescript-eslint/no-explicit-any
