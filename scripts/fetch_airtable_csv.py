@@ -6,6 +6,7 @@ Run locally or via GitHub Actions (see .github/workflows/sync-airtable.yml).
 import csv
 import os
 import sys
+from urllib.parse import quote
 
 import requests
 
@@ -30,11 +31,6 @@ VIEWS = [
         "output": "public/data/Startups-Financial Health.csv",
     },
     {
-        "table": "Startups",
-        "view": "Funding",
-        "output": "public/data/Startups-Funding.csv",
-    },
-    {
         "table": "Investors",
         "view": "Grid view",
         "output": "public/data/Investors-Grid view.csv",
@@ -45,7 +41,7 @@ VIEWS = [
 def fetch_all_records(table: str, view: str) -> list[dict]:
     """Paginate through all records in a given Airtable table/view."""
     records, offset = [], None
-    url = f"https://api.airtable.com/v0/{BASE_ID}/{requests.utils.quote(table)}"
+    url = f"https://api.airtable.com/v0/{BASE_ID}/{quote(table)}"
     headers = {"Authorization": f"Bearer {TOKEN}"}
 
     while True:
