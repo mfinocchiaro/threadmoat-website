@@ -232,7 +232,7 @@ export function MapChart({ data = [], className, preview = false }: MapChartProp
     if (!cityBubbles.length) return null;
     const maxCount = d3.max(cityBubbles, (d) => d.count) || 1;
     return {
-      size: d3.scaleSqrt().domain([0, maxCount]).range([3, 16]),
+      size: d3.scaleSqrt().domain([0, maxCount]).range([2, 8]),
     };
   }, [cityBubbles]);
 
@@ -251,7 +251,7 @@ export function MapChart({ data = [], className, preview = false }: MapChartProp
 
       const scale = Math.max(
         1,
-        Math.min(12, 0.9 / Math.max((x1 - x0) / width, (y1 - y0) / height)),
+        Math.min(20, 0.85 / Math.max((x1 - x0) / width, (y1 - y0) / height)),
       );
 
       d3.select(svgRef.current)
@@ -306,7 +306,7 @@ export function MapChart({ data = [], className, preview = false }: MapChartProp
 
     const zoom = d3
       .zoom<SVGSVGElement, unknown>()
-      .scaleExtent([1, 12])
+      .scaleExtent([1, 20])
       .on("zoom", (event) => g.attr("transform", event.transform));
 
     zoomRef.current = zoom;
@@ -421,14 +421,14 @@ export function MapChart({ data = [], className, preview = false }: MapChartProp
             .attr("stroke", "#fff")
             .attr("stroke-width", 0.8);
 
-          if (r > 6) {
+          if (r > 5) {
             d3.select(this)
               .append("text")
               .attr("x", cx)
               .attr("y", cy)
-              .attr("dy", 3.5)
+              .attr("dy", 3)
               .attr("text-anchor", "middle")
-              .style("font-size", "9px")
+              .style("font-size", "7px")
               .style("font-weight", "bold")
               .style("fill", "white")
               .style("pointer-events", "none")
