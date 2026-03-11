@@ -1,7 +1,7 @@
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import { Check, Calendar, Phone, MapPin, CalendarDays, BarChart2, Network, FileText, BookOpen, Download, ShieldCheck, Users, Building2, Briefcase, Castle } from "lucide-react"
+import { Check, Calendar, MapPin, CalendarDays, BarChart2, Network, FileText, BookOpen, Download, Briefcase, Castle } from "lucide-react"
 
 // Update this date each week after the Monday refresh
 const LAST_UPDATED = "March 11, 2026"
@@ -19,20 +19,10 @@ const REPORT_FEATURES = [
   "12 months of updates included",
 ]
 
-const GROUP_FEATURES = [
-  "Everything in Single Entity, plus:",
-  "Named subsidiaries / business units covered",
-  "ThreadMoat dashboard access (22 visualizations)",
-  "Internal distribution across licensed entities",
-  "Scenario modeling + saved views",
-]
-
 const PORTFOLIO_FEATURES = [
-  "Everything in Group, plus:",
-  "One PE/VC firm + up to 5 named portfolio companies",
+  "Everything in Single Entity, plus:",
   "60-min analyst briefing with Michael Finocchiaro",
-  "Spreadsheet annex (557 companies, all scoring dimensions)",
-  "Custom sector deep-dive on one category of choice",
+  "Custom thesis report on one sector or competitive question",
 ]
 
 const FREE_FEATURES = [
@@ -165,7 +155,7 @@ export default function PricingPage() {
         <p className="text-center text-muted-foreground mb-10 max-w-2xl mx-auto">
           Every copy is personalized, watermarked, and traceable. Choose the license that fits your organization.
         </p>
-        <div className="mx-auto grid max-w-7xl gap-6 lg:grid-cols-4">
+        <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-3">
 
           {/* Single Entity */}
           <div className="flex flex-col rounded-lg border-2 border-primary/60 bg-card p-6 shadow-md relative">
@@ -207,40 +197,12 @@ export default function PricingPage() {
             </div>
           </div>
 
-          {/* Group */}
-          <div className="flex flex-col rounded-lg border border-border/60 bg-card p-6">
-            <div className="flex items-start justify-between">
-              <div>
-                <h3 className="text-lg font-semibold">Group</h3>
-                <p className="mt-1 text-xs text-muted-foreground">Named subsidiaries &amp; business units</p>
-              </div>
-              <Users className="h-5 w-5 text-muted-foreground mt-1" />
-            </div>
-            <div className="mt-5">
-              <span className="text-3xl font-bold">$9,999</span>
-              <p className="text-xs text-muted-foreground mt-1">One-time purchase</p>
-            </div>
-            <ul className="mt-6 flex-1 space-y-2.5">
-              {GROUP_FEATURES.map(f => (
-                <li key={f} className="flex items-start gap-2">
-                  <Check className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
-                  <span className="text-xs">{f}</span>
-                </li>
-              ))}
-            </ul>
-            <div className="mt-6">
-              <a href="/about#contact">
-                <Button variant="outline" className="w-full" size="sm">Contact for Group License</Button>
-              </a>
-            </div>
-          </div>
-
           {/* Investor / Portfolio */}
           <div className="flex flex-col rounded-lg border border-primary/40 bg-card p-6 shadow-sm">
             <div className="flex items-start justify-between">
               <div>
                 <h3 className="text-lg font-semibold">Investor / Portfolio</h3>
-                <p className="mt-1 text-xs text-muted-foreground">PE / VC + named portfolio companies</p>
+                <p className="mt-1 text-xs text-muted-foreground">PE / VC firms &amp; corporate strategy</p>
               </div>
               <Briefcase className="h-5 w-5 text-primary mt-1" />
             </div>
