@@ -406,23 +406,24 @@ export function MapChart({ data = [], className, preview = false }: MapChartProp
         zoomToFeature(d);
       });
 
-    // City bubbles — drawn in overlay (screen-space, unaffected by zoom)
+    // City bubbles — drawn in overlay after zoom transition completes
     overlay.selectAll("*").remove();
     if (selectedCountry && cityBubbles.length > 0 && cityScales) {
-      // Get current zoom transform to position bubbles correctly
-      const currentTransform = d3.zoomTransform(svg.node()!);
+      // Delay drawing until after the 750ms zoom transition finishes
+      const drawTimer = setTimeout(() => {
+        const currentTransform = d3.zoomTransform(svg.node()!);
 
-      overlay
-        .selectAll(".city-bubble")
-        .data(cityBubbles)
-        .join("g")
-        .attr("class", "city-bubble")
-        .attr("transform", (d: any) => {
-          const projected = projection(d.coords);
-          if (!projected) return "translate(-9999,-9999)";
-          const [sx, sy] = currentTransform.apply(projected);
-          return `translate(${sx},${sy})`;
-        })
+        overlay
+          .selectAll(".city-bubble")
+          .data(cityBubbles)
+          .join("g")
+          .attr("class", "city-bubble")
+          .attr("transform", (d: any) => {
+            const projected = projection(d.coords);
+            if (!projected) return "translate(-9999,-9999)";
+            const [sx, sy] = currentTransform.apply(projected);
+            return `translate(${sx},${sy})`;
+          })
         .style("cursor", "pointer")
         .on("mouseover", (event: MouseEvent, d: any) => {
           const iso = COUNTRY_ISO[d.countryForFlag] || "un";
@@ -474,6 +475,9 @@ export function MapChart({ data = [], className, preview = false }: MapChartProp
             .style("text-shadow", "0 1px 3px rgba(0,0,0,0.8)")
             .text(`${d.name} (${d.count})`);
         });
+      }, 800); // wait for 750ms zoom transition to finish
+      // Cleanup timer on re-render
+      return () => clearTimeout(drawTimer);
     }
 
     // Legend
