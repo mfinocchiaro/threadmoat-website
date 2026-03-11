@@ -69,10 +69,35 @@ export async function POST(request: Request) {
 async function handleCheckoutCompleted(session: Stripe.Checkout.Session, stripe: Stripe) {
   // Support both old (supabase_user_id) and new (user_id) metadata keys during transition
   const userId = session.metadata?.user_id || session.metadata?.supabase_user_id
+  const productId = session.metadata?.product_id
+
+  if (!userId) {
+    console.error('Missing user ID in checkout session')
+    return
+  }
+
+  // One-time payment (e.g. market report purchase)
+  if (session.mode === 'payment') {
+    const paymentIntentId = session.payment_intent as string
+    await sql`
+      INSERT INTO purchases (user_id, stripe_payment_intent_id, product_id, amount_cents, status, purchased_at)
+      VALUES (
+        ${userId},
+        ${paymentIntentId},
+        ${productId ?? 'unknown'},
+        ${session.amount_total ?? 0},
+        'completed',
+        NOW()
+      )
+    `
+    return
+  }
+
+  // Recurring subscription
   const subscriptionId = session.subscription as string
 
-  if (!userId || !subscriptionId) {
-    console.error('Missing user ID or subscription ID in checkout session')
+  if (!subscriptionId) {
+    console.error('Missing subscription ID in checkout session')
     return
   }
 

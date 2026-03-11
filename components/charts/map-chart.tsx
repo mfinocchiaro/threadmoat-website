@@ -105,13 +105,22 @@ const US_METRO_MAP: Record<string, string> = {
   "Sunnyvale": "Bay Area", "Los Altos": "Bay Area", "Los Gatos": "Bay Area",
   "Pleasonton": "Bay Area", "Folsom": "Bay Area", "Concord": "Bay Area",
   "San Francisco Bay Area": "Bay Area",
-  // LA Area
+  // LA / Southern California
   "Los Angeles": "Los Angeles Area", "Santa Monica": "Los Angeles Area",
   "Culver City": "Los Angeles Area", "Inglewood": "Los Angeles Area",
   "Hollywood": "Los Angeles Area", "Malibu": "Los Angeles Area",
   "Chatsworth": "Los Angeles Area", "Irvine": "Los Angeles Area",
   "Brea": "Los Angeles Area", "Tustin": "Los Angeles Area",
   "Chula Vista": "Los Angeles Area",
+  "San Diego": "Los Angeles Area", "Carlsbad": "Los Angeles Area",
+  "Oceanside": "Los Angeles Area", "Escondido": "Los Angeles Area",
+  "Riverside": "Los Angeles Area", "Ontario": "Los Angeles Area",
+  "Anaheim": "Los Angeles Area", "Long Beach": "Los Angeles Area",
+  "Pasadena": "Los Angeles Area", "Torrance": "Los Angeles Area",
+  "Naples": "Miami Area", "Daytona Beach": "Miami Area",
+  "Minneaopolis": "Minneapolis", "Minneapolis": "Minneapolis",
+  // Catch-all for unknown US locations
+  "Nowhere": "Rest of USA", "St. Joseph": "Rest of USA", "California": "Rest of USA",
   // Boston / New England
   "Boston": "Boston Area", "Cambridge": "Boston Area", "Somerville": "Boston Area",
   "Burlington": "Boston Area", "Northampton": "Boston Area",
@@ -119,7 +128,7 @@ const US_METRO_MAP: Record<string, string> = {
   "New York": "New York Area", "New York City": "New York Area",
   "Brooklyn": "New York Area", "Jersey City": "New York Area",
   "Newark": "New York Area", "Hazlet": "New York Area",
-  "New London": "New York Area",
+  "New London": "New York Area", "Syracuse": "New York Area", "Rochester": "New York Area",
   // Seattle Area
   "Seattle": "Seattle Area", "Kent": "Seattle Area",
   // Denver Area
@@ -276,21 +285,19 @@ export function MapChart({ data = [], className, preview = false }: MapChartProp
     const results: any[] = [];
     cityMap.forEach((val) => {
       let coords: [number, number] | null = null;
-      if (val.lat !== undefined && val.lng !== undefined) {
+      // Prefer static geocoding lookup (curated) over database lat/lng (often inaccurate)
+      const lookupKey = `${val.name}|${selectedCountry}`;
+      const lookup = CITY_COORDINATES[lookupKey];
+      if (lookup) {
+        coords = lookup;
+      } else if (val.lat !== undefined && val.lng !== undefined) {
         coords = [val.lng, val.lat];
-      } else {
-        // Static geocoding lookup
-        const lookupKey = `${val.name}|${selectedCountry}`;
-        const lookup = CITY_COORDINATES[lookupKey];
-        if (lookup) {
-          coords = lookup;
-        } else if (countryCentroid) {
-          // Last resort: jitter from mainland centroid
-          coords = [
-            countryCentroid[0] + (Math.random() - 0.5) * 1.5,
-            countryCentroid[1] + (Math.random() - 0.5) * 1.5,
-          ];
-        }
+      } else if (countryCentroid) {
+        // Last resort: jitter from mainland centroid
+        coords = [
+          countryCentroid[0] + (Math.random() - 0.5) * 1.5,
+          countryCentroid[1] + (Math.random() - 0.5) * 1.5,
+        ];
       }
       if (coords) {
         results.push({ ...val, coords, countryForFlag: selectedCountry });

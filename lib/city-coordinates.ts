@@ -106,6 +106,9 @@ export const CITY_COORDINATES: Record<string, [number, number]> = {
   "Delaware|United States": [-75.5277, 38.9108],
   "Minneaopolis|United States": [-93.265, 44.9778],
   "Nowhere|United States": [-98.5795, 39.8283], // geographic center of US
+  "Miami Area|United States": [-80.1918, 25.7617],
+  "Minneapolis|United States": [-93.265, 44.9778],
+  "Rest of USA|United States": [-98.5795, 39.8283], // geographic center of US
 
   // United Kingdom
   "London|United Kingdom": [-0.1278, 51.5074],

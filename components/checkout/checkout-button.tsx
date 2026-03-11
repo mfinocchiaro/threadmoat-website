@@ -7,9 +7,11 @@ import { createCheckoutSession } from "@/app/actions/stripe"
 export function CheckoutButton({
   productId,
   userEmail,
+  label = "Purchase Now",
 }: {
   productId: string
   userEmail: string
+  label?: string
 }) {
   const [isLoading, setIsLoading] = useState(false)
 
@@ -29,7 +31,7 @@ export function CheckoutButton({
 
   return (
     <Button onClick={handleCheckout} disabled={isLoading} className="w-full">
-      {isLoading ? "Loading..." : "Subscribe Now"}
+      {isLoading ? "Loading..." : label}
     </Button>
   )
 }
