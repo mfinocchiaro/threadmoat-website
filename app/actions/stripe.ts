@@ -35,6 +35,31 @@ export async function createCheckoutSession(productId: string, userEmail: string
     process.env.NEXT_PUBLIC_BASE_URL ||
     (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
 
+  if (product.mode === 'payment') {
+    // One-time payment (e.g. market reports)
+    const checkoutSession = await getStripe().checkout.sessions.create({
+      customer: customerId,
+      mode: 'payment',
+      payment_method_types: ['card'],
+      line_items: [
+        {
+          price_data: {
+            currency: 'usd',
+            product_data: { name: product.name, description: product.description || '' },
+            unit_amount: product.priceInCents,
+          },
+          quantity: 1,
+        },
+      ],
+      success_url: `${baseUrl}/dashboard?checkout=success&product=${productId}`,
+      cancel_url: `${baseUrl}/pricing?checkout=canceled`,
+      metadata: { user_id: userId, product_id: productId },
+    })
+
+    return { url: checkoutSession.url }
+  }
+
+  // Recurring subscription
   const interval = product.interval === 'year' ? 'year' as const : 'month' as const
 
   const checkoutSession = await getStripe().checkout.sessions.create({

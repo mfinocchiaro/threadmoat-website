@@ -1,10 +1,21 @@
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import { Check, Calendar, Phone, MapPin, CalendarDays, BarChart2, Network, FileText } from "lucide-react"
+import { Check, Calendar, Phone, MapPin, CalendarDays, BarChart2, Network, FileText, BookOpen, Download, ShieldCheck } from "lucide-react"
 
 // Update this date each week after the Monday refresh
 const LAST_UPDATED = "March 3, 2026"
+
+const REPORT_FEATURES = [
+  "150+ page deep-dive analysis",
+  "500+ companies, $15.5B VC funding mapped",
+  "Incumbent landscape — $22–24B anchor vendors profiled",
+  "Startup ecosystem — 10 investment categories ranked",
+  "$50B+ M&A consolidation analysis (2022–2025)",
+  "5-year market forecast ($120–140B by 2028)",
+  "Top 10 company rankings with scoring methodology",
+  "Delivered as PDF within 24 hours of purchase",
+]
 
 const FREE_FEATURES = [
   "Network Graph — interactive relationship mapping",
@@ -13,9 +24,10 @@ const FREE_FEATURES = [
   "Updated weekly with the full dataset",
 ]
 
-const ENTERPRISE_FEATURES = [
+const WATCHTOWER_FEATURES = [
   "All 20+ dashboards + filters + saved views",
-  "Watchlists + alerts",
+  "Annual Market State Report included",
+  "Watchlists + alerts on portfolio companies",
   "Exports: charts + aggregated tables",
   "Custom reports + briefings + consulting",
   "Controlled dataset access / bespoke exports under contract",
@@ -117,13 +129,57 @@ export default function PricingPage() {
           with 35+ years in engineering software markets.
         </p>
         <p className="mx-auto mt-3 max-w-xl text-sm text-muted-foreground border border-border/40 rounded-lg px-4 py-2 bg-muted/30">
-          <strong>Analytics access only.</strong> Raw directory available exclusively via Enterprise engagement.
+          <strong>Analytics access only.</strong> Raw directory available exclusively via Watchtower engagement.
         </p>
       </section>
 
       {/* Pricing Cards */}
       <section className="container mx-auto px-4 pb-24">
-        <div className="mx-auto grid max-w-4xl gap-8 md:grid-cols-2">
+        <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-3">
+
+          {/* 2026 Market Report */}
+          <div className="flex flex-col rounded-lg border-2 border-primary/60 bg-card p-8 shadow-md relative">
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-4 py-1 text-xs font-semibold text-primary-foreground">
+              New Release
+            </div>
+            <div className="flex items-start justify-between">
+              <div>
+                <h3 className="text-xl font-semibold">2026 Market Report</h3>
+                <p className="mt-1 text-sm text-muted-foreground">Engineering Software &amp; Industrial AI</p>
+              </div>
+              <BookOpen className="h-5 w-5 text-primary mt-1" />
+            </div>
+            <div className="mt-6 space-y-1">
+              <div>
+                <span className="text-4xl font-bold">$4,999</span>
+              </div>
+              <div className="text-sm text-muted-foreground">
+                Individual license &mdash; one-time purchase
+              </div>
+            </div>
+            <ul className="mt-8 flex-1 space-y-3">
+              {REPORT_FEATURES.map(f => (
+                <li key={f} className="flex items-start gap-2">
+                  <Check className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                  <span className="text-sm">{f}</span>
+                </li>
+              ))}
+            </ul>
+            <div className="mt-8 space-y-3">
+              <Link href="/auth/sign-up?product=market-report-2026">
+                <Button className="w-full">Purchase Report</Button>
+              </Link>
+              <a
+                href="/reports/2026-market-report-sample.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <Download className="h-3.5 w-3.5" />
+                Download redacted sample
+              </a>
+            </div>
+          </div>
 
           {/* Free — Explorer */}
           <div className="flex flex-col rounded-lg border border-border/40 bg-card p-8">
@@ -157,20 +213,21 @@ export default function PricingPage() {
             </div>
           </div>
 
-          {/* Enterprise */}
+          {/* The Watchtower — Enterprise */}
           <div className="flex flex-col rounded-lg border border-primary/40 bg-card p-8 shadow-sm">
             <div className="flex items-start justify-between">
               <div>
-                <h3 className="text-xl font-semibold">Enterprise / VC / PE</h3>
-                <p className="mt-1 text-sm text-muted-foreground">Custom engagement</p>
+                <h3 className="text-xl font-semibold">The Watchtower</h3>
+                <p className="mt-1 text-sm text-muted-foreground">Annual strategic engagement</p>
               </div>
-              <Phone className="h-5 w-5 text-primary mt-1" />
+              <ShieldCheck className="h-5 w-5 text-primary mt-1" />
             </div>
             <div className="mt-6">
               <span className="text-4xl font-bold">Custom</span>
+              <p className="text-sm text-muted-foreground mt-1">Annual contract &mdash; VC / PE / Corporate</p>
             </div>
             <ul className="mt-8 flex-1 space-y-3">
-              {ENTERPRISE_FEATURES.map(f => (
+              {WATCHTOWER_FEATURES.map(f => (
                 <li key={f} className="flex items-start gap-2">
                   <Check className="h-4 w-4 text-primary mt-0.5 shrink-0" />
                   <span className="text-sm">{f}</span>
@@ -178,7 +235,7 @@ export default function PricingPage() {
               ))}
             </ul>
             <div className="mt-8">
-              <a href="/#contact">
+              <a href="/about#contact">
                 <Button className="w-full">Book an intro call</Button>
               </a>
             </div>
