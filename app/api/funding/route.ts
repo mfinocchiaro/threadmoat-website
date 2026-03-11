@@ -3,6 +3,7 @@ import { auth } from '@/auth'
 import Papa from 'papaparse'
 import { promises as fs } from 'fs'
 import path from 'path'
+import { rateLimit } from '@/lib/rate-limit'
 
 // Cloud SaaS benchmark: $200K ARR/employee is the industry "good" threshold (Bessemer/BVP standard)
 const CLOUD_ARR_BENCHMARK = 200_000
@@ -57,11 +58,16 @@ export async function GET() {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
+  const rl = await rateLimit(`api:funding:${session.user.id}`, 30, 60 * 1000)
+  if (!rl.allowed) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+  }
+
   try {
     // Load both CSVs in parallel
     const [financialContent, gridContent] = await Promise.all([
-      fs.readFile(path.join(process.cwd(), 'public', 'data', 'Startups-Financial Health.csv'), 'utf-8'),
-      fs.readFile(path.join(process.cwd(), 'public', 'data', 'Startups-Grid view.csv'), 'utf-8'),
+      fs.readFile(path.join(process.cwd(), 'data', 'Startups-Financial Health.csv'), 'utf-8'),
+      fs.readFile(path.join(process.cwd(), 'data', 'Startups-Grid view.csv'), 'utf-8'),
     ])
 
     const stripBOM = (s: string) => s.charCodeAt(0) === 0xFEFF ? s.slice(1) : s

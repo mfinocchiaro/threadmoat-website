@@ -4,6 +4,7 @@ import { getUserSubscription } from '@/lib/subscription'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ManageSubscriptionButton } from '@/components/checkout/manage-subscription-button'
 import { ProfileForm } from './profile-form'
+import { DeleteAccountButton } from './delete-account-button'
 
 export default async function SettingsPage() {
   const session = await auth()
@@ -79,6 +80,18 @@ export default async function SettingsPage() {
             )}
           </div>
           <ManageSubscriptionButton />
+        </CardContent>
+      </Card>
+      {/* Danger Zone */}
+      <Card className="border-destructive/50">
+        <CardHeader>
+          <CardTitle className="text-destructive">Danger Zone</CardTitle>
+          <CardDescription>
+            Permanently delete your account and all associated data. This action cannot be undone.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <DeleteAccountButton />
         </CardContent>
       </Card>
     </div>

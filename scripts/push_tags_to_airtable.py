@@ -24,7 +24,7 @@ TOKEN   = os.environ.get("AIRTABLE_TOKEN", "")
 BASE_ID = os.environ.get("AIRTABLE_BASE_ID", "")
 TABLE   = "Startups"
 
-CSV_PATH = os.path.join(os.path.dirname(__file__), "..", "public", "data", "Startups-Grid view.csv")
+CSV_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "Startups-Grid view.csv")
 
 CAT_COL  = "Category/Function Tags"
 OP_COL   = "Operating Model Tags"

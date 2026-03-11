@@ -3,6 +3,7 @@ import { auth } from '@/auth'
 import Papa from 'papaparse'
 import { promises as fs } from 'fs'
 import path from 'path'
+import { rateLimit } from '@/lib/rate-limit'
 
 export async function GET() {
   const session = await auth()
@@ -10,8 +11,13 @@ export async function GET() {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
+  const rl = await rateLimit(`api:investors:${session.user.id}`, 30, 60 * 1000)
+  if (!rl.allowed) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+  }
+
   try {
-    const csvPath = path.join(process.cwd(), 'public', 'data', 'Investors-Grid view.csv')
+    const csvPath = path.join(process.cwd(), 'data', 'Investors-Grid view.csv')
     let csvContent = await fs.readFile(csvPath, 'utf-8')
 
     if (csvContent.charCodeAt(0) === 0xFEFF) {

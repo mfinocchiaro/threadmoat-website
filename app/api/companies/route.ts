@@ -1,11 +1,17 @@
 import { NextResponse } from 'next/server'
 import { auth } from '@/auth'
 import { loadCompaniesFromCSV } from '@/lib/load-companies-server'
+import { rateLimit } from '@/lib/rate-limit'
 
 export async function GET() {
   const session = await auth()
   if (!session?.user?.id) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  const rl = await rateLimit(`api:companies:${session.user.id}`, 30, 60 * 1000)
+  if (!rl.allowed) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
   }
 
   try {
