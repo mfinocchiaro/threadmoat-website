@@ -14,7 +14,7 @@ const REPORT_FEATURES = [
   "Startup ecosystem — 10 investment categories ranked",
   "$50B+ M&A consolidation analysis (2022–2025)",
   "5-year market forecast ($120–140B by 2028)",
-  "ThreadMoat Top 25 rankings with 8-dimension scoring",
+  "ThreadMoat Top 25 rankings with 7-dimension scoring",
   "Personalized, watermarked copy with unique Copy ID",
 ]
 
