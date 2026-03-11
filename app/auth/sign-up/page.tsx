@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { Suspense, useState } from 'react'
 import { registerUser } from '@/app/actions/auth'
 import { PASSWORD_RULES, type RegisterData } from '@/lib/auth-schema'
 import { Button } from '@/components/ui/button'
@@ -22,7 +22,7 @@ import {
 } from '@/components/ui/select'
 import { CheckCircle2, Circle } from 'lucide-react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 const PROFILE_OPTIONS = [
   { value: 'startup_founder', label: 'Startup / Founder' },
@@ -53,7 +53,7 @@ function PasswordRequirements({ password }: { password: string }) {
   )
 }
 
-export default function SignUpPage() {
+function SignUpForm() {
   const [form, setForm] = useState({
     fullName: '',
     company: '',
@@ -73,6 +73,8 @@ export default function SignUpPage() {
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const pendingProduct = searchParams.get('product') || ''
 
   const set = (field: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm(prev => ({ ...prev, [field]: e.target.value }))
@@ -115,7 +117,8 @@ export default function SignUpPage() {
       marketingConsent,
     })
     if (result.success) {
-      router.push(result.emailSent === false ? '/auth/sign-up-success?warn=email' : '/auth/sign-up-success')
+      const productParam = pendingProduct ? `&product=${encodeURIComponent(pendingProduct)}` : ''
+      router.push(result.emailSent === false ? `/auth/sign-up-success?warn=email${productParam}` : `/auth/sign-up-success?${productParam.slice(1)}`)
     } else {
       setError(result.error)
       setIsLoading(false)
@@ -366,5 +369,17 @@ export default function SignUpPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function SignUpPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
+        <p className="text-muted-foreground">Loading...</p>
+      </div>
+    }>
+      <SignUpForm />
+    </Suspense>
   )
 }

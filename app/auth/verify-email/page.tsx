@@ -16,6 +16,7 @@ import { CheckCircle2, XCircle, Loader2 } from 'lucide-react'
 function VerifyEmailContent() {
   const searchParams = useSearchParams()
   const token = searchParams.get('token')
+  const pendingProduct = searchParams.get('product') || ''
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading')
   const [errorMsg, setErrorMsg] = useState('')
 
@@ -56,7 +57,7 @@ function VerifyEmailContent() {
                 <p className="text-sm text-muted-foreground">
                   Your email has been verified. You can now sign in.
                 </p>
-                <Link href="/auth/login">
+                <Link href={pendingProduct ? `/auth/login?redirect=/pricing?product=${encodeURIComponent(pendingProduct)}` : '/auth/login'}>
                   <Button className="w-full">Sign In</Button>
                 </Link>
               </div>
