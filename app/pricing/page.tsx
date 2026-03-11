@@ -16,7 +16,6 @@ const REPORT_FEATURES = [
   "5-year market forecast ($120–140B by 2028)",
   "ThreadMoat Top 25 rankings with 8-dimension scoring",
   "Personalized, watermarked copy with unique Copy ID",
-  "12 months of updates included",
 ]
 
 const PORTFOLIO_FEATURES = [
