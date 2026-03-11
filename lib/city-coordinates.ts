@@ -4,7 +4,21 @@
  * Values: [longitude, latitude]
  */
 export const CITY_COORDINATES: Record<string, [number, number]> = {
-  // United States — major hubs
+  // United States — consolidated metro areas
+  "Bay Area|United States": [-122.2, 37.55],
+  "Los Angeles Area|United States": [-118.25, 34.05],
+  "Boston Area|United States": [-71.06, 42.36],
+  "New York Area|United States": [-74.0, 40.71],
+  "Seattle Area|United States": [-122.33, 47.61],
+  "Denver Area|United States": [-105.0, 39.74],
+  "DC Area|United States": [-77.04, 38.91],
+  "Chicago Area|United States": [-87.63, 41.88],
+  "Ohio|United States": [-82.0, 40.5],
+  "Pittsburgh Area|United States": [-79.99, 40.44],
+  "Research Triangle|United States": [-78.77, 35.87],
+  "Philadelphia Area|United States": [-75.17, 39.95],
+
+  // United States — individual cities (non-consolidated)
   "San Francisco|United States": [-122.4194, 37.7749],
   "San Francisco|USA": [-122.4194, 37.7749],
   "San Francisco Bay Area|United States": [-122.4194, 37.7749],
