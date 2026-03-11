@@ -96,13 +96,61 @@ const COUNTRY_ISO: Record<string, string> = {
   Philippines: "ph",
 };
 
-/** Extract a city name from hqLocation string */
-function extractCity(hqLocation: string | undefined | null): string {
+/** US metro area consolidation — group nearby cities into regional hubs */
+const US_METRO_MAP: Record<string, string> = {
+  // Bay Area
+  "San Francisco": "Bay Area", "Palo Alto": "Bay Area", "Mountain View": "Bay Area",
+  "Redwood City": "Bay Area", "San Jose": "Bay Area", "San Mateo": "Bay Area",
+  "Santa Clara": "Bay Area", "Berkeley": "Bay Area", "Oakland": "Bay Area",
+  "Sunnyvale": "Bay Area", "Los Altos": "Bay Area", "Los Gatos": "Bay Area",
+  "Pleasonton": "Bay Area", "Folsom": "Bay Area", "Concord": "Bay Area",
+  "San Francisco Bay Area": "Bay Area",
+  // LA Area
+  "Los Angeles": "Los Angeles Area", "Santa Monica": "Los Angeles Area",
+  "Culver City": "Los Angeles Area", "Inglewood": "Los Angeles Area",
+  "Hollywood": "Los Angeles Area", "Malibu": "Los Angeles Area",
+  "Chatsworth": "Los Angeles Area", "Irvine": "Los Angeles Area",
+  "Brea": "Los Angeles Area", "Tustin": "Los Angeles Area",
+  "Chula Vista": "Los Angeles Area",
+  // Boston / New England
+  "Boston": "Boston Area", "Cambridge": "Boston Area", "Somerville": "Boston Area",
+  "Burlington": "Boston Area", "Northampton": "Boston Area",
+  // NYC / Tri-State
+  "New York": "New York Area", "New York City": "New York Area",
+  "Brooklyn": "New York Area", "Jersey City": "New York Area",
+  "Newark": "New York Area", "Hazlet": "New York Area",
+  "New London": "New York Area",
+  // Seattle Area
+  "Seattle": "Seattle Area", "Kent": "Seattle Area",
+  // Denver Area
+  "Denver": "Denver Area", "Boulder": "Denver Area",
+  // DC / Mid-Atlantic
+  "Washington": "DC Area", "Arlington": "DC Area", "Tysons": "DC Area",
+  "Wilmington": "DC Area", "Delaware": "DC Area",
+  // Chicago Area
+  "Chicago": "Chicago Area", "Chicago IL": "Chicago Area", "Warrenville": "Chicago Area",
+  // Ohio
+  "Cleveland": "Ohio", "Akron": "Ohio", "Columbus": "Ohio", "Dayton": "Ohio",
+  // Pittsburgh Area
+  "Pittsburgh": "Pittsburgh Area", "Bethlehem": "Pittsburgh Area",
+  // Research Triangle
+  "Durham": "Research Triangle", "Raleigh": "Research Triangle",
+  "Charlottesville": "Research Triangle",
+  // Philadelphia
+  "Philadelphia": "Philadelphia Area",
+};
+
+/** Extract a city name from hqLocation string, with US metro consolidation */
+function extractCity(hqLocation: string | undefined | null, country?: string): string {
   if (!hqLocation) return "Unknown";
-  // hqLocation is typically "City, State, Country" or "City, Country"
   const parts = hqLocation.split(",").map((s) => s.trim());
-  // First part is usually the city
-  return parts[0] || "Unknown";
+  const city = parts[0] || "Unknown";
+  // Consolidate US metros
+  const c = (country || "").replace(/[\u{1F300}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}]/gu, "").trim();
+  if (c === "United States" || c === "USA") {
+    return US_METRO_MAP[city] || city;
+  }
+  return city;
 }
 
 export function MapChart({ data = [], className, preview = false }: MapChartProps) {
@@ -179,7 +227,7 @@ export function MapChart({ data = [], className, preview = false }: MapChartProp
     }>();
 
     for (const c of stats.companies) {
-      const city = extractCity(c.hqLocation);
+      const city = extractCity(c.hqLocation, selectedCountry);
       if (!cityMap.has(city)) {
         cityMap.set(city, {
           name: city,
