@@ -205,6 +205,40 @@ export async function verifyEmail(token: string): Promise<ActionResult> {
   }
 }
 
+export async function deleteAccount(): Promise<ActionResult> {
+  try {
+    const { auth } = await import('@/auth')
+    const session = await auth()
+    if (!session?.user?.id) return { success: false, error: 'Not authenticated' }
+
+    const userId = session.user.id
+
+    // Cancel Stripe subscription if active
+    try {
+      const rows = await sql`SELECT stripe_customer_id FROM profiles WHERE id = ${userId}`
+      const customerId = rows[0]?.stripe_customer_id as string | undefined
+      if (customerId) {
+        const stripe = (await import('stripe')).default
+        const stripeClient = new stripe(process.env.STRIPE_SECRET_KEY!)
+        const subs = await stripeClient.subscriptions.list({ customer: customerId, status: 'active' })
+        for (const sub of subs.data) {
+          await stripeClient.subscriptions.cancel(sub.id)
+        }
+      }
+    } catch (err) {
+      console.error('[deleteAccount] Stripe cleanup error (non-fatal):', err)
+    }
+
+    // Delete user — profiles and subscriptions cascade automatically
+    await sql`DELETE FROM users WHERE id = ${userId}`
+
+    return { success: true }
+  } catch (err) {
+    console.error('[deleteAccount]', err)
+    return { success: false, error: 'Account deletion failed. Please try again.' }
+  }
+}
+
 export async function requestPasswordReset(email: string): Promise<ActionResult> {
   try {
     const rl = await rateLimit(`reset:${email}`, 3, 15 * 60 * 1000)

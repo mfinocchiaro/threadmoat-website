@@ -35,7 +35,7 @@ from pathlib import Path
 # ─── Config ───────────────────────────────────────────────────────────────────
 
 ROOT           = Path(__file__).parent.parent
-CSV_PATH       = ROOT / "public/data/Startups-Grid view.csv"
+CSV_PATH       = ROOT / "data/Startups-Grid view.csv"
 CHECKPOINT_DIR = Path(__file__).parent / ".tag_clean_checkpoints"
 STATE_FILE     = CHECKPOINT_DIR / "op_model_enrichment_state.json"
 

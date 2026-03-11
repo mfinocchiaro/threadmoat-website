@@ -25,7 +25,7 @@ from pathlib import Path
 # ─── Paths ────────────────────────────────────────────────────────────────────
 
 ROOT            = Path(__file__).parent.parent
-CSV_PATH        = ROOT / "public/data/Startups-Grid view.csv"
+CSV_PATH        = ROOT / "data/Startups-Grid view.csv"
 CHECKPOINT_DIR  = Path(__file__).parent / ".tag_clean_checkpoints"
 
 CAT_COL  = "Category/Function Tags"

@@ -27,7 +27,7 @@ function parseNum(value: string | undefined): number {
  * Used by both the API route and server components (homepage).
  */
 export async function loadCompaniesFromCSV(): Promise<Company[]> {
-  const csvPath = path.join(process.cwd(), 'public', 'data', 'Startups-Grid view.csv')
+  const csvPath = path.join(process.cwd(), 'data', 'Startups-Grid view.csv')
   let csvContent = await fs.readFile(csvPath, 'utf-8')
 
   // Strip BOM if present

@@ -1,5 +1,5 @@
 """
-Fetch Airtable views as CSVs and write to public/data/.
+Fetch Airtable views as CSVs and write to data/ (private, not public).
 Run locally or via GitHub Actions (see .github/workflows/sync-airtable.yml).
 """
 
@@ -23,17 +23,17 @@ VIEWS = [
     {
         "table": "Startups",
         "view": "Grid view",
-        "output": "public/data/Startups-Grid view.csv",
+        "output": "data/Startups-Grid view.csv",
     },
     {
         "table": "Startups",
         "view": "Financial Health",
-        "output": "public/data/Startups-Financial Health.csv",
+        "output": "data/Startups-Financial Health.csv",
     },
     {
         "table": "Investors",
         "view": "Grid view",
-        "output": "public/data/Investors-Grid view.csv",
+        "output": "data/Investors-Grid view.csv",
     },
 ]
 

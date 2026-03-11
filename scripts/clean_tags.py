@@ -35,7 +35,7 @@ from pathlib import Path
 
 # ─── Config ───────────────────────────────────────────────────────────────────
 
-CSV_PATH = Path(__file__).parent.parent / "public/data/Startups-Grid view.csv"
+CSV_PATH = Path(__file__).parent.parent / "data/Startups-Grid view.csv"
 CHECKPOINT_DIR = Path(__file__).parent / ".tag_clean_checkpoints"
 
 COL_CATEGORY = "Category/Function Tags"
