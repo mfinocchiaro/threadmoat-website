@@ -199,7 +199,8 @@ export default function PricingPage() {
             </div>
             <div className="mt-5">
               <span className="text-3xl font-bold">$14,999</span>
-              <p className="text-xs text-muted-foreground mt-1">One-time purchase</p>
+              <span className="text-lg text-muted-foreground font-normal">/year</span>
+              <p className="text-xs text-muted-foreground mt-1">Annual subscription</p>
             </div>
             <ul className="mt-6 flex-1 space-y-2.5">
               {PORTFOLIO_FEATURES.map(f => (
@@ -230,7 +231,7 @@ export default function PricingPage() {
               <Castle className="h-5 w-5 text-red-400 mt-1" />
             </div>
             <div className="mt-5">
-              <span className="text-3xl font-bold">Custom</span>
+              <span className="text-3xl font-bold">Call For Details</span>
               <p className="text-xs text-muted-foreground mt-1">Annual contract</p>
             </div>
             <ul className="mt-6 flex-1 space-y-2.5">
@@ -242,8 +243,8 @@ export default function PricingPage() {
               ))}
             </ul>
             <div className="mt-6">
-              <a href="/about#contact">
-                <Button variant="outline" className="w-full border-red-800/40 hover:bg-red-950/20 hover:text-red-300" size="sm">Enter the Red Keep</Button>
+              <a href="mailto:michael.finocchiaro@gmail.com?subject=ThreadMoat%20Red%20Keep%20Inquiry">
+                <Button variant="outline" className="w-full border-red-800/40 hover:bg-red-950/20 hover:text-red-300" size="sm">Email Us</Button>
               </a>
             </div>
           </div>
