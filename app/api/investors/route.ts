@@ -4,6 +4,7 @@ import Papa from 'papaparse'
 import { promises as fs } from 'fs'
 import path from 'path'
 import { rateLimit } from '@/lib/rate-limit'
+import { INVESTOR_META } from '@/lib/investor-meta'
 
 export async function GET() {
   const session = await auth()
@@ -47,7 +48,7 @@ export async function GET() {
       .map((row, i) => ({
         id: String(i + 1),
         name: (row['Name (Institution or Individual)'] || '').trim(),
-        startupNames: parseNestedCsv(row['Startups'] || ''),
+        startupNames: parseNestedCsv(row['Company (from Associated Startups)'] || ''),
         startupCount: parseInt(row['Startup Count']) || 0,
         investmentLists: parseNestedCsv(row['Investment Lists'] || ''),
         linkedInProfile: (row['LinkedIn Profile'] || '').trim(),
@@ -55,7 +56,17 @@ export async function GET() {
         notes: (row['Notes'] || '').trim(),
         contacts: (row['Contacts'] || '').trim(),
         investorType: (row['Investor Type'] || '').trim(),
+        hq: '',
+        description: '',
       }))
+      .map(inv => {
+        const meta = INVESTOR_META[inv.name]
+        if (meta) {
+          inv.hq = meta.hq
+          inv.description = meta.description
+        }
+        return inv
+      })
 
     return NextResponse.json({ success: true, count: investors.length, data: investors })
   } catch (error) {

@@ -15,6 +15,8 @@ interface NodeDialogData {
   name: string
   investorType?: string
   investmentList?: string
+  hq?: string
+  description?: string
   connectedNames: { name: string; investmentList: string }[]
 }
 
@@ -25,6 +27,8 @@ interface InvestorRecord {
   startupCount: number
   investmentLists: string[]
   investorType: string
+  hq: string
+  description: string
 }
 
 interface InvestorNode {
@@ -114,7 +118,7 @@ export function InvestorNetwork({ className }: { className?: string }) {
 
     const nodes: GraphNode[] = []
     const links: GraphLink[] = []
-    const startupMap = new Map<string, string>() // name → investmentList
+    const startupMap = new Map<string, { name: string; investmentList: string }>()
 
     for (const inv of filtered) {
       nodes.push({
@@ -130,7 +134,7 @@ export function InvestorNetwork({ className }: { className?: string }) {
         const investmentList = inv.investmentLists[idx] ?? ""
 
         if (!startupMap.has(sid)) {
-          startupMap.set(sid, investmentList)
+          startupMap.set(sid, { name: sName.trim(), investmentList })
         }
         links.push({ source: `i:${inv.id}`, target: sid })
       })
@@ -138,9 +142,8 @@ export function InvestorNetwork({ className }: { className?: string }) {
 
     // Add startup nodes that appear in at least one link
     const linkedStartups = new Set(links.map(l => l.target))
-    for (const [sid, investmentList] of startupMap) {
+    for (const [sid, { name, investmentList }] of startupMap) {
       if (!linkedStartups.has(sid)) continue
-      const name = sid.slice(2).replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase())
       nodes.push({ id: sid, type: "startup", name, investmentList })
     }
 
@@ -343,10 +346,14 @@ export function InvestorNetwork({ className }: { className?: string }) {
               return { name: sNode.name, investmentList: (sNode as any).investmentList || "" }
             })
             .filter(Boolean) as { name: string; investmentList: string }[]
+          // Look up full investor record for hq/description
+          const invRecord = investors.find(r => r.name === inv.name)
           dialogRef.current({
             type: "investor",
             name: inv.name,
             investorType: inv.investorType,
+            hq: invRecord?.hq || "",
+            description: invRecord?.description || "",
             connectedNames: connected.sort((a, b) => a.name.localeCompare(b.name)),
           })
         }
@@ -566,13 +573,23 @@ export function InvestorNetwork({ className }: { className?: string }) {
               {dialogData?.type === "investor" && dialogData.name}
               {dialogData?.type === "startup" && dialogData.name}
             </DialogTitle>
-            <DialogDescription>
-              {dialogData?.type === "investor" && (
-                <span>{dialogData.investorType || "Investor"} · {dialogData.connectedNames.length} startup{dialogData.connectedNames.length !== 1 ? "s" : ""} funded</span>
-              )}
-              {dialogData?.type === "startup" && (
-                <span>{dialogData.investmentList || "Startup"} · {dialogData.connectedNames.length} investor{dialogData.connectedNames.length !== 1 ? "s" : ""}</span>
-              )}
+            <DialogDescription asChild>
+              <div>
+                {dialogData?.type === "investor" && (
+                  <>
+                    <span>{dialogData.investorType || "Investor"} · {dialogData.connectedNames.length} startup{dialogData.connectedNames.length !== 1 ? "s" : ""} funded</span>
+                    {dialogData.hq && (
+                      <span className="block mt-0.5 text-xs">{dialogData.hq}</span>
+                    )}
+                    {dialogData.description && (
+                      <span className="block mt-0.5 text-xs text-muted-foreground italic">{dialogData.description}</span>
+                    )}
+                  </>
+                )}
+                {dialogData?.type === "startup" && (
+                  <span>{dialogData.investmentList || "Startup"} · {dialogData.connectedNames.length} investor{dialogData.connectedNames.length !== 1 ? "s" : ""}</span>
+                )}
+              </div>
             </DialogDescription>
           </DialogHeader>
           {dialogData && dialogData.connectedNames.length > 0 && (
@@ -584,7 +601,7 @@ export function InvestorNetwork({ className }: { className?: string }) {
                       {dialogData.type === "investor" ? "Startup" : "Investor"}
                     </th>
                     <th className="px-2 py-1.5 font-medium">
-                      {dialogData.type === "investor" ? "Category" : "Type"}
+                      {dialogData.type === "investor" ? "Investment List" : "Type"}
                     </th>
                   </tr>
                 </thead>

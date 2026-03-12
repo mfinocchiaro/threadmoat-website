@@ -143,9 +143,31 @@ export function MaturityMatrixChart({ data, className }: MaturityMatrixChartProp
 
     const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`)
 
-    // Scales — 0-10 range for all scores
-    const xScale = d3.scaleLinear().domain([2, 9]).range([0, innerWidth])
-    const yScale = d3.scaleLinear().domain([2, 9]).range([innerHeight, 0])
+    // Scales — fit to actual data range with padding, ensuring quadrant midpoint is meaningful
+    const allX: number[] = []
+    const allY: number[] = []
+    for (const cat of categoryData) {
+      allX.push(cat.disruptionScore)
+      allY.push(cat.innovationScore)
+    }
+    if (viewMode === "startups" || viewMode === "both") {
+      for (const c of filteredStartups) {
+        const td = c.techDifferentiation || 0
+        const mo = c.marketOpportunity || 0
+        const cm = c.competitiveMoat || 0
+        const te = c.teamExecution || 0
+        if (td > 0 && mo > 0) {
+          allX.push(td * 0.6 + cm * 0.4)
+          allY.push(mo * 0.5 + te * 0.3 + td * 0.2)
+        }
+      }
+    }
+    const xExtent = d3.extent(allX) as [number, number]
+    const yExtent = d3.extent(allY) as [number, number]
+    const xPad = Math.max((xExtent[1] - xExtent[0]) * 0.12, 0.3)
+    const yPad = Math.max((yExtent[1] - yExtent[0]) * 0.12, 0.3)
+    const xScale = d3.scaleLinear().domain([xExtent[0] - xPad, xExtent[1] + xPad]).range([0, innerWidth])
+    const yScale = d3.scaleLinear().domain([yExtent[0] - yPad, yExtent[1] + yPad]).range([innerHeight, 0])
 
     const midX = innerWidth / 2
     const midY = innerHeight / 2
@@ -162,26 +184,36 @@ export function MaturityMatrixChart({ data, className }: MaturityMatrixChartProp
         .attr("fill", q.bg)
         .attr("stroke", "none")
 
-      // Quadrant label
-      g.append("text")
-        .attr("x", x + w / 2).attr("y", y + 28)
-        .attr("text-anchor", "middle")
-        .text(q.label)
-        .attr("font-size", "22px")
-        .attr("font-weight", 900)
-        .attr("fill", "var(--muted-foreground)")
-        .attr("opacity", 0.12)
-        .style("pointer-events", "none")
+      // Quadrant label — high contrast badge along top edge
+      const labelX = x + (q.col === 0 ? 8 : w - 8)
+      const labelAnchor = q.col === 0 ? "start" : "end"
+      const labelY = y + (q.row === 0 ? 6 : 6)
 
-      // Sub-label (Red/Blue Ocean)
+      // Background rect for label
+      const labelText = `${q.label} — ${q.sub}`
+      const tempText = g.append("text").text(labelText).attr("font-size", "11px").attr("font-weight", 800)
+      const bbox = tempText.node()?.getBBox()
+      tempText.remove()
+
+      if (bbox) {
+        g.append("rect")
+          .attr("x", q.col === 0 ? labelX - 4 : labelX - bbox.width - 8)
+          .attr("y", labelY - 2)
+          .attr("width", bbox.width + 12)
+          .attr("height", 18)
+          .attr("rx", 3)
+          .attr("fill", "var(--foreground)")
+          .attr("opacity", 0.85)
+          .style("pointer-events", "none")
+      }
+
       g.append("text")
-        .attr("x", x + w / 2).attr("y", y + 48)
-        .attr("text-anchor", "middle")
-        .text(q.sub)
+        .attr("x", labelX).attr("y", labelY + 12)
+        .attr("text-anchor", labelAnchor)
+        .text(labelText)
         .attr("font-size", "11px")
-        .attr("font-weight", 600)
-        .attr("fill", "var(--muted-foreground)")
-        .attr("opacity", 0.1)
+        .attr("font-weight", 800)
+        .attr("fill", "var(--background)")
         .style("pointer-events", "none")
     }
 
