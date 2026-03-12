@@ -95,26 +95,44 @@ export function QuadrantChart({ data, className }: QuadrantChartProps) {
     const midX = innerWidth / 2
     const midY = innerHeight / 2
 
+    // Quadrant labels — high contrast badges along edges
     const quadrants = [
-      { label: "VISIONARIES", x: innerWidth * 0.25, y: innerHeight * 0.25 },
-      { label: "LEADERS", x: innerWidth * 0.75, y: innerHeight * 0.25 },
-      { label: "NICHE PLAYERS", x: innerWidth * 0.25, y: innerHeight * 0.75 },
-      { label: "CHALLENGERS", x: innerWidth * 0.75, y: innerHeight * 0.75 },
+      { label: "VISIONARIES", col: 0, row: 0 },
+      { label: "LEADERS", col: 1, row: 0 },
+      { label: "NICHE PLAYERS", col: 0, row: 1 },
+      { label: "CHALLENGERS", col: 1, row: 1 },
     ]
 
-    g.selectAll(".quad-label")
-      .data(quadrants)
-      .join("text")
-      .attr("x", d => d.x)
-      .attr("y", d => d.y)
-      .attr("text-anchor", "middle")
-      .attr("dy", "0.35em")
-      .text(d => d.label)
-      .attr("font-size", "40px")
-      .attr("font-weight", 900)
-      .attr("fill", "var(--muted-foreground)")
-      .attr("opacity", 0.1)
-      .style("pointer-events", "none")
+    for (const q of quadrants) {
+      const lx = q.col === 0 ? 8 : innerWidth - 8
+      const ly = q.row === 0 ? 6 : midY + 6
+      const anchor = q.col === 0 ? "start" : "end"
+
+      const tempText = g.append("text").text(q.label).attr("font-size", "12px").attr("font-weight", 800)
+      const bbox = tempText.node()?.getBBox()
+      tempText.remove()
+
+      if (bbox) {
+        g.append("rect")
+          .attr("x", q.col === 0 ? lx - 4 : lx - bbox.width - 8)
+          .attr("y", ly - 2)
+          .attr("width", bbox.width + 12)
+          .attr("height", 18)
+          .attr("rx", 3)
+          .attr("fill", "var(--foreground)")
+          .attr("opacity", 0.85)
+          .style("pointer-events", "none")
+      }
+
+      g.append("text")
+        .attr("x", lx).attr("y", ly + 12)
+        .attr("text-anchor", anchor)
+        .text(q.label)
+        .attr("font-size", "12px")
+        .attr("font-weight", 800)
+        .attr("fill", "var(--background)")
+        .style("pointer-events", "none")
+    }
 
     g.append("line").attr("x1", midX).attr("y1", 0).attr("x2", midX).attr("y2", innerHeight)
       .attr("stroke", "var(--border)").attr("stroke-width", 2).attr("stroke-dasharray", "4,4")

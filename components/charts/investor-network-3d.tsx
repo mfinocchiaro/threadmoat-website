@@ -90,21 +90,20 @@ export function InvestorNetwork3D({ className }: { className?: string }) {
 
     const nodes: GraphNode[] = []
     const links: { source: string; target: string }[] = []
-    const startupMap = new Map<string, string>()
+    const startupMap = new Map<string, { name: string; investmentList: string }>()
 
     for (const inv of filtered) {
       nodes.push({ id: `i:${inv.id}`, type: "investor", name: inv.name, count: inv.startupCount, investorType: inv.investorType })
       inv.startupNames.forEach((sName, idx) => {
         const sid = `s:${sName.toLowerCase().replace(/\s+/g, "-")}`
-        if (!startupMap.has(sid)) startupMap.set(sid, inv.investmentLists[idx] ?? "")
+        if (!startupMap.has(sid)) startupMap.set(sid, { name: sName.trim(), investmentList: inv.investmentLists[idx] ?? "" })
         links.push({ source: `i:${inv.id}`, target: sid })
       })
     }
 
     const linkedStartups = new Set(links.map(l => l.target))
-    for (const [sid, investmentList] of startupMap) {
+    for (const [sid, { name, investmentList }] of startupMap) {
       if (!linkedStartups.has(sid)) continue
-      const name = sid.slice(2).replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase())
       nodes.push({ id: sid, type: "startup", name, investmentList })
     }
 

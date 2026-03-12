@@ -5,6 +5,7 @@ import * as d3 from "d3"
 import { Company } from "@/lib/company-data"
 import { getInvestmentColor } from "@/lib/investment-colors"
 import { getCustomerLogoUrl, parseKnownCustomers } from "@/lib/customer-logos"
+import { CUSTOMER_META } from "@/lib/customer-meta"
 import { cn } from "@/lib/utils"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
@@ -14,6 +15,7 @@ import { Search, X } from "lucide-react"
 interface NodeDialogData {
   type: "customer" | "startup"
   name: string
+  description?: string
   connectedNames: { name: string; detail: string }[]
 }
 
@@ -371,6 +373,7 @@ export function CustomerNetwork({ data, className }: { data: Company[]; classNam
           dialogRef.current({
             type: "customer",
             name: cn.name,
+            description: CUSTOMER_META[cn.name] || "",
             connectedNames: connected.sort((a, b) => a.name.localeCompare(b.name)),
           })
         }
@@ -645,13 +648,20 @@ export function CustomerNetwork({ data, className }: { data: Company[]; classNam
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>{dialogData?.name}</DialogTitle>
-            <DialogDescription>
-              {dialogData?.type === "customer" && (
-                <span>{dialogData.connectedNames.length} startup{dialogData.connectedNames.length !== 1 ? "s" : ""} using this customer</span>
-              )}
-              {dialogData?.type === "startup" && (
-                <span>{dialogData.connectedNames.length} customer{dialogData.connectedNames.length !== 1 ? "s" : ""}</span>
-              )}
+            <DialogDescription asChild>
+              <div>
+                {dialogData?.type === "customer" && (
+                  <>
+                    <span>{dialogData.connectedNames.length} Startup{dialogData.connectedNames.length !== 1 ? "s" : ""} In Play at this Customer</span>
+                    {dialogData.description && (
+                      <span className="block mt-1 text-xs text-muted-foreground">{dialogData.description}</span>
+                    )}
+                  </>
+                )}
+                {dialogData?.type === "startup" && (
+                  <span>{dialogData.connectedNames.length} customer{dialogData.connectedNames.length !== 1 ? "s" : ""}</span>
+                )}
+              </div>
             </DialogDescription>
           </DialogHeader>
           {dialogData && dialogData.connectedNames.length > 0 && (
@@ -663,7 +673,7 @@ export function CustomerNetwork({ data, className }: { data: Company[]; classNam
                       {dialogData.type === "customer" ? "Startup" : "Customer"}
                     </th>
                     <th className="px-2 py-1.5 font-medium">
-                      {dialogData.type === "customer" ? "Category" : "Network Size"}
+                      {dialogData.type === "customer" ? "Investment List" : "Network Size"}
                     </th>
                   </tr>
                 </thead>
