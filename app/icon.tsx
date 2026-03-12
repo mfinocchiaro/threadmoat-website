@@ -17,30 +17,17 @@ export default function Icon() {
           borderRadius: 6,
         }}
       >
-        {/* Stylized T with gradient stripe matching the ThreadMoat logo */}
-        <svg width="24" height="24" viewBox="0 0 24 24">
-          {/* Gradient definition */}
+        <svg width="26" height="26" viewBox="0 0 512 512">
           <defs>
-            <linearGradient id="tg" x1="0" y1="0" x2="1" y2="0">
+            <linearGradient id="stripe" x1="80" y1="100" x2="432" y2="280" gradientUnits="userSpaceOnUse">
               <stop offset="0%" stopColor="#7c3aed" />
               <stop offset="50%" stopColor="#a78bfa" />
               <stop offset="100%" stopColor="#22d3ee" />
             </linearGradient>
           </defs>
-          {/* T crossbar */}
-          <rect x="2" y="4" width="20" height="3.5" rx="1" fill="white" />
-          {/* T stem */}
-          <rect x="9" y="4" width="5.5" height="17" rx="1" fill="white" />
-          {/* Diagonal gradient stripe (the ThreadMoat slash) */}
-          <line
-            x1="3"
-            y1="2"
-            x2="21"
-            y2="12"
-            stroke="url(#tg)"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-          />
+          <rect x="96" y="110" width="320" height="56" rx="8" fill="white" />
+          <rect x="204" y="110" width="104" height="296" rx="8" fill="white" />
+          <line x1="72" y1="80" x2="440" y2="300" stroke="url(#stripe)" strokeWidth="36" strokeLinecap="round" />
         </svg>
       </div>
     ),

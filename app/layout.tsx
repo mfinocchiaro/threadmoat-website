@@ -13,20 +13,11 @@ export const metadata: Metadata = {
   description: 'Navigate the future of Industrial AI & Engineering Software. Access 550+ startup profiles, 35+ years of PLM market expertise, and 200+ founder interviews.',
   icons: {
     icon: [
-      {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
-      },
+      { url: '/icon-32x32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/icon-192x192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/icon.svg', type: 'image/svg+xml' },
     ],
-    apple: '/apple-icon.png',
+    apple: { url: '/apple-icon.png', sizes: '180x180' },
   },
     generator: 'v0.app'
 }
