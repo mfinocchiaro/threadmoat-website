@@ -18,8 +18,9 @@ const REPORT_FEATURES = [
   "Personalized, watermarked copy with unique Copy ID",
 ]
 
-const PORTFOLIO_FEATURES = [
-  "Everything in Single Entity, plus:",
+const ANNUAL_FEATURES = [
+  "All four quarterly reports included",
+  "Access to 10 graphs and analytics in ThreadMoat Dashboard",
   "60-min analyst briefing with Michael Finocchiaro",
   "Custom thesis report on one sector or competitive question",
 ]
@@ -140,22 +141,50 @@ export default function PricingPage() {
         </p>
       </section>
 
-      {/* Report License Tiers */}
+      {/* Pricing Tiers */}
       <section className="container mx-auto px-4 pb-16">
-        <h2 className="text-center text-2xl font-bold mb-2">Q1 Market Report Licenses</h2>
+        <h2 className="text-center text-2xl font-bold mb-2">Access to ThreadMoat</h2>
         <p className="text-center text-muted-foreground mb-10 max-w-2xl mx-auto">
           Every copy is personalized, watermarked, and traceable. Choose the license that fits your organization.
         </p>
-        <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-3">
+        <div className="mx-auto grid max-w-7xl gap-6 lg:grid-cols-4">
 
-          {/* Single Entity */}
+          {/* Explorer — Free */}
+          <div className="flex flex-col rounded-lg border border-border/40 bg-card p-6">
+            <div className="flex items-start justify-between">
+              <div>
+                <h3 className="text-lg font-semibold">Explorer</h3>
+                <p className="mt-1 text-xs text-muted-foreground">Free forever &mdash; no credit card required</p>
+              </div>
+              <Network className="h-5 w-5 text-primary mt-1" />
+            </div>
+            <div className="mt-5">
+              <span className="text-3xl font-bold">$0</span>
+              <p className="text-xs text-muted-foreground mt-1">Free</p>
+            </div>
+            <ul className="mt-6 flex-1 space-y-2.5">
+              {FREE_FEATURES.map(f => (
+                <li key={f} className="flex items-start gap-2">
+                  <Check className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
+                  <span className="text-xs">{f}</span>
+                </li>
+              ))}
+            </ul>
+            <div className="mt-6">
+              <Link href="/auth/sign-up">
+                <Button variant="outline" className="w-full" size="sm">Sign up free</Button>
+              </Link>
+            </div>
+          </div>
+
+          {/* Latest Quarterly Report */}
           <div className="flex flex-col rounded-lg border-2 border-primary/60 bg-card p-6 shadow-md relative">
             <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-4 py-1 text-xs font-semibold text-primary-foreground">
               Most Popular
             </div>
             <div className="flex items-start justify-between">
               <div>
-                <h3 className="text-lg font-semibold">Single Entity</h3>
+                <h3 className="text-lg font-semibold">Latest Quarterly Report</h3>
                 <p className="mt-1 text-xs text-muted-foreground">One legal entity, internal use only</p>
               </div>
               <BookOpen className="h-5 w-5 text-primary mt-1" />
@@ -188,12 +217,12 @@ export default function PricingPage() {
             </div>
           </div>
 
-          {/* Investor / Portfolio */}
+          {/* Annual Report Subscription */}
           <div className="flex flex-col rounded-lg border border-primary/40 bg-card p-6 shadow-sm">
             <div className="flex items-start justify-between">
               <div>
-                <h3 className="text-lg font-semibold">Investor / Portfolio</h3>
-                <p className="mt-1 text-xs text-muted-foreground">PE / VC firms &amp; corporate strategy</p>
+                <h3 className="text-lg font-semibold">Annual Report Subscription</h3>
+                <p className="mt-1 text-xs text-muted-foreground">Full year of quarterly intelligence</p>
               </div>
               <Briefcase className="h-5 w-5 text-primary mt-1" />
             </div>
@@ -203,7 +232,7 @@ export default function PricingPage() {
               <p className="text-xs text-muted-foreground mt-1">Annual subscription</p>
             </div>
             <ul className="mt-6 flex-1 space-y-2.5">
-              {PORTFOLIO_FEATURES.map(f => (
+              {ANNUAL_FEATURES.map(f => (
                 <li key={f} className="flex items-start gap-2">
                   <Check className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
                   <span className="text-xs">{f}</span>
@@ -212,7 +241,7 @@ export default function PricingPage() {
             </ul>
             <div className="mt-6">
               <a href="/about#contact">
-                <Button className="w-full" size="sm">Contact for Portfolio License</Button>
+                <Button className="w-full" size="sm">Contact for Annual Subscription</Button>
               </a>
             </div>
           </div>
@@ -231,7 +260,8 @@ export default function PricingPage() {
               <Castle className="h-5 w-5 text-red-400 mt-1" />
             </div>
             <div className="mt-5">
-              <span className="text-3xl font-bold">Call For Details</span>
+              <span className="text-3xl font-bold">$17,999</span>
+              <span className="text-lg text-muted-foreground font-normal">/year</span>
               <p className="text-xs text-muted-foreground mt-1">Annual contract</p>
             </div>
             <ul className="mt-6 flex-1 space-y-2.5">
@@ -271,29 +301,6 @@ export default function PricingPage() {
         </div>
       </section>
 
-      {/* Free Explorer */}
-      <section className="container mx-auto px-4 pb-16">
-        <div className="mx-auto max-w-2xl rounded-lg border border-border/40 bg-card p-8 text-center">
-          <Network className="h-6 w-6 text-primary mx-auto mb-3" />
-          <h3 className="text-xl font-semibold">Explorer</h3>
-          <p className="mt-1 text-sm text-muted-foreground mb-4">Free forever &mdash; no credit card required</p>
-          <div className="mb-6">
-            <span className="text-4xl font-bold">$0</span>
-          </div>
-          <ul className="text-left max-w-sm mx-auto space-y-2.5 mb-6">
-            {FREE_FEATURES.map(f => (
-              <li key={f} className="flex items-start gap-2">
-                <Check className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-                <span className="text-sm">{f}</span>
-              </li>
-            ))}
-          </ul>
-          <Link href="/auth/sign-up">
-            <Button variant="outline">Sign up free</Button>
-          </Link>
-        </div>
-      </section>
-
       {/* Sample Outputs */}
       <section className="border-t border-border/40 bg-muted/30">
         <div className="container mx-auto px-4 py-20">
@@ -301,28 +308,33 @@ export default function PricingPage() {
           <p className="text-center text-muted-foreground mb-12 max-w-xl mx-auto">
             Sample dashboard views and analyst briefing outputs.
           </p>
-          <div className="grid gap-6 md:grid-cols-3 max-w-5xl mx-auto">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 max-w-6xl mx-auto">
             {[
-              { icon: BarChart2, label: "Funding Stage Distribution", desc: "Bar chart of companies by round (Seed → Series D+)" },
-              { icon: Network, label: "Discipline Breakdown", desc: "CAD / CAM / PLM / ERP / Industrial AI by headcount and funding" },
-              { icon: FileText, label: "Bi-Monthly Briefing", desc: "30-minute one-on-one analyst call covering portfolio-relevant market moves and emerging signals" },
-            ].map(sample => {
-              const Icon = sample.icon
-              return (
-                <div
-                  key={sample.label}
-                  className="rounded-lg border border-border/40 bg-card overflow-hidden"
-                >
-                  <div className="h-40 bg-gradient-to-br from-primary/5 to-primary/15 flex items-center justify-center">
-                    <Icon className="h-12 w-12 text-primary/30" />
-                  </div>
-                  <div className="p-4">
-                    <p className="font-medium text-sm">{sample.label}</p>
-                    <p className="text-xs text-muted-foreground mt-1">{sample.desc}</p>
-                  </div>
+              { img: "/sample-investor-network.jpg", label: "Investor Stats", desc: "Interactive network graph mapping investors, portfolio companies, and co-investment relationships" },
+              { img: "/sample-funding-distribution.jpg", label: "Funding Distribution", desc: "Bar chart of companies by funding stage (Seed → Series D+) with total capital deployed" },
+              { img: "/sample-discipline-breakdown.jpg", label: "Discipline Breakdown", desc: "CAD / CAM / PLM / ERP / Industrial AI by headcount and funding — full ecosystem view" },
+              { img: "/sample-ic-memo.jpg", label: "Analyst Briefing", desc: "Investment Committee Memo with scoring breakdown, financials, and competitive analysis" },
+            ].map(sample => (
+              <div
+                key={sample.label}
+                className="rounded-lg border border-border/40 bg-card overflow-hidden"
+              >
+                <div className="h-40 overflow-hidden">
+                  <Image
+                    src={sample.img}
+                    alt={sample.label}
+                    width={400}
+                    height={200}
+                    className="w-full h-full object-cover"
+                    unoptimized
+                  />
                 </div>
-              )
-            })}
+                <div className="p-4">
+                  <p className="font-medium text-sm">{sample.label}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{sample.desc}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
