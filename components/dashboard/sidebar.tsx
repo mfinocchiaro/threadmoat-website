@@ -16,7 +16,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useThesisOptional } from "@/contexts/thesis-context";
 import { useState, useEffect } from "react";
-import { FREE_TIER_PATHS } from "@/lib/free-tier";
+import { isPathAllowed, type AccessTier } from "@/lib/tiers";
 import { Lock } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -82,6 +82,7 @@ export const TAB_GROUPS: TabGroup[] = [
       { href: "/dashboard/landscape",       icon: LayoutGrid, label: "Landscape" },
       { href: "/dashboard/periodic-table",  icon: Table2,     label: "Periodic Table" },
       { href: "/dashboard/compare",         icon: GitCompare, label: "Compare" },
+      { href: "/dashboard/sunburst",        icon: Sun,        label: "Sunburst" },
     ],
   },
   {
@@ -104,8 +105,8 @@ export const TAB_GROUPS: TabGroup[] = [
     icon: Map,
     href: "/dashboard/tab/geographic",
     items: [
-      { href: "/dashboard/map",      icon: Map, label: "Geography Map" },
-      { href: "/dashboard/sunburst", icon: Sun, label: "Sunburst" },
+      { href: "/dashboard/map",      icon: Map,      label: "Geography Map" },
+      { href: "/dashboard/metros",   icon: BarChart2, label: "Metro Areas" },
     ],
   },
   {
@@ -167,6 +168,7 @@ interface SidebarProps {
   activeScenario?: string;
   isAdmin?: boolean;
   isFreeUser?: boolean;
+  accessTier?: AccessTier;
 }
 
 function NavLink({ href, icon: Icon, label, collapsed, exact, locked }: {
@@ -212,10 +214,11 @@ function NavLink({ href, icon: Icon, label, collapsed, exact, locked }: {
   return link;
 }
 
-function TabGroupNav({ group, collapsed, isFreeUser, openGroups, toggleGroup }: {
+function TabGroupNav({ group, collapsed, isFreeUser, accessTier = 'explorer', openGroups, toggleGroup }: {
   group: TabGroup
   collapsed: boolean
   isFreeUser: boolean
+  accessTier?: AccessTier
   openGroups: Record<string, boolean>
   toggleGroup: (key: string) => void
 }) {
@@ -275,7 +278,7 @@ function TabGroupNav({ group, collapsed, isFreeUser, openGroups, toggleGroup }: 
       {isOpen && (
         <div className="ml-4 mt-0.5 space-y-0.5 border-l border-border pl-2">
           {group.items.map(item => (
-            <NavLink key={item.href} {...item} collapsed={false} locked={isFreeUser && !FREE_TIER_PATHS.has(item.href)} />
+            <NavLink key={item.href} {...item} collapsed={false} locked={!isPathAllowed(item.href, accessTier)} />
           ))}
         </div>
       )}
@@ -283,7 +286,7 @@ function TabGroupNav({ group, collapsed, isFreeUser, openGroups, toggleGroup }: 
   );
 }
 
-export function Sidebar({ collapsed, onToggle, onSelectScenario, activeScenario, isAdmin = false, isFreeUser = false }: SidebarProps) {
+export function Sidebar({ collapsed, onToggle, onSelectScenario, activeScenario, isAdmin = false, isFreeUser = false, accessTier = 'explorer' }: SidebarProps) {
   const thesis = useThesisOptional();
   const hasThesis = !!thesis?.activeThesis;
   const pathname = usePathname();
@@ -419,6 +422,7 @@ export function Sidebar({ collapsed, onToggle, onSelectScenario, activeScenario,
                 group={group}
                 collapsed={collapsed}
                 isFreeUser={isFreeUser}
+                accessTier={accessTier}
                 openGroups={openGroups}
                 toggleGroup={toggleGroup}
               />

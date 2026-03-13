@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useRef, useState, useMemo } from "react"
+import React, { useEffect, useRef, useState, useMemo, useCallback } from "react"
 import * as d3 from "d3"
 import { formatCurrency } from "@/lib/company-data"
 import { Card } from "@/components/ui/card"
@@ -10,6 +10,7 @@ interface FundingRecord {
   id: string
   company: string
   cloudModel: string
+  cloudFactor: number  // cloud cost % applied (e.g., 20 = 20%)
   cloudArrEfficiency: number
   cloudArrVsBenchmark: number
   scoreFinancial: number
@@ -47,20 +48,20 @@ type ColDef =
   | { type: "qual"; key: keyof FundingRecord; label: string; tip: string; levels: string[] }
   | { type: "num";  key: keyof FundingRecord; label: string; tip: string; format: (v: number) => string; higherIsGood: boolean }
 
-const CLOUD_MODEL_ORDER = ["Cloud-Native", "SaaS", "Hybrid", "Traditional", "Unknown"]
+const CLOUD_MODEL_ORDER = ["Cloud-Native", "SaaS", "Hybrid", "Edge/HW", "Traditional", "No Data"]
 
 const COLUMNS: ColDef[] = [
   // 0. Cloud Model
   { type: "qual", key: "cloudModel", label: "Cloud Model",
-    tip: "Delivery model derived from operating tags. Cloud-Native = cloud-first/consumption; SaaS = subscription; Hybrid = mixed; Traditional = on-premise/perpetual.",
+    tip: "Delivery model derived from Operating Model Tags. Cloud-Native = cloud HPC / usage-based billing (+25% cloud cost factor); SaaS = subscription cloud (+20%); Hybrid = cloud + on-prem (+15%); Edge/HW = hardware-centric (+5%); Traditional = on-prem/perpetual (+3%).",
     levels: CLOUD_MODEL_ORDER },
   // 0b. Cloud ARR Efficiency
   { type: "num", key: "cloudArrEfficiency", label: "ARR Efficiency %",
-    tip: "ARR as % of total capital raised. 100% = ARR equals all funding ever raised. Higher = more capital-efficient revenue generation.",
+    tip: "Formula: (Estimated ARR ÷ Total Funding Raised) × 100. Measures how many cents of recurring revenue the company generates per dollar of capital raised. 100% = ARR matches all funding ever raised; >100% = capital-efficient; <50% = still burning through raised capital.",
     format: (v: number) => `${v.toFixed(0)}%`, higherIsGood: true },
   // 0c. ARR vs $200K Benchmark
   { type: "num", key: "cloudArrVsBenchmark", label: "vs $200K Bench",
-    tip: "ARR/employee as % of the $200K/employee SaaS benchmark (Bessemer/BVP standard). 100% = at benchmark, >100% = above.",
+    tip: "Formula: (ARR per Employee ÷ $200K) × 100. The $200K/employee benchmark is the Bessemer/BVP SaaS industry standard for healthy ARR productivity. 100% = at benchmark; >150% = best-in-class; <50% = underperforming.",
     format: (v: number) => `${v.toFixed(0)}%`, higherIsGood: true },
   // 1. Company Size
   { type: "qual", key: "startupSizeCategory", label: "Company Size",
@@ -72,7 +73,7 @@ const COLUMNS: ColDef[] = [
     levels: ["High", "Medium", "Low", "Small"] },
   // 3. Financial Health
   { type: "num", key: "scoreFinancial", label: "Financial Health",
-    tip: "Composite financial health rating combining revenue strength, burn sustainability, and funding trajectory.",
+    tip: "Composite financial health rating from Airtable combining revenue strength, burn sustainability, and funding trajectory. Excellent (30+), Healthy (20–29), Moderate (10–19), Weak (<10).",
     format: (v: number) => {
       if (v >= 30) return "Excellent"
       if (v >= 20) return "Healthy"
@@ -81,28 +82,28 @@ const COLUMNS: ColDef[] = [
       return "—"
     }, higherIsGood: true },
   // 4. Burn Rate (per month)
-  { type: "num", key: "annualBurnProxy", label: "Burn Rate (per month)",
-    tip: "Estimated monthly cash burn derived from annual operating costs. Lower is generally better for runway.",
+  { type: "num", key: "annualBurnProxy", label: "Burn (monthly)",
+    tip: "Formula: (Headcount × $200K/yr + Cloud Cost Factor) ÷ 12. Base cost = $200K/person/year (fully loaded: salary, benefits, office, tools). Cloud factor adds 3–25% depending on Cloud Model: Cloud-Native +25%, SaaS +20%, Hybrid +15%, Edge/HW +5%, Traditional +3%.",
     format: (v: number) => formatBurnPerMonth(v), higherIsGood: false },
   // 5. Burn Level
   { type: "qual", key: "netBurnLevel", label: "Burn Level",
-    tip: "Qualitative assessment of burn intensity relative to company stage and funding. Very Low = conservative, Critical = unsustainable.",
-    levels: ["Very Low", "Low", "Moderate", "Comfortable", "High", "Very High", "Critical", "Unknown"] },
+    tip: "Net annual burn (Burn − Revenue) as % of total funding raised. Profitable = revenue exceeds burn; Very Low (<5%); Low (5–15%); Moderate (15–25%); Comfortable (25–40%); High (40–60%); Very High (60–80%); Critical (>80%).",
+    levels: ["Profitable", "Very Low", "Low", "Moderate", "Comfortable", "High", "Very High", "Critical", "No Data"] },
   // 6. ARR / Employee (US$)
-  { type: "num", key: "arrPerEmployee", label: "ARR/Employee (US$)",
-    tip: "Annual recurring revenue divided by headcount. Higher values indicate stronger per-capita productivity.",
+  { type: "num", key: "arrPerEmployee", label: "ARR/HC ($)",
+    tip: "Formula: Estimated ARR ÷ Headcount. Measures revenue productivity per person. BVP benchmark = $200K/employee. >$300K = strong; <$100K = early-stage or R&D-heavy.",
     format: (v: number) => formatCurrency(v), higherIsGood: true },
   // 7. Runway (months)
-  { type: "num", key: "runwayProxyMonths", label: "Runway (months)",
-    tip: "Estimated months of operating runway remaining based on current cash and burn rate.",
-    format: (v: number) => v.toFixed(0), higherIsGood: true },
-  // 8. Runway
+  { type: "num", key: "runwayProxyMonths", label: "Runway (mo.)",
+    tip: "Formula: Total Funding ÷ ((Annual Burn − Annual Revenue) ÷ 12). Uses net burn (gross burn minus revenue). If revenue ≥ burn, company is cash-flow positive and runway shows 999 (effectively infinite). <12 months = critical; 12–24 = tight; 24–36 = healthy; 36+ = very strong.",
+    format: (v: number) => v >= 999 ? "∞" : v.toFixed(0), higherIsGood: true },
+  // 8. Runway Quality
   { type: "qual", key: "runwayQuality", label: "Runway",
-    tip: "Qualitative runway assessment. Very Strong = 24+ months, Healthy = 12–24, Tight = 6–12, Critical = <6 months.",
-    levels: ["Very Strong", "Healthy", "Comfortable", "Tight", "High Risk", "High", "Medium", "Low", "Critical", "Unknown"] },
+    tip: "Cash-flow Positive = revenue covers burn; Very Strong = 36+ months; Healthy = 24–36; Comfortable = 18–24; Tight = 12–18; High Risk = 6–12; Critical = <6 months.",
+    levels: ["Cash-flow Positive", "Very Strong", "Healthy", "Comfortable", "Tight", "High Risk", "Critical", "No Data"] },
   // 9. Data Integrity Confidence
-  { type: "qual", key: "financialConfidence", label: "Data Confidence",
-    tip: "How reliable the underlying financial data is. Very High = verified sources, Low = estimated or sparse data.",
+  { type: "qual", key: "financialConfidence", label: "Confidence",
+    tip: "How reliable the underlying financial data is. Very High = verified/disclosed sources; Low = estimated from headcount proxies and sparse public data.",
     levels: ["Very High", "Strong", "Medium", "Moderate", "Low", "Very Low"] },
 ]
 
@@ -151,6 +152,7 @@ export function FinancialHeatmapChart({ className, filteredCompanyNames }: Finan
   const [sortBy, setSortBy] = useState<SortKey>("scoreFinancial")
   const [topN, setTopN] = useState(15)
   const [cloudOnly, setCloudOnly] = useState(false)
+  const [showLegend, setShowLegend] = useState(false)
 
   useEffect(() => {
     fetch("/api/funding")
@@ -292,8 +294,9 @@ export function FinancialHeatmapChart({ className, filteredCompanyNames }: Finan
       if (!tooltipRef.current) return
       const lines = [
         `<strong style="font-size:14px">${rec.company}</strong>`,
+        `Cloud Model: <strong>${rec.cloudModel}</strong> (+${rec.cloudFactor}% infra cost)`,
         ``,
-        ...COLUMNS.map((col) => {
+        ...COLUMNS.filter(col => col.key !== "cloudModel").map((col) => {
           if (col.type === "qual") {
             return `${col.label}: <strong>${(rec[col.key] as string) || "—"}</strong>`
           }
@@ -376,7 +379,39 @@ export function FinancialHeatmapChart({ className, filteredCompanyNames }: Finan
         <span className="text-xs text-muted-foreground ml-auto">
           {ranked.length} of {fundingData.length} startups
         </span>
+        <button
+          onClick={() => setShowLegend(!showLegend)}
+          className="text-xs text-blue-400 hover:text-blue-300 underline underline-offset-2"
+        >
+          {showLegend ? "Hide legend" : "What do these metrics mean?"}
+        </button>
       </div>
+      {showLegend && (
+        <div className="px-4 py-3 border-b border-border bg-muted/20 text-xs text-muted-foreground space-y-1.5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1">
+            {COLUMNS.map(col => (
+              <div key={col.label}>
+                <span className="font-semibold text-foreground">{col.label}</span>
+                {" — "}{col.tip}
+              </div>
+            ))}
+            <div>
+              <span className="font-semibold text-foreground">Valuation</span>
+              {" — "}Estimated enterprise value derived from ARR multiples and comparable transactions.
+            </div>
+            <div>
+              <span className="font-semibold text-foreground">Funding Floor</span>
+              {" — "}Minimum implied valuation based on total capital raised (post-money floor).
+            </div>
+          </div>
+          <div className="flex gap-4 pt-1 border-t border-border/50 mt-1.5">
+            <span><span className="inline-block w-3 h-3 rounded-sm mr-1" style={{background: "#16a34a"}} />Green = strong/healthy</span>
+            <span><span className="inline-block w-3 h-3 rounded-sm mr-1" style={{background: "#eab308"}} />Yellow = moderate</span>
+            <span><span className="inline-block w-3 h-3 rounded-sm mr-1" style={{background: "#ef4444"}} />Red = weak/at risk</span>
+            <span><span className="inline-block w-3 h-3 rounded-sm mr-1" style={{background: "#334155"}} />Gray = no data</span>
+          </div>
+        </div>
+      )}
       <div ref={containerRef} className="flex-1 w-full min-h-0 overflow-y-auto p-2">
         <svg ref={svgRef} className="w-full" />
         <div

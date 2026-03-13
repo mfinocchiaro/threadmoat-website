@@ -13,7 +13,6 @@ import { Lock, Maximize2 } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 
-// Inner component — requires FilterProvider in tree
 function ExploreContent({ companies, isLoading }: { companies: Company[]; isLoading: boolean }) {
   const { filterCompany } = useFilter()
   const graphContainerRef = useRef<HTMLDivElement>(null)
@@ -90,7 +89,7 @@ export default function ExplorePage() {
           <div>
             <h1 className="text-2xl font-bold">Explore the AI PLM Ecosystem</h1>
             <p className="text-muted-foreground text-sm mt-1">
-              {companies.length > 0 ? `${companies.length} companies` : "Loading…"} — network relationships and global footprint. Free preview.
+              {companies.length > 0 ? `${companies.length} companies` : "Loading…"} — network relationships and global footprint.
             </p>
           </div>
           <Link href="/pricing">

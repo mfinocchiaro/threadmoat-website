@@ -52,6 +52,48 @@ export interface Company {
   competitiveMoat: number
   competitiveMoatJustification: string
   weightedScore: number
+  // Financial health (pre-computed in Airtable)
+  scoreFinancial: number
+  customerSignalScore: number
+  startupSizeCategory: string
+  // City-level geo
+  city: string
+  // Binary domain flags — CAD ecosystem
+  flagSolidWorks: boolean
+  flagCATIA: boolean
+  flagSiemens: boolean
+  flagParasolid: boolean
+  flagSTEP: boolean
+  flagNURBS: boolean
+  flagECAD: boolean
+  flagTextToCAD: boolean
+  flagProprietary: boolean
+  // Binary domain flags — Simulation
+  flagFEA: boolean
+  flagCFD: boolean
+  // Binary domain flags — Modeling
+  flagGenerative: boolean
+  flagImplicit: boolean
+  flagHTE: boolean
+  flagQC: boolean
+  // Binary domain flags — Industry verticals
+  flagAeroDefense: boolean
+  flagAutomotive: boolean
+  flagPharma: boolean
+  flagMedDev: boolean
+  flagDiscrete: boolean
+  flagNonDiscrete: boolean
+  flagProcess: boolean
+  // Binary domain flags — VC / Investor signals
+  flagYCombinator: boolean
+  flagA16Z: boolean
+  flagTechstars: boolean
+  flagSequoia: boolean
+  flagInsightPartners: boolean
+  flagEclipseVentures: boolean
+  flagBain: boolean
+  flagFidelity: boolean
+  flagBrowserBased: boolean
 }
 
 export interface Investor {

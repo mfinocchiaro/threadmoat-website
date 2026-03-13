@@ -7,6 +7,7 @@ import { PlanProvider } from "@/contexts/plan-context"
 import { SidebarShell } from "./sidebar-shell"
 import { FreeUserGuard } from "./free-user-guard"
 import { CheckoutToast } from "@/components/checkout/checkout-toast"
+import type { AccessTier } from "@/lib/tiers"
 
 interface Profile {
   full_name?: string
@@ -15,7 +16,16 @@ interface Profile {
   profile_type?: string
 }
 
-function LayoutInner({ user, profile, children, isAdmin, isFreeUser, isExpiredTrial, daysRemaining }: { user: Session["user"]; profile?: Profile; children: ReactNode; isAdmin: boolean; isFreeUser: boolean; isExpiredTrial: boolean; daysRemaining: number | null }) {
+function LayoutInner({ user, profile, children, isAdmin, isFreeUser, isExpiredTrial, daysRemaining, accessTier }: {
+  user: Session["user"]
+  profile?: Profile
+  children: ReactNode
+  isAdmin: boolean
+  isFreeUser: boolean
+  isExpiredTrial: boolean
+  daysRemaining: number | null
+  accessTier: AccessTier
+}) {
   const { scenario, setScenario } = useScenario()
   return (
     <SidebarShell
@@ -25,9 +35,14 @@ function LayoutInner({ user, profile, children, isAdmin, isFreeUser, isExpiredTr
       activeScenario={scenario}
       isAdmin={isAdmin}
       isFreeUser={isFreeUser}
+      accessTier={accessTier}
     >
       <Suspense><CheckoutToast /></Suspense>
-      {isFreeUser ? <FreeUserGuard isExpiredTrial={isExpiredTrial} daysRemaining={daysRemaining}>{children}</FreeUserGuard> : children}
+      {accessTier !== 'admin' ? (
+        <FreeUserGuard accessTier={accessTier} isExpiredTrial={isExpiredTrial} daysRemaining={daysRemaining}>
+          {children}
+        </FreeUserGuard>
+      ) : children}
     </SidebarShell>
   )
 }
@@ -40,6 +55,7 @@ export function DashboardLayoutClient({
   isFreeUser = false,
   isExpiredTrial = false,
   daysRemaining = null,
+  accessTier = 'explorer',
   children,
 }: {
   user: Session["user"]
@@ -49,12 +65,21 @@ export function DashboardLayoutClient({
   isFreeUser?: boolean
   isExpiredTrial?: boolean
   daysRemaining?: number | null
+  accessTier?: AccessTier
   children: ReactNode
 }) {
   return (
     <PlanProvider isFreeUser={isFreeUser}>
       <ScenarioProvider initialScenario={initialScenario}>
-        <LayoutInner user={user} profile={profile} isAdmin={isAdmin} isFreeUser={isFreeUser} isExpiredTrial={isExpiredTrial} daysRemaining={daysRemaining}>
+        <LayoutInner
+          user={user}
+          profile={profile}
+          isAdmin={isAdmin}
+          isFreeUser={isFreeUser}
+          isExpiredTrial={isExpiredTrial}
+          daysRemaining={daysRemaining}
+          accessTier={accessTier}
+        >
           {children}
         </LayoutInner>
       </ScenarioProvider>

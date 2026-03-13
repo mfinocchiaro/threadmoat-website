@@ -457,6 +457,9 @@ export function ThesisProvider({ children, profileType }: { children: ReactNode;
       categoryTags: [],
       differentiationTags: [],
       metrics: "totalFunding",
+      oceanStrategy: "all",
+      sizeCategory: [],
+      ecosystemFlags: [],
     })
   }, [setFilters])
 

@@ -3,8 +3,8 @@ import { redirect } from 'next/navigation'
 import { auth } from '@/auth'
 import { sql } from '@/lib/db'
 import { getUserSubscription } from '@/lib/subscription'
+import { getAccessTier } from '@/lib/tiers'
 import { DashboardLayoutClient } from '@/components/dashboard/layout-client'
-import { Paywall } from '@/components/dashboard/paywall'
 
 type ProfileRow = {
   is_admin?: boolean
@@ -52,25 +52,25 @@ export default async function DashboardLayout({
     || adminEmails.includes(userEmail)
     || adminEmails.includes(baseEmail)
 
-  let hasSubscription = false
   let isExpiredTrial = false
   let daysRemaining: number | null = null
+  let productId: string | null = null
+  let hasSubscription = false
+
   if (!isAdmin) {
     try {
       const subscription = await getUserSubscription(userId)
       hasSubscription = subscription.hasActiveSubscription
       isExpiredTrial = subscription.isExpiredTrial
       daysRemaining = subscription.daysRemaining
+      productId = subscription.productId
     } catch {
       // DB unavailable
     }
-  } else {
-    hasSubscription = true
   }
 
-  // Free users get the dashboard chrome (sidebar, topbar) but only access free pages
-  // Paid pages show an inline upgrade prompt via FreeUserGuard
-  const isFreeUser = !isAdmin && !hasSubscription
+  const accessTier = getAccessTier(productId, isAdmin)
+  const isFreeUser = accessTier === 'explorer'
 
   return (
     <DashboardLayoutClient
@@ -81,6 +81,7 @@ export default async function DashboardLayout({
       isFreeUser={isFreeUser}
       isExpiredTrial={isExpiredTrial}
       daysRemaining={daysRemaining}
+      accessTier={accessTier}
     >
       {children}
     </DashboardLayoutClient>
