@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation"
 import Link from "next/link"
 import { Lock, ArrowRight, Network, Compass, Map, Clock, Shield, AlertTriangle } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { isFreeTierPath } from "@/lib/free-tier"
+import { isPathAllowed, getRequiredTier, getTierLabel, type AccessTier } from "@/lib/tiers"
 
 const FREE_HIGHLIGHTS = [
   { icon: Network, label: "Network Graph", href: "/dashboard/network" },
@@ -14,27 +14,19 @@ const FREE_HIGHLIGHTS = [
 
 interface FreeUserGuardProps {
   children: React.ReactNode
+  accessTier: AccessTier
   isExpiredTrial?: boolean
   daysRemaining?: number | null
 }
 
-export function FreeUserGuard({ children, isExpiredTrial = false, daysRemaining = null }: FreeUserGuardProps) {
+export function FreeUserGuard({ children, accessTier, isExpiredTrial = false, daysRemaining = null }: FreeUserGuardProps) {
   const pathname = usePathname()
+  const allowed = isPathAllowed(pathname, accessTier)
 
-  // Active trial — show content but with warning banner when < 7 days left
-  if (!isExpiredTrial && daysRemaining !== null && daysRemaining > 0) {
-    return (
-      <>
-        {daysRemaining <= 7 && <TrialExpiryBanner daysRemaining={daysRemaining} />}
-        {isFreeTierPath(pathname) ? children : <PaywallBlock isExpiredTrial={false} />}
-      </>
-    )
-  }
-
-  // Expired trial — degraded access (map only)
+  // Expired Explorer trial — degraded to map + settings only
   if (isExpiredTrial) {
-    // Expired explorers keep only the map
-    if (pathname === '/dashboard/map' || pathname === '/dashboard/settings' || pathname === '/dashboard') {
+    const degradedAllowed = pathname === '/dashboard/map' || pathname === '/dashboard/settings' || pathname === '/dashboard'
+    if (degradedAllowed) {
       return (
         <>
           <ExpiredTrialBanner />
@@ -42,15 +34,24 @@ export function FreeUserGuard({ children, isExpiredTrial = false, daysRemaining 
         </>
       )
     }
-    return <PaywallBlock isExpiredTrial={true} />
+    return <PaywallBlock accessTier={accessTier} pathname={pathname} isExpiredTrial />
   }
 
-  // No trial (legacy free user) — standard behavior
-  if (isFreeTierPath(pathname)) {
-    return <>{children}</>
+  // Active trial with warning banner when < 7 days left
+  if (accessTier === 'explorer' && daysRemaining !== null && daysRemaining > 0 && daysRemaining <= 7) {
+    return (
+      <>
+        <TrialExpiryBanner daysRemaining={daysRemaining} />
+        {allowed ? children : <PaywallBlock accessTier={accessTier} pathname={pathname} />}
+      </>
+    )
   }
 
-  return <PaywallBlock isExpiredTrial={false} />
+  // Path allowed at this tier — render content
+  if (allowed) return <>{children}</>
+
+  // Path not allowed — show tier-appropriate paywall
+  return <PaywallBlock accessTier={accessTier} pathname={pathname} />
 }
 
 /** Yellow warning banner shown when trial has < 7 days left */
@@ -84,15 +85,21 @@ function ExpiredTrialBanner() {
   )
 }
 
-/** Paywall block shown on gated pages */
-function PaywallBlock({ isExpiredTrial }: { isExpiredTrial: boolean }) {
+/** Paywall block shown on gated pages — messaging adapts to the user's tier */
+function PaywallBlock({ accessTier, pathname, isExpiredTrial = false }: { accessTier: AccessTier; pathname: string; isExpiredTrial?: boolean }) {
+  const requiredTier = getRequiredTier(pathname)
+  const requiredLabel = requiredTier ? getTierLabel(requiredTier) : 'a higher plan'
+  const isRedKeepFeature = requiredTier === 'red_keep'
+
   return (
     <div className="flex flex-1 items-center justify-center py-20">
       <div className="mx-auto max-w-lg text-center">
         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
           {isExpiredTrial
             ? <AlertTriangle className="h-8 w-8 text-red-500" />
-            : <Lock className="h-8 w-8 text-primary" />
+            : isRedKeepFeature
+              ? <Shield className="h-8 w-8 text-red-500" />
+              : <Lock className="h-8 w-8 text-primary" />
           }
         </div>
 
@@ -104,17 +111,25 @@ function PaywallBlock({ isExpiredTrial }: { isExpiredTrial: boolean }) {
               charts, and analytics — or get the full picture with The Red Keep.
             </p>
           </>
+        ) : isRedKeepFeature ? (
+          <>
+            <h2 className="mt-6 text-2xl font-bold">The Red Keep</h2>
+            <p className="mt-3 text-muted-foreground">
+              This visualization is exclusive to The Red Keep — full platform access
+              with all 20+ charts, exports, watchlists, and dedicated analyst support.
+            </p>
+          </>
         ) : (
           <>
-            <h2 className="mt-6 text-2xl font-bold">Pro Feature</h2>
+            <h2 className="mt-6 text-2xl font-bold">{requiredLabel} Feature</h2>
             <p className="mt-3 text-muted-foreground">
-              This visualization is available with an Analytics subscription.
-              Upgrade to unlock all 20+ interactive charts, filters, and saved views.
+              This visualization requires the <strong>{requiredLabel}</strong> plan.
+              Upgrade to unlock {requiredTier === 'investor' ? '10 interactive charts and quarterly reports' : 'additional features'}.
             </p>
           </>
         )}
 
-        {/* Primary CTA — pricing page */}
+        {/* Primary CTA */}
         <div className="mt-8 flex flex-col items-center gap-3">
           <Link href="/pricing">
             <Button size="lg">
@@ -123,8 +138,8 @@ function PaywallBlock({ isExpiredTrial }: { isExpiredTrial: boolean }) {
             </Button>
           </Link>
 
-          {/* Red Keep nudge for expired trials */}
-          {isExpiredTrial && (
+          {/* Red Keep nudge for Explorer/Investor users on Red Keep pages */}
+          {isRedKeepFeature && accessTier !== 'red_keep' && (
             <Link
               href="/pricing#red-keep"
               className="mt-2 flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
@@ -135,14 +150,14 @@ function PaywallBlock({ isExpiredTrial }: { isExpiredTrial: boolean }) {
           )}
         </div>
 
-        {/* Show what's still available */}
+        {/* Show what's available at current tier */}
         <div className="mt-10 rounded-lg border border-border/40 bg-muted/30 p-6">
           <p className="text-sm font-medium mb-4">
-            {isExpiredTrial ? 'Still available:' : 'Available on your free plan:'}
+            {isExpiredTrial ? 'Still available:' : `Available on your ${getTierLabel(accessTier)} plan:`}
           </p>
           <div className="flex flex-col gap-3">
             {(isExpiredTrial
-              ? FREE_HIGHLIGHTS.filter(h => h.href === '/dashboard/map')  // expired: map only
+              ? FREE_HIGHLIGHTS.filter(h => h.href === '/dashboard/map')
               : FREE_HIGHLIGHTS
             ).map(({ icon: Icon, label, href }) => (
               <Link

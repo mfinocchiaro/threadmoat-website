@@ -18,6 +18,8 @@ export interface UserSubscription {
   isExpiredTrial: boolean
   /** Days remaining on the current period (null if no subscription) */
   daysRemaining: number | null
+  /** Raw product_id from subscriptions table — used for tier mapping */
+  productId: string | null
 }
 
 export async function getUserSubscription(userId: string): Promise<UserSubscription> {
@@ -28,18 +30,26 @@ export async function getUserSubscription(userId: string): Promise<UserSubscript
   `
   const subscription = rows[0]
 
-  if (!subscription) {
-    return { hasActiveSubscription: false, status: 'none', currentPeriodEnd: null, isExpiredTrial: false, daysRemaining: null }
+  const empty: UserSubscription = {
+    hasActiveSubscription: false,
+    status: 'none',
+    currentPeriodEnd: null,
+    isExpiredTrial: false,
+    daysRemaining: null,
+    productId: null,
   }
+
+  if (!subscription) return empty
 
   const periodEnd = subscription.current_period_end
     ? new Date(subscription.current_period_end as string)
     : null
 
+  const productId = (subscription.product_id as string) || null
   const now = new Date()
   const isTrialing = subscription.status === 'trialing'
   const isPastEnd = periodEnd ? periodEnd < now : false
-  const isExplorerProduct = subscription.product_id === EXPLORER_TRIAL_PRODUCT || subscription.product_id === 'coupon_trial'
+  const isExplorerProduct = productId === EXPLORER_TRIAL_PRODUCT || productId === 'coupon_trial'
 
   // If trial period has elapsed, treat as expired
   if (isTrialing && isPastEnd) {
@@ -49,6 +59,19 @@ export async function getUserSubscription(userId: string): Promise<UserSubscript
       currentPeriodEnd: periodEnd,
       isExpiredTrial: isExplorerProduct,
       daysRemaining: 0,
+      productId,
+    }
+  }
+
+  // If active subscription has passed its end date, treat as expired
+  if (subscription.status === 'active' && isPastEnd) {
+    return {
+      hasActiveSubscription: false,
+      status: 'expired',
+      currentPeriodEnd: periodEnd,
+      isExpiredTrial: false,
+      daysRemaining: 0,
+      productId,
     }
   }
 
@@ -64,5 +87,6 @@ export async function getUserSubscription(userId: string): Promise<UserSubscript
     currentPeriodEnd: periodEnd,
     isExpiredTrial: false,
     daysRemaining,
+    productId,
   }
 }

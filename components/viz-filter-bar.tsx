@@ -5,7 +5,7 @@ import { Search, X, ChevronDown, ChevronUp, SlidersHorizontal } from "lucide-rea
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { useFilter } from "@/contexts/filter-context"
+import { useFilter, getOceanType, ECOSYSTEM_FLAGS } from "@/contexts/filter-context"
 import { Company } from "@/lib/company-data"
 import { getInvestmentColor } from "@/lib/investment-colors"
 
@@ -181,7 +181,23 @@ export function VizFilterBar({ companies, className }: VizFilterBarProps) {
     }))
     const categoryTags = Array.from(catCount.entries()).sort((a, b) => b[1] - a[1]).map(([t]) => t)
 
-    return { investmentLists, subsegments, industries, countries, lifecycles, fundingRounds, opModelGroups, categoryTags }
+    // Size categories
+    const sizeCategories = Array.from(new Set(companies.map(c => c.startupSizeCategory).filter(Boolean))).sort()
+
+    // Ecosystem flags: group by category, only show flags that have at least 1 company
+    const ecoGroups = new Map<string, { flag: string; label: string; count: number }[]>()
+    Object.entries(ECOSYSTEM_FLAGS).forEach(([flag, def]) => {
+      const count = companies.filter(c => c[def.field] === true).length
+      if (count === 0) return
+      if (!ecoGroups.has(def.group)) ecoGroups.set(def.group, [])
+      ecoGroups.get(def.group)!.push({ flag, label: def.label, count })
+    })
+    const ecosystemGroups = Array.from(ecoGroups.entries()).map(([group, items]) => ({
+      group,
+      items: items.sort((a, b) => b.count - a.count),
+    }))
+
+    return { investmentLists, subsegments, industries, countries, lifecycles, fundingRounds, opModelGroups, categoryTags, sizeCategories, ecosystemGroups }
   }, [companies])
 
   const toggle = React.useCallback((type: string, value: string) => {
@@ -209,6 +225,9 @@ export function VizFilterBar({ companies, className }: VizFilterBarProps) {
       categoryTags: [],
       differentiationTags: [],
       search: "",
+      oceanStrategy: "all",
+      sizeCategory: [],
+      ecosystemFlags: [],
     }))
   }
 
@@ -221,7 +240,19 @@ export function VizFilterBar({ companies, className }: VizFilterBarProps) {
     filters.fundingRound.length +
     filters.operatingModel.length +
     filters.categoryTags.length +
-    filters.differentiationTags.length
+    filters.differentiationTags.length +
+    filters.sizeCategory.length +
+    filters.ecosystemFlags.length +
+    (filters.oceanStrategy !== "all" ? 1 : 0)
+
+  // Ocean strategy counts
+  const oceanCounts = React.useMemo(() => {
+    let red = 0, blue = 0
+    companies.forEach(c => {
+      if (getOceanType(c) === "red") red++; else blue++
+    })
+    return { red, blue }
+  }, [companies])
 
   const primaryOpGroups = options.opModelGroups.filter(g => PRIMARY_OP_GROUPS.includes(g.group))
   const secondaryOpGroups = options.opModelGroups.filter(g => SECONDARY_OP_GROUPS.includes(g.group))
@@ -251,16 +282,59 @@ export function VizFilterBar({ companies, className }: VizFilterBarProps) {
       <div className="border rounded-lg bg-muted/30 divide-y divide-border">
 
         {/* ═══ TIER 1: Primary Slicers (always visible) ═══ */}
-        <div className="p-4 space-y-3">
-          <PillFilter
-            label="Investment List" items={options.investmentLists} active={filters.investmentLists}
-            onToggle={(v) => toggle("investmentLists", v)} onClear={() => clearFilter("investmentLists")}
-            showColorDot
-          />
+        <div className="p-3 space-y-2.5">
+          <div className="flex flex-col sm:flex-row gap-3">
+            {/* Investment List pills */}
+            <div className="flex-1">
+              <PillFilter
+                label="Investment List" items={options.investmentLists} active={filters.investmentLists}
+                onToggle={(v) => toggle("investmentLists", v)} onClear={() => clearFilter("investmentLists")}
+                showColorDot compact
+              />
+            </div>
+
+            {/* Ocean Strategy toggle */}
+            <div className="shrink-0 space-y-1.5">
+              <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Strategic Lens</span>
+              <div className="flex gap-1.5">
+                {([
+                  { key: "all" as const, label: "All", color: "" },
+                  { key: "red" as const, label: `Red Ocean`, color: "rgb(220, 38, 38)" },
+                  { key: "blue" as const, label: `Blue Ocean`, color: "rgb(37, 99, 235)" },
+                ] as const).map(({ key, label, color }) => {
+                  const isActive = filters.oceanStrategy === key
+                  const count = key === "all" ? companies.length : key === "red" ? oceanCounts.red : oceanCounts.blue
+                  return (
+                    <button
+                      key={key}
+                      onClick={() => setFilters(prev => ({ ...prev, oceanStrategy: prev.oceanStrategy === key ? "all" : key }))}
+                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all border ${
+                        isActive
+                          ? key === "red"
+                            ? "bg-red-600 text-white border-red-600 shadow-sm shadow-red-600/25"
+                            : key === "blue"
+                              ? "bg-blue-600 text-white border-blue-600 shadow-sm shadow-blue-600/25"
+                              : "bg-primary text-primary-foreground border-primary"
+                          : "bg-background text-foreground border-border hover:bg-muted"
+                      }`}
+                    >
+                      {key !== "all" && (
+                        <div className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: color }} />
+                      )}
+                      {label}
+                      <span className={`text-[10px] font-normal ${isActive ? "opacity-80" : "text-muted-foreground"}`}>
+                        {count}
+                      </span>
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          </div>
 
           {/* Primary Op Model dimensions: Deployment, Segment, Focus */}
           {primaryOpGroups.length > 0 && (
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Operating Model</span>
                 {filters.operatingModel.length > 0 && (
@@ -269,7 +343,7 @@ export function VizFilterBar({ companies, className }: VizFilterBarProps) {
                   </button>
                 )}
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                 {primaryOpGroups.map(({ group, tags }) => (
                   <OpModelGroup key={group} group={group} tags={tags} active={filters.operatingModel} onToggle={(v) => toggle("operatingModel", v)} />
                 ))}
@@ -279,7 +353,7 @@ export function VizFilterBar({ companies, className }: VizFilterBarProps) {
         </div>
 
         {/* ═══ TIER 2: Secondary Slicers (collapsible) ═══ */}
-        <div className="px-4 py-1">
+        <div className="px-3 py-0.5">
           <FilterSection title="Category & Delivery" defaultOpen={false}>
             <PillFilter
               label="Category" items={options.categoryTags} active={filters.categoryTags}
@@ -289,7 +363,7 @@ export function VizFilterBar({ companies, className }: VizFilterBarProps) {
 
             {/* Secondary Op Model dimensions */}
             {secondaryOpGroups.length > 0 && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
                 {secondaryOpGroups.map(({ group, tags }) => (
                   <OpModelGroup key={group} group={group} tags={tags} active={filters.operatingModel} onToggle={(v) => toggle("operatingModel", v)} />
                 ))}
@@ -309,9 +383,60 @@ export function VizFilterBar({ companies, className }: VizFilterBarProps) {
           </FilterSection>
         </div>
 
+        {/* ═══ TIER 2.5: Ecosystem Compatibility (collapsible) ═══ */}
+        {options.ecosystemGroups.length > 0 && (
+          <div className="px-3 py-0.5">
+            <FilterSection title="Ecosystem & Compatibility" defaultOpen={false}>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Technology & VC Flags</span>
+                  {filters.ecosystemFlags.length > 0 && (
+                    <button onClick={() => clearFilter("ecosystemFlags")} className="text-xs text-muted-foreground hover:text-foreground">
+                      Clear ({filters.ecosystemFlags.length})
+                    </button>
+                  )}
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {options.ecosystemGroups.map(({ group, items }) => (
+                    <div key={group} className="space-y-1">
+                      <span className="text-[11px] font-medium text-muted-foreground/70">{group}</span>
+                      <div className="flex flex-wrap gap-1">
+                        {items.map(({ flag, label, count }) => {
+                          const isActive = filters.ecosystemFlags.includes(flag)
+                          return (
+                            <button
+                              key={flag}
+                              onClick={() => toggle("ecosystemFlags", flag)}
+                              className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium transition-colors border ${
+                                isActive
+                                  ? "bg-primary text-primary-foreground border-primary"
+                                  : "bg-background text-foreground border-border hover:bg-muted"
+                              }`}
+                            >
+                              {label}
+                              <span className={`text-[10px] ${isActive ? "opacity-70" : "text-muted-foreground"}`}>{count}</span>
+                            </button>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </FilterSection>
+          </div>
+        )}
+
         {/* ═══ TIER 3: Additional Filters (collapsed by default) ═══ */}
-        <div className="px-4 py-1">
+        <div className="px-3 py-0.5">
           <FilterSection title="More Filters" defaultOpen={false}>
+            {options.sizeCategories.length > 0 && (
+              <PillFilter
+                label="Startup Size" items={options.sizeCategories} active={filters.sizeCategory}
+                onToggle={(v) => toggle("sizeCategory", v)} onClear={() => clearFilter("sizeCategory")}
+                compact
+              />
+            )}
             <PillFilter
               label="Country" items={options.countries} active={filters.countries}
               onToggle={(v) => toggle("countries", v)} onClear={() => clearFilter("countries")}

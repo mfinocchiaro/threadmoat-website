@@ -43,6 +43,12 @@ function parseNum(value: string | undefined): number {
   return isNaN(num) ? 0 : num
 }
 
+function parseBool(value: string | undefined): boolean {
+  if (!value) return false
+  const v = value.trim().toLowerCase()
+  return v === 'true' || v === '1' || v === 'yes' || v === 'checked'
+}
+
 /**
  * Load companies from CSV on the server.
  * Used by both the API route and server components (homepage).
@@ -139,6 +145,48 @@ export async function loadCompaniesFromCSV(): Promise<Company[]> {
     competitiveMoat: parseNum(row['Competitive Moat']),
     competitiveMoatJustification: extractAirtableValue(row['Competitive Moat Justification']),
     weightedScore: parseNum(row['Weighted Score']),
+    // Financial health
+    scoreFinancial: parseNum(row['Score Financial']),
+    customerSignalScore: parseNum(row['Customer Signal Score']),
+    startupSizeCategory: row['Startup Size Category'] || '',
+    // City
+    city: row['City'] || '',
+    // Binary flags — CAD ecosystem
+    flagSolidWorks: parseBool(row['SolidWorks']),
+    flagCATIA: parseBool(row['CATIA']),
+    flagSiemens: parseBool(row['Siemens']),
+    flagParasolid: parseBool(row['Parasolid']),
+    flagSTEP: parseBool(row['STEP']),
+    flagNURBS: parseBool(row['NURBS']),
+    flagECAD: parseBool(row['ECAD/EDA']),
+    flagTextToCAD: parseBool(row['Text-to-CAD']),
+    flagProprietary: parseBool(row['Proprietary']),
+    // Binary flags — Simulation
+    flagFEA: parseBool(row['FEA/FEM']),
+    flagCFD: parseBool(row['CFD']),
+    // Binary flags — Modeling
+    flagGenerative: parseBool(row['Generative']),
+    flagImplicit: parseBool(row['Implicit']),
+    flagHTE: parseBool(row['HTE']),
+    flagQC: parseBool(row['QC']),
+    // Binary flags — Industry
+    flagAeroDefense: parseBool(row['A&D']),
+    flagAutomotive: parseBool(row['Automotive']),
+    flagPharma: parseBool(row['Pharma']),
+    flagMedDev: parseBool(row['MedDev']),
+    flagDiscrete: parseBool(row['Discrete']),
+    flagNonDiscrete: parseBool(row['Non-Discrete']),
+    flagProcess: parseBool(row['Process']),
+    // Binary flags — VC
+    flagYCombinator: parseBool(row['Y-Combinator']),
+    flagA16Z: parseBool(row['a16z']),
+    flagTechstars: parseBool(row['Techstars']),
+    flagSequoia: parseBool(row['Sequoia']),
+    flagInsightPartners: parseBool(row['Insight Partners']),
+    flagEclipseVentures: parseBool(row['Eclipse Ventures']),
+    flagBain: parseBool(row['Bain']),
+    flagFidelity: parseBool(row['Fidelity']),
+    flagBrowserBased: parseBool(row[' Browser-based'] || row['Browser-based']),
   }))
 }
 

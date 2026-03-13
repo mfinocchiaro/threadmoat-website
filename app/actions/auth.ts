@@ -191,7 +191,7 @@ export async function verifyEmail(token: string): Promise<ActionResult> {
       try {
         const coupon = await validateCoupon(inviteCode)
         if (coupon) {
-          await redeemCoupon(coupon.id, userId, coupon.duration_days)
+          await redeemCoupon(coupon.id, userId, coupon.duration_days, coupon.product_id, coupon.grant_status)
         }
       } catch (err) {
         console.error('[verifyEmail] coupon redemption failed:', err)

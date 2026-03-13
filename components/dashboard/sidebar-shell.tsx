@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Sidebar } from "./sidebar";
 import { TopBar } from "./topbar";
 import type { Session } from "next-auth";
+import type { AccessTier } from "@/lib/tiers";
 
 interface Profile {
   full_name?: string;
@@ -20,6 +21,7 @@ export function SidebarShell({
   activeScenario,
   isAdmin = false,
   isFreeUser = false,
+  accessTier = 'explorer',
 }: {
   user: Session["user"];
   profile?: Profile;
@@ -28,6 +30,7 @@ export function SidebarShell({
   activeScenario?: string;
   isAdmin?: boolean;
   isFreeUser?: boolean;
+  accessTier?: AccessTier;
 }) {
   const [collapsed, setCollapsed] = useState(false);
 
@@ -53,6 +56,7 @@ export function SidebarShell({
         activeScenario={activeScenario}
         isAdmin={isAdmin}
         isFreeUser={isFreeUser}
+        accessTier={accessTier}
       />
       <div className="flex flex-1 flex-col overflow-hidden">
         <TopBar user={user} profile={profile} />
