@@ -304,3 +304,35 @@ export async function resetPassword(token: string, newPassword: string): Promise
     return { success: false, error: 'Password reset failed. Please try again.' }
   }
 }
+
+export async function redeemInviteCode(code: string): Promise<ActionResult> {
+  try {
+    const { auth } = await import('@/auth')
+    const session = await auth()
+    if (!session?.user?.id) return { success: false, error: 'Not authenticated' }
+
+    const userId = session.user.id
+
+    const rl = await rateLimit(`redeem:${userId}`, 5, 15 * 60 * 1000)
+    if (!rl.allowed) return { success: false, error: 'Too many attempts. Please try again later.' }
+
+    const trimmed = code.trim().toUpperCase()
+    if (!trimmed) return { success: false, error: 'Please enter an invite code' }
+
+    let coupon
+    try {
+      coupon = await validateCoupon(trimmed)
+    } catch (err) {
+      console.error('[redeemInviteCode] coupon validation error:', err)
+      return { success: false, error: 'Invalid invite code. Please check and try again.' }
+    }
+
+    if (!coupon) return { success: false, error: 'Invalid or expired invite code' }
+
+    await redeemCoupon(coupon.id, userId, coupon.duration_days, coupon.product_id, coupon.grant_status)
+    return { success: true }
+  } catch (err) {
+    console.error('[redeemInviteCode]', err)
+    return { success: false, error: 'Failed to redeem code. Please try again.' }
+  }
+}

@@ -4,6 +4,7 @@ import { getUserSubscription } from '@/lib/subscription'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ManageSubscriptionButton } from '@/components/checkout/manage-subscription-button'
 import { ProfileForm } from './profile-form'
+import { RedeemCodeForm } from './redeem-code-form'
 import { DeleteAccountButton } from './delete-account-button'
 
 export default async function SettingsPage() {
@@ -62,7 +63,7 @@ export default async function SettingsPage() {
       <Card>
         <CardHeader>
           <CardTitle>Subscription</CardTitle>
-          <CardDescription>Manage your ThreadMoat Pro subscription</CardDescription>
+          <CardDescription>Manage your ThreadMoat subscription</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between">
@@ -80,6 +81,17 @@ export default async function SettingsPage() {
             )}
           </div>
           <ManageSubscriptionButton />
+        </CardContent>
+      </Card>
+
+      {/* Invite Code Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Invite Code</CardTitle>
+          <CardDescription>Have an invite or coupon code? Redeem it here to upgrade your access.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <RedeemCodeForm />
         </CardContent>
       </Card>
       {/* Danger Zone */}
