@@ -320,7 +320,7 @@ export function Sidebar({ collapsed, onToggle, onSelectScenario, activeScenario,
         {/* Logo + toggle */}
         <div className={cn("flex h-14 items-center border-b border-border px-3", collapsed ? "justify-center" : "justify-between")}>
           {!collapsed && (
-            <Link href="/" className="flex items-center">
+            <Link href="/dashboard" className="flex items-center">
               <Image src="/logo.png" alt="ThreadMoat" width={120} height={32} className="h-8 w-auto" unoptimized />
             </Link>
           )}

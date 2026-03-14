@@ -131,7 +131,7 @@ function PaywallBlock({ accessTier, pathname, isExpiredTrial = false }: { access
 
         {/* Primary CTA */}
         <div className="mt-8 flex flex-col items-center gap-3">
-          <Link href="/pricing">
+          <Link href="/pricing" target="_blank">
             <Button size="lg">
               View Plans
               <ArrowRight className="ml-2 h-4 w-4" />
@@ -150,8 +150,16 @@ function PaywallBlock({ accessTier, pathname, isExpiredTrial = false }: { access
           )}
         </div>
 
+        {/* Invite code hint */}
+        <p className="mt-6 text-sm text-muted-foreground">
+          Have an invite code?{' '}
+          <Link href="/dashboard/settings" className="font-medium text-primary underline hover:text-primary/80">
+            Redeem it in Settings
+          </Link>
+        </p>
+
         {/* Show what's available at current tier */}
-        <div className="mt-10 rounded-lg border border-border/40 bg-muted/30 p-6">
+        <div className="mt-6 rounded-lg border border-border/40 bg-muted/30 p-6">
           <p className="text-sm font-medium mb-4">
             {isExpiredTrial ? 'Still available:' : `Available on your ${getTierLabel(accessTier)} plan:`}
           </p>

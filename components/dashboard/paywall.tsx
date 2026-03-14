@@ -8,7 +8,7 @@ export function Paywall({ user }: { user: { email?: string | null } }) {
       {/* Header */}
       <header className="border-b border-border/40">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
-          <Link href="/" className="flex items-center gap-2">
+          <Link href="/dashboard" className="flex items-center gap-2">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="https://threadmoat.vercel.app/finocchiaro-logo.png" alt="ThreadMoat" className="h-8 w-auto" />
           </Link>
@@ -39,8 +39,8 @@ export function Paywall({ user }: { user: { email?: string | null } }) {
         </div>
         {/* Back Link */}
         <div className="mt-12 text-center">
-          <Link href="/">
-            <Button variant="ghost">Back to Home</Button>
+          <Link href="/dashboard">
+            <Button variant="ghost">Back to Dashboard</Button>
           </Link>
         </div>
       </main>
