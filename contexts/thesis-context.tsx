@@ -264,23 +264,50 @@ function scoreVC(company: Company, thesis: VCThesis): number {
 }
 
 function scoreISV(company: Company, thesis: ISVThesis): { score: number; label: string } {
-  const coveredList = thesis.coveredInvestmentLists.length === 0
-    || thesis.coveredInvestmentLists.includes(company.investmentList)
+  // Need at least one covered investment list to define what the ISV already owns
+  if (thesis.coveredInvestmentLists.length === 0) {
+    return { score: 0, label: "Filtered Out" }
+  }
+
+  // ── Is this company in the ISV's existing coverage? ──
+  const inCoveredList = thesis.coveredInvestmentLists.includes(company.investmentList)
 
   const phase = company.lifecyclePhase || company.startupLifecyclePhase || ""
-  const coveredPhase = thesis.coveredLifecycles.length === 0
+  const inCoveredLifecycle = thesis.coveredLifecycles.length === 0
     || thesis.coveredLifecycles.includes(phase)
 
-  const coveredIndustry = thesis.targetIndustries.length === 0
-    || company.industriesServed?.some(ind => thesis.targetIndustries.includes(ind))
+  // ── Does the company match the ISV's acquisition criteria? ──
+  const matchesTargetIndustry = thesis.targetIndustries.length === 0
+    || (company.industriesServed || []).some(ind => thesis.targetIndustries.includes(ind))
 
-  if (!coveredList && !coveredPhase) {
-    return { score: 100, label: "Whitespace" }
-  }
-  if (!coveredList || !coveredPhase || !coveredIndustry) {
+  const matchesOperatingModel = (thesis.operatingModelTags || []).length === 0
+    || (company.operatingModelTags || []).some(t =>
+      (thesis.operatingModelTags || []).some(tt => t.toLowerCase() === tt.toLowerCase())
+    )
+
+  // ── Classification ──
+
+  // Company is in ISV's existing investment list coverage
+  if (inCoveredList) {
+    // Same list + same lifecycle = direct competitor
+    if (inCoveredLifecycle) return { score: 20, label: "Covered" }
+    // Same list but different lifecycle = adjacent opportunity
     return { score: 60, label: "Adjacent" }
   }
-  return { score: 20, label: "Covered" }
+
+  // Company is NOT in covered investment lists → potential acquisition
+  // Must match BOTH target industry AND operating model to be a prime target
+  if (matchesTargetIndustry && matchesOperatingModel) {
+    return { score: 100, label: "Whitespace" }
+  }
+
+  // Matches one criterion → adjacent
+  if (matchesTargetIndustry || matchesOperatingModel) {
+    return { score: 60, label: "Adjacent" }
+  }
+
+  // Matches nothing → not relevant to this ISV
+  return { score: 0, label: "Filtered Out" }
 }
 
 function scoreOEM(company: Company, thesis: OEMThesis): { score: number; label: string } {
