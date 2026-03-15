@@ -36,16 +36,28 @@ export function OEMDashboard({ data, isLoading, isAdmin = false }: { data: Compa
     const filtered = displayData.filter(filterCompany);
 
     const threats = useMemo(() =>
-        hasThesis ? replacementCandidates.filter(r => (r.company.weightedScore || 0) > 60).slice(0, 5) : []
+        hasThesis ? replacementCandidates.filter(r => (r.company.weightedScore || 0) > 35).slice(0, 10) : []
     , [hasThesis, replacementCandidates]);
 
     const acquisitionTargets = useMemo(() =>
-        hasThesis ? coverageGaps.filter(r => ["Pre-Seed", "Seed", "Series A"].includes(r.company.latestFundingRound || "") && (r.company.techDifferentiation || 0) > 3).slice(0, 5) : []
+        hasThesis ? coverageGaps
+            .filter(r => (r.company.techDifferentiation || 0) > 2.5)
+            .sort((a, b) => (b.company.techDifferentiation || 0) - (a.company.techDifferentiation || 0))
+            .slice(0, 10) : []
     , [hasThesis, coverageGaps]);
 
-    const gapCount = useMemo(() =>
-        hasThesis ? Object.values(oemThesis.coverageMap).filter(v => v === "none").length : 0
-    , [hasThesis, oemThesis]);
+    // Count gaps = subcategories not covered (explicit "none" + all subcategories NOT in coverageMap)
+    const gapCount = useMemo(() => {
+        if (!hasThesis) return 0
+        const allSubcats = new Set<string>()
+        data.forEach(c => { if (c.subcategories) allSubcats.add(c.subcategories) })
+        let gaps = 0
+        for (const sub of allSubcats) {
+            const coverage = oemThesis.coverageMap[sub]
+            if (coverage === undefined || coverage === "none") gaps++
+        }
+        return gaps
+    }, [hasThesis, oemThesis, data]);
 
     if (isLoading) return <div className="p-8 text-center text-muted-foreground">Loading White Space intelligence...</div>;
 
@@ -70,11 +82,14 @@ export function OEMDashboard({ data, isLoading, isAdmin = false }: { data: Compa
             {hasThesis && threats.length > 0 && (
                 <WidgetCard title="Threat Radar" subtitle="Replacement candidates with highest scores">
                     <div className="space-y-3">
-                        {threats.map(({ company: t }) => (
-                            <div key={t.id} className="flex items-center gap-4 p-3 rounded-lg border">
+                        {threats.map(({ company: t }) => {
+                            const words = t.name.split(/\s+/).filter(Boolean);
+                            const initials = words.length >= 2 ? (words[0][0] + words[1][0]).toUpperCase() : t.name.substring(0, 2).toUpperCase();
+                            return (
+                            <div key={t.id} className="flex items-center gap-4 p-3 rounded-lg border" title={t.name}>
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center gap-2">
-                                        <span className="font-medium truncate">{t.name}</span>
+                                        <span className="font-medium truncate">{initials}</span>
                                         <Badge variant="destructive">Threat</Badge>
                                     </div>
                                     <p className="text-xs text-muted-foreground mt-1 truncate">{t.subsegment || t.investmentList}</p>
@@ -84,23 +99,28 @@ export function OEMDashboard({ data, isLoading, isAdmin = false }: { data: Compa
                                     <div className="text-xs text-muted-foreground">Score</div>
                                 </div>
                             </div>
-                        ))}
+                        );
+                        })}
                     </div>
                 </WidgetCard>
             )}
 
             {hasThesis && acquisitionTargets.length > 0 && (
-                <WidgetCard title="Acquisition Shortlist" subtitle="Early-stage companies filling your gaps">
+                <WidgetCard title="Acquisition Shortlist" subtitle="High tech-differentiation companies filling your gaps">
                     <div className="space-y-3">
-                        {acquisitionTargets.map(({ company: t }) => (
-                            <div key={t.id} className="flex items-center gap-4 p-3 rounded-lg border">
+                        {acquisitionTargets.map(({ company: t }) => {
+                            const words = t.name.split(/\s+/).filter(Boolean);
+                            const initials = words.length >= 2 ? (words[0][0] + words[1][0]).toUpperCase() : t.name.substring(0, 2).toUpperCase();
+                            return (
+                            <div key={t.id} className="flex items-center gap-4 p-3 rounded-lg border" title={t.name}>
                                 <div className="flex-1 min-w-0">
-                                    <span className="font-medium truncate">{t.name}</span>
+                                    <span className="font-medium truncate">{initials}</span>
                                     <p className="text-xs text-muted-foreground mt-1 truncate">{t.latestFundingRound} · Tech: {t.techDifferentiation?.toFixed(1)}/10</p>
                                 </div>
                                 <Badge variant="outline">{t.investmentList}</Badge>
                             </div>
-                        ))}
+                        );
+                        })}
                     </div>
                 </WidgetCard>
             )}

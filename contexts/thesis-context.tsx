@@ -191,35 +191,44 @@ function dealSizeMatch(amount: number, brackets: string[]): boolean {
 }
 
 function scoreVC(company: Company, thesis: VCThesis): number {
-  // ── Hard filters: if user selected these and company doesn't match, exclude ──
-  const lists = thesis.investmentLists ?? []
-  if (lists.length > 0 && !lists.includes(company.investmentList)) return 0
-
-  const subcats = thesis.subcategories ?? []
-  if (subcats.length > 0 && !(company.subcategories && subcats.includes(company.subcategories))) return 0
-
-  // ── Soft scoring on remaining criteria (rescaled to 100) ──
   let score = 0
 
-  // Stage match (20pts)
+  // ── Investment List match (25pts) — strong signal, not a hard filter ──
+  const lists = thesis.investmentLists ?? []
+  if (lists.length === 0) {
+    score += 25
+  } else if (lists.includes(company.investmentList)) {
+    score += 25
+  }
+  // No match = 0pts for this dimension (but doesn't kill the company)
+
+  // ── Subcategory match (15pts) ──
+  const subcats = thesis.subcategories ?? []
+  if (subcats.length === 0) {
+    score += 15
+  } else if (company.subcategories && subcats.includes(company.subcategories)) {
+    score += 15
+  }
+
+  // ── Stage match (10pts) ──
   const stages = thesis.fundingStages ?? []
   if (stages.length === 0) {
-    score += 20
-  } else {
-    const round = company.latestFundingRound || company.startupLifecyclePhase || ""
-    if (stages.some(s => round.toLowerCase().includes(s.toLowerCase()))) score += 20
-  }
-
-  // Last funding year (10pts)
-  const [yearMin, yearMax] = thesis.fundingYearRange ?? [0, 0]
-  if (yearMin === 0 && yearMax === 0) {
     score += 10
   } else {
-    const fy = company.fundingYear || 0
-    if (fy >= yearMin && fy <= yearMax) score += 10
+    const round = company.latestFundingRound || company.startupLifecyclePhase || ""
+    if (stages.some(s => round.toLowerCase().includes(s.toLowerCase()))) score += 10
   }
 
-  // Operating model match (10pts)
+  // ── Last funding year (5pts) ──
+  const [yearMin, yearMax] = thesis.fundingYearRange ?? [0, 0]
+  if (yearMin === 0 && yearMax === 0) {
+    score += 5
+  } else {
+    const fy = company.fundingYear || 0
+    if (fy >= yearMin && fy <= yearMax) score += 5
+  }
+
+  // ── Operating model match (10pts) ──
   const opTags = thesis.operatingModelTags ?? []
   if (opTags.length === 0) {
     score += 10
@@ -228,7 +237,7 @@ function scoreVC(company: Company, thesis: VCThesis): number {
     if (opTags.some(t => companyOps.some(ct => ct.toLowerCase() === t.toLowerCase()))) score += 10
   }
 
-  // Category/function tags match (10pts)
+  // ── Category/function tags match (10pts) ──
   const catTags = thesis.categoryTags ?? []
   if (catTags.length === 0) {
     score += 10
@@ -237,15 +246,15 @@ function scoreVC(company: Company, thesis: VCThesis): number {
     if (catTags.some(t => companyCats.some(ct => ct.toLowerCase() === t.toLowerCase()))) score += 10
   }
 
-  // Geography (10pts)
+  // ── Geography (5pts) ──
   const countries = thesis.countries ?? []
   if (countries.length === 0) {
-    score += 10
+    score += 5
   } else {
-    if (countries.includes(company.country)) score += 10
+    if (countries.includes(company.country)) score += 5
   }
 
-  // Weighted scores (40pts)
+  // ── Weighted dimension scores (20pts) ──
   const weights = thesis.scoreWeights ?? {}
   const totalWeight = Object.values(weights).reduce((a, b) => a + b, 0)
   if (totalWeight > 0) {
@@ -255,9 +264,9 @@ function scoreVC(company: Company, thesis: VCThesis): number {
       const weight = Math.min(weights[dim.key] ?? 4, 5)
       weightedSum += (companyVal / 5) * (weight / 5)
     }
-    score += (weightedSum / SCORE_DIMENSIONS.length) * 40
+    score += (weightedSum / SCORE_DIMENSIONS.length) * 20
   } else {
-    score += 40
+    score += 20
   }
 
   return Math.min(Math.round(score), 100)
@@ -311,20 +320,23 @@ function scoreISV(company: Company, thesis: ISVThesis): { score: number; label: 
 }
 
 function scoreOEM(company: Company, thesis: OEMThesis): { score: number; label: string } {
+  // Need at least one entry in the coverage map to activate scoring
+  if (Object.keys(thesis.coverageMap).length === 0) {
+    return { score: 0, label: "Filtered Out" }
+  }
+
   // Match on subcategory first, fall back to investment list for legacy configs
   const coverage = thesis.coverageMap[company.subcategories] ?? thesis.coverageMap[company.investmentList]
 
-  // undefined = user never configured this area → filter out
-  // "none" = user explicitly marked no coverage → real gap
-  if (coverage === undefined) {
-    return { score: 0, label: "Filtered Out" }
-  }
-  if (coverage === "none") {
+  // undefined = subcategory not in map = user didn't configure this area
+  // Once the user has set up ANY coverage, unconfigured areas are real gaps
+  if (coverage === undefined || coverage === "none") {
     return { score: 80, label: "Coverage Gap" }
   }
   if (coverage === "customized" || coverage === "homegrown") {
     return { score: 100, label: "Replacement Candidate" }
   }
+  // "commercial" = covered by vendor software, low priority
   return { score: 20, label: "Commercial" }
 }
 

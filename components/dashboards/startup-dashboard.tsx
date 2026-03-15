@@ -28,7 +28,7 @@ export function StartupDashboard({ data, isLoading, isAdmin = false }: { data: C
 
     const hasThesis = activeThesis === "founder";
     const scored = useMemo(() => scoreCompanies(data), [scoreCompanies, data]);
-    const matches = useMemo(() => scored.filter(r => r.score >= 50), [scored]);
+    const matches = useMemo(() => scored.filter(r => r.score >= 30), [scored]);
     const displayData = useMemo(() => hasThesis ? matches.map(r => r.company) : [], [hasThesis, matches]);
     const filtered = displayData.filter(filterCompany);
 
