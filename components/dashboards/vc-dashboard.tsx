@@ -13,7 +13,7 @@ import { QuadrantChart } from "@/components/charts/quadrant-chart";
 import { PeriodicTable } from "@/components/charts/periodic-table";
 import { NetworkGraphToggle } from "@/components/charts/network-graph-toggle";
 import { AdminAnalyticsSection } from "./admin-analytics";
-import { AlertTriangle, BarChart3, Target, CheckCircle2, DollarSign } from "lucide-react";
+import { AlertTriangle, BarChart3, Target, CheckCircle2, DollarSign, TrendingUp } from "lucide-react";
 import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -58,7 +58,7 @@ export function VCDashboard({ data, isLoading, isAdmin = false }: { data: Compan
 
     const hasThesis = activeThesis === "vc" || activeThesis === "founder";
     const scored = useMemo(() => scoreCompanies(data), [scoreCompanies, data]);
-    const matches = useMemo(() => scored.filter(r => r.score >= 50), [scored]);
+    const matches = useMemo(() => scored.filter(r => r.score >= 30), [scored]);
     const displayData = useMemo(() => hasThesis ? matches.map(r => r.company) : [], [hasThesis, matches]);
     const filtered = displayData.filter(filterCompany);
 
@@ -67,6 +67,7 @@ export function VCDashboard({ data, isLoading, isAdmin = false }: { data: Compan
     , [matches]);
 
     const totalFunding = useMemo(() => filtered.reduce((s, c) => s + (c.totalFunding || 0), 0), [filtered]);
+    const totalEstimatedARR = useMemo(() => filtered.reduce((s, c) => s + (c.estimatedRevenue || 0), 0), [filtered]);
 
     if (isLoading) return <div className="p-8 text-center text-muted-foreground">Loading portfolio data...</div>;
 
@@ -85,10 +86,11 @@ export function VCDashboard({ data, isLoading, isAdmin = false }: { data: Compan
 
             {hasThesis && <VizFilterBar companies={displayData} />}
 
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <KPICard title="Thesis Matches" value={hasThesis ? matches.length.toString() : "\u2014"} subtitle={hasThesis ? `from ${data.length} total` : "Set focus to populate"} icon={<Target className="size-4" />} />
                 <KPICard title="Avg. Match Score" value={hasThesis ? `${matchAvgScore}%` : "\u2014"} subtitle="Across thesis matches" icon={<BarChart3 className="size-4" />} />
                 <KPICard title="Total Known Funding" value={hasThesis ? formatCurrency(totalFunding) : "\u2014"} subtitle={hasThesis ? `across ${filtered.length} matches` : "Set focus to populate"} icon={<DollarSign className="size-4" />} />
+                <KPICard title="Estimated ARR" value={hasThesis ? formatCurrency(totalEstimatedARR) : "\u2014"} subtitle={hasThesis ? `across ${filtered.length} matches` : "Set focus to populate"} icon={<TrendingUp className="size-4" />} />
             </div>
 
             {hasThesis && redFlags.length > 0 && (
