@@ -46,18 +46,30 @@ function formatBurnPerMonth(annual: number): string {
   return `$${monthly.toFixed(0)}`
 }
 
-// Unified column definitions in display order.
-// type "qual" = qualitative (levels array), type "num" = numeric (format + higherIsGood)
+// Column definitions in display order.
+// type "qual" = qualitative (levels array, index 0 = green, last = red)
+// type "num"  = numeric (format fn). "neutral" numeric columns get a blue intensity ramp
+//              instead of green-red to avoid contradicting qualitative Airtable assessments.
+// type "desc" = descriptive/categorical (neutral blue palette, no good/bad implied)
 type ColDef =
   | { type: "qual"; key: keyof FundingRecord; label: string; tip: string; levels: string[] }
-  | { type: "num";  key: keyof FundingRecord; label: string; tip: string; format: (v: number) => string; higherIsGood: boolean }
+  | { type: "num";  key: keyof FundingRecord; label: string; tip: string; format: (v: number) => string; higherIsGood: boolean; neutral?: boolean }
+  | { type: "desc"; key: keyof FundingRecord; label: string; tip: string; levels: string[] }
 
 const CLOUD_MODEL_ORDER = ["Cloud-Native", "SaaS", "Hybrid", "Edge/HW", "Traditional", "No Data"]
 
 const COLUMNS: ColDef[] = [
-  { type: "qual", key: "startupSizeCategory", label: "Size",
+  // ── Identity & Context ──
+  { type: "desc", key: "startupSizeCategory", label: "Size",
     tip: "Headcount-based size bucket from Airtable: Large (250+), Medium (50-249), Small (<50).",
     levels: ["Large", "Medium", "Small"] },
+  { type: "desc", key: "aiIntensity", label: "AI Intens.",
+    tip: "AI Intensity rating from Airtable based on product signals. High = core AI/ML product; Medium = AI-augmented features; Low = minimal or no AI.",
+    levels: ["High", "Medium", "Low"] },
+  { type: "desc", key: "cloudModel", label: "Cloud",
+    tip: "Delivery model classified from Operating Model Tags. Cloud-Native = cloud HPC/usage-based; SaaS = subscription cloud; Hybrid = cloud + on-prem; Edge/HW = hardware-centric; Traditional = on-prem/perpetual.",
+    levels: CLOUD_MODEL_ORDER },
+  // ── Financial Health (from Airtable — source of truth) ──
   { type: "num", key: "scoreFinancial", label: "Fin. Health",
     tip: "Composite financial health score from Airtable combining revenue strength, burn sustainability, and funding trajectory. Excellent (30+), Healthy (20-29), Moderate (10-19), Weak (<10).",
     format: (v: number) => {
@@ -70,18 +82,20 @@ const COLUMNS: ColDef[] = [
   { type: "qual", key: "capitalEfficiency", label: "Cap. Eff.",
     tip: "How efficiently the company converts funding into revenue. High = strong returns per dollar raised. From Airtable.",
     levels: ["High", "Medium", "Low"] },
+  // ── Revenue Productivity (neutral — absolute numbers, context-dependent) ──
   { type: "num", key: "arrPerEmployee", label: "ARR/HC",
     tip: "Annual Recurring Revenue per employee from Airtable. BVP benchmark = $200K/employee. >$300K = strong; <$100K = early-stage or R&D-heavy.",
-    format: (v: number) => formatCurrency(v), higherIsGood: true },
+    format: (v: number) => formatCurrency(v), higherIsGood: true, neutral: true },
   { type: "num", key: "cloudArrEfficiency", label: "ARR Eff. %",
     tip: "Derived: (Estimated ARR / Total Funding) x 100. Measures cents of recurring revenue per dollar of capital raised. 100% = ARR matches total funding; >100% = capital-efficient.",
-    format: (v: number) => `${v.toFixed(0)}%`, higherIsGood: true },
+    format: (v: number) => `${v.toFixed(0)}%`, higherIsGood: true, neutral: true },
   { type: "num", key: "cloudArrVsBenchmark", label: "vs $200K",
     tip: "Derived: (ARR per Employee / $200K) x 100. The $200K/employee is the Bessemer/BVP SaaS benchmark. 100% = at benchmark; >150% = best-in-class.",
-    format: (v: number) => `${v.toFixed(0)}%`, higherIsGood: true },
+    format: (v: number) => `${v.toFixed(0)}%`, higherIsGood: true, neutral: true },
+  // ── Burn & Runway (qualitative = Airtable truth, numeric = neutral context) ──
   { type: "num", key: "annualBurnProxy", label: "Burn/mo",
-    tip: "Monthly burn rate from Airtable (Annual Burn Proxy / 12). Based on headcount-weighted cost model with cloud/AI adjustments applied in Airtable.",
-    format: (v: number) => formatBurnPerMonth(v), higherIsGood: false },
+    tip: "Monthly burn rate from Airtable (Annual Burn Proxy / 12). Absolute number — use Burn Lvl and Adj. Burn for health assessment.",
+    format: (v: number) => formatBurnPerMonth(v), higherIsGood: false, neutral: true },
   { type: "qual", key: "netBurnLevel", label: "Burn Lvl",
     tip: "Net burn level from Airtable based on headcount cost model. Very Low (<5% of funding/yr); Low (5-15%); Moderate (15-25%); High (40-60%); Very High (60-80%).",
     levels: ["Very Low", "Low", "Moderate", "High", "Very High"] },
@@ -89,17 +103,12 @@ const COLUMNS: ColDef[] = [
     tip: "Enhanced burn rate from Airtable factoring in headcount + cloud infrastructure + AI compute costs. Low = lean operation; Very High = heavy cloud/AI spend.",
     levels: ["Low", "Medium", "High", "Very High"] },
   { type: "num", key: "runwayProxyMonths", label: "Runway",
-    tip: "Estimated runway in months from Airtable. Total Funding / monthly net burn. If revenue >= burn, shows as infinite. <12mo = critical; 12-24 = tight; 24-36 = healthy; 36+ = very strong.",
-    format: (v: number) => v >= 999 ? "∞" : v.toFixed(0), higherIsGood: true },
+    tip: "Estimated runway in months from Airtable. Absolute number — use Run. Qual for health assessment.",
+    format: (v: number) => v >= 999 ? "∞" : v.toFixed(0), higherIsGood: true, neutral: true },
   { type: "qual", key: "runwayQuality", label: "Run. Qual",
     tip: "Runway quality from Airtable. Very Strong = 36+ months; Healthy = 24-36; Comfortable = 18-24; Tight = 12-18; High Risk = 6-12; Critical = <6 months.",
     levels: ["Very Strong", "Healthy", "Comfortable", "Tight", "High Risk", "Critical"] },
-  { type: "qual", key: "aiIntensity", label: "AI Intens.",
-    tip: "AI Intensity rating from Airtable based on product signals. High = core AI/ML product; Medium = AI-augmented features; Low = minimal or no AI.",
-    levels: ["High", "Medium", "Low"] },
-  { type: "qual", key: "cloudModel", label: "Cloud",
-    tip: "Delivery model classified from Operating Model Tags. Cloud-Native = cloud HPC/usage-based; SaaS = subscription cloud; Hybrid = cloud + on-prem; Edge/HW = hardware-centric; Traditional = on-prem/perpetual.",
-    levels: CLOUD_MODEL_ORDER },
+  // ── Data Quality ──
   { type: "qual", key: "financialConfidence", label: "Conf.",
     tip: "Data confidence from Airtable. Strong = verified/disclosed sources; Medium = public estimates + signals; Low = estimated from sparse public data.",
     levels: ["Strong", "Medium", "Low"] },
@@ -122,7 +131,7 @@ const SORT_OPTIONS: { value: SortKey; label: string }[] = [
 
 const TOP_N_OPTIONS = [10, 15, 20, 30]
 
-// Unified green → yellow → orange → red color ramp
+// Green → yellow → orange → red ramp for qualitative health columns
 const RAMP_STOPS = ["#16a34a", "#22c55e", "#84cc16", "#eab308", "#f97316", "#ef4444", "#dc2626"]
 
 function rampColor(t: number): string {
@@ -133,27 +142,44 @@ function rampColor(t: number): string {
   return d3.interpolateRgb(RAMP_STOPS[lo], RAMP_STOPS[hi])(scaled - lo)
 }
 
+// Green → red for qualitative columns (index 0 = green/good, last = red/bad)
 function qualColor(levelIndex: number, totalLevels: number): string {
   if (totalLevels <= 1) return RAMP_STOPS[0]
   return rampColor(levelIndex / (totalLevels - 1))
 }
 
-/** Metric descriptions shown below the chart */
-const METRIC_DESCRIPTIONS: { label: string; description: string }[] = [
-  { label: "Size", description: "Company headcount bucket: Large (250+), Medium (50-249), Small (<50)." },
-  { label: "Fin. Health", description: "Composite score from Airtable (0-40) combining revenue strength, burn sustainability, and funding trajectory. Excellent (30+), Healthy (20-29), Moderate (10-19), Weak (<10)." },
-  { label: "Cap. Eff.", description: "Capital Efficiency — how well the company converts total funding raised into revenue. High means strong returns per dollar of capital invested." },
-  { label: "ARR/HC", description: "Annual Recurring Revenue per employee. The Bessemer/BVP industry benchmark is $200K/employee. Above $300K signals a highly efficient revenue engine; below $100K often indicates early-stage or heavy R&D spend." },
-  { label: "ARR Eff. %", description: "ARR Efficiency — (Estimated ARR / Total Funding) x 100. Measures how many cents of recurring revenue the company earns per dollar of capital raised. Above 100% means the company's ARR exceeds total capital raised." },
-  { label: "vs $200K", description: "ARR per Employee as a percentage of the $200K Bessemer/BVP SaaS benchmark. 100% = at benchmark, 150% = 50% above, <50% = underperforming." },
-  { label: "Burn/mo", description: "Monthly burn rate (Annual Burn Proxy / 12). Calculated in Airtable using headcount-weighted cost models with cloud and AI infrastructure adjustments." },
-  { label: "Burn Lvl", description: "Net Burn Level — annual net burn (burn minus revenue) as a percentage of total funding raised. Very Low (<5%); Low (5-15%); Moderate (15-25%); High (40-60%); Very High (60-80%)." },
-  { label: "Adj. Burn", description: "Enhanced HR+Cloud+AI Burn Rate — adjusted burn accounting for headcount costs, cloud infrastructure (AWS/GCP/Azure), and AI compute (GPU clusters, training). Low = lean; Very High = heavy cloud/AI-native operation." },
-  { label: "Runway", description: "Estimated months of runway remaining. Total Funding / monthly net burn. Shows infinity when revenue exceeds burn (cash-flow positive). <12 months = critical; 12-24 = tight; 24-36 = healthy; 36+ = very strong." },
-  { label: "Run. Qual", description: "Runway Quality classification. Very Strong (36+ months), Healthy (24-36), Comfortable (18-24), Tight (12-18), High Risk (6-12), Critical (<6)." },
-  { label: "AI Intens.", description: "AI Intensity — rated from product and technology signals. High = core AI/ML product with deep learning, generative AI, or simulation-driven AI. Medium = AI-augmented features. Low = minimal or no AI in the product." },
-  { label: "Cloud", description: "Cloud delivery model classified from Operating Model Tags. Cloud-Native = cloud HPC or usage-based billing; SaaS = subscription cloud; Hybrid = cloud + on-prem; Edge/HW = hardware-centric; Traditional = on-prem/perpetual license." },
-  { label: "Conf.", description: "Financial data confidence level. Strong = verified or publicly disclosed financials. Medium = public estimates combined with market signals. Low = estimated from headcount proxies and sparse public data." },
+// Neutral blue intensity for descriptive columns and neutral numeric columns
+// Avoids implying good/bad — just shows relative magnitude
+const NEUTRAL_STOPS = ["#1e3a5f", "#2563eb", "#60a5fa"]
+function neutralColor(t: number): string {
+  const clamped = Math.max(0, Math.min(1, t))
+  const scaled = clamped * (NEUTRAL_STOPS.length - 1)
+  const lo = Math.floor(scaled)
+  const hi = Math.min(lo + 1, NEUTRAL_STOPS.length - 1)
+  return d3.interpolateRgb(NEUTRAL_STOPS[lo], NEUTRAL_STOPS[hi])(scaled - lo)
+}
+
+function descColor(levelIndex: number, totalLevels: number): string {
+  if (totalLevels <= 1) return NEUTRAL_STOPS[1]
+  return neutralColor(levelIndex / (totalLevels - 1))
+}
+
+/** Metric descriptions shown below the chart (matches column display order) */
+const METRIC_DESCRIPTIONS: { label: string; description: string; color: "neutral" | "health" }[] = [
+  { label: "Size", color: "neutral", description: "Company headcount bucket: Large (250+), Medium (50-249), Small (<50). Shown in blue — size is context, not a health indicator." },
+  { label: "AI Intens.", color: "neutral", description: "AI Intensity — rated from product and technology signals. High = core AI/ML product with deep learning, generative AI, or simulation-driven AI. Medium = AI-augmented features. Low = minimal or no AI. Shown in blue — descriptive, not a health rating." },
+  { label: "Cloud", color: "neutral", description: "Cloud delivery model classified from Operating Model Tags. Cloud-Native = cloud HPC or usage-based billing; SaaS = subscription cloud; Hybrid = cloud + on-prem; Edge/HW = hardware-centric; Traditional = on-prem/perpetual license. Shown in blue — descriptive." },
+  { label: "Fin. Health", color: "health", description: "Composite score from Airtable (0-40) combining revenue strength, burn sustainability, and funding trajectory. Excellent (30+), Healthy (20-29), Moderate (10-19), Weak (<10)." },
+  { label: "Cap. Eff.", color: "health", description: "Capital Efficiency from Airtable — how well the company converts total funding raised into revenue. High (green) = strong returns per dollar invested; Low (red) = poor conversion." },
+  { label: "ARR/HC", color: "neutral", description: "Annual Recurring Revenue per employee from Airtable. The Bessemer/BVP industry benchmark is $200K/employee. Above $300K signals a highly efficient revenue engine; below $100K often indicates early-stage or heavy R&D spend. Shown in blue — absolute number." },
+  { label: "ARR Eff. %", color: "neutral", description: "ARR Efficiency — (Estimated ARR / Total Funding) x 100. Measures how many cents of recurring revenue the company earns per dollar of capital raised. Above 100% means the company's ARR exceeds total capital raised. Shown in blue — absolute number." },
+  { label: "vs $200K", color: "neutral", description: "ARR per Employee as a percentage of the $200K Bessemer/BVP SaaS benchmark. 100% = at benchmark, 150% = 50% above, <50% = underperforming. Shown in blue — absolute number." },
+  { label: "Burn/mo", color: "neutral", description: "Monthly burn rate from Airtable (Annual Burn Proxy / 12). Shown in blue because absolute burn scales with company size — see Burn Lvl and Adj. Burn for health assessment." },
+  { label: "Burn Lvl", color: "health", description: "Net Burn Level from Airtable — annual net burn (burn minus revenue) as a percentage of total funding raised. Green = low burn relative to capital (Very Low, Low); Red = high burn (High, Very High)." },
+  { label: "Adj. Burn", color: "health", description: "Enhanced HR+Cloud+AI Burn Rate from Airtable — adjusted burn accounting for headcount costs, cloud infrastructure, and AI compute. Green = lean (Low); Red = heavy spend (Very High)." },
+  { label: "Runway", color: "neutral", description: "Estimated months of runway remaining from Airtable. Shows infinity when revenue exceeds burn. Shown in blue — see Run. Qual for health assessment." },
+  { label: "Run. Qual", color: "health", description: "Runway Quality from Airtable. Green = Very Strong (36+ months); Red = Critical (<6 months). The definitive health signal for cash position." },
+  { label: "Conf.", color: "health", description: "Financial data confidence from Airtable. Green = Strong (verified/disclosed); Red = Low (estimated from sparse data)." },
 ]
 
 export function FinancialHeatmapChart({ className, filteredCompanyNames }: FinancialHeatmapChartProps) {
@@ -273,11 +299,21 @@ export function FinancialHeatmapChart({ className, filteredCompanyNames }: Finan
           const levelIdx = col.levels.indexOf(val)
           cellColor = levelIdx >= 0 ? qualColor(levelIdx, col.levels.length) : "#334155"
           cellText = val || "—"
+        } else if (col.type === "desc") {
+          const val = (rec[col.key] as string) || ""
+          const levelIdx = col.levels.indexOf(val)
+          cellColor = levelIdx >= 0 ? descColor(levelIdx, col.levels.length) : "#334155"
+          cellText = val || "—"
         } else {
           const raw = (rec[col.key] as number) || 0
           const norm = numScales.get(col.key)!(raw)
-          const t = col.higherIsGood ? 1 - norm : norm
-          cellColor = raw === 0 ? "#334155" : rampColor(t)
+          if (col.neutral) {
+            // Neutral blue — shows relative magnitude without implying good/bad
+            cellColor = raw === 0 ? "#334155" : neutralColor(norm)
+          } else {
+            const t = col.higherIsGood ? 1 - norm : norm
+            cellColor = raw === 0 ? "#334155" : rampColor(t)
+          }
           cellText = raw > 0 ? col.format(raw) : "—"
         }
 
@@ -325,7 +361,7 @@ export function FinancialHeatmapChart({ className, filteredCompanyNames }: Finan
         `AI Intensity: <strong>${rec.aiIntensity}</strong> (score: ${rec.aiIntensityScore})`,
         ``,
         ...COLUMNS.filter(col => col.key !== "cloudModel" && col.key !== "aiIntensity").map((col) => {
-          if (col.type === "qual") {
+          if (col.type === "qual" || col.type === "desc") {
             return `${col.label}: <strong>${(rec[col.key] as string) || "—"}</strong>`
           }
           const v = (rec[col.key] as number) || 0
@@ -447,10 +483,13 @@ export function FinancialHeatmapChart({ className, filteredCompanyNames }: Finan
             {" — "}Minimum implied valuation based on total capital raised (post-money floor).
           </div>
         </div>
-        <div className="flex gap-4 pt-3 border-t border-border/50 mt-3">
+        <div className="flex flex-wrap gap-4 pt-3 border-t border-border/50 mt-3">
+          <span className="text-xs font-medium text-foreground mr-1">Health columns:</span>
           <span className="text-xs"><span className="inline-block w-3 h-3 rounded-sm mr-1" style={{background: "#16a34a"}} />Green = strong/healthy</span>
           <span className="text-xs"><span className="inline-block w-3 h-3 rounded-sm mr-1" style={{background: "#eab308"}} />Yellow = moderate</span>
           <span className="text-xs"><span className="inline-block w-3 h-3 rounded-sm mr-1" style={{background: "#ef4444"}} />Red = weak/at risk</span>
+          <span className="text-xs font-medium text-foreground ml-2 mr-1">Neutral columns:</span>
+          <span className="text-xs"><span className="inline-block w-3 h-3 rounded-sm mr-1" style={{background: "#2563eb"}} />Blue = factual data (no good/bad implied)</span>
           <span className="text-xs"><span className="inline-block w-3 h-3 rounded-sm mr-1" style={{background: "#334155"}} />Gray = no data</span>
         </div>
       </div>
