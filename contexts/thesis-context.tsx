@@ -193,21 +193,24 @@ function dealSizeMatch(amount: number, brackets: string[]): boolean {
 function scoreVC(company: Company, thesis: VCThesis): number {
   let score = 0
 
-  // ── Investment List match (25pts) — strong signal, not a hard filter ──
+  // ── Investment List match (25pts) — HARD FILTER when set ──
   const lists = thesis.investmentLists ?? []
   if (lists.length === 0) {
     score += 25
   } else if (lists.includes(company.investmentList)) {
     score += 25
+  } else {
+    return 0 // Company is outside the selected investment lists — exclude entirely
   }
-  // No match = 0pts for this dimension (but doesn't kill the company)
 
-  // ── Subcategory match (15pts) ──
+  // ── Subcategory match (15pts) — HARD FILTER when set ──
   const subcats = thesis.subcategories ?? []
   if (subcats.length === 0) {
     score += 15
   } else if (company.subcategories && subcats.includes(company.subcategories)) {
     score += 15
+  } else {
+    return 0 // Company is outside the selected subcategories — exclude entirely
   }
 
   // ── Stage match (10pts) ──
@@ -308,14 +311,13 @@ function scoreISV(company: Company, thesis: ISVThesis): { score: number; label: 
     return { score: 60, label: "Adjacent" }
   }
 
-  // No acquisition criteria set → can't classify non-covered companies
+  // Company is NOT in covered investment lists → potential acquisition target
+  // If no targeting criteria set, ALL non-covered companies are whitespace
   if (!hasTargetIndustries && !hasOperatingModel) {
-    return { score: 0, label: "Filtered Out" }
+    return { score: 80, label: "Whitespace" }
   }
 
-  // Company is NOT in covered investment lists → potential acquisition
-  // Must match BOTH target industry AND operating model to be a prime target
-  // (or only the set criterion if only one is configured)
+  // With targeting criteria, prioritize matches
   const bothSet = hasTargetIndustries && hasOperatingModel
   if (bothSet && matchesTargetIndustry && matchesOperatingModel) {
     return { score: 100, label: "Whitespace" }
@@ -323,12 +325,12 @@ function scoreISV(company: Company, thesis: ISVThesis): { score: number; label: 
   if (bothSet && (matchesTargetIndustry || matchesOperatingModel)) {
     return { score: 60, label: "Adjacent" }
   }
-  // Only one criterion configured — match it for Whitespace, no match = filtered
+  // Only one criterion configured
   if (!bothSet && (matchesTargetIndustry || matchesOperatingModel)) {
     return { score: 100, label: "Whitespace" }
   }
 
-  // Matches nothing → not relevant to this ISV
+  // Has targeting criteria set but company doesn't match any → filtered out
   return { score: 0, label: "Filtered Out" }
 }
 
