@@ -14,6 +14,7 @@ interface FilterState {
   operatingModel: string[]
   categoryTags: string[]
   differentiationTags: string[]
+  investmentTheses: string[]
   metrics: string
   oceanStrategy: "all" | "red" | "blue"
   sizeCategory: string[]
@@ -40,6 +41,7 @@ export const DEFAULT_FILTERS: FilterState = {
   operatingModel: [],
   categoryTags: [],
   differentiationTags: [],
+  investmentTheses: [],
   metrics: "totalFunding",
   oceanStrategy: "all",
   sizeCategory: [],
@@ -147,6 +149,11 @@ export function FilterProvider({ children }: { children: ReactNode }) {
     if (filters.differentiationTags.length > 0) {
       const hasTag = company.differentiationTags?.some(t => filters.differentiationTags.includes(t))
       if (!hasTag) return false
+    }
+
+    if (filters.investmentTheses.length > 0) {
+      const hasThesis = company.investmentTheses?.some(t => filters.investmentTheses.includes(t))
+      if (!hasThesis) return false
     }
 
     if (filters.oceanStrategy !== "all") {

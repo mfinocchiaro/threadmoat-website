@@ -4,12 +4,15 @@ import { useEffect, useState, useMemo } from "react"
 import { Company, loadCompanyData } from "@/lib/company-data"
 import { useFilter } from "@/contexts/filter-context"
 import { useThesis } from "@/contexts/thesis-context"
+import { usePlan } from "@/contexts/plan-context"
+import { maskCompanies } from "@/lib/name-masking"
 
 export function useThesisGatedData() {
   const [allCompanies, setAllCompanies] = useState<Company[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const { filterCompany } = useFilter()
   const { activeThesis, scoreCompanies } = useThesis()
+  const { accessTier } = usePlan()
 
   useEffect(() => {
     loadCompanyData().then(data => { setAllCompanies(data); setIsLoading(false) })
@@ -28,5 +31,25 @@ export function useThesisGatedData() {
     [displayData, filterCompany]
   )
 
-  return { companies: displayData, filtered, isLoading, hasThesis, allCompanies }
+  // Mask company names for Forge tier (Red Keep + Admin see real names)
+  const maskedFiltered = useMemo(
+    () => maskCompanies(filtered, accessTier),
+    [filtered, accessTier]
+  )
+
+  const maskedCompanies = useMemo(
+    () => maskCompanies(displayData, accessTier),
+    [displayData, accessTier]
+  )
+
+  return {
+    companies: maskedCompanies,
+    filtered: maskedFiltered,
+    isLoading,
+    hasThesis,
+    allCompanies,
+    // Unmasked versions for filter bar (needs real names for filtering)
+    rawCompanies: displayData,
+    rawFiltered: filtered,
+  }
 }

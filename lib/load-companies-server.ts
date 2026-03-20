@@ -130,6 +130,7 @@ export async function loadCompaniesFromCSV(): Promise<Company[]> {
       (row['Industries Served'] || '').split(',').map(t => t.trim()).filter(Boolean)
     )),
     investmentList: row['Investment List'] || '',
+    investmentTheses: (row['Investment Thesis'] || '').split(',').map((t: string) => t.trim()).filter(Boolean),
     subcategories: row['Subcategories'] || '',
     companyGroup: row['Company Group'] || '',
     startupLifecyclePhase: row['Startup Lifecycle Phase'] || '',
