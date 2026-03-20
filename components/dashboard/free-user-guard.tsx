@@ -124,7 +124,7 @@ function PaywallBlock({ accessTier, pathname, isExpiredTrial = false }: { access
             <h2 className="mt-6 text-2xl font-bold">{requiredLabel} Feature</h2>
             <p className="mt-3 text-muted-foreground">
               This visualization requires the <strong>{requiredLabel}</strong> plan.
-              Upgrade to unlock {requiredTier === 'investor' ? '10 interactive charts and quarterly reports' : 'additional features'}.
+              Upgrade to unlock {requiredTier === 'forge' ? '10 interactive charts and strategic analytics' : 'additional features'}.
             </p>
           </>
         )}
