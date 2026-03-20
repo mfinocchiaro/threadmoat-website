@@ -60,7 +60,7 @@ function TrialExpiryBanner({ daysRemaining }: { daysRemaining: number }) {
     <div className="mx-4 mt-4 flex items-center gap-3 rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm">
       <Clock className="h-4 w-4 shrink-0 text-amber-500" />
       <span>
-        <strong>{daysRemaining} day{daysRemaining !== 1 ? 's' : ''}</strong> left on your Explorer trial.{' '}
+        <strong>{daysRemaining} day{daysRemaining !== 1 ? 's' : ''}</strong> left on your Recon trial.{' '}
         <Link href="/pricing" className="font-medium text-amber-600 underline hover:text-amber-500">
           Upgrade now
         </Link>{' '}
@@ -76,7 +76,7 @@ function ExpiredTrialBanner() {
     <div className="mx-4 mt-4 flex items-center gap-3 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm">
       <AlertTriangle className="h-4 w-4 shrink-0 text-red-500" />
       <span>
-        Your Explorer trial has ended. You can still view the Geography Map.{' '}
+        Your Recon trial has ended. You can still view the Geography Map.{' '}
         <Link href="/pricing" className="font-medium text-red-400 underline hover:text-red-300">
           Upgrade to restore full access
         </Link>
@@ -105,7 +105,7 @@ function PaywallBlock({ accessTier, pathname, isExpiredTrial = false }: { access
 
         {isExpiredTrial ? (
           <>
-            <h2 className="mt-6 text-2xl font-bold">Your Explorer Trial Has Ended</h2>
+            <h2 className="mt-6 text-2xl font-bold">Your Recon Trial Has Ended</h2>
             <p className="mt-3 text-muted-foreground">
               Your 30-day Explorer window has closed. Upgrade to unlock all dashboards,
               charts, and analytics — or get the full picture with The Red Keep.

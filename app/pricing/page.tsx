@@ -1,7 +1,7 @@
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import { Check, Calendar, MapPin, CalendarDays, BarChart2, Network, FileText, BookOpen, Download, Briefcase, Castle } from "lucide-react"
+import { Check, Calendar, MapPin, CalendarDays, BarChart2, Network, FileText, BookOpen, Download, Briefcase, Castle, Flame, Crosshair } from "lucide-react"
 
 // Update this date each week after the Monday refresh
 const LAST_UPDATED = "March 11, 2026"
@@ -18,29 +18,40 @@ const REPORT_FEATURES = [
   "Personalized, watermarked copy with unique Copy ID",
 ]
 
-const ANNUAL_FEATURES = [
-  "All four quarterly reports included",
-  "Access to 10 graphs and analytics in ThreadMoat Dashboard",
-  "60-min analyst briefing with Michael Finocchiaro",
-  "Custom thesis report on one sector or competitive question",
-]
-
-const FREE_FEATURES = [
+const RECON_FEATURES = [
   "Network Graph — interactive relationship mapping",
   "Investment Landscape — 10 domains, category breakdown",
   "Geography Map — global startup distribution",
   "Updated weekly with the full dataset",
 ]
 
+const FORGE_FEATURES = [
+  "All Recon graphs plus 10 interactive analytics charts",
+  "Magic Quadrant — competitive positioning",
+  "Bubble Chart — multi-dimensional scatter analysis",
+  "Full Landscape — grouped company tiles by category",
+  "Top Rankings — companies ranked by any metric",
+  "Category Treemap — hierarchical market view",
+  "Founding Timeline — ecosystem evolution",
+  "Industry Sunburst — radial market hierarchy",
+  "Metro Areas — geographic concentration analysis",
+  "Radar Chart — multi-axis company comparison",
+  "Periodic Table — company tiles at a glance",
+  "All four quarterly reports included",
+  "60-min analyst briefing with Michael Finocchiaro",
+]
+
 const RED_KEEP_FEATURES = [
-  "All 20+ dashboards + filters + saved views",
-  "Annual Market State Reports included (all quarters)",
+  "All Forge dashboards plus 15 advanced analytics",
+  "Company Compare — side-by-side deep dives",
+  "Customer & Investor Networks — full relationship mapping",
+  "Sankey, Chord, Marimekko — advanced flow analysis",
+  "Parallel Coordinates, Box Plots, SPLOM — statistical views",
+  "Annual Market State Reports (all quarters)",
   "Watchlists + alerts on portfolio companies",
   "Exports: charts + aggregated tables",
   "Custom reports + briefings + consulting",
-  "Controlled dataset access / bespoke exports under contract",
-  "Dedicated analyst support",
-  "Quarterly strategy sessions",
+  "Dedicated analyst support & quarterly strategy sessions",
 ]
 
 const METHODOLOGY_FIELDS = [
@@ -145,25 +156,25 @@ export default function PricingPage() {
       <section className="container mx-auto px-4 pb-16">
         <h2 className="text-center text-2xl font-bold mb-2">Access to ThreadMoat</h2>
         <p className="text-center text-muted-foreground mb-10 max-w-2xl mx-auto">
-          Every copy is personalized, watermarked, and traceable. Choose the license that fits your organization.
+          Choose your level of intelligence. Every tier includes weekly data updates and the full 600+ company dataset.
         </p>
         <div className="mx-auto grid max-w-7xl gap-6 lg:grid-cols-4">
 
-          {/* Explorer — Free */}
+          {/* Recon — Free */}
           <div className="flex flex-col rounded-lg border border-border/40 bg-card p-6">
             <div className="flex items-start justify-between">
               <div>
-                <h3 className="text-lg font-semibold">Explorer</h3>
-                <p className="mt-1 text-xs text-muted-foreground">Free forever &mdash; no credit card required</p>
+                <h3 className="text-lg font-semibold">Recon</h3>
+                <p className="mt-1 text-xs text-muted-foreground">Scout the landscape &mdash; no credit card</p>
               </div>
-              <Network className="h-5 w-5 text-primary mt-1" />
+              <Crosshair className="h-5 w-5 text-primary mt-1" />
             </div>
             <div className="mt-5">
               <span className="text-3xl font-bold">$0</span>
-              <p className="text-xs text-muted-foreground mt-1">Free</p>
+              <p className="text-xs text-muted-foreground mt-1">Free &mdash; 3 interactive graphs</p>
             </div>
             <ul className="mt-6 flex-1 space-y-2.5">
-              {FREE_FEATURES.map(f => (
+              {RECON_FEATURES.map(f => (
                 <li key={f} className="flex items-start gap-2">
                   <Check className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
                   <span className="text-xs">{f}</span>
@@ -217,56 +228,55 @@ export default function PricingPage() {
             </div>
           </div>
 
-          {/* Annual Report Subscription */}
-          <div className="flex flex-col rounded-lg border border-primary/40 bg-card p-6 shadow-sm">
+          {/* The Forge — Annual Subscription */}
+          <div className="flex flex-col rounded-lg border border-amber-600/40 bg-gradient-to-b from-card to-amber-950/10 p-6 shadow-sm">
             <div className="flex items-start justify-between">
               <div>
-                <h3 className="text-lg font-semibold">Annual Report Subscription</h3>
-                <p className="mt-1 text-xs text-muted-foreground">Full year of quarterly intelligence</p>
+                <h3 className="text-lg font-semibold">The Forge</h3>
+                <p className="mt-1 text-xs text-muted-foreground">Strategic analytics + quarterly reports</p>
               </div>
-              <Briefcase className="h-5 w-5 text-primary mt-1" />
+              <Flame className="h-5 w-5 text-amber-500 mt-1" />
             </div>
             <div className="mt-5">
               <span className="text-3xl font-bold">$17,999</span>
               <span className="text-lg text-muted-foreground font-normal">/year</span>
-              <p className="text-xs text-muted-foreground mt-1">Annual subscription</p>
+              <p className="text-xs text-muted-foreground mt-1">Annual subscription &mdash; 13 graphs</p>
             </div>
             <ul className="mt-6 flex-1 space-y-2.5">
-              {ANNUAL_FEATURES.map(f => (
+              {FORGE_FEATURES.map(f => (
                 <li key={f} className="flex items-start gap-2">
-                  <Check className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
+                  <Check className="h-3.5 w-3.5 text-amber-500 mt-0.5 shrink-0" />
                   <span className="text-xs">{f}</span>
                 </li>
               ))}
             </ul>
             <div className="mt-6">
               <a href="/about#contact">
-                <Button className="w-full" size="sm">Contact for Annual Subscription</Button>
+                <Button className="w-full border-amber-600/40 hover:bg-amber-950/20" variant="outline" size="sm">Contact for Subscription</Button>
               </a>
             </div>
           </div>
 
           {/* The Red Keep — Enterprise */}
           <div className="flex flex-col rounded-lg border border-red-800/40 bg-gradient-to-b from-card to-red-950/10 p-6 relative overflow-hidden">
-            {/* Castle silhouette background */}
             <div className="absolute top-0 right-0 opacity-[0.04] pointer-events-none">
               <Castle className="h-32 w-32 -mt-4 -mr-4" />
             </div>
             <div className="flex items-start justify-between relative">
               <div>
                 <h3 className="text-lg font-semibold">The Red Keep</h3>
-                <p className="mt-1 text-xs text-muted-foreground">Annual strategic intelligence</p>
+                <p className="mt-1 text-xs text-muted-foreground">Full command &mdash; nothing hidden</p>
               </div>
               <Castle className="h-5 w-5 text-red-400 mt-1" />
             </div>
             <div className="mt-5">
               <span className="text-3xl font-bold">Call For Quote</span>
-              <p className="text-xs text-muted-foreground mt-1">Annual contract</p>
+              <p className="text-xs text-muted-foreground mt-1">Annual contract &mdash; 28+ graphs</p>
             </div>
             <ul className="mt-6 flex-1 space-y-2.5">
               {RED_KEEP_FEATURES.map(f => (
                 <li key={f} className="flex items-start gap-2">
-                  <Check className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
+                  <Check className="h-3.5 w-3.5 text-red-400 mt-0.5 shrink-0" />
                   <span className="text-xs">{f}</span>
                 </li>
               ))}
@@ -309,7 +319,7 @@ export default function PricingPage() {
           </p>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 max-w-6xl mx-auto">
             {[
-              { img: "/sample-investor-network.jpg", label: "Investor Stats", desc: "Interactive network graph mapping investors, portfolio companies, and co-investment relationships" },
+              { img: "/sample-investor-network.jpg", label: "Investor Network", desc: "Interactive network graph mapping investors, portfolio companies, and co-investment relationships" },
               { img: "/sample-funding-distribution.jpg", label: "Funding Distribution", desc: "Bar chart of companies by funding stage (Seed → Series D+) with total capital deployed" },
               { img: "/sample-discipline-breakdown.jpg", label: "Discipline Breakdown", desc: "CAD / CAM / PLM / ERP / Industrial AI by headcount and funding — full ecosystem view" },
               { img: "/sample-ic-memo.jpg", label: "Analyst Briefing", desc: "Investment Committee Memo with scoring breakdown, financials, and competitive analysis" },
