@@ -547,6 +547,7 @@ export function ThesisProvider({ children, profileType }: { children: ReactNode;
       operatingModel: [],
       categoryTags: [],
       differentiationTags: [],
+      investmentTheses: [],
       metrics: "totalFunding",
       oceanStrategy: "all",
       sizeCategory: [],

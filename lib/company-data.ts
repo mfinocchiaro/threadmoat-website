@@ -25,6 +25,7 @@ export interface Company {
   manufacturingType: string
   industriesServed: string[]
   investmentList: string
+  investmentTheses: string[]
   subcategories: string
   companyGroup: string
   startupLifecyclePhase: string

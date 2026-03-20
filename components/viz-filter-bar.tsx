@@ -197,7 +197,14 @@ export function VizFilterBar({ companies, className }: VizFilterBarProps) {
       items: items.sort((a, b) => b.count - a.count),
     }))
 
-    return { investmentLists, subsegments, industries, countries, lifecycles, fundingRounds, opModelGroups, categoryTags, sizeCategories, ecosystemGroups }
+    // Investment Theses: sorted by frequency
+    const thesisCount = new Map<string, number>()
+    companies.forEach(c => (c.investmentTheses || []).forEach(t => {
+      if (t) thesisCount.set(t, (thesisCount.get(t) || 0) + 1)
+    }))
+    const investmentTheses = Array.from(thesisCount.entries()).sort((a, b) => b[1] - a[1]).map(([t]) => t)
+
+    return { investmentLists, subsegments, industries, countries, lifecycles, fundingRounds, opModelGroups, categoryTags, sizeCategories, ecosystemGroups, investmentTheses }
   }, [companies])
 
   const toggle = React.useCallback((type: string, value: string) => {
@@ -224,6 +231,7 @@ export function VizFilterBar({ companies, className }: VizFilterBarProps) {
       operatingModel: [],
       categoryTags: [],
       differentiationTags: [],
+      investmentTheses: [],
       search: "",
       oceanStrategy: "all",
       sizeCategory: [],
@@ -241,6 +249,7 @@ export function VizFilterBar({ companies, className }: VizFilterBarProps) {
     filters.operatingModel.length +
     filters.categoryTags.length +
     filters.differentiationTags.length +
+    filters.investmentTheses.length +
     filters.sizeCategory.length +
     filters.ecosystemFlags.length +
     (filters.oceanStrategy !== "all" ? 1 : 0)
@@ -293,6 +302,18 @@ export function VizFilterBar({ companies, className }: VizFilterBarProps) {
               />
             </div>
 
+            {/* Investment Thesis pills */}
+            {options.investmentTheses.length > 0 && (
+              <div className="flex-1">
+                <PillFilter
+                  label="Investment Thesis" items={options.investmentTheses} active={filters.investmentTheses}
+                  onToggle={(v) => toggle("investmentTheses", v)} onClear={() => clearFilter("investmentTheses")}
+                  compact
+                />
+              </div>
+            )}
+          </div>
+          <div className="flex flex-col sm:flex-row gap-3">
             {/* Ocean Strategy toggle */}
             <div className="shrink-0 space-y-1.5">
               <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Strategic Lens</span>

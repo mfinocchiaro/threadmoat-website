@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, startTransition, useCallback } from "react"
+import { useEffect, useState, startTransition, useCallback, useMemo } from "react"
 import { Company, loadCompanyData } from "@/lib/company-data"
 import { FilterProvider } from "@/contexts/filter-context"
 import { ThesisProvider, ThesisType, useThesis } from "@/contexts/thesis-context"
@@ -16,6 +16,7 @@ import { FOCUS_SCENARIOS } from "@/components/dashboard/sidebar"
 import { LayoutProvider } from "@/contexts/layout-context"
 import { ConfigPanel } from "@/components/dashboard/config-panel"
 import { usePlan } from "@/contexts/plan-context"
+import { maskCompanies } from "@/lib/name-masking"
 
 const SCENARIO_THESIS: Record<string, ThesisType> = {
   startup_founder: "founder",
@@ -64,7 +65,10 @@ function DashboardInner({ companies, isLoading, profileType, onSelectProfile, is
   isAdmin: boolean
 }) {
   const { applyThesis } = useThesis()
-  const { isFreeUser } = usePlan()
+  const { isFreeUser, accessTier } = usePlan()
+
+  // Mask company names for Forge tier (Red Keep + Admin see real names)
+  const maskedCompanies = useMemo(() => maskCompanies(companies, accessTier), [companies, accessTier])
 
   const handleSelectProfile = useCallback((key: string) => {
     onSelectProfile(key)
@@ -86,12 +90,12 @@ function DashboardInner({ companies, isLoading, profileType, onSelectProfile, is
         </h2>
       </div>
 
-      <ThesisResults companies={companies} />
+      <ThesisResults companies={maskedCompanies} />
 
-      {profileType === "startup_founder" && <StartupDashboard data={companies} isLoading={isLoading} isAdmin={isAdmin} />}
-      {profileType === "vc_investor" && <VCDashboard data={companies} isLoading={isLoading} isAdmin={isAdmin} />}
-      {profileType === "oem_enterprise" && <OEMDashboard data={companies} isLoading={isLoading} isAdmin={isAdmin} />}
-      {profileType === "isv_platform" && <ISVDashboard data={companies} isLoading={isLoading} isAdmin={isAdmin} />}
+      {profileType === "startup_founder" && <StartupDashboard data={maskedCompanies} isLoading={isLoading} isAdmin={isAdmin} />}
+      {profileType === "vc_investor" && <VCDashboard data={maskedCompanies} isLoading={isLoading} isAdmin={isAdmin} />}
+      {profileType === "oem_enterprise" && <OEMDashboard data={maskedCompanies} isLoading={isLoading} isAdmin={isAdmin} />}
+      {profileType === "isv_platform" && <ISVDashboard data={maskedCompanies} isLoading={isLoading} isAdmin={isAdmin} />}
 
       <ConfigPanel
         companies={companies}
