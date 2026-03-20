@@ -93,14 +93,12 @@ function DashboardInner({ companies, isLoading, profileType, onSelectProfile, is
       {profileType === "oem_enterprise" && <OEMDashboard data={companies} isLoading={isLoading} isAdmin={isAdmin} />}
       {profileType === "isv_platform" && <ISVDashboard data={companies} isLoading={isLoading} isAdmin={isAdmin} />}
 
-      {!isFreeUser && (
-        <ConfigPanel
-          companies={companies}
-          profileType={profileType}
-          isAdmin={isAdmin}
-          onSelectScenario={handleSelectProfile}
-        />
-      )}
+      <ConfigPanel
+        companies={companies}
+        profileType={profileType}
+        isAdmin={isAdmin}
+        onSelectScenario={handleSelectProfile}
+      />
     </>
   )
 }

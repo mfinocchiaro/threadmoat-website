@@ -23,6 +23,7 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { FOCUS_SCENARIOS } from "@/components/dashboard/sidebar"
+import { usePlan } from "@/contexts/plan-context"
 
 interface SavedThesisEntry {
   id: string

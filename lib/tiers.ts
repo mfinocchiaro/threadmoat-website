@@ -2,10 +2,10 @@
  * ThreadMoat Access Tier System
  *
  * Tier 1 (Explorer):   Free 30-day trial — 3 graphs (network, landscape-intro, map)
- * Tier 2 (Report):     $4,999 one-time — same 3 graphs + purchased report
- * Tier 3 (Investor):   $14,999/yr — 11 graphs + quarterly reports
- * Tier 4 (Red Keep):   Custom contract — all graphs except admin
- * Friends:             Same access as Tier 3, 1-year duration, no payment
+ * Tier 2 (Analyst):    $14,999/yr — 10 visual analytics graphs (no raw data exports)
+ * Tier 3 (Red Keep):   Custom contract — all graphs except admin (~24 total)
+ * Admin:               Unrestricted (via ADMIN_EMAILS env var)
+ * Friends:             Same access as Tier 2, 1-year duration, no payment
  */
 
 export type AccessTier = 'explorer' | 'investor' | 'red_keep' | 'admin'
@@ -17,44 +17,44 @@ export const UTILITY_PATHS = new Set([
   '/dashboard/settings',
 ])
 
-/** Tier 1 + 2: Explorer — 3 graphs (free for everyone) */
+/** Tier 1: Explorer — 3 graphs (free for everyone) */
 export const EXPLORER_PATHS = new Set([
   '/dashboard/network',
   '/dashboard/landscape-intro',
   '/dashboard/map',
 ])
 
-/** Tier 3: Investor / Friends — 11 graphs */
+/** Tier 2: Analyst — 10 visual analytics graphs (no full company lists or raw exports) */
 export const INVESTOR_PATHS = new Set([
-  '/dashboard/quadrant',          // Magic Quadrant
-  '/dashboard/bubbles',           // Bubble Chart
-  '/dashboard/landscape',         // Full Landscape
-  '/dashboard/bar-chart',         // Funding Bar Chart
+  '/dashboard/quadrant',          // Magic Quadrant positioning
+  '/dashboard/bubbles',           // Bubble Chart (scatter plot)
+  '/dashboard/landscape',         // Full Landscape (grouped tiles)
+  '/dashboard/bar-chart',         // Top Rankings bar chart
   '/dashboard/treemap',           // Category Treemap
-  '/dashboard/timeline',          // Funding Timeline
+  '/dashboard/timeline',          // Founding Timeline
   '/dashboard/sunburst',          // Industry Sunburst
   '/dashboard/metros',            // Metro Area Analysis
-  '/dashboard/customers',         // Customer Network
-  '/dashboard/investor-network',  // Investor Network
-  '/dashboard/radar',             // Radar Chart
+  '/dashboard/radar',             // Radar Chart comparison
+  '/dashboard/periodic-table',    // Periodic Table (company tiles)
 ])
 
-/** Tier 4: Red Keep only — remaining graphs (unlocked on top of Investor) */
+/** Tier 3: Red Keep — full platform access (unlocked on top of Analyst) */
 export const RED_KEEP_ONLY_PATHS = new Set([
-  '/dashboard/periodic-table',
-  '/dashboard/compare',
-  '/dashboard/marimekko',
-  '/dashboard/spiral',
-  '/dashboard/patterns',
-  '/dashboard/sankey',
-  '/dashboard/chord',
-  '/dashboard/heatmap',
-  '/dashboard/parallel',
-  '/dashboard/box-plot',
-  '/dashboard/distribution',
-  '/dashboard/wordcloud',
-  '/dashboard/slope',
-  '/dashboard/splom',
+  '/dashboard/compare',           // Side-by-side company comparison
+  '/dashboard/customers',         // Customer Network (2D/3D)
+  '/dashboard/investor-network',  // Investor Network (2D/3D)
+  '/dashboard/marimekko',         // Market concentration
+  '/dashboard/spiral',            // Spiral Timeline
+  '/dashboard/patterns',          // Investment × funding stage heatmap
+  '/dashboard/sankey',            // Flow Diagram
+  '/dashboard/chord',             // Chord Diagram
+  '/dashboard/heatmap',           // Pattern Heatmap
+  '/dashboard/parallel',          // Parallel Coordinates
+  '/dashboard/box-plot',          // Box Plot distributions
+  '/dashboard/distribution',      // Funding Distribution
+  '/dashboard/wordcloud',         // Word Cloud
+  '/dashboard/slope',             // Slope Chart
+  '/dashboard/splom',             // Scatter Plot Matrix
 ])
 
 /** Admin-only analytics — never shown to non-admin users */
@@ -107,7 +107,7 @@ export function getTierLabel(tier: AccessTier): string {
   switch (tier) {
     case 'admin': return 'Admin'
     case 'red_keep': return 'The Red Keep'
-    case 'investor': return 'Investor'
+    case 'investor': return 'Analyst'
     case 'explorer': return 'Explorer'
   }
 }
