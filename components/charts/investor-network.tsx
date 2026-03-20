@@ -66,7 +66,7 @@ function investorTypeColor(type: string): string {
 
 const SKIP_MIN = 2 // investors with only 1 startup are too noisy
 
-export function InvestorNetwork({ className }: { className?: string }) {
+export function InvestorNetwork({ className, filteredCompanyNames }: { className?: string; filteredCompanyNames?: Set<string> }) {
   const svgRef = useRef<SVGSVGElement>(null)
   const tooltipRef = useRef<HTMLDivElement>(null)
 
@@ -110,6 +110,7 @@ export function InvestorNetwork({ className }: { className?: string }) {
 
   const { nodes, links, investorCount } = useMemo(() => {
     const threshold = parseInt(minCount)
+    const hasGlobalFilter = filteredCompanyNames && filteredCompanyNames.size > 0
 
     // Filter investors
     const filtered = investors.filter(inv => {
@@ -124,24 +125,36 @@ export function InvestorNetwork({ className }: { className?: string }) {
     const startupMap = new Map<string, { name: string; investmentList: string }>()
 
     for (const inv of filtered) {
-      nodes.push({
-        id: `i:${inv.id}`,
-        type: "investor",
-        name: inv.name,
-        count: inv.startupCount,
-        investorType: inv.investorType,
-      })
+      const investorId = `i:${inv.id}`
+      let hasVisibleStartup = false
 
       inv.startupNames.forEach((sName) => {
         const trimmed = sName.trim()
+        // If global filter is active, skip startups not in the filtered set
+        if (hasGlobalFilter && !filteredCompanyNames!.has(trimmed)) return
+
         const sid = `s:${trimmed.toLowerCase().replace(/\s+/g, "-")}`
         const investmentList = startupListMap[trimmed] || ""
 
         if (!startupMap.has(sid)) {
           startupMap.set(sid, { name: trimmed, investmentList })
         }
-        links.push({ source: `i:${inv.id}`, target: sid })
+        links.push({ source: investorId, target: sid })
+        hasVisibleStartup = true
       })
+
+      // Only include investor if they have at least one visible startup
+      if (!hasGlobalFilter || hasVisibleStartup) {
+        nodes.push({
+          id: investorId,
+          type: "investor",
+          name: inv.name,
+          count: hasGlobalFilter
+            ? inv.startupNames.filter(s => filteredCompanyNames!.has(s.trim())).length
+            : inv.startupCount,
+          investorType: inv.investorType,
+        })
+      }
     }
 
     // Add startup nodes that appear in at least one link
@@ -151,8 +164,8 @@ export function InvestorNetwork({ className }: { className?: string }) {
       nodes.push({ id: sid, type: "startup", name, investmentList })
     }
 
-    return { nodes, links, investorCount: filtered.length }
-  }, [investors, minCount, filterType, startupListMap])
+    return { nodes, links, investorCount: nodes.filter(n => n.type === "investor").length }
+  }, [investors, minCount, filterType, startupListMap, filteredCompanyNames])
 
   useEffect(() => {
     if (!svgRef.current || nodes.length === 0) return

@@ -44,7 +44,7 @@ function investorTypeColor(type: string): string {
   return "#64748b"
 }
 
-export function InvestorNetwork3D({ className }: { className?: string }) {
+export function InvestorNetwork3D({ className, filteredCompanyNames }: { className?: string; filteredCompanyNames?: Set<string> }) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [dimensions, setDimensions] = useState({ width: 800, height: 700 })
 
@@ -87,6 +87,7 @@ export function InvestorNetwork3D({ className }: { className?: string }) {
 
   const { graphData, investorCount } = useMemo(() => {
     const threshold = parseInt(minCount)
+    const hasGlobalFilter = filteredCompanyNames && filteredCompanyNames.size > 0
 
     const filtered = investors.filter(inv => {
       if (inv.name.toLowerCase() === "undisclosed or unknown") return false
@@ -100,13 +101,30 @@ export function InvestorNetwork3D({ className }: { className?: string }) {
     const startupMap = new Map<string, { name: string; investmentList: string }>()
 
     for (const inv of filtered) {
-      nodes.push({ id: `i:${inv.id}`, type: "investor", name: inv.name, count: inv.startupCount, investorType: inv.investorType })
+      const investorId = `i:${inv.id}`
+      let hasVisibleStartup = false
+
       inv.startupNames.forEach((sName) => {
         const trimmed = sName.trim()
+        if (hasGlobalFilter && !filteredCompanyNames!.has(trimmed)) return
+
         const sid = `s:${trimmed.toLowerCase().replace(/\s+/g, "-")}`
         if (!startupMap.has(sid)) startupMap.set(sid, { name: trimmed, investmentList: startupListMap[trimmed] || "" })
-        links.push({ source: `i:${inv.id}`, target: sid })
+        links.push({ source: investorId, target: sid })
+        hasVisibleStartup = true
       })
+
+      if (!hasGlobalFilter || hasVisibleStartup) {
+        nodes.push({
+          id: investorId,
+          type: "investor",
+          name: inv.name,
+          count: hasGlobalFilter
+            ? inv.startupNames.filter(s => filteredCompanyNames!.has(s.trim())).length
+            : inv.startupCount,
+          investorType: inv.investorType,
+        })
+      }
     }
 
     const linkedStartups = new Set(links.map(l => l.target))
@@ -115,8 +133,8 @@ export function InvestorNetwork3D({ className }: { className?: string }) {
       nodes.push({ id: sid, type: "startup", name, investmentList })
     }
 
-    return { graphData: { nodes, links }, investorCount: filtered.length }
-  }, [investors, minCount, filterType, startupListMap])
+    return { graphData: { nodes, links }, investorCount: nodes.filter(n => n.type === "investor").length }
+  }, [investors, minCount, filterType, startupListMap, filteredCompanyNames])
 
   const maxCount = useMemo(
     () => Math.max(...graphData.nodes.filter(n => n.type === "investor").map(n => (n as InvestorNode).count), 1),
