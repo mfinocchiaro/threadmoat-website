@@ -33,22 +33,25 @@ function parseNum(value: string | undefined): number {
 }
 
 /**
- * Classify cloud delivery model from Operating Model Tags.
- * Priority: Cloud-Native > SaaS > Hybrid > Edge/HW > Traditional > No Data
+ * Classify cloud delivery model from Deployment Model column.
+ * Maps new Airtable deployment values to heatmap cloud model categories.
  */
-function classifyCloudModel(tags: string): string {
-  if (!tags.trim()) return 'No Data'
-  const set = new Set(tags.split(',').map(t => t.trim().toLowerCase()))
-  if (set.has('cloud-native') || set.has('usage-based') || set.has('consumption-based') || set.has('cloud hpc')) return 'Cloud-Native'
-  if (set.has('hybrid')) return 'Hybrid'
-  const hasCloud = set.has('cloud') || set.has('saas') || set.has('paas') || set.has('b2b saas') || set.has('enterprise saas') || set.has('vertical saas')
-  const hasOnPrem = set.has('on-premises') || set.has('on-premise') || set.has('on premise') || set.has('hw+sw') || set.has('edge')
-  if (hasCloud && hasOnPrem) return 'Hybrid'
+function classifyCloudModel(deploymentModel: string): string {
+  if (!deploymentModel.trim()) return 'No Data'
+  const set = new Set(deploymentModel.split(',').map(t => t.trim().toLowerCase()))
+  const hasCloud = set.has('cloud') || set.has('web')
+  const hasOnPrem = set.has('on-prem') || set.has('desktop') || set.has('embedded')
+  const hasHardware = set.has('hardware')
+  const hasEdge = set.has('edge')
+  if (hasCloud && (hasOnPrem || hasEdge)) return 'Hybrid'
   if (hasCloud) return 'SaaS'
-  if (set.has('edge') || set.has('hw+sw')) return 'Edge/HW'
-  if (set.has('on-premises') || set.has('on-premise') || set.has('on premise') || set.has('perpetual license') || set.has('perpetual') || set.has('plugin/add-on')) return 'Traditional'
-  if (set.has('subscription')) return 'SaaS'
-  if (set.has('per-unit') || set.has('per-project')) return 'Traditional'
+  if (hasEdge) return 'Edge/HW'
+  if (hasHardware) return 'Edge/HW'
+  if (hasOnPrem) return 'Traditional'
+  if (set.has('api-only')) return 'SaaS'
+  if (set.has('plugin')) return 'Traditional'
+  if (set.has('hybrid')) return 'Hybrid'
+  if (set.has('mobile')) return 'SaaS'
   return 'No Data'
 }
 
@@ -79,7 +82,7 @@ export async function GET() {
     const tagsByCompany = new Map<string, string>()
     for (const row of gridRows) {
       const name = (row['Company'] || '').trim()
-      if (name) tagsByCompany.set(normalizeCompanyName(name), row['Operating Model Tags'] || '')
+      if (name) tagsByCompany.set(normalizeCompanyName(name), row['Deployment Model'] || '')
     }
 
     const funding = financialRows

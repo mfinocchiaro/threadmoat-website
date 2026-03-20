@@ -133,23 +133,20 @@ function FilterSection({ title, defaultOpen, children }: { title: string; defaul
   )
 }
 
-/* ─── Operating Model dimension definitions ─── */
+/* ─── Operating Model dimension definitions (cleaned — deployment is separate) ─── */
 
 const OP_MODEL_GROUPS: Record<string, Set<string>> = {
-  "Deployment": new Set(["Cloud", "On-premises", "Hybrid", "Edge"]),
-  "Segment": new Set(["Enterprise", "Mid-market", "SMB", "B2B", "B2C"]),
-  "Delivery": new Set(["SaaS", "PaaS", "HW+SW", "Plugin/Add-on", "API/SDK", "Marketplace", "Open Source", "Perpetual License"]),
-  "Sales Motion": new Set(["Direct Sales", "Product-led Growth", "Partner/Channel", "Self-Service", "Enterprise Sales", "OEM", "Freemium"]),
-  "Geo Reach": new Set(["Local", "Regional", "International", "Global"]),
-  "Pricing": new Set(["Subscription", "Usage-based", "Per-seat", "Per-unit", "Per-project"]),
+  "Segment": new Set(["Enterprise", "SMB", "B2B", "B2C"]),
   "Focus": new Set(["Vertical", "Horizontal"]),
-  "Compute": new Set(["Cloud HPC", "Edge AI", "GPU-intensive"]),
+  "Sales Motion": new Set(["Direct Sales", "Product-led Growth", "Partner/Channel", "Self-Service", "Enterprise Sales", "OEM", "Freemium"]),
+  "Geo Reach": new Set(["Regional", "International", "Global"]),
+  "Pricing": new Set(["Subscription", "Usage-based", "Per-unit", "Marketplace", "Open Source", "Platform"]),
 }
 
-// Primary slicers: dimensions that have <6 options and are top-level filters
-const PRIMARY_OP_GROUPS = ["Deployment", "Segment", "Focus"]
+// Primary slicers: top-level filters
+const PRIMARY_OP_GROUPS = ["Segment", "Focus"]
 // Secondary slicers: shown in collapsible section
-const SECONDARY_OP_GROUPS = ["Delivery", "Sales Motion", "Geo Reach", "Pricing"]
+const SECONDARY_OP_GROUPS = ["Sales Motion", "Geo Reach", "Pricing"]
 
 /* ─── Funding Range Slider ─── */
 
@@ -261,7 +258,14 @@ export function VizFilterBar({ companies, className }: VizFilterBarProps) {
     const fundingMin = fundings.length > 0 ? Math.min(...fundings) : 0
     const fundingMax = fundings.length > 0 ? Math.max(...fundings) : 0
 
-    return { investmentLists, subsegments, industries, countries, lifecycles, fundingRounds, opModelGroups, categoryTags, sizeCategories, ecosystemGroups, investmentTheses, fundingMin, fundingMax }
+    // Deployment model: sorted by frequency
+    const deployCount = new Map<string, number>()
+    companies.forEach(c => (c.deploymentModel || []).forEach(t => {
+      if (t) deployCount.set(t, (deployCount.get(t) || 0) + 1)
+    }))
+    const deploymentModels = Array.from(deployCount.entries()).sort((a, b) => b[1] - a[1]).map(([t]) => t)
+
+    return { investmentLists, subsegments, industries, countries, lifecycles, fundingRounds, opModelGroups, categoryTags, sizeCategories, ecosystemGroups, investmentTheses, fundingMin, fundingMax, deploymentModels }
   }, [companies])
 
   const toggle = React.useCallback((type: string, value: string) => {
@@ -285,6 +289,7 @@ export function VizFilterBar({ companies, className }: VizFilterBarProps) {
       countries: [],
       lifecycle: [],
       fundingRound: [],
+      deploymentModel: [],
       operatingModel: [],
       categoryTags: [],
       differentiationTags: [],
@@ -304,6 +309,7 @@ export function VizFilterBar({ companies, className }: VizFilterBarProps) {
     filters.countries.length +
     filters.lifecycle.length +
     filters.fundingRound.length +
+    filters.deploymentModel.length +
     filters.operatingModel.length +
     filters.categoryTags.length +
     filters.differentiationTags.length +
@@ -422,7 +428,16 @@ export function VizFilterBar({ companies, className }: VizFilterBarProps) {
             </div>
           </div>
 
-          {/* Primary Op Model dimensions: Deployment, Segment, Focus */}
+          {/* Deployment Model */}
+          {options.deploymentModels.length > 0 && (
+            <PillFilter
+              label="Deployment Model" items={options.deploymentModels} active={filters.deploymentModel}
+              onToggle={(v) => toggle("deploymentModel", v)} onClear={() => clearFilter("deploymentModel")}
+              compact
+            />
+          )}
+
+          {/* Primary Op Model dimensions: Segment, Focus */}
           {primaryOpGroups.length > 0 && (
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
