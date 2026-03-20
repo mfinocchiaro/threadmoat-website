@@ -29,7 +29,7 @@ export function QuadrantChart({ data, className }: QuadrantChartProps) {
   const [yMetric, setYMetric] = useState("marketOpportunity")
   const [sizeMetric, setSizeMetric] = useState("totalFunding")
   const [spreadMode, setSpreadMode] = useState<"linear" | "percentile">("percentile")
-  const [topN, setTopN] = useState("50")
+  const [topN, setTopN] = useState("30")
 
   const chartData = useMemo((): ChartDatum[] => {
     if (!data || data.length === 0) return []
@@ -41,7 +41,8 @@ export function QuadrantChart({ data, className }: QuadrantChartProps) {
       return 0
     }
 
-    let processed = [...data].sort((a, b) => getSize(b) - getSize(a)).slice(0, parseInt(topN))
+    // Take top N by weighted score (highest-ranked companies from the filtered set)
+    let processed = [...data].sort((a, b) => (b.weightedScore || 0) - (a.weightedScore || 0)).slice(0, parseInt(topN))
 
     if (spreadMode === "percentile") {
       const getVal = (d: Company, m: string) => (d as any)[m] || 0
