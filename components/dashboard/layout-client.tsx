@@ -71,7 +71,7 @@ export function DashboardLayoutClient({
   children: ReactNode
 }) {
   return (
-    <PlanProvider isFreeUser={isFreeUser}>
+    <PlanProvider isFreeUser={isFreeUser} accessTier={accessTier ?? 'explorer'}>
       <ScenarioProvider initialScenario={initialScenario}>
         <LayoutInner
           user={user}
