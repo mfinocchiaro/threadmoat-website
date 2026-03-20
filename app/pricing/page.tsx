@@ -238,7 +238,7 @@ export default function PricingPage() {
               <Flame className="h-5 w-5 text-amber-500 mt-1" />
             </div>
             <div className="mt-5">
-              <span className="text-3xl font-bold">$17,999</span>
+              <span className="text-3xl font-bold">$18,999</span>
               <span className="text-lg text-muted-foreground font-normal">/year</span>
               <p className="text-xs text-muted-foreground mt-1">Annual subscription &mdash; 13 graphs</p>
             </div>
