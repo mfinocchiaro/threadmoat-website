@@ -11,6 +11,7 @@ interface FilterState {
   subsegments: string[]
   lifecycle: string[]
   fundingRound: string[]
+  deploymentModel: string[]
   operatingModel: string[]
   categoryTags: string[]
   differentiationTags: string[]
@@ -39,6 +40,7 @@ export const DEFAULT_FILTERS: FilterState = {
   subsegments: [],
   lifecycle: [],
   fundingRound: [],
+  deploymentModel: [],
   operatingModel: [],
   categoryTags: [],
   differentiationTags: [],
@@ -136,6 +138,11 @@ export function FilterProvider({ children }: { children: ReactNode }) {
     if (filters.fundingRound.length > 0) {
       const round = company.latestFundingRound
       if (!round || !filters.fundingRound.includes(round)) return false
+    }
+
+    if (filters.deploymentModel.length > 0) {
+      const hasModel = company.deploymentModel?.some(t => filters.deploymentModel.includes(t))
+      if (!hasModel) return false
     }
 
     if (filters.operatingModel.length > 0) {

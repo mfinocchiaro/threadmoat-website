@@ -21,6 +21,7 @@ export interface Company {
   tags: string[]
   categoryTags: string[]
   differentiationTags: string[]
+  deploymentModel: string[]
   operatingModelTags: string[]
   manufacturingType: string
   industriesServed: string[]

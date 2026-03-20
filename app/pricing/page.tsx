@@ -42,6 +42,7 @@ const FORGE_FEATURES = [
 ]
 
 const RED_KEEP_FEATURES = [
+  "Dedicated analyst support & quarterly strategy sessions",
   "All Forge dashboards plus 15 advanced analytics",
   "Company Compare — side-by-side deep dives",
   "Customer & Investor Networks — full relationship mapping",
@@ -51,13 +52,12 @@ const RED_KEEP_FEATURES = [
   "Watchlists + alerts on portfolio companies",
   "Exports: charts + aggregated tables",
   "Custom reports + briefings + consulting",
-  "Dedicated analyst support & quarterly strategy sessions",
 ]
 
 const METHODOLOGY_FIELDS = [
   { label: "Company Profile", items: ["Name, URL, HQ location, country, founded", "Estimated headcount", "Known customers"] },
   { label: "Market Position", items: ["Discipline (CAD, CAM, PLM, ERP…)", "Lifecycle phase & workflow segment", "Sector focus & industries served"] },
-  { label: "Technical Stack", items: ["Differentiation tags", "Operating model (SaaS, B2B, cloud-native…)", "Manufacturing type & integration points"] },
+  { label: "Technical Stack", items: ["Differentiation tags", "Deployment model (Cloud, On-Prem, Edge, Hybrid…)", "Operating model (SaaS, B2B, Direct Sales…)", "Manufacturing type & integration points"] },
   { label: "Financials", items: ["Latest funding round & year", "Total known funding level", "Estimated revenue & market value"] },
   { label: "Investment Context", items: ["Investors & VCs", "Investment list membership", "Stripe customer & buyer maturity signals"] },
   { label: "Competitive Scoring", items: ["Market Opportunity", "Team & Execution", "Funding Efficiency", "Growth Metrics", "Technical Differentiation", "Industry Impact", "Competitive Moat", "Weighted score (0–10)"] },

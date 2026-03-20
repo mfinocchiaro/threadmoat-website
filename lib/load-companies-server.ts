@@ -117,6 +117,9 @@ export async function loadCompaniesFromCSV(): Promise<Company[]> {
     differentiationTags: Array.from(new Set(
       (row['Differentiation Tags'] || '').split(',').map(t => t.trim()).filter(Boolean)
     )),
+    deploymentModel: Array.from(new Set(
+      (row['Deployment Model'] || '').split(',').map(t => t.trim()).filter(Boolean)
+    )),
     operatingModelTags: Array.from(new Set(
       (row['Operating Model Tags'] || '').split(',').map(t => t.trim()).filter(Boolean)
     )),
