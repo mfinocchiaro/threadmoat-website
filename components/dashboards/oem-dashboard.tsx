@@ -120,14 +120,11 @@ export function OEMDashboard({ data, isLoading, isAdmin = false }: { data: Compa
             {hasThesis && threats.length > 0 && (
                 <WidgetCard title="Threat Radar" subtitle="Replacement candidates with highest scores">
                     <div className="space-y-3">
-                        {threats.map(({ company: t }) => {
-                            const words = t.name.split(/\s+/).filter(Boolean);
-                            const initials = words.length >= 2 ? (words[0][0] + words[1][0]).toUpperCase() : t.name.substring(0, 2).toUpperCase();
-                            return (
-                            <div key={t.id} className="flex items-center gap-4 p-3 rounded-lg border" title={t.name}>
+                        {threats.map(({ company: t }) => (
+                            <div key={t.id} className="flex items-center gap-4 p-3 rounded-lg border">
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center gap-2">
-                                        <span className="font-medium truncate">{initials}</span>
+                                        <span className="font-medium truncate">{t.name}</span>
                                         <Badge variant="destructive">Threat</Badge>
                                     </div>
                                     <p className="text-xs text-muted-foreground mt-1 truncate">{t.subsegment || t.investmentList}</p>
@@ -137,8 +134,7 @@ export function OEMDashboard({ data, isLoading, isAdmin = false }: { data: Compa
                                     <div className="text-xs text-muted-foreground">Score</div>
                                 </div>
                             </div>
-                        );
-                        })}
+                        ))}
                     </div>
                 </WidgetCard>
             )}
@@ -146,19 +142,15 @@ export function OEMDashboard({ data, isLoading, isAdmin = false }: { data: Compa
             {hasThesis && acquisitionTargets.length > 0 && (
                 <WidgetCard title="Acquisition Shortlist" subtitle="High tech-differentiation companies filling your gaps">
                     <div className="space-y-3">
-                        {acquisitionTargets.map(({ company: t }) => {
-                            const words = t.name.split(/\s+/).filter(Boolean);
-                            const initials = words.length >= 2 ? (words[0][0] + words[1][0]).toUpperCase() : t.name.substring(0, 2).toUpperCase();
-                            return (
-                            <div key={t.id} className="flex items-center gap-4 p-3 rounded-lg border" title={t.name}>
+                        {acquisitionTargets.map(({ company: t }) => (
+                            <div key={t.id} className="flex items-center gap-4 p-3 rounded-lg border">
                                 <div className="flex-1 min-w-0">
-                                    <span className="font-medium truncate">{initials}</span>
+                                    <span className="font-medium truncate">{t.name}</span>
                                     <p className="text-xs text-muted-foreground mt-1 truncate">{t.latestFundingRound} · Tech: {t.techDifferentiation?.toFixed(1)}/10</p>
                                 </div>
                                 <Badge variant="outline">{t.investmentList}</Badge>
                             </div>
-                        );
-                        })}
+                        ))}
                     </div>
                 </WidgetCard>
             )}
