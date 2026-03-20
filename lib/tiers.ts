@@ -1,14 +1,18 @@
 /**
  * ThreadMoat Access Tier System
  *
- * Tier 1 (Explorer):   Free 30-day trial — 3 graphs (network, landscape-intro, map)
- * Tier 2 (Analyst):    $14,999/yr — 10 visual analytics graphs (no raw data exports)
- * Tier 3 (Red Keep):   Custom contract — all graphs except admin (~24 total)
+ * Tier 1 (Recon):      Free 30-day trial — 3 graphs (network, landscape-intro, map)
+ * Tier 2 (The Forge):  $14,999/yr — 10 visual analytics graphs
+ * Tier 3 (Red Keep):   Custom contract — all graphs except admin (~25 total)
  * Admin:               Unrestricted (via ADMIN_EMAILS env var)
- * Friends:             Same access as Tier 2, 1-year duration, no payment
+ *
+ * Product IDs in Neon:
+ *   explorer_trial / coupon_trial  → Recon
+ *   forge_annual / friends_access / investor_annual  → The Forge
+ *   red_keep / red_keep_annual  → The Red Keep
  */
 
-export type AccessTier = 'explorer' | 'investor' | 'red_keep' | 'admin'
+export type AccessTier = 'explorer' | 'forge' | 'red_keep' | 'admin'
 
 /** Utility pages — always accessible to any authenticated user */
 export const UTILITY_PATHS = new Set([
@@ -17,15 +21,15 @@ export const UTILITY_PATHS = new Set([
   '/dashboard/settings',
 ])
 
-/** Tier 1: Explorer — 3 graphs (free for everyone) */
+/** Tier 1: Recon — 3 graphs (free for everyone) */
 export const EXPLORER_PATHS = new Set([
   '/dashboard/network',
   '/dashboard/landscape-intro',
   '/dashboard/map',
 ])
 
-/** Tier 2: Analyst — 10 visual analytics graphs (no full company lists or raw exports) */
-export const INVESTOR_PATHS = new Set([
+/** Tier 2: The Forge — 10 visual analytics graphs */
+export const FORGE_PATHS = new Set([
   '/dashboard/quadrant',          // Magic Quadrant positioning
   '/dashboard/bubbles',           // Bubble Chart (scatter plot)
   '/dashboard/landscape',         // Full Landscape (grouped tiles)
@@ -38,7 +42,7 @@ export const INVESTOR_PATHS = new Set([
   '/dashboard/periodic-table',    // Periodic Table (company tiles)
 ])
 
-/** Tier 3: Red Keep — full platform access (unlocked on top of Analyst) */
+/** Tier 3: The Red Keep — full platform access (unlocked on top of The Forge) */
 export const RED_KEEP_ONLY_PATHS = new Set([
   '/dashboard/compare',           // Side-by-side company comparison
   '/dashboard/customers',         // Customer Network (2D/3D)
@@ -69,20 +73,19 @@ export const ADMIN_PATHS = new Set([
 
 /** Check whether a path is accessible at the given tier */
 export function isPathAllowed(pathname: string, tier: AccessTier): boolean {
-  // Utility + Explorer paths open to everyone
   if (UTILITY_PATHS.has(pathname) || EXPLORER_PATHS.has(pathname)) return true
 
   if (tier === 'admin') return true
 
   if (tier === 'red_keep') {
-    return INVESTOR_PATHS.has(pathname) || RED_KEEP_ONLY_PATHS.has(pathname)
+    return FORGE_PATHS.has(pathname) || RED_KEEP_ONLY_PATHS.has(pathname)
   }
 
-  if (tier === 'investor') {
-    return INVESTOR_PATHS.has(pathname)
+  if (tier === 'forge') {
+    return FORGE_PATHS.has(pathname)
   }
 
-  // Explorer tier — only utility + explorer paths
+  // Recon tier — only utility + explorer paths
   return false
 }
 
@@ -94,9 +97,10 @@ export function getAccessTier(productId: string | null | undefined, isAdmin: boo
     case 'red_keep':
     case 'red_keep_annual':
       return 'red_keep'
+    case 'forge_annual':
     case 'investor_annual':
     case 'friends_access':
-      return 'investor'
+      return 'forge'
     default:
       return 'explorer'
   }
@@ -107,15 +111,15 @@ export function getTierLabel(tier: AccessTier): string {
   switch (tier) {
     case 'admin': return 'Admin'
     case 'red_keep': return 'The Red Keep'
-    case 'investor': return 'Analyst'
-    case 'explorer': return 'Explorer'
+    case 'forge': return 'The Forge'
+    case 'explorer': return 'Recon'
   }
 }
 
 /** The minimum tier required to access a path */
 export function getRequiredTier(pathname: string): AccessTier | null {
   if (UTILITY_PATHS.has(pathname) || EXPLORER_PATHS.has(pathname)) return 'explorer'
-  if (INVESTOR_PATHS.has(pathname)) return 'investor'
+  if (FORGE_PATHS.has(pathname)) return 'forge'
   if (RED_KEEP_ONLY_PATHS.has(pathname)) return 'red_keep'
   if (ADMIN_PATHS.has(pathname)) return 'admin'
   return null
