@@ -43,11 +43,19 @@ const VIZ_LINKS = [
   { href: '/dashboard/splom',          icon: ScatterChart,    label: 'Scatter Matrix' },
   { href: '/dashboard/marimekko',      icon: LayoutTemplate,  label: 'Marimekko' },
   { href: '/dashboard/spiral',         icon: Orbit,           label: 'Spiral Timeline' },
+  { href: '/dashboard/compare',         icon: GitCompare,      label: 'Compare' },
+  { href: '/dashboard/customers',       icon: Users,           label: 'Customer Network' },
+  { href: '/dashboard/investor-network', icon: Network,        label: 'Investor Network' },
+  { href: '/dashboard/metros',          icon: Map,             label: 'Metro Areas' },
+  { href: '/dashboard/patterns',        icon: Grid,            label: 'Patterns' },
+  { href: '/dashboard/maturity-matrix', icon: ScatterChart,    label: 'Maturity Matrix' },
   { href: '/dashboard/investor-stats', icon: Users,           label: 'Investor Stats' },
   { href: '/dashboard/financial-heatmap', icon: Grid3x3,       label: 'Financial Heatmap' },
   { href: '/dashboard/correlation',    icon: Grid3x3,         label: 'Correlation' },
   { href: '/dashboard/reports',        icon: FileBarChart,    label: 'Reports' },
   { href: '/dashboard/investor-views', icon: Eye,             label: 'Investor Views' },
+  { href: '/dashboard/swot',           icon: GitBranch,       label: 'SWOT Analysis' },
+  { href: '/dashboard/candlestick',   icon: Activity,        label: 'Valuation Candlestick' },
 ]
 
 const PROFILE_LABELS: Record<string, string> = {
