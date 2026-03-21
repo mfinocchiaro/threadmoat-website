@@ -2,6 +2,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Check, Calendar, MapPin, CalendarDays, BarChart2, Network, FileText, BookOpen, Download, Briefcase, Castle, Flame, Crosshair } from "lucide-react"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 // Update this date each week after the Monday refresh
 const LAST_UPDATED = "March 11, 2026"
@@ -82,10 +83,12 @@ export default function PricingPage() {
           <nav className="flex items-center gap-8">
             <Link href="/#services" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Services</Link>
             <Link href="/#expertise" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Expertise</Link>
+            <Link href="/report" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Market Report</Link>
             <Link href="/about" className="text-sm text-muted-foreground hover:text-foreground transition-colors">About</Link>
             <Link href="/about#contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Contact Us</Link>
           </nav>
           <div className="flex items-center gap-3">
+            <ThemeToggle />
             <Link href="/auth/login">
               <Button variant="ghost" size="sm">Sign In</Button>
             </Link>

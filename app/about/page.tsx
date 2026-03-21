@@ -3,6 +3,7 @@ import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Mic, BookOpen, Mail } from "lucide-react"
+import { ThemeToggle } from "@/components/theme-toggle"
 import { FaYoutube, FaSpotify, FaApple, FaAmazon, FaDeezer, FaLinkedin } from "react-icons/fa6"
 
 export default function AboutPage() {
@@ -24,10 +25,12 @@ export default function AboutPage() {
           <nav className="flex items-center gap-8">
             <Link href="/#services" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Services</Link>
             <Link href="/#expertise" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Expertise</Link>
+            <Link href="/report" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Market Report</Link>
             <Link href="/about" className="text-sm font-medium text-foreground transition-colors">About</Link>
             <Link href="/about#contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Contact Us</Link>
           </nav>
           <div className="flex items-center gap-3">
+            <ThemeToggle />
             <Link href="/auth/login">
               <Button variant="ghost" size="sm">Sign In</Button>
             </Link>

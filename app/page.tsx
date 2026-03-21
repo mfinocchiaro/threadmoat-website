@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { ArrowRight, Database, Users, TrendingUp, Mail, CheckCircle2, MapPin, CalendarDays, Link2, Shield, Layers } from "lucide-react"
 import { loadCompaniesFromCSV, stripSensitiveFields } from "@/lib/load-companies-server"
 import { HomepageDashboard } from "@/components/homepage/homepage-dashboard"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 export default async function HomePage() {
   let companies: Awaited<ReturnType<typeof loadCompaniesFromCSV>> = []
@@ -33,10 +34,12 @@ export default async function HomePage() {
           <nav className="flex items-center gap-8">
             <a href="#services" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Services</a>
             <a href="#expertise" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Expertise</a>
+            <Link href="/report" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Market Report</Link>
             <Link href="/about" className="text-sm text-muted-foreground hover:text-foreground transition-colors">About</Link>
             <Link href="/about#contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Contact Us</Link>
           </nav>
           <div className="flex items-center gap-3">
+            <ThemeToggle />
             <Link href="/auth/login">
               <Button variant="ghost" size="sm">Sign In</Button>
             </Link>

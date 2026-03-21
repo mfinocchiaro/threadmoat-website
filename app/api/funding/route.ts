@@ -78,19 +78,26 @@ export async function GET() {
     const financialRows = (Papa.parse(stripBOM(financialContent), { header: true, skipEmptyLines: true }).data as Record<string, string>[])
     const gridRows = (Papa.parse(stripBOM(gridContent), { header: true, skipEmptyLines: true }).data as Record<string, string>[])
 
-    // Build a lookup: company name → operating model tags
+    // Build lookups from grid view: company name → deployment model, investment list
     const tagsByCompany = new Map<string, string>()
+    const investmentListByCompany = new Map<string, string>()
     for (const row of gridRows) {
       const name = (row['Company'] || '').trim()
-      if (name) tagsByCompany.set(normalizeCompanyName(name), row['Deployment Model'] || '')
+      if (name) {
+        const key = normalizeCompanyName(name)
+        tagsByCompany.set(key, row['Deployment Model'] || '')
+        investmentListByCompany.set(key, row['Investment List'] || '')
+      }
     }
 
     const funding = financialRows
       .filter(row => (row['Company'] || '').trim())
       .map((row, index) => {
         const company = (row['Company'] || '').trim()
-        const tags = tagsByCompany.get(normalizeCompanyName(company)) ?? ''
+        const normalizedName = normalizeCompanyName(company)
+        const tags = tagsByCompany.get(normalizedName) ?? ''
         const cloudModel = classifyCloudModel(tags)
+        const investmentList = investmentListByCompany.get(normalizedName) ?? ''
 
         const totalFunding = parseCurrency(row['Total Current Known Funding Level'])
         const estimatedRevenue = parseCurrency(row['Current Estimated Annual Revenue'])
@@ -111,7 +118,11 @@ export async function GET() {
         return {
           id: String(index + 1),
           company,
+          investmentList,
           cloudModel,
+          totalFunding,
+          estimatedRevenue,
+          estimatedMarketValue: parseCurrency(row['Estimated Market Value']),
           cloudSaasMultiplier,
           cloudArrEfficiency: Math.round(cloudArrEfficiency * 10) / 10,
           cloudArrVsBenchmark: Math.round(cloudArrVsBenchmark * 10) / 10,

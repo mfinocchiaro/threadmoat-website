@@ -133,6 +133,8 @@ export const TAB_GROUPS: TabGroup[] = [
       { href: "/dashboard/parallel",     icon: SlidersHorizontal, label: "Parallel Coords" },
       { href: "/dashboard/box-plot",     icon: BoxSelect,        label: "Box Plot" },
       { href: "/dashboard/distribution", icon: Activity,         label: "Distribution" },
+      { href: "/dashboard/slope",        icon: TrendingUp,       label: "Slope Chart" },
+      { href: "/dashboard/splom",        icon: ScatterChart,     label: "Scatter Matrix" },
       { href: "/dashboard/wordcloud",    icon: Type,             label: "Word Cloud" },
     ],
   },
@@ -145,6 +147,8 @@ const ADMIN_ITEMS = [
   { href: "/dashboard/reports",           icon: FileText,  label: "Report Generator" },
   { href: "/dashboard/investor-views",    icon: Eye,       label: "Investor Views" },
   { href: "/dashboard/maturity-matrix",   icon: ScatterChart, label: "Maturity Matrix" },
+  { href: "/dashboard/swot",             icon: Focus,        label: "SWOT Analysis" },
+  { href: "/dashboard/candlestick",     icon: Activity,     label: "Valuation Candlestick" },
 ];
 
 const BOTTOM_ITEMS = [
@@ -159,6 +163,8 @@ const ADMIN_VIZ_HREFS = new Set([
   "/dashboard/reports",
   "/dashboard/investor-views",
   "/dashboard/maturity-matrix",
+  "/dashboard/swot",
+  "/dashboard/candlestick",
 ])
 
 interface SidebarProps {

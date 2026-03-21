@@ -69,6 +69,8 @@ export const ADMIN_PATHS = new Set([
   '/dashboard/reports',
   '/dashboard/investor-views',
   '/dashboard/maturity-matrix',
+  '/dashboard/swot',
+  '/dashboard/candlestick',
 ])
 
 /** Check whether a path is accessible at the given tier */
