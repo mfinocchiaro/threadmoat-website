@@ -7,6 +7,7 @@ import { ArrowRight, Database, Users, TrendingUp, Mail, CheckCircle2, MapPin, Ca
 import { loadCompaniesFromCSV, stripSensitiveFields } from "@/lib/load-companies-server"
 import { HomepageDashboard } from "@/components/homepage/homepage-dashboard"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { LanguageSwitcher } from "@/components/language-switcher"
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 
 type Props = { params: Promise<{ locale: string }> }
@@ -56,6 +57,7 @@ export default async function HomePage({ params }: Props) {
             <Link href="/about#contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{tCommon('nav.contactUs')}</Link>
           </nav>
           <div className="flex items-center gap-3">
+            <LanguageSwitcher />
             <ThemeToggle />
             <Link href="/auth/login">
               <Button variant="ghost" size="sm">{tCommon('nav.signIn')}</Button>

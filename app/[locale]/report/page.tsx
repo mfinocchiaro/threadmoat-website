@@ -3,6 +3,7 @@ import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { LanguageSwitcher } from "@/components/language-switcher"
 import {
   Download, BookOpen, Users, Globe, Layers,
   MapPin, CalendarDays, ArrowRight, FileText, Target,
@@ -76,6 +77,7 @@ export default async function ReportPage({ params }: Props) {
             <Link href="/about#contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{tCommon('nav.contactUs')}</Link>
           </nav>
           <div className="flex items-center gap-3">
+            <LanguageSwitcher />
             <ThemeToggle />
             <Link href="/auth/login">
               <Button variant="ghost" size="sm">{tCommon('nav.signIn')}</Button>
