@@ -159,7 +159,7 @@ export default function ReportPage() {
               <strong>ThreadMoat Research</strong> — Michael Finocchiaro — March 2026
             </p>
             <div className="flex flex-wrap gap-3 mt-6">
-              <Link href="/auth/sign-up?product=market-report-2026-q1">
+              <Link href="/pricing">
                 <Button size="lg" className="gap-2">
                   <FileText className="h-4 w-4" />
                   Purchase Report — $4,999
@@ -315,7 +315,7 @@ export default function ReportPage() {
             One legal entity, internal use only.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Link href="/auth/sign-up?product=market-report-2026-q1">
+            <Link href="/pricing">
               <Button size="lg" className="gap-2">
                 <FileText className="h-4 w-4" />
                 Purchase Report — $4,999
