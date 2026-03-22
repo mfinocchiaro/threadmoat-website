@@ -5,12 +5,16 @@ import { NextResponse, type NextRequest } from 'next/server'
 
 const intlMiddleware = createIntlMiddleware(routing)
 
+// Build locale regex from routing config so it stays in sync
+const localePattern = routing.locales.join('|')
+const localeRegex = new RegExp(`^/(${localePattern})(/|$)`)
+
 // Paths that should be handled by next-intl (public pages)
 const PUBLIC_PAGES = ['/', '/pricing', '/about', '/report']
 
 function isPublicPage(pathname: string): boolean {
-  // Strip locale prefix if present
-  const strippedPath = pathname.replace(/^\/(fr|es|it|de)(\/|$)/, '/$2') || '/'
+  // Strip any locale prefix
+  const strippedPath = pathname.replace(localeRegex, '/$2') || '/'
   const normalizedPath = strippedPath === '' ? '/' : strippedPath
   return PUBLIC_PAGES.some(p =>
     normalizedPath === p || normalizedPath === p + '/'
@@ -18,7 +22,7 @@ function isPublicPage(pathname: string): boolean {
 }
 
 function isLocalePrefix(pathname: string): boolean {
-  return /^\/(fr|es|it|de)(\/|$)/.test(pathname)
+  return localeRegex.test(pathname)
 }
 
 export default auth((req) => {
