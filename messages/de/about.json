@@ -1,0 +1,46 @@
+{
+  "meta": {
+    "title": "\u00dcber uns - ThreadMoat & Michael Finocchiaro",
+    "description": "Erfahren Sie mehr \u00fcber ThreadMoat, die Marktintelligenz-Plattform f\u00fcr Industrielle KI und Engineering-Software, und Gr\u00fcnder Michael Finocchiaro."
+  },
+  "about": {
+    "title": "\u00dcber",
+    "titleHighlight": "ThreadMoat",
+    "description1": "ThreadMoat ist die Marktintelligenz-Plattform f\u00fcr Industrielle KI und Engineering-Software, erstellt und gepflegt von Michael Finocchiaro \u2014 einem unabh\u00e4ngigen Analysten mit 30+ Jahren bei Dassault Syst\u00e8mes, PTC, IBM und HP, der heute die Unternehmen ber\u00e4t, die diese Branche umkrempeln.",
+    "description2": "Jedes Profil wird sorgf\u00e4ltig kuratiert \u2014 nicht gescrapt oder KI-generiert \u2014 und w\u00f6chentlich mit Finanzierungsereignissen, Produkteinf\u00fchrungen und Wettbewerbs-Scoring aktualisiert.",
+    "startupsTracked": "Startups verfolgt",
+    "vcFunding": "VC-Finanzierung kartiert",
+    "countries": "L\u00e4nder",
+    "marketSubsegments": "Marktsub-segmente"
+  },
+  "founder": {
+    "title": "\u00dcber",
+    "titleHighlight": "Michael Finocchiaro",
+    "role": "Industrieanalyst \u00b7 Berater \u00b7 Advisor",
+    "location": "Paris, Frankreich",
+    "bio1": "Michael ist ein unabh\u00e4ngiger Senior-Analyst f\u00fcr PLM und Fertigungsindustrie und Moderator der Podcasts AI Across the Product Lifecycle und The Future of PLM, die sich auf den Digital Thread und die Einf\u00fchrung von Industrieller KI in Ingenieurwesen und Fertigung konzentrieren.",
+    "bio2": "Mit 30+ Jahren bei Dassault Syst\u00e8mes (Sr. Director, 3DEXPERIENCE), PTC, IBM und HP ber\u00e4t Michael heute Startups und Industrieunternehmen zu Positionierung, Go-to-Market-Strategie und Enterprise-Deployment. Er ist auch Autor von Kernel Wars \u2014 einer Geschichte von CAD, PLM und den geometrischen Kernel-K\u00e4mpfen, die die Branche geformt haben.",
+    "linkedin": "26K+ Follower auf LinkedIn",
+    "workedAt": "Hat gearbeitet bei",
+    "workedWith": "Hat gearbeitet mit"
+  },
+  "conference": {
+    "title": "Threaded!",
+    "titleHighlight": "Konferenzserie",
+    "description1": "Threaded! bringt Startups und Branchenf\u00fchrer f\u00fcr intensive Arbeitssitzungen zusammen, in denen er\u00f6rtert wird, wie KI Ingenieurwesen und Fertigung transformiert. Pr\u00e4sentatoren m\u00fcssen explizit zeigen, wie ihre Produkte sich mit dem Digital Thread verbinden \u2014 welche Systeme sie integrieren, welche Entscheidungen sie verbessern und welche messbaren Ergebnisse sie erm\u00f6glichen.",
+    "description2": "Mitgesponsert von Aras Corporation und dem Podcast AI Across the Product Lifecycle, verbindet Threaded! L\u00f6sungsanbieter der n\u00e4chsten Generation mit Unternehmensf\u00fchrern in PLM und Digital Thread. Gef\u00fchrter L\u00f6sungsaustausch und strukturiertes Feedback helfen Gr\u00fcndern, ihre Produktrichtung zu verfeinern, ICPs zu sch\u00e4rfen und glaubw\u00fcrdige Nachweise f\u00fcr Enterprise-K\u00e4ufer aufzubauen.",
+    "visitSite": "threaded.live besuchen"
+  },
+  "podcasts": {
+    "title": "Podcasts & Inhalte",
+    "aiPodcastTitle": "AI Across the Product Lifecycle",
+    "aiPodcastDesc": "Offene Gespr\u00e4che mit Gr\u00fcndern, CTOs und Unternehmensf\u00fchrern, die KI im Ingenieurwesen und in der Fertigung entwickeln und einsetzen. Deep-Tech-Startups, echte Adoptionsgeschichten.",
+    "plmPodcastTitle": "The Future of PLM",
+    "plmPodcastDesc": "Video-Podcast mit Branchendenkern, die die Entwicklung des PLM, Digital-Thread-Strategie und Marktdynamiken diskutieren."
+  },
+  "contact": {
+    "title": "Wo Sie mich erreichen",
+    "location": "Mit Sitz in Paris \u00b7 Zweisprachig Franz\u00f6sisch/Englisch \u00b7 T\u00e4tig in US- und EU-Zeitzonen",
+    "viewPricing": "Preise & Zugangspl\u00e4ne ansehen"
+  }
+}

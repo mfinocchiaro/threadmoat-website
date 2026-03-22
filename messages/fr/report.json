@@ -1,0 +1,94 @@
+{
+  "meta": {
+    "title": "Rapport de march\u00e9 1T2026 - Logiciels d'ing\u00e9nierie et IA industrielle",
+    "description": "150+ pages de recherche originale couvrant 632 startups, 31 \u00e9diteurs historiques et 16,2 Md$ de financement VC. Bas\u00e9 sur 200+ entretiens avec des fondateurs."
+  },
+  "hero": {
+    "badge": "Rapport d'\u00e9tat du march\u00e9 1T2026",
+    "title": "Logiciels d'ing\u00e9nierie et IA industrielle",
+    "subtitle": "Rapport d'\u00e9tat du march\u00e9 \u2014 1T2026",
+    "description": "L'analyse la plus compl\u00e8te de l'\u00e9cosyst\u00e8me des startups en logiciels d'ing\u00e9nierie. 150+ pages de recherche originale couvrant 632 startups, 31 \u00e9diteurs historiques et 16,2 Md$ de financement VC \u2014 bas\u00e9 sur 200+ entretiens avec des fondateurs et des donn\u00e9es propri\u00e9taires.",
+    "author": "ThreadMoat Research \u2014 Michael Finocchiaro \u2014 Mars 2026",
+    "purchaseCta": "Acheter le rapport \u2014 4 999 $",
+    "sampleCta": "\u00c9chantillon gratuit (30 pages)"
+  },
+  "stats": {
+    "startupsTracked": "Startups suivies",
+    "vcFunding": "Financement VC cartographi\u00e9",
+    "investorsMapped": "Investisseurs cartographi\u00e9s",
+    "countriesCovered": "Pays couverts",
+    "founderInterviews": "Entretiens fondateurs",
+    "incumbentVendors": "\u00c9diteurs historiques"
+  },
+  "toc": {
+    "title": "Contenu du rapport",
+    "subtitle": "150+ pages r\u00e9parties en 14 chapitres, deux annexes et un r\u00e9sum\u00e9 ex\u00e9cutif."
+  },
+  "audience": {
+    "title": "\u00c0 qui s'adresse ce rapport",
+    "subtitle": "Intelligence strat\u00e9gique pour tous les acteurs du march\u00e9 des logiciels d'ing\u00e9nierie de 120+ Md$.",
+    "vcTitle": "Fonds VC et PE",
+    "vcDesc": "Identifiez le deal flow, validez vos th\u00e8ses, cartographiez les co-investisseurs et benchmarkez les entreprises du portefeuille par rapport \u00e0 632 pairs.",
+    "corpTitle": "Strat\u00e9gie d'entreprise / M&A",
+    "corpDesc": "Trouvez des cibles d'acquisition, \u00e9valuez construire vs. acheter et comprenez les dynamiques concurrentielles dans chaque segment.",
+    "startupTitle": "Fondateurs de startups",
+    "startupDesc": "Comprenez votre paysage concurrentiel, identifiez les lacunes de positionnement et pr\u00e9parez-vous pour les conversations avec les investisseurs.",
+    "buyerTitle": "Acheteurs de technologies",
+    "buyerDesc": "Cartographiez le paysage des fournisseurs, comparez les incumbents aux challengers et prenez des d\u00e9cisions de plateforme \u00e9clair\u00e9es."
+  },
+  "methodology": {
+    "title": "M\u00e9thodologie",
+    "subtitle": "Chaque donn\u00e9e est cur\u00e9e par un seul expert du domaine \u2014 pas de scraping, pas de g\u00e9n\u00e9ration par IA.",
+    "m1": "200+ entretiens de recherche primaire avec des fondateurs",
+    "m2": "Mises \u00e0 jour hebdomadaires de la base Airtable (lundis CET)",
+    "m3": "Scoring concurrentiel sur 7 dimensions (\u00e9chelle 1-5)",
+    "m4": "Mod\u00e9lisation de la sant\u00e9 financi\u00e8re avec burn et runway",
+    "m5": "Analyse des signaux clients (1 644 mentions)",
+    "m6": "Croisement avec Crunchbase, PitchBook, LinkedIn"
+  },
+  "cta": {
+    "title": "Pr\u00eat \u00e0 acc\u00e9der au rapport complet ?",
+    "subtitle": "150+ pages de recherche propri\u00e9taire. Copie personnalis\u00e9e avec filigrane et identifiant unique. Une entit\u00e9 juridique, usage interne uniquement.",
+    "purchaseCta": "Acheter le rapport \u2014 4 999 $",
+    "sampleCta": "T\u00e9l\u00e9charger l'\u00e9chantillon gratuit",
+    "seePlans": "Voir tous les plans"
+  },
+  "chapters": {
+    "ch1": "R\u00e9sum\u00e9 ex\u00e9cutif",
+    "ch1d": "Vue d'ensemble de l'\u00e9tat du march\u00e9 et principaux r\u00e9sultats",
+    "ch2": "Partie 0 : Signaux cl\u00e9s",
+    "ch2d": "Cinq d\u00e9veloppements indiquant la disruption et l'\u00e9volution du march\u00e9",
+    "ch3": "Partie 1 : Incumbents vs. Challengers",
+    "ch3d": "La tension structurelle qui redessine les logiciels d'ing\u00e9nierie",
+    "ch4": "Partie 2 : Le paysage des incumbents",
+    "ch4d": "Comment Siemens, Dassault, PTC et Autodesk r\u00e9pondent",
+    "ch5": "Partie 3 : Tendances structurelles",
+    "ch5d": "Migration cloud, int\u00e9gration IA et disruption tarifaire",
+    "ch6": "Partie 4 : L'\u00e9cosyst\u00e8me des startups",
+    "ch6d": "632 startups dans 10 cat\u00e9gories d'investissement",
+    "ch7": "Partie 5 : Adoption client",
+    "ch7d": "Mod\u00e8les d'achat entreprise et signaux de d\u00e9ploiement",
+    "ch8": "Partie 6 : Le paysage des investisseurs",
+    "ch8d": "2 788 investisseurs cartographi\u00e9s par stade de financement",
+    "ch9": "Partie 7 : Dimensionnement r\u00e9vis\u00e9 du march\u00e9",
+    "ch9d": "Pr\u00e9vision de march\u00e9 de 120-140 Md$ \u00e0 l'horizon 2028",
+    "ch10": "Partie 8 : Le signal de consolidation",
+    "ch10d": "Analyse des activit\u00e9s M&A de 50+ Md$ (2022-2025)",
+    "ch11": "Partie 9 : Oc\u00e9an rouge / Oc\u00e9an bleu",
+    "ch11d": "Positionnement strat\u00e9gique et espaces d'opportunit\u00e9",
+    "ch12": "Partie 10 : Analyses verticales",
+    "ch12d": "Analyse sectorielle : A\u00e9ro, Auto, Pharma, Dispositifs m\u00e9dicaux",
+    "ch13": "Partie 11 : Disruption tarifaire",
+    "ch13d": "Comment les challengers d\u00e9composent la tarification des incumbents",
+    "ch14": "Partie 12 : Cadre de pr\u00e9diction M&A",
+    "ch14d": "Qui sera acquis ensuite et pourquoi",
+    "ch15": "Partie 13 : Signaux \u00e9mergents",
+    "ch15d": "Paris contrariants et investissements pr\u00e9coces",
+    "ch16": "Partie 14 : Acheteurs de technologies",
+    "ch16d": "Ce que cela signifie pour les OEM, ISV et plateformes",
+    "ch17": "Annexe A",
+    "ch17d": "Profils d'entreprises \u2014 les 632 startups profil\u00e9es",
+    "ch18": "Annexe B",
+    "ch18d": "R\u00e9pertoire des investisseurs \u2014 2 788 investisseurs et VCs"
+  }
+}

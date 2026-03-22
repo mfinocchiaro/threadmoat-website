@@ -1,0 +1,46 @@
+{
+  "meta": {
+    "title": "\u00c0 propos - ThreadMoat & Michael Finocchiaro",
+    "description": "D\u00e9couvrez ThreadMoat, la plateforme d'intelligence de march\u00e9 pour l'IA industrielle et les logiciels d'ing\u00e9nierie, et son fondateur Michael Finocchiaro."
+  },
+  "about": {
+    "title": "\u00c0 propos de",
+    "titleHighlight": "ThreadMoat",
+    "description1": "ThreadMoat est la plateforme d'intelligence de march\u00e9 pour l'IA industrielle et les logiciels d'ing\u00e9nierie, cr\u00e9\u00e9e et maintenue par Michael Finocchiaro \u2014 un analyste ind\u00e9pendant avec 30+ ans chez Dassault Syst\u00e8mes, PTC, IBM et HP, qui conseille aujourd'hui les entreprises qui les perturbent.",
+    "description2": "Chaque profil est soigneusement s\u00e9lectionn\u00e9 \u2014 pas scrap\u00e9 ni g\u00e9n\u00e9r\u00e9 par IA \u2014 et mis \u00e0 jour chaque semaine avec les \u00e9v\u00e9nements de financement, les lancements de produits et le scoring concurrentiel.",
+    "startupsTracked": "Startups suivies",
+    "vcFunding": "Financement VC cartographi\u00e9",
+    "countries": "Pays",
+    "marketSubsegments": "Sous-segments de march\u00e9"
+  },
+  "founder": {
+    "title": "\u00c0 propos de",
+    "titleHighlight": "Michael Finocchiaro",
+    "role": "Analyste industrie \u00b7 Consultant \u00b7 Conseiller",
+    "location": "Paris, France",
+    "bio1": "Michael est un analyste senior ind\u00e9pendant du PLM et de l'industrie manufacturi\u00e8re et l'animateur des podcasts AI Across the Product Lifecycle et The Future of PLM, ax\u00e9s sur le Digital Thread et l'adoption de l'IA industrielle dans l'ing\u00e9nierie et la fabrication.",
+    "bio2": "Avec 30+ ans chez Dassault Syst\u00e8mes (Directeur Sr., 3DEXPERIENCE), PTC, IBM et HP, Michael conseille d\u00e9sormais les startups et les entreprises industrielles sur le positionnement, la strat\u00e9gie go-to-market et le d\u00e9ploiement entreprise. Il est \u00e9galement l'auteur de Kernel Wars \u2014 une histoire de la CAO, du PLM et des batailles de noyaux g\u00e9om\u00e9triques qui ont fa\u00e7onn\u00e9 l'industrie.",
+    "linkedin": "26K+ abonn\u00e9s sur LinkedIn",
+    "workedAt": "A travaill\u00e9 chez",
+    "workedWith": "A travaill\u00e9 avec"
+  },
+  "conference": {
+    "title": "Threaded!",
+    "titleHighlight": "S\u00e9rie de conf\u00e9rences",
+    "description1": "Threaded! r\u00e9unit startups et leaders de l'industrie pour des sessions de travail intensives sur la fa\u00e7on dont l'IA transforme l'ing\u00e9nierie et la fabrication. Les pr\u00e9sentateurs doivent montrer explicitement comment leurs produits se connectent au Digital Thread \u2014 quels syst\u00e8mes ils int\u00e8grent, quelles d\u00e9cisions ils am\u00e9liorent et quels r\u00e9sultats mesurables ils permettent.",
+    "description2": "Co-sponsoris\u00e9 par Aras Corporation et le podcast AI Across the Product Lifecycle, Threaded! connecte les fournisseurs de solutions nouvelle g\u00e9n\u00e9ration avec les leaders d'entreprise du PLM et du Digital Thread. Le partage guid\u00e9 de solutions et les retours structur\u00e9s aident les fondateurs \u00e0 affiner leur direction produit, \u00e0 pr\u00e9ciser leurs ICP et \u00e0 construire des preuves cr\u00e9dibles pour les acheteurs entreprise.",
+    "visitSite": "Visiter threaded.live"
+  },
+  "podcasts": {
+    "title": "Podcasts et contenu",
+    "aiPodcastTitle": "AI Across the Product Lifecycle",
+    "aiPodcastDesc": "Conversations franches avec des fondateurs, CTO et leaders d'entreprise qui construisent et d\u00e9ploient l'IA dans l'ing\u00e9nierie et la fabrication. Startups deep-tech, histoires d'adoption r\u00e9elles.",
+    "plmPodcastTitle": "The Future of PLM",
+    "plmPodcastDesc": "Podcast vid\u00e9o avec des leaders d'opinion de l'industrie discutant de l'\u00e9volution du PLM, de la strat\u00e9gie Digital Thread et des dynamiques de march\u00e9."
+  },
+  "contact": {
+    "title": "O\u00f9 me contacter",
+    "location": "Bas\u00e9 \u00e0 Paris \u00b7 Bilingue fran\u00e7ais/anglais \u00b7 Travail sur les fuseaux horaires US et EU",
+    "viewPricing": "Voir les tarifs et plans d'acc\u00e8s"
+  }
+}
