@@ -1,0 +1,33 @@
+{
+  "nav": {
+    "services": "Servicos",
+    "expertise": "Expertise",
+    "marketReport": "Relatorio de Mercado",
+    "about": "Sobre",
+    "contactUs": "Fale Conosco",
+    "signIn": "Entrar",
+    "scheduleCall": "Agendar Chamada",
+    "getStarted": "Comecar",
+    "viewPricing": "Ver Precos",
+    "registerNow": "Registre-se Agora!"
+  },
+  "footer": {
+    "copyright": "\u00a9 {year} ThreadMoat. Todos os direitos reservados.",
+    "copyrightFino": "\u00a9 {year} Finocchiaro Consulting / ThreadMoat. Todos os direitos reservados.",
+    "copyrightResearch": "\u00a9 {year} ThreadMoat Research / Michael Finocchiaro. Todos os direitos reservados.",
+    "home": "Inicio",
+    "pricing": "Precos",
+    "signIn": "Entrar",
+    "about": "Sobre",
+    "contact": "Contato"
+  },
+  "language": {
+    "en": "English",
+    "fr": "Francais",
+    "es": "Espanol",
+    "it": "Italiano",
+    "de": "Deutsch",
+    "pt": "Portugues",
+    "switchLanguage": "Mudar idioma"
+  }
+}

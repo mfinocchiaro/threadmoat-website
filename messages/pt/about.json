@@ -1,0 +1,46 @@
+{
+  "meta": {
+    "title": "Sobre - ThreadMoat e Michael Finocchiaro",
+    "description": "Saiba mais sobre a ThreadMoat, a plataforma de inteligencia de mercado para IA Industrial e software de engenharia, e o fundador Michael Finocchiaro."
+  },
+  "about": {
+    "title": "Sobre",
+    "titleHighlight": "ThreadMoat",
+    "description1": "ThreadMoat e a plataforma de inteligencia de mercado para IA Industrial e software de engenharia, construida e mantida por Michael Finocchiaro -- um analista independente com mais de 30 anos na Dassault Systemes, PTC, IBM e HP, agora assessorando as empresas que os estao disruptando.",
+    "description2": "Cada perfil e curado manualmente -- nao raspado ou alucinado por IA -- e atualizado semanalmente com eventos de financiamento, lancamentos de produtos e pontuacao competitiva.",
+    "startupsTracked": "Startups Rastreadas",
+    "vcFunding": "Financiamento VC Mapeado",
+    "countries": "Paises",
+    "marketSubsegments": "Subsegmentos de Mercado"
+  },
+  "founder": {
+    "title": "Sobre",
+    "titleHighlight": "Michael Finocchiaro",
+    "role": "Analista da Industria - Consultor - Assessor",
+    "location": "Paris, Franca",
+    "bio1": "Michael e um analista senior independente da industria de PLM e manufatura e apresentador dos podcasts AI Across the Product Lifecycle e The Future of PLM, focado na adocao de digital thread e IA industrial em engenharia e manufatura.",
+    "bio2": "Com mais de 30 anos na Dassault Systemes (Diretor Senior, 3DEXPERIENCE), PTC, IBM e HP, Michael agora assessora startups e empresas industriais em posicionamento, estrategia de go-to-market e implantacao empresarial. Ele tambem e autor de Kernel Wars -- uma historia de CAD, PLM e as batalhas de kernels geometricos que moldaram a industria.",
+    "linkedin": "Mais de 26K Seguidores no LinkedIn",
+    "workedAt": "Trabalhou Em",
+    "workedWith": "Trabalhou Com"
+  },
+  "conference": {
+    "title": "Threaded!",
+    "titleHighlight": "Serie de Conferencias",
+    "description1": "Threaded! reune startups e lideres da industria para sessoes de trabalho dinamicas sobre como a IA esta transformando engenharia e manufatura. Os apresentadores devem mostrar explicitamente como seus produtos se conectam ao digital thread -- quais sistemas integram, quais decisoes melhoram e quais resultados mensuraveis proporcionam.",
+    "description2": "Co-patrocinado pela Aras Corporation e o podcast AI Across the Product Lifecycle, Threaded! conecta fornecedores de solucoes de proxima geracao com lideres empresariais em PLM e digital thread. Compartilhamento guiado de solucoes e feedback estruturado ajudam fundadores a refinar a direcao do produto, afiar ICPs e construir pontos de prova crediveis que ressoam com compradores empresariais.",
+    "visitSite": "Visite threaded.live"
+  },
+  "podcasts": {
+    "title": "Podcasts e Conteudo",
+    "aiPodcastTitle": "AI Across the Product Lifecycle",
+    "aiPodcastDesc": "Conversas francas com fundadores, CTOs e lideres empresariais construindo e implantando IA em engenharia e manufatura. Startups de deep-tech, historias reais de adocao.",
+    "plmPodcastTitle": "The Future of PLM",
+    "plmPodcastDesc": "Podcast em video com lideres de pensamento da industria discutindo a evolucao da gestao do ciclo de vida do produto, estrategia de digital thread e dinamicas de mercado."
+  },
+  "contact": {
+    "title": "Onde se conectar comigo",
+    "location": "Baseado em Paris - Bilingue Frances/Ingles - Trabalhando em fusos horarios dos EUA e UE",
+    "viewPricing": "Ver Precos e Planos de Acesso"
+  }
+}
