@@ -41,6 +41,9 @@
 - [ ] Phase 3: Content & SEO Polish — production-ready public pages
   - **Goal:** Polish all marketing copy, add OG images for social sharing, generate sitemap with locale variants, ensure all meta tags are production-quality
   - **Requirements:** SEO-01, SEO-02, SEO-03, SEO-04
+  - **Plans:** 2 plans
+    - [ ] 03-01-PLAN.md — Metadata helpers, sitemap, robots, enhanced generateMetadata on all pages
+    - [ ] 03-02-PLAN.md — Dynamic OG images for all pages, social sharing verification
   - **Depends on:** Phase 1 (Portuguese content must exist for sitemap)
   - **Success criteria:**
     1. Every public page has unique, compelling title and description
@@ -51,7 +54,7 @@
 - [ ] Phase 4: Transactional Email Polish — professional email experience
   - **Goal:** Create professionally styled welcome and receipt emails with ThreadMoat branding using Resend
   - **Requirements:** EMAIL-01, EMAIL-02, EMAIL-03
-  - **Depends on:** Phase 2 (Stripe must be live for receipt triggers)
+  - **Depends on:** Phase 3 (build templates now, test with sandbox Stripe, go live with Phase 2)
   - **Success criteria:**
     1. New subscriber receives branded welcome email within 1 minute
     2. Successful payment triggers receipt email with invoice details
@@ -74,10 +77,10 @@
 | 14. Internationalization | pre-v1.0 | 3/3 | Complete | 2026-03-22 |
 | 1. Portuguese & Flags | v1.0 | 0/1 | Planned | - |
 | 2. Production Stripe | v1.0 | 0/? | Not started | - |
-| 3. Content & SEO | v1.0 | 0/? | Not started | - |
+| 3. Content & SEO | v1.0 | 0/2 | Planned | - |
 | 4. Email Polish | v1.0 | 0/? | Not started | - |
 | 5. Onboarding | v1.0 | 0/? | Not started | - |
 
 ---
 *Roadmap created: 2026-03-22*
-*Last updated: 2026-03-22 after Phase 1 planning*
+*Last updated: 2026-03-22 after Phase 3 planning*
