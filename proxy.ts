@@ -5,47 +5,65 @@ import { NextResponse, type NextRequest } from 'next/server'
 
 const intlMiddleware = createIntlMiddleware(routing)
 
+// Build locale prefix regex from routing config (ALL locales including default)
+// The default locale (en) prefix must also be caught so intlMiddleware can
+// redirect /en/about → /about (as-needed strips the default locale prefix)
+const allLocalePattern = routing.locales.join('|')
+const localePrefixRegex = new RegExp(`^/(${allLocalePattern})(/|$)`)
+
 // Paths that should be handled by next-intl (public pages)
 const PUBLIC_PAGES = ['/', '/pricing', '/about', '/report']
 
 function isPublicPage(pathname: string): boolean {
-  // Strip locale prefix if present
-  const strippedPath = pathname.replace(/^\/(fr|es|it|de)(\/|$)/, '/$2') || '/'
+  // Strip locale prefix if present (any non-default locale)
+  const strippedPath = pathname.replace(localePrefixRegex, '/$2') || '/'
   const normalizedPath = strippedPath === '' ? '/' : strippedPath
-  return PUBLIC_PAGES.some(p =>
-    normalizedPath === p || normalizedPath === p + '/'
+  return PUBLIC_PAGES.some(
+    (p) => normalizedPath === p || normalizedPath === p + '/'
   )
 }
 
-function isLocalePrefix(pathname: string): boolean {
-  return /^\/(fr|es|it|de)(\/|$)/.test(pathname)
+function hasLocalePrefix(pathname: string): boolean {
+  return localePrefixRegex.test(pathname)
 }
 
-export default auth((req) => {
-  const { pathname } = req.nextUrl
-
-  // 1. Allow auth routes, public API (webhooks), and static assets
-  if (
+// Routes that bypass all middleware processing
+function isBypassRoute(pathname: string): boolean {
+  return (
     pathname.startsWith('/auth/') ||
     pathname.startsWith('/api/auth/') ||
     pathname.startsWith('/api/webhooks/')
-  ) {
+  )
+}
+
+// Routes that need auth protection
+function isProtectedRoute(pathname: string): boolean {
+  return pathname.startsWith('/dashboard') || pathname.startsWith('/api/')
+}
+
+export default async function proxy(req: NextRequest) {
+  const { pathname } = req.nextUrl
+
+  // 1. Bypass routes — no middleware processing needed
+  if (isBypassRoute(pathname)) {
     return NextResponse.next()
   }
 
-  // 2. Public pages + locale-prefixed public pages → run next-intl middleware
-  if (isPublicPage(pathname) || isLocalePrefix(pathname)) {
-    return intlMiddleware(req as unknown as NextRequest)
+  // 2. Public pages and locale-prefixed paths → run next-intl directly
+  //    This avoids NextAuth's Response wrapper which can interfere with rewrites
+  if (isPublicPage(pathname) || hasLocalePrefix(pathname)) {
+    return intlMiddleware(req)
   }
 
-  // 3. Landscape page (public, no locale)
+  // 3. Landscape page (public, no i18n)
   if (pathname === '/landscape') {
     return NextResponse.next()
   }
 
-  // 4. Protect dashboard and API routes — reject/redirect unauthenticated users
-  if (pathname.startsWith('/dashboard') || pathname.startsWith('/api/')) {
-    if (!req.auth?.user) {
+  // 4. Protected routes — use auth() to check session
+  if (isProtectedRoute(pathname)) {
+    const session = await auth()
+    if (!session?.user) {
       if (pathname.startsWith('/api/')) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
       }
@@ -56,7 +74,7 @@ export default auth((req) => {
   }
 
   return NextResponse.next()
-})
+}
 
 export const config = {
   matcher: [
