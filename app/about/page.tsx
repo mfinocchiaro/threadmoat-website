@@ -378,6 +378,11 @@ export default function AboutPage() {
           <p className="mt-6 text-xs text-muted-foreground">
             Based in Paris &middot; Bilingual French/English &middot; Working across US and EU time zones
           </p>
+          <div className="mt-8">
+            <Link href="/pricing">
+              <Button size="lg" className="gap-2">View Pricing &amp; Access Plans</Button>
+            </Link>
+          </div>
         </div>
       </section>
 
