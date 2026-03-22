@@ -52,18 +52,28 @@ export default async function proxy(req: NextRequest) {
     return NextResponse.next()
   }
 
-  // 2. Public pages and locale-prefixed paths → run next-intl directly
+  // 2. Generated assets (OG images) without locale prefix
+  //    Delete NEXT_LOCALE cookie so intlMiddleware rewrites to default locale
+  //    instead of redirecting to the cookie's locale. Crawlers don't have cookies
+  //    but browsers do — this ensures consistent default-locale images.
+  //    Locale-prefixed requests (e.g., /fr/opengraph-image) pass through step 3 normally.
+  if (!hasLocalePrefix(pathname) && /opengraph-image|twitter-image/.test(pathname)) {
+    req.cookies.delete('NEXT_LOCALE')
+    return intlMiddleware(req)
+  }
+
+  // 3. Public pages and locale-prefixed paths → run next-intl directly
   //    This avoids NextAuth's Response wrapper which can interfere with rewrites
   if (isPublicPage(pathname) || hasLocalePrefix(pathname)) {
     return intlMiddleware(req)
   }
 
-  // 3. Landscape page (public, no i18n)
+  // 4. Landscape page (public, no i18n)
   if (pathname === '/landscape') {
     return NextResponse.next()
   }
 
-  // 4. Protected routes — use auth() to check session
+  // 5. Protected routes — use auth() to check session
   if (isProtectedRoute(pathname)) {
     const session = await auth()
     if (!session?.user) {
