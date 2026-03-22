@@ -15,11 +15,14 @@ const localePrefixRegex = new RegExp(`^/(${allLocalePattern})(/|$)`)
 const PUBLIC_PAGES = ['/', '/pricing', '/about', '/report']
 
 function isPublicPage(pathname: string): boolean {
-  // Strip locale prefix if present (any non-default locale)
+  // Strip locale prefix if present
   const strippedPath = pathname.replace(localePrefixRegex, '/$2') || '/'
   const normalizedPath = strippedPath === '' ? '/' : strippedPath
+  // Match exact public pages AND their sub-paths (e.g., /opengraph-image, /pricing/opengraph-image)
   return PUBLIC_PAGES.some(
-    (p) => normalizedPath === p || normalizedPath === p + '/'
+    (p) => normalizedPath === p || normalizedPath === p + '/' ||
+      (p === '/' ? normalizedPath.startsWith('/opengraph-image') || normalizedPath.startsWith('/sitemap') || normalizedPath.startsWith('/robots')
+        : normalizedPath.startsWith(p + '/'))
   )
 }
 
