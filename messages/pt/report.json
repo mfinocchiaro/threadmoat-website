@@ -1,0 +1,94 @@
+{
+  "meta": {
+    "title": "Relatorio do Estado do Mercado 1T2026 - Software de Engenharia e IA Industrial",
+    "description": "Mais de 150 paginas de pesquisa original cobrindo 632 startups, 31 fornecedores incumbentes e $16,2B em financiamento VC. Baseado em mais de 200 entrevistas com fundadores."
+  },
+  "hero": {
+    "badge": "Relatorio do Estado do Mercado 1T2026",
+    "title": "Software de Engenharia e IA Industrial",
+    "subtitle": "Relatorio do Estado do Mercado -- 1T2026",
+    "description": "A analise mais abrangente do ecossistema de startups de software de engenharia. Mais de 150 paginas de pesquisa original cobrindo 632 startups, 31 fornecedores incumbentes e $16,2B em financiamento VC -- baseado em mais de 200 entrevistas com fundadores e dados proprietarios.",
+    "author": "ThreadMoat Research -- Michael Finocchiaro -- Marco 2026",
+    "purchaseCta": "Comprar Relatorio -- $4.999",
+    "sampleCta": "Amostra Gratuita (30 paginas)"
+  },
+  "stats": {
+    "startupsTracked": "Startups Rastreadas",
+    "vcFunding": "Financiamento VC Mapeado",
+    "investorsMapped": "Investidores Mapeados",
+    "countriesCovered": "Paises Cobertos",
+    "founderInterviews": "Entrevistas com Fundadores",
+    "incumbentVendors": "Fornecedores Incumbentes"
+  },
+  "toc": {
+    "title": "O que Ha Dentro",
+    "subtitle": "Mais de 150 paginas em 14 capitulos, dois apendices e um resumo executivo."
+  },
+  "audience": {
+    "title": "Para Quem e Este Relatorio",
+    "subtitle": "Inteligencia estrategica para qualquer pessoa navegando o mercado de software de engenharia de mais de $120B.",
+    "vcTitle": "Firmas de VC e PE",
+    "vcDesc": "Identifique fluxo de negocios, valide teses, mapeie co-investidores e compare empresas do portfolio com 632 pares.",
+    "corpTitle": "Estrategia Corporativa / M&A",
+    "corpDesc": "Encontre alvos de aquisicao, avalie construir vs. comprar e entenda as dinamicas competitivas em cada segmento.",
+    "startupTitle": "Fundadores de Startups",
+    "startupDesc": "Entenda seu cenario competitivo, identifique lacunas de posicionamento e prepare-se para conversas com investidores.",
+    "buyerTitle": "Compradores de Tecnologia",
+    "buyerDesc": "Mapeie o cenario de fornecedores, compare incumbentes vs. desafiantes e tome decisoes informadas de plataforma."
+  },
+  "methodology": {
+    "title": "Metodologia",
+    "subtitle": "Cada ponto de dado curado por um unico especialista de dominio -- nao raspado, nao alucinado por IA.",
+    "m1": "Mais de 200 entrevistas de pesquisa primaria com fundadores",
+    "m2": "Atualizacoes semanais do banco de dados Airtable (segundas-feiras CET)",
+    "m3": "Pontuacao competitiva de 7 dimensoes (escala 1-5)",
+    "m4": "Modelagem de saude financeira com burn e runway",
+    "m5": "Analise de sinais de clientes (1.644 mencoes)",
+    "m6": "Referencia cruzada com Crunchbase, PitchBook, LinkedIn"
+  },
+  "cta": {
+    "title": "Pronto para acessar o relatorio completo?",
+    "subtitle": "Mais de 150 paginas de pesquisa proprietaria. Copia personalizada e com marca d'agua com ID de Copia unico. Uma entidade juridica, uso interno apenas.",
+    "purchaseCta": "Comprar Relatorio -- $4.999",
+    "sampleCta": "Baixar Amostra Gratuita",
+    "seePlans": "Ver Todos os Planos"
+  },
+  "chapters": {
+    "ch1": "Resumo Executivo",
+    "ch1d": "Visao geral do estado do mercado e principais descobertas",
+    "ch2": "Parte 0: Sinais Chave",
+    "ch2d": "Cinco desenvolvimentos indicando disruptacao e evolucao do mercado",
+    "ch3": "Parte 1: Incumbentes vs. Desafiantes",
+    "ch3d": "A tensao estrutural remodelando o software de engenharia",
+    "ch4": "Parte 2: O Panorama dos Incumbentes",
+    "ch4d": "Como Siemens, Dassault, PTC e Autodesk estao respondendo",
+    "ch5": "Parte 3: Tendencias Estruturais",
+    "ch5d": "Migracao para cloud, integracao de IA e disruptacao de precos",
+    "ch6": "Parte 4: O Ecossistema de Startups",
+    "ch6d": "632 startups em 10 categorias de investimento",
+    "ch7": "Parte 5: Adocao pelo Cliente",
+    "ch7d": "Padroes de compra empresarial e sinais de implantacao",
+    "ch8": "Parte 6: O Panorama dos Investidores",
+    "ch8d": "2.788 investidores mapeados em estagios de financiamento",
+    "ch9": "Parte 7: Dimensionamento Revisado do Mercado",
+    "ch9d": "Previsao de mercado de $120-140B ate 2028",
+    "ch10": "Parte 8: O Sinal de Consolidacao",
+    "ch10d": "Analise de atividade M&A de mais de $50B (2022-2025)",
+    "ch11": "Parte 9: Oceano Vermelho / Oceano Azul",
+    "ch11d": "Posicionamento estrategico e oportunidades de espaco em branco",
+    "ch12": "Parte 10: Mergulhos Profundos Verticais",
+    "ch12d": "Analise especifica por setor: Aero, Auto, Farma, Dispositivos Medicos",
+    "ch13": "Parte 11: Disruptacao de Precos",
+    "ch13d": "Como os desafiantes estao desmembrando os precos dos incumbentes",
+    "ch14": "Parte 12: Framework de Predicao de M&A",
+    "ch14d": "Quem sera adquirido em seguida e por que",
+    "ch15": "Parte 13: Sinais Emergentes",
+    "ch15d": "Apostas contrarias e apostas em estagio inicial",
+    "ch16": "Parte 14: Compradores de Tecnologia",
+    "ch16d": "O que isso significa para OEMs, ISVs e empresas de plataforma",
+    "ch17": "Apendice A",
+    "ch17d": "Perfis de empresas -- todas as 632 startups perfiladas",
+    "ch18": "Apendice B",
+    "ch18d": "Diretorio de investidores -- 2.788 investidores e VCs"
+  }
+}
