@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Mic, BookOpen, Mail } from "lucide-react"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { LanguageSwitcher } from "@/components/language-switcher"
 import { FaYoutube, FaSpotify, FaApple, FaAmazon, FaDeezer, FaLinkedin } from "react-icons/fa6"
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 
@@ -47,6 +48,7 @@ export default async function AboutPage({ params }: Props) {
             <Link href="/about#contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{tCommon('nav.contactUs')}</Link>
           </nav>
           <div className="flex items-center gap-3">
+            <LanguageSwitcher />
             <ThemeToggle />
             <Link href="/auth/login">
               <Button variant="ghost" size="sm">{tCommon('nav.signIn')}</Button>

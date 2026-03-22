@@ -3,6 +3,7 @@ import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Check, Calendar, MapPin, CalendarDays, BookOpen, Download, Castle, Flame, Crosshair } from "lucide-react"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { LanguageSwitcher } from "@/components/language-switcher"
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 
 // Update this date each week after the Monday refresh
@@ -82,6 +83,7 @@ export default async function PricingPage({ params }: Props) {
             <Link href="/about#contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{tCommon('nav.contactUs')}</Link>
           </nav>
           <div className="flex items-center gap-3">
+            <LanguageSwitcher />
             <ThemeToggle />
             <Link href="/auth/login">
               <Button variant="ghost" size="sm">{tCommon('nav.signIn')}</Button>
