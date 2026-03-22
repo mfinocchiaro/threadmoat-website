@@ -1,0 +1,94 @@
+{
+  "meta": {
+    "title": "Rapporto di mercato 1T2026 - Software di ingegneria e IA industriale",
+    "description": "150+ pagine di ricerca originale che coprono 632 startup, 31 vendor incumbent e $16,2B di finanziamenti VC. Basato su 200+ interviste con fondatori."
+  },
+  "hero": {
+    "badge": "Rapporto sullo stato del mercato 1T2026",
+    "title": "Software di ingegneria e IA industriale",
+    "subtitle": "Rapporto sullo stato del mercato \u2014 1T2026",
+    "description": "L'analisi pi\u00f9 completa dell'ecosistema startup del software di ingegneria. 150+ pagine di ricerca originale che coprono 632 startup, 31 vendor incumbent e $16,2B di finanziamenti VC \u2014 basato su 200+ interviste con fondatori e dati proprietari.",
+    "author": "ThreadMoat Research \u2014 Michael Finocchiaro \u2014 Marzo 2026",
+    "purchaseCta": "Acquista il rapporto \u2014 $4.999",
+    "sampleCta": "Campione gratuito (30 pagine)"
+  },
+  "stats": {
+    "startupsTracked": "Startup monitorate",
+    "vcFunding": "Finanziamenti VC mappati",
+    "investorsMapped": "Investitori mappati",
+    "countriesCovered": "Paesi coperti",
+    "founderInterviews": "Interviste con fondatori",
+    "incumbentVendors": "Vendor incumbent"
+  },
+  "toc": {
+    "title": "Contenuto del rapporto",
+    "subtitle": "150+ pagine in 14 capitoli, due appendici e un executive summary."
+  },
+  "audience": {
+    "title": "A chi \u00e8 rivolto",
+    "subtitle": "Intelligence strategica per chiunque navighi il mercato del software di ingegneria da $120B+.",
+    "vcTitle": "Fondi VC e PE",
+    "vcDesc": "Identifica deal flow, valida tesi, mappa co-investitori e confronta le aziende in portafoglio con 632 pari.",
+    "corpTitle": "Strategia aziendale / M&A",
+    "corpDesc": "Trova target di acquisizione, valuta costruire vs. acquistare e comprendi le dinamiche competitive in ogni segmento.",
+    "startupTitle": "Fondatori di startup",
+    "startupDesc": "Comprendi il tuo panorama competitivo, identifica gap di posizionamento e preparati per le conversazioni con gli investitori.",
+    "buyerTitle": "Acquirenti di tecnologia",
+    "buyerDesc": "Mappa il panorama dei vendor, confronta incumbent vs. challenger e prendi decisioni di piattaforma informate."
+  },
+  "methodology": {
+    "title": "Metodologia",
+    "subtitle": "Ogni dato curato da un singolo esperto del dominio \u2014 non scraping, non generazione IA.",
+    "m1": "200+ interviste di ricerca primaria con fondatori",
+    "m2": "Aggiornamenti settimanali del database Airtable (luned\u00ec CET)",
+    "m3": "Scoring competitivo su 7 dimensioni (scala 1-5)",
+    "m4": "Modellazione della salute finanziaria con burn e runway",
+    "m5": "Analisi dei segnali clienti (1.644 menzioni)",
+    "m6": "Incrocio con Crunchbase, PitchBook, LinkedIn"
+  },
+  "cta": {
+    "title": "Pronto ad accedere al rapporto completo?",
+    "subtitle": "150+ pagine di ricerca proprietaria. Copia personalizzata con filigrana e ID unico. Una entit\u00e0 giuridica, solo uso interno.",
+    "purchaseCta": "Acquista il rapporto \u2014 $4.999",
+    "sampleCta": "Scarica il campione gratuito",
+    "seePlans": "Vedi tutti i piani"
+  },
+  "chapters": {
+    "ch1": "Executive Summary",
+    "ch1d": "Panoramica dello stato del mercato e risultati chiave",
+    "ch2": "Parte 0: Segnali chiave",
+    "ch2d": "Cinque sviluppi che indicano disruption ed evoluzione del mercato",
+    "ch3": "Parte 1: Incumbent vs. Challenger",
+    "ch3d": "La tensione strutturale che sta ridisegnando il software di ingegneria",
+    "ch4": "Parte 2: Il panorama degli incumbent",
+    "ch4d": "Come rispondono Siemens, Dassault, PTC e Autodesk",
+    "ch5": "Parte 3: Tendenze strutturali",
+    "ch5d": "Migrazione cloud, integrazione IA e disruption dei prezzi",
+    "ch6": "Parte 4: L'ecosistema delle startup",
+    "ch6d": "632 startup in 10 categorie di investimento",
+    "ch7": "Parte 5: Adozione dei clienti",
+    "ch7d": "Pattern di acquisto enterprise e segnali di deployment",
+    "ch8": "Parte 6: Il panorama degli investitori",
+    "ch8d": "2.788 investitori mappati per fase di finanziamento",
+    "ch9": "Parte 7: Dimensionamento rivisto del mercato",
+    "ch9d": "Previsione di mercato $120-140B fino al 2028",
+    "ch10": "Parte 8: Il segnale di consolidamento",
+    "ch10d": "Analisi dell'attivit\u00e0 M&A da $50B+ (2022-2025)",
+    "ch11": "Parte 9: Oceano rosso / Oceano blu",
+    "ch11d": "Posizionamento strategico e opportunit\u00e0 di spazio bianco",
+    "ch12": "Parte 10: Approfondimenti verticali",
+    "ch12d": "Analisi settoriale: Aero, Auto, Pharma, Dispositivi medici",
+    "ch13": "Parte 11: Disruption dei prezzi",
+    "ch13d": "Come i challenger stanno scomponendo i prezzi degli incumbent",
+    "ch14": "Parte 12: Framework di previsione M&A",
+    "ch14d": "Chi verr\u00e0 acquisito prossimamente e perch\u00e9",
+    "ch15": "Parte 13: Segnali emergenti",
+    "ch15d": "Scommesse contrarian e investimenti early-stage",
+    "ch16": "Parte 14: Acquirenti di tecnologia",
+    "ch16d": "Cosa significa per OEM, ISV e aziende di piattaforma",
+    "ch17": "Appendice A",
+    "ch17d": "Profili aziendali \u2014 tutte le 632 startup profilate",
+    "ch18": "Appendice B",
+    "ch18d": "Directory degli investitori \u2014 2.788 investitori e VC"
+  }
+}
