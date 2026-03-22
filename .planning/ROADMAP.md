@@ -18,6 +18,8 @@
 - [ ] Phase 1: Portuguese Language & Flag Emoji — i18n completion
   - **Goal:** Add Portuguese (pt) as 6th language with translated message files, and add flag emoji to all language names in the LanguageSwitcher dropdown
   - **Requirements:** I18N-04, I18N-05
+  - **Plans:** 1 plan
+    - [ ] 01-01-PLAN.md — Portuguese message files, routing config, LanguageSwitcher flags
   - **Depends on:** Phase 14 (complete)
   - **Success criteria:**
     1. Visiting /pt/pricing renders Portuguese pricing content
@@ -70,7 +72,7 @@
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|---------------|--------|-----------|
 | 14. Internationalization | pre-v1.0 | 3/3 | Complete | 2026-03-22 |
-| 1. Portuguese & Flags | v1.0 | 0/? | Not started | - |
+| 1. Portuguese & Flags | v1.0 | 0/1 | Planned | - |
 | 2. Production Stripe | v1.0 | 0/? | Not started | - |
 | 3. Content & SEO | v1.0 | 0/? | Not started | - |
 | 4. Email Polish | v1.0 | 0/? | Not started | - |
@@ -78,4 +80,4 @@
 
 ---
 *Roadmap created: 2026-03-22*
-*Last updated: 2026-03-22 after initialization*
+*Last updated: 2026-03-22 after Phase 1 planning*
