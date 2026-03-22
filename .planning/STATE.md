@@ -10,7 +10,7 @@ milestone: v1.0
 
 ## Status
 
-Active — Phase 3 plan 1 (SEO metadata & sitemap) complete, plan 2 (OG images) next.
+Active — Phase 3 plan 2 (OG images) Task 1 complete, awaiting checkpoint verification for Task 2.
 
 ## Current Position
 
@@ -36,6 +36,8 @@ See: .planning/PROJECT.md (updated 2026-03-22)
 - Shared metadata helpers in lib/metadata.ts to avoid URL-building duplication across pages
 - Static public/robots.txt deleted in favor of dynamic app/robots.ts for sitemap reference
 - English canonical URLs omit /en/ prefix consistent with localePrefix: as-needed
+- Node runtime for OG images (not Edge) due to getTranslations compatibility with next-intl file-based messages
+- System fonts only in OG images; text-only design without logo assets
 
 ### Blockers
 
