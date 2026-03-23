@@ -27,6 +27,17 @@ export async function createCheckoutSession(productId: string, userEmail: string
   const rows = await sql`SELECT stripe_customer_id FROM profiles WHERE id = ${userId}`
   let customerId: string = (rows[0]?.stripe_customer_id as string) || ''
 
+  // Validate existing customer ID works with current Stripe key (test vs live mismatch)
+  if (customerId) {
+    try {
+      await getStripe().customers.retrieve(customerId)
+    } catch {
+      console.log('[Checkout] Stale customer ID (test/live mismatch), creating new:', customerId)
+      customerId = ''
+      await sql`UPDATE profiles SET stripe_customer_id = NULL WHERE id = ${userId}`
+    }
+  }
+
   // Create Stripe customer if one doesn't exist yet
   if (customerId === '') {
     const customer = await getStripe().customers.create({
