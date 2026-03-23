@@ -38,7 +38,6 @@ const INTERNAL_PRODUCT_IDS: Record<string, string> = {
  * The Analyst Stripe product handles the report purchase.
  */
 const PRODUCT_ALIASES: Record<string, string> = {
-  'market-report-2026-q1': 'analyst',
   'analyst_annual': 'analyst',
 }
 

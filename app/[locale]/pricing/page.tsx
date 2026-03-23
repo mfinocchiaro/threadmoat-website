@@ -226,9 +226,9 @@ export default async function PricingPage({ params }: Props) {
             </ul>
             <div className="mt-6 space-y-2.5">
               {userEmail ? (
-                <CheckoutButton productId="market-report-2026-q1" userEmail={userEmail} label={t('tiers.analystCta')} />
+                <CheckoutButton productId="analyst" userEmail={userEmail} label={t('tiers.analystCta')} />
               ) : (
-                <NextLink href="/auth/sign-up?product=market-report-2026-q1">
+                <NextLink href="/auth/sign-up?product=analyst">
                   <Button className="w-full" size="sm">{t('tiers.analystCta')}</Button>
                 </NextLink>
               )}
