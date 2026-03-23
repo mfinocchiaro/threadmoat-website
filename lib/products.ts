@@ -10,7 +10,7 @@ export interface Product {
 
 export const PRODUCTS: Product[] = [
   {
-    id: "market-report-2026-q1",
+    id: "analyst",
     name: "ThreadMoat Analyst",
     description:
       "One-time purchase — quarterly market report + 10 interactive analytics charts covering 600+ companies in Industrial AI & Engineering Software.",
