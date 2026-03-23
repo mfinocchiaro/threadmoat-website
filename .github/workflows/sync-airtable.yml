@@ -10,13 +10,15 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true  # Opt in now; remove after June 2nd
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4          # v4 tag already updated to node24 runtime
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6      # v6 is the node24 upgrade (breaking from v5)
         with:
           python-version: '3.12'
 
