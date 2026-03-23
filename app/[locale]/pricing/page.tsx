@@ -200,24 +200,24 @@ export default async function PricingPage({ params }: Props) {
             </div>
           </div>
 
-          {/* Latest Quarterly Report */}
+          {/* Analyst — One-time Purchase (was "Latest Quarterly Report") */}
           <div className="flex flex-col rounded-lg border-2 border-primary/60 bg-card p-6 shadow-md relative">
             <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-4 py-1 text-xs font-semibold text-primary-foreground">
               {t('tiers.mostPopular')}
             </div>
             <div className="flex items-start justify-between">
               <div>
-                <h3 className="text-lg font-semibold">{t('tiers.reportTitle')}</h3>
-                <p className="mt-1 text-xs text-muted-foreground">{t('tiers.reportSubtitle')}</p>
+                <h3 className="text-lg font-semibold">{t('tiers.analystTitle')}</h3>
+                <p className="mt-1 text-xs text-muted-foreground">{t('tiers.analystSubtitle')}</p>
               </div>
               <BookOpen className="h-5 w-5 text-primary mt-1" />
             </div>
             <div className="mt-5">
-              <span className="text-3xl font-bold">{t('tiers.reportPrice')}</span>
-              <p className="text-xs text-muted-foreground mt-1">{t('tiers.reportPriceNote')}</p>
+              <span className="text-3xl font-bold">{t('tiers.analystPrice')}</span>
+              <p className="text-xs text-muted-foreground mt-1">{t('tiers.analystPriceNote')}</p>
             </div>
             <ul className="mt-6 flex-1 space-y-2.5">
-              {REPORT_FEATURES.map(f => (
+              {ANALYST_FEATURES.map(f => (
                 <li key={f} className="flex items-start gap-2">
                   <Check className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
                   <span className="text-xs">{f}</span>
@@ -226,10 +226,10 @@ export default async function PricingPage({ params }: Props) {
             </ul>
             <div className="mt-6 space-y-2.5">
               {userEmail ? (
-                <CheckoutButton productId="market-report-2026-q1" userEmail={userEmail} label={t('tiers.reportCta')} />
+                <CheckoutButton productId="market-report-2026-q1" userEmail={userEmail} label={t('tiers.analystCta')} />
               ) : (
                 <NextLink href="/auth/sign-up?product=market-report-2026-q1">
-                  <Button className="w-full" size="sm">{t('tiers.reportCta')}</Button>
+                  <Button className="w-full" size="sm">{t('tiers.analystCta')}</Button>
                 </NextLink>
               )}
               <a
@@ -244,22 +244,22 @@ export default async function PricingPage({ params }: Props) {
             </div>
           </div>
 
-          {/* Analyst — Annual Subscription */}
+          {/* Strategist — Annual Subscription (was "Analyst") */}
           <div className="flex flex-col rounded-lg border border-amber-600/40 bg-gradient-to-b from-card to-amber-950/10 p-6 shadow-sm">
             <div className="flex items-start justify-between">
               <div>
-                <h3 className="text-lg font-semibold">{t('tiers.analystTitle')}</h3>
-                <p className="mt-1 text-xs text-muted-foreground">{t('tiers.analystSubtitle')}</p>
+                <h3 className="text-lg font-semibold">{t('tiers.strategistTitle')}</h3>
+                <p className="mt-1 text-xs text-muted-foreground">{t('tiers.strategistSubtitle')}</p>
               </div>
               <Flame className="h-5 w-5 text-amber-500 mt-1" />
             </div>
             <div className="mt-5">
-              <span className="text-3xl font-bold">{t('tiers.analystPrice')}</span>
+              <span className="text-3xl font-bold">{t('tiers.strategistPrice')}</span>
               <span className="text-lg text-muted-foreground font-normal">/year</span>
-              <p className="text-xs text-muted-foreground mt-1">{t('tiers.analystPriceNote')}</p>
+              <p className="text-xs text-muted-foreground mt-1">{t('tiers.strategistPriceNote')}</p>
             </div>
             <ul className="mt-6 flex-1 space-y-2.5">
-              {ANALYST_FEATURES.map(f => (
+              {STRATEGIST_FEATURES.map(f => (
                 <li key={f} className="flex items-start gap-2">
                   <Check className="h-3.5 w-3.5 text-amber-500 mt-0.5 shrink-0" />
                   <span className="text-xs">{f}</span>
@@ -267,27 +267,31 @@ export default async function PricingPage({ params }: Props) {
               ))}
             </ul>
             <div className="mt-6">
-              <a href="/about#contact">
-                <Button className="w-full border-amber-600/40 hover:bg-amber-950/20" variant="outline" size="sm">{t('tiers.analystCta')}</Button>
-              </a>
+              {userEmail ? (
+                <CheckoutButton productId="strategist_annual" userEmail={userEmail} label={t('tiers.strategistCta')} />
+              ) : (
+                <NextLink href="/auth/sign-up?product=strategist_annual">
+                  <Button className="w-full border-amber-600/40 hover:bg-amber-950/20" variant="outline" size="sm">{t('tiers.strategistCta')}</Button>
+                </NextLink>
+              )}
             </div>
           </div>
 
-          {/* Strategist — Enterprise */}
+          {/* Advisory — Custom Contract (was "Strategist") */}
           <div className="flex flex-col rounded-lg border border-red-800/40 bg-gradient-to-b from-card to-red-950/10 p-6 relative overflow-hidden">
             <div className="absolute top-0 right-0 opacity-[0.04] pointer-events-none">
               <Castle className="h-32 w-32 -mt-4 -mr-4" />
             </div>
             <div className="flex items-start justify-between relative">
               <div>
-                <h3 className="text-lg font-semibold">{t('tiers.strategistTitle')}</h3>
-                <p className="mt-1 text-xs text-muted-foreground">{t('tiers.strategistSubtitle')}</p>
+                <h3 className="text-lg font-semibold">{t('tiers.advisoryTitle')}</h3>
+                <p className="mt-1 text-xs text-muted-foreground">{t('tiers.advisorySubtitle')}</p>
               </div>
               <Castle className="h-5 w-5 text-red-400 mt-1" />
             </div>
             <div className="mt-5">
-              <span className="text-3xl font-bold">{t('tiers.strategistPrice')}</span>
-              <p className="text-xs text-muted-foreground mt-1">{t('tiers.strategistPriceNote')}</p>
+              <span className="text-3xl font-bold">{t('tiers.advisoryPrice')}</span>
+              <p className="text-xs text-muted-foreground mt-1">{t('tiers.advisoryPriceNote')}</p>
             </div>
             <ul className="mt-6 flex-1 space-y-2.5">
               {STRATEGIST_FEATURES.map(f => (
@@ -298,8 +302,8 @@ export default async function PricingPage({ params }: Props) {
               ))}
             </ul>
             <div className="mt-6">
-              <a href="mailto:michael.finocchiaro@gmail.com?subject=ThreadMoat%20Strategist%20Inquiry">
-                <Button variant="outline" className="w-full border-red-800/40 hover:bg-red-950/20 hover:text-red-300" size="sm">{t('tiers.strategistCta')}</Button>
+              <a href="mailto:michael.finocchiaro@gmail.com?subject=ThreadMoat%20Advisory%20Inquiry">
+                <Button variant="outline" className="w-full border-red-800/40 hover:bg-red-950/20 hover:text-red-300" size="sm">{t('tiers.advisoryCta')}</Button>
               </a>
             </div>
           </div>

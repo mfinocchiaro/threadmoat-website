@@ -11,20 +11,31 @@ export interface Product {
 export const PRODUCTS: Product[] = [
   {
     id: "market-report-2026-q1",
-    name: "2026 Q1 Market State Report",
+    name: "ThreadMoat Analyst",
     description:
-      "Engineering Software & Industrial AI — 150+ page analysis covering 600+ companies, >$16B in VC funding, M&A trends, and 5-year market forecasts.",
+      "One-time purchase — quarterly market report + 10 interactive analytics charts covering 600+ companies in Industrial AI & Engineering Software.",
     priceInCents: 499900, // $4,999
     mode: "payment",
     features: [
-      "150+ page deep-dive analysis",
-      "600+ companies, >$16B VC funding mapped",
-      "Incumbent landscape — $22–24B anchor vendors",
-      "Startup ecosystem — 10 investment categories",
-      "$50B+ M&A consolidation analysis (2022–2025)",
-      "5-year market forecast ($120–140B by 2028)",
-      "Top 10 company rankings with scoring methodology",
-      "Delivered as PDF within 24 hours of purchase",
+      "1 quarterly Market State Report",
+      "10 interactive analytics charts",
+      "600+ startups tracked weekly",
+      "60-min analyst briefing",
+    ],
+  },
+  {
+    id: "strategist_annual",
+    name: "ThreadMoat Strategist",
+    description:
+      "Annual subscription — 4 quarterly reports + 25+ interactive analytics charts + dedicated analyst support.",
+    priceInCents: 1899900, // €18,999
+    mode: "subscription",
+    interval: "year",
+    features: [
+      "4 quarterly Market State Reports",
+      "25+ interactive analytics charts",
+      "Dedicated analyst support",
+      "Quarterly strategy sessions",
     ],
   },
 ]
