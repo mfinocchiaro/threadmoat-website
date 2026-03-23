@@ -34,7 +34,7 @@ Requirements for production launch. Each maps to roadmap phases.
 
 - [ ] **EMAIL-01**: Welcome email sent on successful subscription
 - [ ] **EMAIL-02**: Payment receipt email on successful charge
-- [ ] **EMAIL-03**: Email templates professionally styled with ThreadMoat branding
+- [x] **EMAIL-03**: Email templates professionally styled with ThreadMoat branding
 
 ### Onboarding
 
@@ -92,7 +92,7 @@ Deferred to post-launch. Tracked but not in current roadmap.
 | SEO-04 | Phase 3 | Pending |
 | EMAIL-01 | Phase 4 | Pending |
 | EMAIL-02 | Phase 4 | Pending |
-| EMAIL-03 | Phase 4 | Pending |
+| EMAIL-03 | Phase 4 | Complete |
 | ONBD-01 | Phase 5 | Pending |
 | ONBD-02 | Phase 5 | Pending |
 
