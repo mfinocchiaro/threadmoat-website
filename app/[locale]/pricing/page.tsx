@@ -39,6 +39,7 @@ export default async function PricingPage({ params }: Props) {
   const session = await auth()
   const userEmail = session?.user?.email
 
+
   const RECON_FEATURES = [
     t('features.reconF1'), t('features.reconF2'), t('features.reconF3'), t('features.reconF4'),
   ]
