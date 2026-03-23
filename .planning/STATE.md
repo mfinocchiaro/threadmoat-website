@@ -2,7 +2,7 @@
 status: active
 last_activity: 2026-03-23
 current_phase: 4
-current_plan: 1
+current_plan: 2
 milestone: v1.0
 ---
 
@@ -10,12 +10,12 @@ milestone: v1.0
 
 ## Status
 
-Active — Phase 4 plan 1 (email templates) complete. Plan 2 (webhook wiring) next.
+Active — Phase 4 complete (both plans done). Email templates + webhook wiring finished.
 
 ## Current Position
 
 Phase 4 of 5: Transactional Email Polish
-Plan: 1 of 2 complete
+Plan: 2 of 2 complete
 
 ## Project Reference
 
@@ -41,6 +41,9 @@ See: .planning/PROJECT.md (updated 2026-03-22)
 - Text-based ThreadMoat logo in emails (violet #7c3aed) rather than image asset
 - ReceiptEmail accepts pre-formatted date strings; formatting done in lib/email.ts
 - React Email templates called as functions (not JSX) when passed to Resend react: param
+- Fire-and-forget pattern (no await) for email sends in webhook handlers to avoid blocking Stripe 2xx response
+- Welcome email only for subscription mode; one-time payments get receipt only
+- One-time payment receipts via checkout.session.completed since invoice.payment_succeeded does not fire for payment mode
 
 ### Blockers
 
