@@ -1,4 +1,5 @@
 import { Link } from "@/i18n/navigation"
+import NextLink from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -58,9 +59,9 @@ export default async function AboutPage({ params }: Props) {
           <div className="flex items-center gap-3">
             <LanguageSwitcher />
             <ThemeToggle />
-            <Link href="/auth/login">
+            <NextLink href="/auth/login">
               <Button variant="ghost" size="sm">{tCommon('nav.signIn')}</Button>
-            </Link>
+            </NextLink>
             <Button asChild size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
               <a href="https://calendly.com/mfinocchiaro/15min" target="_blank" rel="noopener noreferrer">{tCommon('nav.scheduleCall')}</a>
             </Button>
@@ -403,7 +404,7 @@ export default async function AboutPage({ params }: Props) {
           <div className="flex gap-4">
             <Link href="/" className="hover:text-foreground">{tCommon('footer.home')}</Link>
             <Link href="/pricing" className="hover:text-foreground">{tCommon('footer.pricing')}</Link>
-            <Link href="/auth/login" className="hover:text-foreground">{tCommon('footer.signIn')}</Link>
+            <NextLink href="/auth/login" className="hover:text-foreground">{tCommon('footer.signIn')}</NextLink>
           </div>
         </div>
       </footer>

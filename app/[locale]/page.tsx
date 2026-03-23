@@ -1,5 +1,6 @@
 import React from "react"
 import { Link } from "@/i18n/navigation"
+import NextLink from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -67,9 +68,9 @@ export default async function HomePage({ params }: Props) {
           <div className="flex items-center gap-3">
             <LanguageSwitcher />
             <ThemeToggle />
-            <Link href="/auth/login">
+            <NextLink href="/auth/login">
               <Button variant="ghost" size="sm">{tCommon('nav.signIn')}</Button>
-            </Link>
+            </NextLink>
             <Button asChild size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
               <a href="https://calendly.com/mfinocchiaro/15min" target="_blank" rel="noopener noreferrer">{tCommon('nav.scheduleCall')}</a>
             </Button>
@@ -129,12 +130,12 @@ export default async function HomePage({ params }: Props) {
           {t('hero.subtitle')}
         </p>
         <div className="mt-10 flex items-center justify-center gap-4">
-          <Link href="/auth/login">
+          <NextLink href="/auth/login">
             <Button size="lg" className="gap-2">
               <Database className="h-5 w-5" />
               {t('hero.seeAnalytics')}
             </Button>
-          </Link>
+          </NextLink>
           <Link href="/pricing">
             <Button size="lg" variant="outline">{t('hero.viewPricing')}</Button>
           </Link>
@@ -224,7 +225,7 @@ export default async function HomePage({ params }: Props) {
             <div><p className="text-4xl font-bold text-primary">35+</p><p className="text-sm text-muted-foreground mt-1">{t('profiles.yearsExperience')}</p></div>
             <div><p className="text-4xl font-bold text-primary">550+</p><p className="text-sm text-muted-foreground mt-1">{t('profiles.startupsInDb')}</p></div>
             <div><p className="text-4xl font-bold text-primary">200+</p><p className="text-sm text-muted-foreground mt-1">{t('profiles.founderInterviews')}</p></div>
-            <Link href="/landscape" className="hover:opacity-80 transition-opacity"><p className="text-4xl font-bold text-primary">10</p><p className="text-sm text-muted-foreground mt-1 underline underline-offset-2">{t('profiles.investmentDomains')}</p></Link>
+            <NextLink href="/landscape" className="hover:opacity-80 transition-opacity"><p className="text-4xl font-bold text-primary">10</p><p className="text-sm text-muted-foreground mt-1 underline underline-offset-2">{t('profiles.investmentDomains')}</p></NextLink>
           </div>
         </div>
       </section>
@@ -354,7 +355,7 @@ export default async function HomePage({ params }: Props) {
           <div className="flex gap-4">
             <Link href="/pricing" className="hover:text-foreground">{tCommon('footer.pricing')}</Link>
             <Link href="/about" className="hover:text-foreground">{tCommon('footer.about')}</Link>
-            <Link href="/auth/login" className="hover:text-foreground">{tCommon('footer.signIn')}</Link>
+            <NextLink href="/auth/login" className="hover:text-foreground">{tCommon('footer.signIn')}</NextLink>
           </div>
         </div>
       </footer>
