@@ -34,6 +34,15 @@ const INTERNAL_PRODUCT_IDS: Record<string, string> = {
 }
 
 /**
+ * Maps legacy/alternate product IDs to STRIPE_PRICES keys.
+ * The Analyst Stripe product handles the report purchase.
+ */
+const PRODUCT_ALIASES: Record<string, string> = {
+  'market-report-2026-q1': 'analyst',
+  'analyst_annual': 'analyst',
+}
+
+/**
  * Resolve a Stripe Price ID to the internal product_id used by getAccessTier.
  *
  * Iterates STRIPE_PRICES to find the key whose value matches the given
@@ -57,11 +66,18 @@ export function getInternalProductId(stripePriceId: string): string {
  * free trials, or products not yet configured in Stripe).
  */
 export function getStripePriceId(internalProductId: string): string | undefined {
-  // Direct key match (e.g. "analyst_annual")
+  // Direct key match (e.g. "analyst")
   const directMatch = STRIPE_PRICES[internalProductId]
   if (directMatch) return directMatch
 
-  // Reverse lookup through INTERNAL_PRODUCT_IDS (e.g. "market-report-2026-q1" → "market_report_q1")
+  // Alias lookup (e.g. "market-report-2026-q1" → "analyst" → Price ID)
+  const aliasKey = PRODUCT_ALIASES[internalProductId]
+  if (aliasKey) {
+    const aliasMatch = STRIPE_PRICES[aliasKey]
+    if (aliasMatch) return aliasMatch
+  }
+
+  // Reverse lookup through INTERNAL_PRODUCT_IDS
   for (const [key, internalId] of Object.entries(INTERNAL_PRODUCT_IDS)) {
     if (internalId === internalProductId) {
       const priceId = STRIPE_PRICES[key]
