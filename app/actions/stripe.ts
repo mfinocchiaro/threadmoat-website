@@ -7,11 +7,19 @@ import { auth } from '@/auth'
 import { sql } from '@/lib/db'
 
 export async function createCheckoutSession(productId: string, userEmail: string) {
+  console.log('[Checkout] Starting for productId:', productId, 'email:', userEmail)
+
   const product = getProduct(productId)
-  if (!product) throw new Error('Product not found')
+  if (!product) {
+    console.error('[Checkout] Product not found:', productId)
+    throw new Error(`Product not found: ${productId}`)
+  }
 
   const session = await auth()
-  if (!session?.user?.id) throw new Error('User not authenticated')
+  if (!session?.user?.id) {
+    console.error('[Checkout] User not authenticated')
+    throw new Error('User not authenticated')
+  }
 
   const userId: string = session.user.id
 
@@ -36,9 +44,13 @@ export async function createCheckoutSession(productId: string, userEmail: string
     process.env.NEXT_PUBLIC_BASE_URL ||
     (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
 
+  console.log('[Checkout] Customer:', customerId, 'Mode:', product.mode, 'BaseURL:', baseUrl)
+
+  try {
   if (product.mode === 'payment') {
     // One-time payment (e.g. market reports)
     const stripePriceId = getStripePriceId(productId)
+    console.log('[Checkout] StripePriceId resolved:', stripePriceId)
 
     const lineItem = stripePriceId
       ? { price: stripePriceId, quantity: 1 }
@@ -90,6 +102,10 @@ export async function createCheckoutSession(productId: string, userEmail: string
   })
 
   return { url: checkoutSession.url }
+  } catch (err) {
+    console.error('[Checkout] Stripe API error:', err)
+    throw err
+  }
 }
 
 export async function createBillingPortalSession() {
