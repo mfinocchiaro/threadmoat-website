@@ -1,8 +1,8 @@
 ---
 status: active
-last_activity: 2026-03-22
-current_phase: 3
-current_plan: 2
+last_activity: 2026-03-23
+current_phase: 4
+current_plan: 1
 milestone: v1.0
 ---
 
@@ -10,12 +10,12 @@ milestone: v1.0
 
 ## Status
 
-Active — Phase 3 plan 2 (OG images) Task 1 complete, awaiting checkpoint verification for Task 2.
+Active — Phase 4 plan 1 (email templates) complete. Plan 2 (webhook wiring) next.
 
 ## Current Position
 
-Phase 3 of 5: Content & SEO Polish
-Plan: 2 of 2
+Phase 4 of 5: Transactional Email Polish
+Plan: 1 of 2 complete
 
 ## Project Reference
 
@@ -38,6 +38,9 @@ See: .planning/PROJECT.md (updated 2026-03-22)
 - English canonical URLs omit /en/ prefix consistent with localePrefix: as-needed
 - Node runtime for OG images (not Edge) due to getTranslations compatibility with next-intl file-based messages
 - System fonts only in OG images; text-only design without logo assets
+- Text-based ThreadMoat logo in emails (violet #7c3aed) rather than image asset
+- ReceiptEmail accepts pre-formatted date strings; formatting done in lib/email.ts
+- React Email templates called as functions (not JSX) when passed to Resend react: param
 
 ### Blockers
 
