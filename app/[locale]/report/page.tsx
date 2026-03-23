@@ -1,4 +1,5 @@
 import { Link } from "@/i18n/navigation"
+import NextLink from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -87,9 +88,9 @@ export default async function ReportPage({ params }: Props) {
           <div className="flex items-center gap-3">
             <LanguageSwitcher />
             <ThemeToggle />
-            <Link href="/auth/login">
+            <NextLink href="/auth/login">
               <Button variant="ghost" size="sm">{tCommon('nav.signIn')}</Button>
-            </Link>
+            </NextLink>
             <Link href="/pricing">
               <Button size="sm">{tCommon('nav.viewPricing')}</Button>
             </Link>

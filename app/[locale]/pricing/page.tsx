@@ -1,4 +1,5 @@
 import { Link } from "@/i18n/navigation"
+import NextLink from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Check, Calendar, MapPin, CalendarDays, BookOpen, Download, Castle, Flame, Crosshair } from "lucide-react"
@@ -93,12 +94,12 @@ export default async function PricingPage({ params }: Props) {
           <div className="flex items-center gap-3">
             <LanguageSwitcher />
             <ThemeToggle />
-            <Link href="/auth/login">
+            <NextLink href="/auth/login">
               <Button variant="ghost" size="sm">{tCommon('nav.signIn')}</Button>
-            </Link>
-            <Link href="/auth/sign-up">
+            </NextLink>
+            <NextLink href="/auth/sign-up">
               <Button size="sm">{tCommon('nav.getStarted')}</Button>
-            </Link>
+            </NextLink>
           </div>
         </div>
       </header>
@@ -188,9 +189,9 @@ export default async function PricingPage({ params }: Props) {
               ))}
             </ul>
             <div className="mt-6">
-              <Link href="/auth/sign-up">
+              <NextLink href="/auth/sign-up">
                 <Button variant="outline" className="w-full" size="sm">{t('tiers.reconCta')}</Button>
-              </Link>
+              </NextLink>
             </div>
           </div>
 
@@ -219,9 +220,9 @@ export default async function PricingPage({ params }: Props) {
               ))}
             </ul>
             <div className="mt-6 space-y-2.5">
-              <Link href="/auth/sign-up?product=market-report-2026-q1">
+              <NextLink href="/auth/sign-up?product=market-report-2026-q1">
                 <Button className="w-full" size="sm">{t('tiers.reportCta')}</Button>
-              </Link>
+              </NextLink>
               <a
                 href="/reports/2026-q1-market-report-sample.pdf"
                 target="_blank"
@@ -382,7 +383,7 @@ export default async function PricingPage({ params }: Props) {
           <p>{tCommon('footer.copyright', { year: new Date().getFullYear() })}</p>
           <div className="flex gap-4">
             <Link href="/" className="hover:text-foreground">{tCommon('footer.home')}</Link>
-            <Link href="/auth/login" className="hover:text-foreground">{tCommon('footer.signIn')}</Link>
+            <NextLink href="/auth/login" className="hover:text-foreground">{tCommon('footer.signIn')}</NextLink>
           </div>
         </div>
       </footer>
