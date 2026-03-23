@@ -1,42 +1,94 @@
-name: Sync Airtable CSVs
+import csv
+import io
+import os
+import sys
+import requests
 
-on:
-  schedule:
-    - cron: '0 6 * * 1'  # Every Monday at 6am UTC
-  workflow_dispatch:       # Manual trigger from GitHub Actions UI
+TOKEN   = os.environ["AIRTABLE_TOKEN"]
+BASE_ID = os.environ["AIRTABLE_BASE_ID"]
+BASE_URL = f"https://api.airtable.com/v0/{BASE_ID}"
 
-jobs:
-  sync:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true  # Opt in now; remove after June 2nd
+VIEWS = [
+    {
+        "table": "Startups",
+        "view":   "Software-Only ThreadMoat",
+        "output": "data/Startups-Grid view.csv",
+    },
+    {
+        "table": "Startups",
+        "view":   "Financial Health",
+        "output": "data/Startups-Financial Health.csv",
+    },
+    {
+        "table": "Investors",
+        "view":   "Grid view",
+        "output": "data/Investors-main.csv",
+    },
+]
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4          # v4 tag already updated to node24 runtime
 
-      - name: Set up Python
-        uses: actions/setup-python@v6      # v6 is the node24 upgrade (breaking from v5)
-        with:
-          python-version: '3.12'
+def fetch_all_records(table: str, view: str) -> list[dict]:
+    headers = {"Authorization": f"Bearer {TOKEN}"}
+    records = []
+    params  = {"view": view, "pageSize": 100}
 
-      - name: Install dependencies
-        run: pip install requests
+    while True:
+        resp = requests.get(f"{BASE_URL}/{requests.utils.quote(table)}", headers=headers, params=params)
+        resp.raise_for_status()
+        body = resp.json()
+        records.extend(body.get("records", []))
+        offset = body.get("offset")
+        if not offset:
+            break
+        params["offset"] = offset
 
-      - name: Fetch Airtable CSVs
-        env:
-          AIRTABLE_TOKEN: ${{ secrets.AIRTABLE_TOKEN }}
-          AIRTABLE_BASE_ID: ${{ secrets.AIRTABLE_BASE_ID }}
-        run: python scripts/fetch_airtable_csv.py
+    return records
 
-      - name: Commit and push if changed
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/*.csv
-          git diff --staged --quiet || (
-            git commit -m "chore(data): auto-sync Airtable CSVs [skip ci]" &&
-            git push
-          )
+
+def records_to_csv(records: list[dict], output_path: str) -> None:
+    if not records:
+        print(f"  No records returned — skipping {output_path}")
+        return
+
+    # Collect all field names preserving insertion order
+    fieldnames: list[str] = ["id"]
+    for rec in records:
+        for key in rec.get("fields", {}):
+            if key not in fieldnames:
+                fieldnames.append(key)
+
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    with open(output_path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
+        writer.writeheader()
+        for rec in records:
+            row = {"id": rec["id"], **rec.get("fields", {})}
+            writer.writerow(row)
+
+    print(f"  Wrote {len(records)} records → {output_path}")
+
+
+def main() -> None:
+    errors = []
+    for cfg in VIEWS:
+        table, view, output = cfg["table"], cfg["view"], cfg["output"]
+        print(f"Fetching '{table}' / '{view}' ...")
+        try:
+            recs = fetch_all_records(table, view)
+            records_to_csv(recs, output)
+        except requests.HTTPError as e:
+            msg = f"  HTTP error: {e.response.status_code} — {e.response.text}"
+            print(msg)
+            errors.append(f"{table}/{view}: {msg}")
+
+    if errors:
+        print("\nCompleted with errors:")
+        for err in errors:
+            print(f"  {err}")
+        sys.exit(1)
+
+    print("\nDone.")
+
+
+if __name__ == "__main__":
+    main()
