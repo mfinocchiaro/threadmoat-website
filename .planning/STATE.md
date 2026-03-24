@@ -1,7 +1,7 @@
 ---
 status: active
-last_activity: 2026-03-23
-current_phase: 2
+last_activity: 2026-03-24
+current_phase: 5
 current_plan: 1
 milestone: v1.0
 ---
@@ -10,11 +10,11 @@ milestone: v1.0
 
 ## Status
 
-Active — Phase 2, Plan 1 complete. Stripe Price ID mapping layer created, checkout migrated to Price IDs, webhook product_id mapping fixed.
+Active — Phase 5, Plan 1 complete. Onboarding wizard foundation built: migration script, API endpoint, tier-aware wizard component.
 
 ## Current Position
 
-Phase 2 of 5: Production Stripe Integration
+Phase 5 of 5: Subscriber Onboarding
 Plan: 1 complete
 
 ## Project Reference
@@ -47,6 +47,9 @@ See: .planning/PROJECT.md (updated 2026-03-22)
 - Graceful empty string fallback for Stripe Price ID env vars instead of non-null assertions
 - Fallback to inline price_data when no Stripe Price ID configured (supports coupon/manual products)
 - Removed duplicate getStripe() in webhook; uses shared lib/stripe import
+- Best-effort API call pattern for onboarding completion (don't block user on failure)
+- Admin tier reuses Strategist onboarding steps
+- No zod validation on onboarding endpoint (no request body, toggle-to-true only)
 
 ### Blockers
 
