@@ -21,7 +21,7 @@ function isPublicPage(pathname: string): boolean {
   // Match exact public pages AND their sub-paths (e.g., /opengraph-image, /pricing/opengraph-image)
   return PUBLIC_PAGES.some(
     (p) => normalizedPath === p || normalizedPath === p + '/' ||
-      (p === '/' ? normalizedPath.startsWith('/opengraph-image') || normalizedPath.startsWith('/sitemap') || normalizedPath.startsWith('/robots')
+      (p === '/' ? normalizedPath.startsWith('/opengraph-image')
         : normalizedPath.startsWith(p + '/'))
   )
 }
@@ -49,6 +49,11 @@ export default async function proxy(req: NextRequest) {
 
   // 1. Bypass routes — no middleware processing needed
   if (isBypassRoute(pathname)) {
+    return NextResponse.next()
+  }
+
+  // 1b. Next.js generated metadata routes — bypass all middleware
+  if (pathname === '/robots.txt' || pathname === '/sitemap.xml') {
     return NextResponse.next()
   }
 
