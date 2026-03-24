@@ -2,7 +2,7 @@
 
 ## What This Is
 
-A B2B SaaS website for industrial AI and engineering software market intelligence. Public marketing pages convert visitors into paid dashboard subscribers who access 44+ interactive data visualizations covering 500+ startups across the PLM, CAD, CAE, and industrial AI landscape. Supports 6 languages (English, French, Spanish, Italian, German, Portuguese).
+A B2B SaaS website for industrial AI and engineering software market intelligence. Public marketing pages in 6 languages convert visitors into paid dashboard subscribers who access 44+ interactive data visualizations covering 500+ startups across the PLM, CAD, CAE, and industrial AI landscape. Live Stripe payments with Analyst ($4,999 one-time) and Strategist (€18,999/yr) tiers.
 
 ## Core Value
 
@@ -12,78 +12,75 @@ Converting visitors into paying dashboard subscribers through compelling market 
 
 ### Validated
 
-- ✓ Public marketing pages (home, pricing, about, report) — Phase 14
+- ✓ Public marketing pages (home, pricing, about, report) — v1.0
 - ✓ Email/password authentication with verification and password reset — existing
-- ✓ 44+ dashboard visualization pages (charts, maps, radar, treemap, SWOT, etc.) — existing
-- ✓ Stripe sandbox integration with subscription tiers — existing
-- ✓ i18n for 5 languages (en, fr, es, it, de) with language switcher — Phase 14
+- ✓ 44+ dashboard visualization pages — existing
+- ✓ i18n for 6 languages (en/fr/es/it/de/pt) with flag emoji language switcher — v1.0
 - ✓ CSV-driven startup and investor data pipeline — existing
-- ✓ Role-based access control (free tier, paid tiers, friends access) — existing
+- ✓ Role-based access control (explorer/analyst/strategist/advisory/admin) — v1.0
+- ✓ Live Stripe checkout (Analyst + Strategist) — v1.0
+- ✓ SEO (sitemap, OG images, meta tags, robots.txt) — v1.0
+- ✓ React Email templates (welcome, receipt, verification, password-reset) — v1.0
+- ✓ Subscriber onboarding wizard (tier-aware, 3 steps) — v1.0
 
 ### Active
 
-- [ ] Production Stripe integration (live keys, real payments)
-- [ ] Portuguese (pt) language support with flag emoji in language switcher
-- [ ] Flag emoji next to all language names in LanguageSwitcher (🇺🇸🇬🇧, 🇫🇷, 🇪🇸, 🇮🇹, 🇩🇪, 🇧🇷🇵🇹)
-- [ ] Production content polish (copy, SEO, meta tags, OG images)
-- [ ] Stripe checkout dry run with production keys
-- [ ] Subscription lifecycle (upgrade, downgrade, cancel, billing portal)
-- [ ] Onboarding flow for new subscribers
-- [ ] Email transactional polish (welcome, receipt, trial expiry)
+(None yet — define for v1.1 milestone)
 
 ### Out of Scope
 
-- Asian language variants (Japanese, Chinese) — different SEO, payment rails, regulatory complexity; separate project
-- Mobile app — web-first, responsive design sufficient
-- Real-time data feeds — CSV-based pipeline sufficient for current scale
+- Asian language variants (Japanese, Chinese) — different infrastructure, payment rails, regulatory
+- Mobile app — responsive web sufficient for B2B market
+- Real-time data feeds — CSV pipeline sufficient at current scale
 - Report generator tool — separate GSD project
 - Agent updater tool — separate GSD project
-- Dashboard content translation — deferred, English-only dashboard is acceptable for B2B
+- Dashboard content translation — English-only dashboard acceptable for B2B
 
 ## Context
 
-- **Tech stack:** Next.js 15, NextAuth, Stripe, Resend, D3, Recharts, Tailwind CSS, shadcn/ui, next-intl
-- **Database:** Neon (Postgres) via Drizzle ORM
+- **Tech stack:** Next.js 16, NextAuth, Stripe (live), Resend, React Email, D3, Recharts, Tailwind CSS, shadcn/ui, next-intl
+- **Database:** Neon (Postgres)
 - **Data:** 500+ startups, investors from CSV files, market reports
-- **Scale:** 263 TypeScript files, 37K lines, 241 commits
-- **Current state:** Stripe in sandbox mode, site not yet live with real payments
-- **Hosting:** Vercel (inferred from Next.js)
-- **Existing i18n:** 5 languages with LanguageSwitcher globe dropdown, cookie persistence, locale-prefixed URLs
+- **Scale:** 281 TypeScript files, 38.5K lines, 251 commits
+- **Current state:** v1.0 shipped — live at threadmoat.com with real payments
+- **Hosting:** Vercel
+- **Tiers:** Recon (free) → Analyst ($4,999 one-time) → Strategist (€18,999/yr) → Advisory (custom)
 
 ## Constraints
 
-- **Stripe:** Must complete live mode onboarding and test with production keys before launch
-- **Translations:** Draft quality from Claude — professional review recommended before launch for customer-facing content
-- **Data privacy:** CSV data contains startup financial information — ensure proper access control
-- **Brand names:** ThreadMoat, Digital Thread, Recon, Forge, Red Keep must never be translated
+- **Translations:** ES/IT/DE reviewed by native speakers; FR/PT pending review
+- **Data privacy:** CSV data contains startup financial information — access controlled by tier
+- **Brand names:** ThreadMoat, Digital Thread, Analyst, Strategist, Advisory, Recon must not be translated
 
 ## Key Decisions
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| next-intl for i18n | App Router native, cookie-based locale detection, no redirect for default locale | ✓ Good |
-| localePrefix: as-needed | English visitors see / not /en, cleaner URLs | ✓ Good |
-| Skip Asian languages | Different infrastructure requirements, low ROI for initial launch | — Pending |
-| Add Portuguese | Brazil has growing industrial sector, 270M speakers, minimal effort to add | — Pending |
-| Both US+UK flags for English | Neutral representation for international English content | — Pending |
-| Stripe for payments | Industry standard, good developer experience, handles subscriptions | ✓ Good |
+| next-intl for i18n | App Router native, cookie-based locale detection | ✓ Good |
+| localePrefix: as-needed | English at /, no redirect to /en | ✓ Good |
+| intlMiddleware outside auth() | Prevents rewrite→redirect on Vercel edge | ✓ Good |
+| Forge→Analyst, Red Keep→Strategist | Business partners preferred professional tier names | ✓ Good |
+| Analyst as one-time, Strategist as annual | Matches actual product offering — report vs subscription | ✓ Good |
+| React Email + Resend | Official companion, JSX templates, Resend already in use | ✓ Good |
+| Skip Asian languages | Different infrastructure requirements | — Pending |
+| Add Portuguese | Brazil industrial market, 270M speakers | ✓ Good |
 
 ## Evolution
 
 This document evolves at phase transitions and milestone boundaries.
 
-**After each phase transition** (via `/gsd:transition`):
+**After each phase transition:**
 1. Requirements invalidated? → Move to Out of Scope with reason
 2. Requirements validated? → Move to Validated with phase reference
 3. New requirements emerged? → Add to Active
 4. Decisions to log? → Add to Key Decisions
 5. "What This Is" still accurate? → Update if drifted
 
-**After each milestone** (via `/gsd:complete-milestone`):
+**After each milestone:**
 1. Full review of all sections
 2. Core Value check — still the right priority?
 3. Audit Out of Scope — reasons still valid?
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-22 after initialization*
+*Last updated: 2026-03-24 after v1.0 milestone*
