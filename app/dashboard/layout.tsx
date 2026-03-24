@@ -12,6 +12,7 @@ type ProfileRow = {
   company?: string
   title?: string
   profile_type?: string
+  onboarding_completed?: boolean
 }
 
 export default async function DashboardLayout({
@@ -31,7 +32,7 @@ export default async function DashboardLayout({
   let profile: ProfileRow | undefined
   try {
     const rows = await sql`
-      SELECT is_admin, full_name, company, title, profile_type
+      SELECT is_admin, full_name, company, title, profile_type, onboarding_completed
       FROM profiles
       WHERE id = ${userId}
     `
@@ -72,6 +73,10 @@ export default async function DashboardLayout({
   const accessTier = getAccessTier(productId, isAdmin)
   const isFreeUser = accessTier === 'explorer'
 
+  const showOnboarding = !isAdmin
+    && profile?.profile_type != null
+    && profile?.onboarding_completed !== true
+
   return (
     <DashboardLayoutClient
       user={user}
@@ -82,6 +87,7 @@ export default async function DashboardLayout({
       isExpiredTrial={isExpiredTrial}
       daysRemaining={daysRemaining}
       accessTier={accessTier}
+      showOnboarding={showOnboarding}
     >
       {children}
     </DashboardLayoutClient>

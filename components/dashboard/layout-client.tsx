@@ -1,6 +1,6 @@
 "use client"
 
-import { ReactNode, Suspense } from "react"
+import { ReactNode, Suspense, useState } from "react"
 import type { Session } from "next-auth"
 import { ScenarioProvider, useScenario } from "@/contexts/scenario-context"
 import { PlanProvider } from "@/contexts/plan-context"
@@ -9,6 +9,7 @@ import { FreeUserGuard } from "./free-user-guard"
 import { CheckoutToast } from "@/components/checkout/checkout-toast"
 import { useIdleTimeout } from "@/hooks/use-idle-timeout"
 import type { AccessTier } from "@/lib/tiers"
+import { OnboardingWizard } from "./onboarding-wizard"
 
 interface Profile {
   full_name?: string
@@ -17,7 +18,7 @@ interface Profile {
   profile_type?: string
 }
 
-function LayoutInner({ user, profile, children, isAdmin, isFreeUser, isExpiredTrial, daysRemaining, accessTier }: {
+function LayoutInner({ user, profile, children, isAdmin, isFreeUser, isExpiredTrial, daysRemaining, accessTier, showOnboarding = false }: {
   user: Session["user"]
   profile?: Profile
   children: ReactNode
@@ -26,8 +27,10 @@ function LayoutInner({ user, profile, children, isAdmin, isFreeUser, isExpiredTr
   isExpiredTrial: boolean
   daysRemaining: number | null
   accessTier: AccessTier
+  showOnboarding?: boolean
 }) {
   const { scenario, setScenario } = useScenario()
+  const [onboardingDismissed, setOnboardingDismissed] = useState(false)
   useIdleTimeout()
   return (
     <SidebarShell
@@ -45,6 +48,12 @@ function LayoutInner({ user, profile, children, isAdmin, isFreeUser, isExpiredTr
           {children}
         </FreeUserGuard>
       ) : children}
+      {showOnboarding && !onboardingDismissed && (
+        <OnboardingWizard
+          accessTier={accessTier}
+          onComplete={() => setOnboardingDismissed(true)}
+        />
+      )}
     </SidebarShell>
   )
 }
@@ -58,6 +67,7 @@ export function DashboardLayoutClient({
   isExpiredTrial = false,
   daysRemaining = null,
   accessTier = 'explorer',
+  showOnboarding = false,
   children,
 }: {
   user: Session["user"]
@@ -68,6 +78,7 @@ export function DashboardLayoutClient({
   isExpiredTrial?: boolean
   daysRemaining?: number | null
   accessTier?: AccessTier
+  showOnboarding?: boolean
   children: ReactNode
 }) {
   return (
@@ -81,6 +92,7 @@ export function DashboardLayoutClient({
           isExpiredTrial={isExpiredTrial}
           daysRemaining={daysRemaining}
           accessTier={accessTier}
+          showOnboarding={showOnboarding}
         >
           {children}
         </LayoutInner>
