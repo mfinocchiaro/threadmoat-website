@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Sidebar } from "./sidebar";
 import { TopBar } from "./topbar";
+import { FilterToolbar } from "./filter-toolbar";
 import type { Session } from "next-auth";
 import type { AccessTier } from "@/lib/tiers";
 
@@ -67,6 +68,7 @@ export function SidebarShell({
           ⚠ Research estimates only — figures are educated approximations from public sources and may contain errors. Not investment advice. Always conduct your own due diligence.
         </div>
         <div className="flex-1 overflow-y-auto">
+          <FilterToolbar />
           <div className="mx-auto px-6 py-6">{children}</div>
         </div>
       </div>
