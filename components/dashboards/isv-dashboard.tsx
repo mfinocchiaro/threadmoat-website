@@ -6,7 +6,6 @@ import { useThesis } from "@/contexts/thesis-context";
 import { useLayout } from "@/contexts/layout-context";
 import { KPICard } from "@/components/widgets/kpi-card";
 import { WidgetCard } from "@/components/widgets/widget-card";
-import { VizFilterBar } from "@/components/viz-filter-bar";
 import { NetworkGraphToggle } from "@/components/charts/network-graph-toggle";
 import { PeriodicTable } from "@/components/charts/periodic-table";
 import { QuadrantChart } from "@/components/charts/quadrant-chart";
@@ -73,8 +72,6 @@ export function ISVDashboard({ data, isLoading, isAdmin = false }: { data: Compa
                 <h1 className="text-3xl font-bold tracking-tight">Targeted Acquisition Radar</h1>
                 <p className="text-muted-foreground">{hasThesis ? `${displayData.length} opportunities found.` : "Configure your acquisition radar to see results."}</p>
             </div>
-
-            {hasThesis && <VizFilterBar companies={displayData} />}
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <KPICard title="Acquisition Targets" value={hasThesis ? whitespace.length.toString() : "\u2014"} subtitle={hasThesis ? "Uncovered market areas" : "Set focus to populate"} icon={<Network className="size-5" />} onClick={hasThesis && whitespace.length > 0 ? () => toggleDrill("whitespace") : undefined} active={drillDown === "whitespace"} />

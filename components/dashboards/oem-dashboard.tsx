@@ -6,7 +6,6 @@ import { useThesis } from "@/contexts/thesis-context";
 import { useLayout } from "@/contexts/layout-context";
 import { KPICard } from "@/components/widgets/kpi-card";
 import { WidgetCard } from "@/components/widgets/widget-card";
-import { VizFilterBar } from "@/components/viz-filter-bar";
 import { NetworkGraphToggle } from "@/components/charts/network-graph-toggle";
 import { SunburstChart } from "@/components/charts/sunburst-chart";
 import { QuadrantChart } from "@/components/charts/quadrant-chart";
@@ -90,8 +89,6 @@ export function OEMDashboard({ data, isLoading, isAdmin = false }: { data: Compa
                 <h1 className="text-3xl font-bold tracking-tight">White Space Intelligence</h1>
                 <p className="text-muted-foreground">{hasThesis ? `${displayData.length} relevant companies found.` : "Configure your coverage map to see results."}</p>
             </div>
-
-            {hasThesis && <VizFilterBar companies={displayData} />}
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <KPICard title="Active Threats" value={hasThesis ? threats.length.toString() : "\u2014"} subtitle={hasThesis ? "High-score replacement targets" : "Set focus to populate"} icon={<Radar className="size-5" />} onClick={hasThesis && threats.length > 0 ? () => toggleDrill("threats") : undefined} active={drillDown === "threats"} />

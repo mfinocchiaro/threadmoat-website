@@ -7,7 +7,6 @@ import { useThesis, ScoredCompany } from "@/contexts/thesis-context";
 import { useLayout } from "@/contexts/layout-context";
 import { KPICard } from "@/components/widgets/kpi-card";
 import { WidgetCard } from "@/components/widgets/widget-card";
-import { VizFilterBar } from "@/components/viz-filter-bar";
 import { BubbleChart } from "@/components/charts/bubble-chart";
 import { QuadrantChart } from "@/components/charts/quadrant-chart";
 import { PeriodicTable } from "@/components/charts/periodic-table";
@@ -87,8 +86,6 @@ export function VCDashboard({ data, isLoading, isAdmin = false }: { data: Compan
                 <h1 className="text-3xl font-bold tracking-tight">Investor Intelligence</h1>
                 <p className="text-muted-foreground">{hasThesis ? `${matches.length} thesis matches found.` : "Configure your investment thesis to see results."}</p>
             </div>
-
-            {hasThesis && <VizFilterBar companies={displayData} />}
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <KPICard title="Thesis Matches" value={hasThesis ? matches.length.toString() : "\u2014"} subtitle={hasThesis ? `from ${data.length} total` : "Set focus to populate"} icon={<Target className="size-4" />} onClick={hasThesis && matches.length > 0 ? () => toggleDrill("matches") : undefined} active={drillDown === "matches"} />
