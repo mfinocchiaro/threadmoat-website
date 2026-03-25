@@ -1,6 +1,6 @@
 "use client"
 
-import React, { createContext, useContext, useState, ReactNode } from "react"
+import React, { createContext, useContext, useState, useMemo, useCallback, ReactNode } from "react"
 import { Company } from "@/lib/company-data"
 
 interface FilterState {
@@ -28,6 +28,9 @@ interface FilterContextType {
   setFilters: React.Dispatch<React.SetStateAction<FilterState>>
   isSidebarOpen: boolean
   filterCompany: (company: Company) => boolean
+  activeFilterCount: number
+  clearAllFilters: () => void
+  removeFilter: (type: string, value: string) => void
 }
 
 const FilterContext = createContext<FilterContextType | undefined>(undefined)
@@ -189,8 +192,58 @@ export function FilterProvider({ children }: { children: ReactNode }) {
     return true
   }
 
+  const activeFilterCount = useMemo(() =>
+    filters.investmentLists.length +
+    filters.subsegments.length +
+    filters.industries.length +
+    filters.countries.length +
+    filters.lifecycle.length +
+    filters.fundingRound.length +
+    filters.deploymentModel.length +
+    filters.operatingModel.length +
+    filters.categoryTags.length +
+    filters.differentiationTags.length +
+    filters.investmentTheses.length +
+    (filters.fundingRange[0] !== 0 || filters.fundingRange[1] !== 0 ? 1 : 0) +
+    filters.sizeCategory.length +
+    filters.ecosystemFlags.length +
+    (filters.oceanStrategy !== "all" ? 1 : 0),
+  [filters])
+
+  const clearAllFilters = useCallback(() => {
+    setFilters(prev => ({
+      ...prev,
+      investmentLists: [],
+      subsegments: [],
+      industries: [],
+      countries: [],
+      lifecycle: [],
+      fundingRound: [],
+      deploymentModel: [],
+      operatingModel: [],
+      categoryTags: [],
+      differentiationTags: [],
+      investmentTheses: [],
+      fundingRange: [0, 0] as [number, number],
+      search: "",
+      oceanStrategy: "all",
+      sizeCategory: [],
+      ecosystemFlags: [],
+    }))
+  }, [setFilters])
+
+  const removeFilter = useCallback((type: string, value: string) => {
+    setFilters(prev => {
+      const current = prev[type as keyof FilterState]
+      if (Array.isArray(current)) {
+        return { ...prev, [type]: (current as string[]).filter(v => v !== value) }
+      }
+      return prev
+    })
+  }, [setFilters])
+
   return (
-    <FilterContext.Provider value={{ filters, setFilters, filterCompany, isSidebarOpen: true }}>
+    <FilterContext.Provider value={{ filters, setFilters, filterCompany, isSidebarOpen: true, activeFilterCount, clearAllFilters, removeFilter }}>
       {children}
     </FilterContext.Provider>
   )
