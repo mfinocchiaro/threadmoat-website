@@ -6,7 +6,6 @@ import { useThesis, ScoredCompany } from "@/contexts/thesis-context";
 import { useLayout } from "@/contexts/layout-context";
 import { KPICard } from "@/components/widgets/kpi-card";
 import { WidgetCard } from "@/components/widgets/widget-card";
-import { VizFilterBar } from "@/components/viz-filter-bar";
 import { LandscapeChart } from "@/components/charts/landscape-chart";
 import { BarChart } from "@/components/charts/bar-chart";
 import { PeriodicTable } from "@/components/charts/periodic-table";
@@ -53,8 +52,6 @@ export function StartupDashboard({ data, isLoading, isAdmin = false }: { data: C
                 <h1 className="text-3xl font-bold tracking-tight">Startup Intelligence</h1>
                 <p className="text-muted-foreground">{hasThesis ? `${matches.length} competitors found.` : "Configure your competitive moat to see results."}</p>
             </div>
-
-            {hasThesis && <VizFilterBar companies={displayData} />}
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <KPICard title="Competitors Found" value={hasThesis ? matches.length.toString() : "\u2014"} subtitle={hasThesis ? `from ${data.length} companies` : "Set focus to populate"} icon={<DollarSign className="size-4" />} onClick={hasThesis && matches.length > 0 ? () => toggleDrill("competitors") : undefined} active={drillDown === "competitors"} />
