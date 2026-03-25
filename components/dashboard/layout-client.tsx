@@ -4,6 +4,8 @@ import { ReactNode, Suspense, useState } from "react"
 import type { Session } from "next-auth"
 import { ScenarioProvider, useScenario } from "@/contexts/scenario-context"
 import { PlanProvider } from "@/contexts/plan-context"
+import { CompanyDataProvider } from "@/contexts/company-data-context"
+import { FilterProvider } from "@/contexts/filter-context"
 import { SidebarShell } from "./sidebar-shell"
 import { FreeUserGuard } from "./free-user-guard"
 import { CheckoutToast } from "@/components/checkout/checkout-toast"
@@ -84,18 +86,22 @@ export function DashboardLayoutClient({
   return (
     <PlanProvider isFreeUser={isFreeUser} accessTier={accessTier ?? 'explorer'}>
       <ScenarioProvider initialScenario={initialScenario}>
-        <LayoutInner
-          user={user}
-          profile={profile}
-          isAdmin={isAdmin}
-          isFreeUser={isFreeUser}
-          isExpiredTrial={isExpiredTrial}
-          daysRemaining={daysRemaining}
-          accessTier={accessTier}
-          showOnboarding={showOnboarding}
-        >
-          {children}
-        </LayoutInner>
+        <CompanyDataProvider>
+          <FilterProvider>
+            <LayoutInner
+              user={user}
+              profile={profile}
+              isAdmin={isAdmin}
+              isFreeUser={isFreeUser}
+              isExpiredTrial={isExpiredTrial}
+              daysRemaining={daysRemaining}
+              accessTier={accessTier}
+              showOnboarding={showOnboarding}
+            >
+              {children}
+            </LayoutInner>
+          </FilterProvider>
+        </CompanyDataProvider>
       </ScenarioProvider>
     </PlanProvider>
   )

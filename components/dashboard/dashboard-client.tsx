@@ -2,7 +2,6 @@
 
 import { useEffect, useState, startTransition, useCallback, useMemo } from "react"
 import { Company, loadCompanyData } from "@/lib/company-data"
-import { FilterProvider } from "@/contexts/filter-context"
 import { ThesisProvider, ThesisType, useThesis } from "@/contexts/thesis-context"
 import { useScenario } from "@/contexts/scenario-context"
 import { StartupDashboard } from "@/components/dashboards/startup-dashboard"
@@ -117,18 +116,16 @@ export function DashboardClient({ isAdmin = false }: { profileType?: string; isA
   }, [])
 
   return (
-    <FilterProvider>
-      <LayoutProvider isAdmin={isAdmin}>
-        <ThesisProvider profileType={scenario}>
-          <DashboardInner
-            companies={companies}
-            isLoading={isLoading}
-            profileType={scenario}
-            onSelectProfile={setScenario}
-            isAdmin={isAdmin}
-          />
-        </ThesisProvider>
-      </LayoutProvider>
-    </FilterProvider>
+    <LayoutProvider isAdmin={isAdmin}>
+      <ThesisProvider profileType={scenario}>
+        <DashboardInner
+          companies={companies}
+          isLoading={isLoading}
+          profileType={scenario}
+          onSelectProfile={setScenario}
+          isAdmin={isAdmin}
+        />
+      </ThesisProvider>
+    </LayoutProvider>
   )
 }
