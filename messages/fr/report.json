@@ -38,7 +38,7 @@
   },
   "methodology": {
     "title": "M\u00e9thodologie",
-    "subtitle": "Chaque donn\u00e9e est cur\u00e9e par un seul expert du domaine \u2014 pas de scraping, pas de g\u00e9n\u00e9ration par IA.",
+    "subtitle": "Chaque donn\u00e9e est s\u00e9lectionn\u00e9e par un seul expert du domaine \u2014 sans collecte automatis\u00e9e ni g\u00e9n\u00e9ration par IA.",
     "m1": "200+ entretiens de recherche primaire avec des fondateurs",
     "m2": "Mises \u00e0 jour hebdomadaires de la base Airtable (lundis CET)",
     "m3": "Scoring concurrentiel sur 7 dimensions (\u00e9chelle 1-5)",
