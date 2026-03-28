@@ -107,11 +107,15 @@ export async function createCheckoutSession(productId: string, userEmail: string
         quantity: 1,
       }
 
+  // Check if this is a Strategist upgrade from an existing Analyst purchase
+  const discounts = await getUpgradeDiscounts(userId, productId)
+
   const checkoutSession = await getStripe().checkout.sessions.create({
     customer: customerId,
     mode: 'subscription' as const,
     payment_method_types: ['card' as const],
     line_items: [lineItem],
+    ...(discounts.length > 0 ? { discounts } : {}),
     success_url: `${baseUrl}/dashboard?checkout=success`,
     cancel_url: `${baseUrl}/dashboard?checkout=canceled`,
     metadata: { user_id: userId, product_id: productId },
@@ -145,4 +149,53 @@ export async function createBillingPortalSession() {
   })
 
   return { url: portalSession.url }
+}
+
+/** Upgrade coupon ID — consistent across Stripe environments via idempotency key */
+const UPGRADE_COUPON_ID = 'threadmoat_analyst_upgrade_4999'
+const UPGRADE_AMOUNT_OFF = 499900 // $4,999 in cents
+
+/**
+ * Check if user has a completed Analyst purchase and return a Stripe discount
+ * array for the Strategist subscription checkout. Returns empty array if
+ * no upgrade credit applies.
+ */
+async function getUpgradeDiscounts(
+  userId: string,
+  targetProductId: string
+): Promise<{ coupon: string }[]> {
+  // Only apply to Strategist upgrades
+  if (targetProductId !== 'strategist_annual') return []
+
+  // Check for a completed Analyst purchase
+  const purchases = await sql`
+    SELECT id FROM purchases
+    WHERE user_id = ${userId}
+      AND product_id = 'analyst_annual'
+      AND status = 'completed'
+    LIMIT 1
+  `
+
+  if (purchases.length === 0) return []
+
+  console.log('[Checkout] Analyst purchase found — applying $4,999 upgrade credit')
+
+  // Ensure the coupon exists in Stripe (idempotent — retrieves if already created)
+  const stripe = getStripe()
+  try {
+    await stripe.coupons.retrieve(UPGRADE_COUPON_ID)
+  } catch {
+    // Coupon doesn't exist yet — create it
+    await stripe.coupons.create({
+      id: UPGRADE_COUPON_ID,
+      amount_off: UPGRADE_AMOUNT_OFF,
+      currency: 'usd',
+      duration: 'once',
+      name: 'Analyst Upgrade Credit ($4,999)',
+      metadata: { purpose: 'analyst_to_strategist_upgrade' },
+    })
+    console.log('[Checkout] Created upgrade coupon:', UPGRADE_COUPON_ID)
+  }
+
+  return [{ coupon: UPGRADE_COUPON_ID }]
 }

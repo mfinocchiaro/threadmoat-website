@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useMemo, useRef } from "react"
-import { Company } from "@/lib/company-data"
+import { Company, formatCurrency } from "@/lib/company-data"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -40,6 +40,7 @@ interface SwotItem {
   label: string
   value: number
   justification?: string
+  companies?: Company[]  // Backing companies for drill-down links
 }
 
 interface SwotData {
@@ -116,7 +117,8 @@ function deriveSwot(company: Company, allData: Company[]): SwotData {
     opportunities.push({ label: "Large addressable market", value: company.marketOpportunity })
   }
   if ((company.weightedScore || 0) > segmentAvgScore && sameSegment.length > 0) {
-    opportunities.push({ label: `Above segment average (${segmentAvgScore.toFixed(1)} avg)`, value: company.weightedScore })
+    const belowCompany = sameSegment.filter(c => (c.weightedScore || 0) <= (company.weightedScore || 0))
+    opportunities.push({ label: `Above segment average (${segmentAvgScore.toFixed(1)} avg)`, value: company.weightedScore, companies: belowCompany })
   }
   if (company.industriesServed && company.industriesServed.length >= 3) {
     opportunities.push({ label: `Multi-industry reach (${company.industriesServed.length} sectors)`, value: company.industriesServed.length })
@@ -127,15 +129,15 @@ function deriveSwot(company: Company, allData: Company[]): SwotData {
 
   // Threats: competitive pressure signals
   if (sameSegment.length >= 20) {
-    threats.push({ label: `Crowded segment (${sameSegment.length} competitors)`, value: sameSegment.length })
+    threats.push({ label: `Crowded segment (${sameSegment.length} competitors)`, value: sameSegment.length, companies: sameSegment })
   }
   const betterFunded = sameSegment.filter(c => (c.totalFunding || 0) > (company.totalFunding || 0))
   if (betterFunded.length >= 5) {
-    threats.push({ label: `${betterFunded.length} better-funded rivals`, value: betterFunded.length })
+    threats.push({ label: `${betterFunded.length} better-funded rivals`, value: betterFunded.length, companies: betterFunded })
   }
   const higherScored = sameSegment.filter(c => (c.weightedScore || 0) > (company.weightedScore || 0))
   if (higherScored.length >= 3) {
-    threats.push({ label: `${higherScored.length} higher-scoring competitors`, value: higherScored.length })
+    threats.push({ label: `${higherScored.length} higher-scoring competitors`, value: higherScored.length, companies: higherScored })
   }
   if ((company.fundingEfficiency || 0) <= 2 && (company.fundingEfficiency || 0) > 0) {
     threats.push({ label: "Low funding efficiency — burn risk", value: company.fundingEfficiency })
@@ -200,9 +202,13 @@ const QUADRANT_CONFIG = {
 function SwotQuadrant({
   quadrant,
   items,
+  onDrillDown,
+  activeDrillLabel,
 }: {
   quadrant: keyof typeof QUADRANT_CONFIG
   items: SwotItem[]
+  onDrillDown?: (item: SwotItem) => void
+  activeDrillLabel?: string | null
 }) {
   const cfg = QUADRANT_CONFIG[quadrant]
   const Icon = cfg.icon
@@ -218,27 +224,44 @@ function SwotQuadrant({
         <p className="text-xs text-muted-foreground italic">No significant signals</p>
       ) : (
         <ul className="space-y-2 flex-1">
-          {items.map((item, i) => (
-            <li key={i} className="text-sm">
-              <div className="flex items-start gap-2">
-                {item.value > 0 ? (
-                  <span className={cn("inline-flex px-1.5 py-0.5 rounded text-[11px] font-medium border shrink-0", cfg.badge)}>
-                    {item.value <= 5 ? `${item.value.toFixed(1)}/5` : item.value}
+          {items.map((item, i) => {
+            const hasCompanies = item.companies && item.companies.length > 0
+            const isActive = activeDrillLabel === item.label
+
+            return (
+              <li key={i} className="text-sm">
+                <div
+                  className={cn(
+                    "flex items-start gap-2 rounded-md px-1 -mx-1 py-0.5",
+                    hasCompanies && "cursor-pointer hover:bg-white/5 transition-colors",
+                    isActive && "bg-white/10 ring-1 ring-white/10"
+                  )}
+                  onClick={hasCompanies ? () => onDrillDown?.(item) : undefined}
+                >
+                  {item.value > 0 ? (
+                    <span className={cn("inline-flex px-1.5 py-0.5 rounded text-[11px] font-medium border shrink-0", cfg.badge)}>
+                      {item.value <= 5 ? `${item.value.toFixed(1)}/5` : item.value}
+                    </span>
+                  ) : (
+                    <span className={cn("inline-flex px-1 py-0.5 rounded text-[11px] shrink-0", cfg.badge)}>
+                      &bull;
+                    </span>
+                  )}
+                  <span className={cn(
+                    "text-foreground",
+                    hasCompanies && "underline decoration-dotted underline-offset-4 decoration-muted-foreground/40"
+                  )}>
+                    {item.label}
                   </span>
-                ) : (
-                  <span className={cn("inline-flex px-1 py-0.5 rounded text-[11px] shrink-0", cfg.badge)}>
-                    &bull;
-                  </span>
+                </div>
+                {item.justification && (
+                  <p className="text-xs text-muted-foreground mt-0.5 ml-10 line-clamp-2">
+                    {item.justification}
+                  </p>
                 )}
-                <span className="text-foreground">{item.label}</span>
-              </div>
-              {item.justification && (
-                <p className="text-xs text-muted-foreground mt-0.5 ml-10 line-clamp-2">
-                  {item.justification}
-                </p>
-              )}
-            </li>
-          ))}
+              </li>
+            )
+          })}
         </ul>
       )}
     </div>
@@ -250,6 +273,7 @@ function SwotQuadrant({
 export function SwotChart({ data, className }: SwotChartProps) {
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [search, setSearch] = useState("")
+  const [drillItem, setDrillItem] = useState<SwotItem | null>(null)
 
   const sortedData = useMemo(
     () => [...data].filter(d => d.weightedScore > 0).sort((a, b) => b.weightedScore - a.weightedScore),
@@ -266,6 +290,22 @@ export function SwotChart({ data, className }: SwotChartProps) {
     [selectedCompany, data]
   )
 
+  const handleDrillDown = (item: SwotItem) => {
+    setDrillItem(prev => prev?.label === item.label ? null : item)
+  }
+
+  // Clear drill-down when company changes
+  const handleSelectCompany = (id: string) => {
+    setSelectedId(id)
+    setDrillItem(null)
+  }
+
+  // Sort drill-down companies by weighted score descending
+  const drillCompanies = useMemo(() => {
+    if (!drillItem?.companies) return []
+    return [...drillItem.companies].sort((a, b) => (b.weightedScore || 0) - (a.weightedScore || 0))
+  }, [drillItem])
+
   return (
     <Card className={cn("p-6", className)}>
       <div className="flex gap-6 h-full">
@@ -281,7 +321,7 @@ export function SwotChart({ data, className }: SwotChartProps) {
             {filtered.slice(0, 50).map(c => (
               <button
                 key={c.id}
-                onClick={() => setSelectedId(c.id)}
+                onClick={() => handleSelectCompany(c.id)}
                 className={cn(
                   "w-full text-left px-3 py-2 rounded-md text-sm transition-colors",
                   "hover:bg-muted/50",
@@ -336,10 +376,55 @@ export function SwotChart({ data, className }: SwotChartProps) {
               {/* 2×2 SWOT Grid */}
               {swot && (
                 <div className="grid grid-cols-2 gap-4">
-                  <SwotQuadrant quadrant="strengths" items={swot.strengths} />
-                  <SwotQuadrant quadrant="weaknesses" items={swot.weaknesses} />
-                  <SwotQuadrant quadrant="opportunities" items={swot.opportunities} />
-                  <SwotQuadrant quadrant="threats" items={swot.threats} />
+                  <SwotQuadrant quadrant="strengths" items={swot.strengths} onDrillDown={handleDrillDown} activeDrillLabel={drillItem?.label} />
+                  <SwotQuadrant quadrant="weaknesses" items={swot.weaknesses} onDrillDown={handleDrillDown} activeDrillLabel={drillItem?.label} />
+                  <SwotQuadrant quadrant="opportunities" items={swot.opportunities} onDrillDown={handleDrillDown} activeDrillLabel={drillItem?.label} />
+                  <SwotQuadrant quadrant="threats" items={swot.threats} onDrillDown={handleDrillDown} activeDrillLabel={drillItem?.label} />
+                </div>
+              )}
+
+              {/* Drill-down company list */}
+              {drillItem && drillCompanies.length > 0 && (
+                <div className="rounded-lg border border-border bg-muted/20 p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <div>
+                      <h3 className="text-sm font-semibold">{drillItem.label}</h3>
+                      <p className="text-xs text-muted-foreground">{drillCompanies.length} companies</p>
+                    </div>
+                    <button
+                      onClick={() => setDrillItem(null)}
+                      className="text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      <X className="size-4" />
+                    </button>
+                  </div>
+                  <div className="space-y-1.5 max-h-[400px] overflow-y-auto pr-1">
+                    {drillCompanies.map(c => (
+                      <div
+                        key={c.id}
+                        className="flex items-center gap-3 px-3 py-2 rounded-md border border-border/50 bg-background/50 text-sm"
+                      >
+                        <span
+                          className="size-2 rounded-full shrink-0"
+                          style={{ backgroundColor: getInvestmentColor(c.investmentList) }}
+                        />
+                        <div className="flex-1 min-w-0">
+                          <span className="font-medium">{c.name}</span>
+                          <p className="text-xs text-muted-foreground truncate">
+                            {c.investmentList}{c.country ? ` · ${c.country}` : ""}
+                          </p>
+                        </div>
+                        {c.totalFunding > 0 && (
+                          <span className="text-xs text-muted-foreground tabular-nums shrink-0">
+                            {formatCurrency(c.totalFunding)}
+                          </span>
+                        )}
+                        <span className="text-xs font-medium tabular-nums shrink-0">
+                          {(c.weightedScore || 0).toFixed(1)}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>

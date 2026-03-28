@@ -114,13 +114,14 @@ export async function registerUser(data: RegisterData): Promise<ActionResult> {
         WHERE id = ${existing[0].id as string}
       `
 
+      let emailSent = true
       try {
         await sendVerificationEmail(email, verificationToken)
       } catch (err) {
         console.error('[email verification] Failed to send on retry:', err)
-        return { success: false, error: 'Account updated but verification email failed to send. Please try again or contact support.' }
+        emailSent = false
       }
-      return { success: true, emailSent: true }
+      return { success: true, emailSent }
     }
 
     const passwordHash = await bcrypt.hash(password, 12)
@@ -152,17 +153,17 @@ export async function registerUser(data: RegisterData): Promise<ActionResult> {
 
     // --- Send verification email ---
     // Coupon is redeemed after email verification (see verifyEmail), not here.
+    let emailSent = true
     try {
       await sendVerificationEmail(email, verificationToken)
     } catch (err) {
       console.error('[email verification] Failed to send:', err)
-      // Clean up the account — don't leave user stuck with no way to verify
-      await sql`DELETE FROM profiles WHERE id = ${user.id as string}`
-      await sql`DELETE FROM users WHERE id = ${user.id as string}`
-      return { success: false, error: 'Registration failed — could not send verification email. Please try again.' }
+      // DON'T delete the account — the user record is valid, they just need to resend.
+      // Redirect to success page with a warning so they can retry.
+      emailSent = false
     }
 
-    return { success: true, emailSent: true }
+    return { success: true, emailSent }
   } catch (err) {
     console.error('[registerUser]', err)
     return { success: false, error: 'Registration failed. Please try again later.' }
@@ -192,7 +193,7 @@ export async function resendVerificationEmail(email: string): Promise<ActionResu
     return { success: true }
   } catch (err) {
     console.error('[resendVerificationEmail]', err)
-    return { success: false, error: 'Failed to resend. Please try again.' }
+    return { success: false, error: 'Failed to send verification email. Please check your email address and try again, or contact support@threadmoat.com.' }
   }
 }
 
