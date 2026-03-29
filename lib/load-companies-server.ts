@@ -153,7 +153,11 @@ export async function loadCompaniesFromCSV(): Promise<Company[]> {
     lastFundingAmount: parseCurrency(row['Latest Event Funding Amount']),
     totalFunding: parseCurrency(row['Total Current Known Funding Level']),
     estimatedRevenue: parseCurrency(row['Current Estimated Annual Revenue']),
-    estimatedMarketValue: parseCurrency(row['Estimated Market Value']),
+    estimatedMarketValue: parseCurrency(row['Best Available Valuation']),
+    valuationConfidence: cleanField(row['Valuation Value Confidence']),
+    financialConfidence: cleanField(row['Financial Confidence']),
+    reportedValuation: parseCurrency(row['Reported Valuation']),
+    reportedValuationYear: parseInt(row['Reported Valuation Year']) || 0,
     financialNotes: extractAirtableValue(row['Financials Notes']),
     investors: Array.from(new Set(
       extractAirtableValue(row['Investors and VCs'])
