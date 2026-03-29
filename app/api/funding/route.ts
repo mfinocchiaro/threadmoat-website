@@ -131,7 +131,7 @@ export async function GET() {
           totalFunding,
           estimatedRevenue,
           estimatedHeadcount,
-          estimatedMarketValue: parseCurrency(row['Estimated Market Value']),
+          estimatedMarketValue: parseCurrency(row['Best Available Valuation']),
           cloudSaasMultiplier,
           cloudArrEfficiency: Math.round(cloudArrEfficiency * 10) / 10,
           cloudArrVsBenchmark: Math.round(cloudArrVsBenchmark * 10) / 10,

@@ -38,6 +38,11 @@ export interface Company {
   estimatedMarketValue: number
   financialNotes: string
   investors: string[]
+  // Funding & valuation metadata
+  valuationConfidence: string
+  financialConfidence: string
+  reportedValuation: number
+  reportedValuationYear: number
   // Scores
   marketOpportunity: number
   marketOpportunityJustification: string
