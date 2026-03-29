@@ -38,5 +38,6 @@ jobs:
           git add data/*.csv
           git diff --staged --quiet || (
             git commit -m "chore(data): auto-sync Airtable CSVs [skip ci]" &&
-            git push
+            git pull origin main &&
+            git push origin main
           )
