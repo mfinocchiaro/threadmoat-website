@@ -1,22 +1,62 @@
+# Workflow to Sync Airtable
+
 name: Sync Airtable
 
 on:
-  schedule:
-    - cron: '0 */6 * * *'
+  push:
+    branches:
+      - main
 
 jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout Code
         uses: actions/checkout@v2
 
-      - name: Set up Node.js
+      - name: Set Up Node.js
         uses: actions/setup-node@v2
         with:
           node-version: '18'
 
-      - name: Sync with Airtable
-        run: | 
-          npm install
-          node sync-script.js
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Configure Git
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+      - name: Fetch Airtable Data
+        env:
+          AIRTABLE_TOKEN: ${{ secrets.AIRTABLE_TOKEN }}
+          AIRTABLE_BASE_ID: ${{ secrets.AIRTABLE_BASE_ID }}
+        run: python scripts/fetch_airtable_csv.py
+
+      - name: Commit Changes
+        run: |
+          git add .
+          git commit -m "chore: sync airtable data" || true
+
+      - name: Retry Logic for Git Push
+        run: |
+          attempts=0
+          max_attempts=3
+          delay=2
+          while [ $attempts -lt $max_attempts ]; do
+            git pull --rebase
+            if [ $? -eq 0 ]; then
+              echo "Rebase successful, pushing changes..."
+              git push
+              exit 0
+            else
+              echo "Rebase failed, retrying in $delay seconds..."
+              attempts=$((attempts + 1))
+              sleep $delay
+            fi
+          done
+          echo "Failed to rebase after $max_attempts attempts, please resolve conflicts manually."
+          exit 1
+
+      - name: Notify on Success
+        run: echo 'Sync completed successfully!'
