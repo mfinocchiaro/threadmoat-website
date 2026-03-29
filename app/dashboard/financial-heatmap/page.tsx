@@ -18,7 +18,7 @@ function FinancialHeatmapInner() {
       <div>
         <h1 className="text-2xl font-bold">Financial Heatmap</h1>
         <p className="text-muted-foreground text-sm mt-1">
-          Startups ranked by financial health. Qualitative ratings (green = strong, red = weak) plus key numeric metrics across 600+ companies.
+          Read left to right: Identity → Raw Inputs → Efficiency → Burn &amp; Runway → Valuation → Confidence. Each column builds on the previous — hover any cell for details, click &quot;Show formulas&quot; for calculation logic.
         </p>
       </div>
       {isLoading ? (

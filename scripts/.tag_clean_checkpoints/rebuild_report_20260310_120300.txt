@@ -1,0 +1,306 @@
+ThreadMoat Tag Rebuild Report — 20260310_120300
+Companies changed: 34/557
+
+
+=== UNMAPPED TAGS (35) ===
+  [182] 'AI-powered Automation'
+  [102] 'Proprietary AI Models'
+  [ 92] 'Deep Integrations'
+  [ 72] 'AI-native Architecture'
+  [ 59] 'Manufacturing-grade AI Models'
+  [ 49] 'High-fidelity Simulation'
+  [ 43] 'Patented Technology'
+  [ 41] 'Proprietary Datasets'
+  [ 38] 'Plugins/Extensions'
+  [ 38] 'Industrial Knowledge Graph'
+  [ 36] 'Industrial-grade Edge'
+  [ 35] 'Fast Concept-to-Manufacturing'
+  [ 33] 'Browser-based'
+  [ 33] 'Real-time Analytics'
+  [ 32] 'ESG/Regulatory Compliance'
+  [ 31] 'Construction Tech'
+  [ 29] 'Modular Architecture'
+  [ 28] 'Domain-specific Workflows'
+  [ 27] 'AI-driven Optimization'
+  [ 26] 'Hardware Engineering Focus'
+  [ 22] 'Single Source of Truth'
+  [ 20] 'Quality & Inspection'
+  [ 20] 'Quoting & Estimation'
+  [ 17] 'No-code Platform'
+  [ 16] 'Aerospace-grade Capability'
+  [ 12] 'Rules-driven BIM'
+  [ 10] 'Training & Education'
+  [  9] 'Document Management'
+  [  9] 'OT Security'
+  [  8] 'Turnkey Deployment'
+  [  7] '3D Creator Tools'
+  [  6] 'Aerospace & Defense'
+  [  5] 'Requirements Traceability'
+  [  4] 'Quantum Computing'
+  [  2] 'Real-time Edge AI'
+
+=== FINAL CATEGORY TAGS ===
+  [170] Workflow Automation
+  [ 87] Digital Twin
+  [ 84] Engineering Software
+  [ 69] Automation
+  [ 58] Simulation
+  [ 56] Manufacturing Software
+  [ 47] AI for Industry 4.0
+  [ 46] Analytics
+  [ 45] Design Automation
+  [ 43] Additive Manufacturing
+  [ 40] Generative CAD
+  [ 39] AI Platform
+  [ 37] CAD
+  [ 35] AR/VR
+  [ 33] Cloud CAD
+  [ 32] Manufacturing Analytics
+  [ 32] Supply Chain
+  [ 32] PLM
+  [ 31] Digital Manufacturing
+  [ 31] Construction Tech
+  [ 30] Manufacturing AI
+  [ 30] BIM
+  [ 28] AI for Design
+  [ 27] Collaboration
+  [ 26] Advanced Manufacturing
+  [ 24] Factory Operations
+  [ 24] AI Copilot
+  [ 23] Industrial Operations
+  [ 23] MES
+  [ 23] Robotics
+  [ 22] Industrial IoT
+  [ 22] Sustainability
+  [ 22] Generative AI
+  [ 22] Industrial AI
+  [ 20] Quality & Inspection
+  [ 20] Quoting & Estimation
+  [ 19] Compliance
+  [ 19] Text-to-CAD
+  [ 19] AEC
+  [ 18] Agentic AI
+  [ 17] CAE
+  [ 17] No-code Platform
+  [ 16] Hardware
+  [ 16] Engineering Analysis
+  [ 16] EDA
+  [ 15] CNC Automation
+  [ 14] Materials
+  [ 13] ERP
+  [ 13] Smart Factory
+  [ 11] Traceability
+  [ 11] Industrial Software
+  [ 10] CFD
+  [ 10] Training & Education
+  [  9] Requirements Management
+  [  9] Document Management
+  [  8] BOM Management
+  [  7] Design Review
+  [  7] 3D Creator Tools
+  [  6] Predictive Maintenance
+  [  6] Project Management
+  [  6] Asset Management
+  [  4] Quantum Computing
+  [  4] OT Security
+  [  1] MBSE
+
+=== FINAL OPERATING MODEL TAGS ===
+  [483] B2B
+  [453] Platform
+  [381] Enterprise
+  [381] Cloud-native
+  [332] SaaS
+  [228] Vertical Focus
+  [208] Subscription
+  [205] Product-led Growth
+  [130] SMB
+  [ 88] API-first
+  [ 73] Self-Service
+  [ 54] Enterprise SaaS
+  [ 44] HW+SW
+  [ 42] Vertical SaaS
+  [ 38] Enterprise Sales
+  [ 38] Plugins/Extensions
+  [ 33] B2B SaaS
+  [ 32] Hybrid
+  [ 22] Community-driven
+  [ 21] Edge Deployment
+  [ 20] OEM
+  [ 17] Partner-led
+  [ 16] Direct Sales
+  [ 15] Services
+  [  9] Marketplace
+  [  8] B2C
+  [  6] On-premise
+  [  6] Aerospace & Defense
+  [  5] Usage-based
+  [  3] White-label
+  [  3] Freemium
+  [  2] Perpetual License
+  [  1] Channel
+
+=== FINAL DIFFERENTIATION TAGS ===
+  [182] AI-powered Automation
+  [102] Proprietary AI Models
+  [ 92] Deep Integrations
+  [ 72] AI-native Architecture
+  [ 61] Real-time Integration
+  [ 59] Manufacturing-grade AI Models
+  [ 58] Agentic Automation
+  [ 55] Physics-informed AI
+  [ 54] Cloud-native Workflow
+  [ 54] Fast Deployment
+  [ 52] Deep Domain Expertise
+  [ 51] Workflow Efficiency
+  [ 49] High-fidelity Simulation
+  [ 48] Generative Modeling
+  [ 47] Ease of Use
+  [ 43] Patented Technology
+  [ 41] Proprietary Datasets
+  [ 39] Real-time Monitoring
+  [ 38] Industrial Knowledge Graph
+  [ 36] Industrial-grade Edge
+  [ 35] Real-time Collaboration
+  [ 35] Operational Optimization
+  [ 35] Fast Concept-to-Manufacturing
+  [ 33] Browser-based
+  [ 33] Real-time Analytics
+  [ 32] ESG/Regulatory Compliance
+  [ 31] Vendor-neutral
+  [ 30] Simulation-Driven Design
+  [ 29] Modular Architecture
+  [ 29] AI-driven Design Generation
+  [ 28] Domain-specific Workflows
+  [ 28] Open Source
+  [ 27] AI-driven Optimization
+  [ 27] No-code Workflows
+  [ 26] AI Toolpath Optimization
+  [ 26] Hardware Engineering Focus
+  [ 24] AI for R&D
+  [ 24] Industrial AI Templates
+  [ 22] Single Source of Truth
+  [ 22] Collaborative Intelligence
+  [ 20] Cloud-native Simulation
+  [ 20] Digital Thread
+  [ 19] Real-time Workflow Guidance
+  [ 19] Real-time 3D Creation
+  [ 16] Aerospace-grade Capability
+  [ 12] Rules-driven BIM
+  [ 11] Open Data Standards
+  [ 10] Collaborative BOM
+  [ 10] Design for Manufacturing
+  [  8] Turnkey Deployment
+  [  5] Requirements Traceability
+  [  5] OT Security
+  [  3] Developer-First
+  [  2] Downstream Collaboration
+
+=== PER-COMPANY CHANGES ===
+
+LimitlessCNC
+    DROP   [Diff] 'Real-time Edge AI'
+
+TDEngine
+    MOVE   'Open Source' → diff
+
+Viam
+    MOVE   'Open Source' → diff
+
+Eleven Dynamics AG
+    MOVE   'Open Source' → diff
+
+DGG - The 3D Pipeline Company
+    MOVE   'Open Source' → diff
+
+Carbon
+    MOVE   'Open Source' → diff
+
+United Manufacturing Hub
+    MOVE   'Open Source' → diff
+
+Leap71
+    MOVE   'Open Source' → diff
+
+Quix
+    MOVE   'Open Source' → diff
+
+Speckle
+    MOVE   'Open Source' → diff
+
+AON3D
+    MOVE   'Open Source' → diff
+
+Foxglove
+    MOVE   'Open Source' → diff
+
+Authentise
+    MOVE   'Open Source' → diff
+
+Motif
+    MOVE   'Open Source' → diff
+
+Kyrall
+    MOVE   'Open Source' → diff
+
+OTee
+    MOVE   'Open Source' → diff
+
+United Manufacturing Hub (UMH)
+    MOVE   'Open Source' → diff
+
+That Open Company
+    MOVE   'Open Source' → diff
+
+LycheeAI
+    MOVE   'Open Source' → diff
+
+camfer
+    RENAME [Diff] 'AI Copilot Interface' → 'AI Copilot'
+    MOVE   'AI Copilot Interface' → cat
+
+Portainer.io
+    MOVE   'Open Source' → diff
+
+Open Orion
+    MOVE   'Open Source' → diff
+
+Quartic.ai
+    DROP   [Diff] 'Real-time Edge AI'
+
+Makistry
+    RENAME [Diff] 'AI Copilot Interface' → 'AI Copilot'
+    MOVE   'AI Copilot Interface' → cat
+
+Ara 3D
+    MOVE   'Open Source' → diff
+
+Quaoar Studio
+    MOVE   'Open Source' → diff
+
+Autodrop3D
+    MOVE   'Open Source' → diff
+
+Optrix
+    MOVE   'Open Source' → diff
+
+xNilio
+    MOVE   'Open Source' → diff
+
+CAD as Code
+    MOVE   'Open Source' → diff
+
+Cadify.ai
+    RENAME [Diff] 'AI Copilot Interface' → 'AI Copilot'
+    MOVE   'AI Copilot Interface' → cat
+
+Redo.pro
+    RENAME [Diff] 'AI Copilot Interface' → 'AI Copilot'
+    MOVE   'AI Copilot Interface' → cat
+
+AnyLog
+    MOVE   'Open Source' → diff
+
+Hanomi AI
+    RENAME [Diff] 'AI Copilot Interface' → 'AI Copilot'
+    MOVE   'AI Copilot Interface' → cat

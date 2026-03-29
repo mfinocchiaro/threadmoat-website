@@ -1,0 +1,91 @@
+# ThreadMoat Website
+
+## What This Is
+
+A B2B SaaS website for industrial AI and engineering software market intelligence. Public marketing pages in 6 languages convert visitors into paid dashboard subscribers who access 44+ interactive data visualizations covering 500+ startups across the PLM, CAD, CAE, and industrial AI landscape. Live Stripe payments with Analyst ($4,999 one-time) and Strategist (€18,999/yr) tiers.
+
+## Core Value
+
+Converting visitors into paying dashboard subscribers through compelling market intelligence content and frictionless checkout.
+
+## Requirements
+
+### Validated
+
+- ✓ Public marketing pages (home, pricing, about, report) — v1.0
+- ✓ Email/password authentication with verification and password reset — existing
+- ✓ 44+ dashboard visualization pages — existing
+- ✓ i18n for 6 languages (en/fr/es/it/de/pt) with flag emoji language switcher — v1.0
+- ✓ CSV-driven startup and investor data pipeline — existing
+- ✓ Role-based access control (explorer/analyst/strategist/advisory/admin) — v1.0
+- ✓ Live Stripe checkout (Analyst + Strategist) — v1.0
+- ✓ SEO (sitemap, OG images, meta tags, robots.txt) — v1.0
+- ✓ React Email templates (welcome, receipt, verification, password-reset) — v1.0
+- ✓ Subscriber onboarding wizard (tier-aware, 3 steps) — v1.0
+
+### Active
+
+- [ ] Compact sticky filter toolbar replacing dialog overlay (filters all charts)
+- [ ] Stripe upgrade coupon ($4,999 credit for report→subscription upgrades)
+- [ ] French translation careful review pass
+- [ ] CSV data refresh from corrected dataset (when available from other GSD project)
+- [ ] Verified funding & valuation data integration from agentic pipeline
+- [ ] SWOT comparative claims drill-down to specific company lists
+
+### Out of Scope
+
+- Asian language variants (Japanese, Chinese) — different infrastructure, payment rails, regulatory
+- Mobile app — responsive web sufficient for B2B market
+- Real-time data feeds — CSV pipeline sufficient at current scale
+- Report generator tool — separate GSD project
+- Agent updater tool — separate GSD project
+- Dashboard content translation — English-only dashboard acceptable for B2B
+
+## Context
+
+- **Tech stack:** Next.js 16, NextAuth, Stripe (live), Resend, React Email, D3, Recharts, Tailwind CSS, shadcn/ui, next-intl
+- **Database:** Neon (Postgres)
+- **Data:** 500+ startups, investors from CSV files, market reports
+- **Scale:** 281 TypeScript files, 38.5K lines, 251 commits
+- **Current state:** v1.0 shipped — live at threadmoat.com with real payments
+- **Hosting:** Vercel
+- **Tiers:** Recon (free) → Analyst ($4,999 one-time) → Strategist (€18,999/yr) → Advisory (custom)
+
+## Constraints
+
+- **Translations:** ES/IT/DE reviewed by native speakers; FR/PT pending review
+- **Data privacy:** CSV data contains startup financial information — access controlled by tier
+- **Brand names:** ThreadMoat, Digital Thread, Analyst, Strategist, Advisory, Recon must not be translated
+
+## Key Decisions
+
+| Decision | Rationale | Outcome |
+|----------|-----------|---------|
+| next-intl for i18n | App Router native, cookie-based locale detection | ✓ Good |
+| localePrefix: as-needed | English at /, no redirect to /en | ✓ Good |
+| intlMiddleware outside auth() | Prevents rewrite→redirect on Vercel edge | ✓ Good |
+| Forge→Analyst, Red Keep→Strategist | Business partners preferred professional tier names | ✓ Good |
+| Analyst as one-time, Strategist as annual | Matches actual product offering — report vs subscription | ✓ Good |
+| React Email + Resend | Official companion, JSX templates, Resend already in use | ✓ Good |
+| Skip Asian languages | Different infrastructure requirements | — Pending |
+| Add Portuguese | Brazil industrial market, 270M speakers | ✓ Good |
+
+## Evolution
+
+This document evolves at phase transitions and milestone boundaries.
+
+**After each phase transition:**
+1. Requirements invalidated? → Move to Out of Scope with reason
+2. Requirements validated? → Move to Validated with phase reference
+3. New requirements emerged? → Add to Active
+4. Decisions to log? → Add to Key Decisions
+5. "What This Is" still accurate? → Update if drifted
+
+**After each milestone:**
+1. Full review of all sections
+2. Core Value check — still the right priority?
+3. Audit Out of Scope — reasons still valid?
+4. Update Context with current state
+
+---
+*Last updated: 2026-03-24 after v1.0 milestone*

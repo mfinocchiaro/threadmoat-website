@@ -35,10 +35,17 @@ function parseNum(value: string | undefined): number {
 /**
  * Classify cloud delivery model from Deployment Model column.
  * Maps new Airtable deployment values to heatmap cloud model categories.
+ *
+ * Airtable exports multi-select fields as Python list syntax:
+ *   "['Cloud', 'Desktop']"  or  "Cloud, Desktop"
+ * We strip brackets/quotes before splitting on commas.
  */
 function classifyCloudModel(deploymentModel: string): string {
   if (!deploymentModel.trim()) return 'No Data'
-  const set = new Set(deploymentModel.split(',').map(t => t.trim().toLowerCase()))
+  // Strip Python list artifacts: [ ] ' "
+  const cleaned = deploymentModel.replace(/[\[\]'"]/g, '')
+  if (!cleaned.trim()) return 'No Data'
+  const set = new Set(cleaned.split(',').map(t => t.trim().toLowerCase()))
   const hasCloud = set.has('cloud') || set.has('web')
   const hasOnPrem = set.has('on-prem') || set.has('desktop') || set.has('embedded')
   const hasHardware = set.has('hardware')
@@ -103,6 +110,7 @@ export async function GET() {
         const estimatedRevenue = parseCurrency(row['Current Estimated Annual Revenue'])
 
         // ── Read directly from CSV (previously computed) ──
+        const estimatedHeadcount = parseNum(row['Estimated Headcount'])
         const arrPerEmployee = parseNum(row['ARR per Employee'])
         const annualBurnProxy = parseNum(row['Annual Burn Proxy'])
         const runwayProxyMonths = Math.min(parseNum(row['Runway Proxy (Months)']), 999)
@@ -122,6 +130,7 @@ export async function GET() {
           cloudModel,
           totalFunding,
           estimatedRevenue,
+          estimatedHeadcount,
           estimatedMarketValue: parseCurrency(row['Estimated Market Value']),
           cloudSaasMultiplier,
           cloudArrEfficiency: Math.round(cloudArrEfficiency * 10) / 10,
