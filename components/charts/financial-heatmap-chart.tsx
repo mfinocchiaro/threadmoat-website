@@ -1,37 +1,43 @@
 "use client"
 
-import React, { useEffect, useRef, useState, useMemo } from "react"
-import * as d3 from "d3"
+import React, { useEffect, useState, useMemo } from "react"
 import { formatCurrency } from "@/lib/company-data"
 import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 
+// ────────────────────────────────────────────────────────
+// Types
+// ────────────────────────────────────────────────────────
+
 interface FundingRecord {
   id: string
   company: string
+  startupSizeCategory: string
   cloudModel: string
-  cloudSaasMultiplier: number
+  aiIntensity: string
+  aiIntensityScore: number
+  totalFunding: number
+  estimatedRevenue: number
+  estimatedHeadcount: number
+  arrPerEmployee: number
   cloudArrEfficiency: number
   cloudArrVsBenchmark: number
-  scoreFinancial: number
-  customerSignalScore: number
-  weightedStartupQualityScore: number
+  capitalEfficiency: string
+  cloudSaasMultiplier: number
+  annualBurnProxy: number
+  netBurnLevel: string
+  enhancedBurnRate: string
+  enhancedBurnPerEmployee: number
+  runwayProxyMonths: number
+  runwayQuality: string
   arrMultiple: number
   estimatedValuation: number
   fundingFloor: number
   estimatedValueFinal: number
-  arrPerEmployee: number
-  annualBurnProxy: number
-  enhancedBurnPerEmployee: number
-  runwayProxyMonths: number
-  startupSizeCategory: string
-  capitalEfficiency: string
-  runwayQuality: string
-  netBurnLevel: string
+  scoreFinancial: number
   financialConfidence: string
-  aiIntensity: string
-  aiIntensityScore: number
-  enhancedBurnRate: string
+  customerSignalScore: number
+  weightedStartupQualityScore: number
 }
 
 interface FinancialHeatmapChartProps {
@@ -39,99 +45,118 @@ interface FinancialHeatmapChartProps {
   filteredCompanyNames?: Set<string>
 }
 
-function formatBurnPerMonth(annual: number): string {
-  const monthly = annual / 12
-  if (monthly >= 1e6) return `$${(monthly / 1e6).toFixed(1)}M`
-  if (monthly >= 1e3) return `$${(monthly / 1e3).toFixed(0)}K`
-  return `$${monthly.toFixed(0)}`
+// ────────────────────────────────────────────────────────
+// Column definitions — narrative flow, trimmed to 14 cols
+//
+// Story: WHO → RAW INPUTS → EFFICIENCY → BURN & RUNWAY → VALUATION → CONFIDENCE
+//
+// Cuts vs. previous 20-column version:
+//   - Removed "vs $200K" (redundant with ARR/HC — can be inferred)
+//   - Removed "Burn/mo" (absolute number, Burn Lvl + Adj. Burn cover health)
+//   - Removed "Runway months" (Runway Quality covers the same signal qualitatively)
+//   - Removed "AI Intensity" from grid (still in tooltip — not a financial metric)
+//   - Removed "Funding Floor" (shown in tooltip — Valuation is the main signal)
+//   - Removed "Size" (shown in tooltip — not core to financial story)
+// ────────────────────────────────────────────────────────
+
+type ColDef =
+  | { type: "qual"; key: keyof FundingRecord; label: string; shortLabel: string; tip: string; levels: string[]; group: string }
+  | { type: "num"; key: keyof FundingRecord; label: string; shortLabel: string; tip: string; format: (v: number) => string; higherIsGood: boolean; neutral?: boolean; group: string }
+  | { type: "desc"; key: keyof FundingRecord; label: string; shortLabel: string; tip: string; levels: string[]; group: string }
+
+function fmtCurrency(v: number): string {
+  if (v >= 1e9) return `$${(v / 1e9).toFixed(1)}B`
+  if (v >= 1e6) return `$${(v / 1e6).toFixed(1)}M`
+  if (v >= 1e3) return `$${(v / 1e3).toFixed(0)}K`
+  return `$${v.toFixed(0)}`
 }
 
-// Column definitions in display order.
-// type "qual" = qualitative (levels array, index 0 = green, last = red)
-// type "num"  = numeric (format fn). "neutral" numeric columns get a blue intensity ramp
-//              instead of green-red to avoid contradicting qualitative Airtable assessments.
-// type "desc" = descriptive/categorical (neutral blue palette, no good/bad implied)
-type ColDef =
-  | { type: "qual"; key: keyof FundingRecord; label: string; tip: string; levels: string[] }
-  | { type: "num";  key: keyof FundingRecord; label: string; tip: string; format: (v: number) => string; higherIsGood: boolean; neutral?: boolean }
-  | { type: "desc"; key: keyof FundingRecord; label: string; tip: string; levels: string[] }
-
-const CLOUD_MODEL_ORDER = ["Cloud-Native", "SaaS", "Hybrid", "Edge/HW", "Traditional", "No Data"]
+function fmtBurnPerMonth(annual: number): string {
+  const monthly = annual / 12
+  if (monthly >= 1e6) return `$${(monthly / 1e6).toFixed(1)}M/mo`
+  if (monthly >= 1e3) return `$${(monthly / 1e3).toFixed(0)}K/mo`
+  return `$${monthly.toFixed(0)}/mo`
+}
 
 const COLUMNS: ColDef[] = [
-  // ── Identity & Context ──
-  { type: "desc", key: "startupSizeCategory", label: "Size",
-    tip: "Headcount-based size bucket from Airtable: Large (250+), Medium (50-249), Small (<50).",
-    levels: ["Large", "Medium", "Small"] },
-  { type: "desc", key: "aiIntensity", label: "AI Intens.",
-    tip: "AI Intensity rating from Airtable based on product signals. High = core AI/ML product; Medium = AI-augmented features; Low = minimal or no AI.",
+  // ── IDENTITY ──
+  { type: "desc", key: "cloudModel", label: "Cloud Model", shortLabel: "Cloud", group: "Identity",
+    tip: "Delivery model: Cloud-Native, SaaS, Hybrid, Edge/HW, Traditional",
+    levels: ["Cloud-Native", "SaaS", "Hybrid", "Edge/HW", "Traditional", "No Data"] },
+
+  // ── RAW INPUTS ──
+  { type: "num", key: "totalFunding", label: "Total Funding", shortLabel: "Funding", group: "Inputs",
+    tip: "Total capital raised to date. Denominator for efficiency ratios.",
+    format: fmtCurrency, higherIsGood: true, neutral: true },
+  { type: "num", key: "estimatedRevenue", label: "Est. Revenue", shortLabel: "Revenue", group: "Inputs",
+    tip: "Current estimated annual revenue (ARR proxy). Numerator for efficiency ratios.",
+    format: fmtCurrency, higherIsGood: true, neutral: true },
+  { type: "num", key: "estimatedHeadcount", label: "Headcount", shortLabel: "HC", group: "Inputs",
+    tip: "Estimated employee count. Used to derive ARR/Employee and burn proxies.",
+    format: (v: number) => v > 0 ? v.toFixed(0) : "—", higherIsGood: true, neutral: true },
+
+  // ── EFFICIENCY ──
+  { type: "num", key: "arrPerEmployee", label: "ARR / Employee", shortLabel: "ARR/HC", group: "Efficiency",
+    tip: "= Revenue ÷ Headcount. BVP benchmark: $200K. >$300K = strong.",
+    format: fmtCurrency, higherIsGood: true },
+  { type: "num", key: "cloudArrEfficiency", label: "ARR Efficiency", shortLabel: "ARR Eff%", group: "Efficiency",
+    tip: "= (Revenue ÷ Funding) × 100. How many cents of ARR per dollar raised. >100% = capital-efficient.",
+    format: (v: number) => `${v.toFixed(0)}%`, higherIsGood: true },
+  { type: "qual", key: "capitalEfficiency", label: "Capital Eff.", shortLabel: "Cap Eff", group: "Efficiency",
+    tip: "Qualitative rating: how well funding converts to revenue.",
     levels: ["High", "Medium", "Low"] },
-  { type: "desc", key: "cloudModel", label: "Cloud",
-    tip: "Delivery model classified from Operating Model Tags. Cloud-Native = cloud HPC/usage-based; SaaS = subscription cloud; Hybrid = cloud + on-prem; Edge/HW = hardware-centric; Traditional = on-prem/perpetual.",
-    levels: CLOUD_MODEL_ORDER },
-  // ── Financial Health (from Airtable — source of truth) ──
-  { type: "num", key: "scoreFinancial", label: "Fin. Health",
-    tip: "Composite financial health score from Airtable combining revenue strength, burn sustainability, and funding trajectory. Excellent (30+), Healthy (20-29), Moderate (10-19), Weak (<10).",
-    format: (v: number) => {
-      if (v >= 30) return "Excellent"
-      if (v >= 20) return "Healthy"
-      if (v >= 10) return "Moderate"
-      if (v > 0) return "Weak"
-      return "—"
-    }, higherIsGood: true },
-  { type: "qual", key: "capitalEfficiency", label: "Cap. Eff.",
-    tip: "How efficiently the company converts funding into revenue. High = strong returns per dollar raised. From Airtable.",
-    levels: ["High", "Medium", "Low"] },
-  // ── Revenue Productivity (neutral — absolute numbers, context-dependent) ──
-  { type: "num", key: "arrPerEmployee", label: "ARR/HC",
-    tip: "Annual Recurring Revenue per employee from Airtable. BVP benchmark = $200K/employee. >$300K = strong; <$100K = early-stage or R&D-heavy.",
-    format: (v: number) => formatCurrency(v), higherIsGood: true, neutral: true },
-  { type: "num", key: "cloudArrEfficiency", label: "ARR Eff. %",
-    tip: "Derived: (Estimated ARR / Total Funding) x 100. Measures cents of recurring revenue per dollar of capital raised. 100% = ARR matches total funding; >100% = capital-efficient.",
-    format: (v: number) => `${v.toFixed(0)}%`, higherIsGood: true, neutral: true },
-  { type: "num", key: "cloudArrVsBenchmark", label: "vs $200K",
-    tip: "Derived: (ARR per Employee / $200K) x 100. The $200K/employee is the Bessemer/BVP SaaS benchmark. 100% = at benchmark; >150% = best-in-class.",
-    format: (v: number) => `${v.toFixed(0)}%`, higherIsGood: true, neutral: true },
-  // ── Burn & Runway (qualitative = Airtable truth, numeric = neutral context) ──
-  { type: "num", key: "annualBurnProxy", label: "Burn/mo",
-    tip: "Monthly burn rate from Airtable (Annual Burn Proxy / 12). Absolute number — use Burn Lvl and Adj. Burn for health assessment.",
-    format: (v: number) => formatBurnPerMonth(v), higherIsGood: false, neutral: true },
-  { type: "qual", key: "netBurnLevel", label: "Burn Lvl",
-    tip: "Net burn level from Airtable based on headcount cost model. Very Low (<5% of funding/yr); Low (5-15%); Moderate (15-25%); High (40-60%); Very High (60-80%).",
+
+  // ── BURN & RUNWAY ──
+  { type: "qual", key: "netBurnLevel", label: "Burn Level", shortLabel: "Burn", group: "Burn",
+    tip: "Net burn as % of funding/year. Very Low (<5%) to Very High (60-80%).",
     levels: ["Very Low", "Low", "Moderate", "High", "Very High"] },
-  { type: "qual", key: "enhancedBurnRate", label: "Adj. Burn",
-    tip: "Enhanced burn rate from Airtable factoring in headcount + cloud infrastructure + AI compute costs. Low = lean operation; Very High = heavy cloud/AI spend.",
+  { type: "qual", key: "enhancedBurnRate", label: "Adj. Burn", shortLabel: "Adj Burn", group: "Burn",
+    tip: "Enhanced burn: HC + cloud infra + AI compute costs.",
     levels: ["Low", "Medium", "High", "Very High"] },
-  { type: "num", key: "runwayProxyMonths", label: "Runway",
-    tip: "Estimated runway in months from Airtable. Absolute number — use Run. Qual for health assessment.",
-    format: (v: number) => v >= 999 ? "∞" : v.toFixed(0), higherIsGood: true, neutral: true },
-  { type: "qual", key: "runwayQuality", label: "Run. Qual",
-    tip: "Runway quality from Airtable. Very Strong = 36+ months; Healthy = 24-36; Comfortable = 18-24; Tight = 12-18; High Risk = 6-12; Critical = <6 months.",
+  { type: "qual", key: "runwayQuality", label: "Runway Quality", shortLabel: "Runway", group: "Burn",
+    tip: "Very Strong (36+mo), Healthy (24-36), Comfortable (18-24), Tight (12-18), High Risk (6-12), Critical (<6).",
     levels: ["Very Strong", "Healthy", "Comfortable", "Tight", "High Risk", "Critical"] },
-  // ── Data Quality ──
-  { type: "qual", key: "financialConfidence", label: "Conf.",
-    tip: "Data confidence from Airtable. Strong = verified/disclosed sources; Medium = public estimates + signals; Low = estimated from sparse public data.",
+
+  // ── VALUATION ──
+  { type: "num", key: "arrMultiple", label: "ARR Multiple", shortLabel: "Mult", group: "Valuation",
+    tip: "Revenue multiple for valuation. Based on sector comps + growth signals.",
+    format: (v: number) => `${v.toFixed(1)}x`, higherIsGood: true },
+  { type: "num", key: "estimatedValuation", label: "Valuation", shortLabel: "Value", group: "Valuation",
+    tip: "= Revenue × ARR Multiple. Enterprise value estimate.",
+    format: fmtCurrency, higherIsGood: true, neutral: true },
+
+  // ── CONFIDENCE ──
+  { type: "num", key: "scoreFinancial", label: "Fin. Score", shortLabel: "Score", group: "Confidence",
+    tip: "Composite 0-40: revenue strength + burn sustainability + funding trajectory.",
+    format: (v: number) => v > 0 ? v.toFixed(0) : "—", higherIsGood: true },
+  { type: "qual", key: "financialConfidence", label: "Data Confidence", shortLabel: "Conf", group: "Confidence",
+    tip: "Strong = verified; Medium = public estimates; Low = sparse data.",
     levels: ["Strong", "Medium", "Low"] },
 ]
 
-const NUM_COLUMNS = COLUMNS.filter((c): c is Extract<ColDef, { type: "num" }> => c.type === "num")
+// ── Sort ──
 
-type SortKey = "scoreFinancial" | "arrPerEmployee" | "annualBurnProxy" | "runwayProxyMonths" | "estimatedValuation" | "cloudArrEfficiency" | "cloudArrVsBenchmark" | "aiIntensityScore"
+type SortKey = "scoreFinancial" | "arrPerEmployee" | "annualBurnProxy" | "runwayProxyMonths"
+  | "estimatedValuation" | "cloudArrEfficiency" | "cloudArrVsBenchmark" | "aiIntensityScore"
+  | "totalFunding" | "estimatedRevenue"
 
 const SORT_OPTIONS: { value: SortKey; label: string }[] = [
   { value: "scoreFinancial",      label: "Financial Score" },
   { value: "estimatedValuation",  label: "Valuation" },
+  { value: "totalFunding",        label: "Total Funding" },
+  { value: "estimatedRevenue",    label: "Est. Revenue" },
   { value: "arrPerEmployee",      label: "ARR / Employee" },
   { value: "cloudArrEfficiency",  label: "ARR Efficiency %" },
-  { value: "cloudArrVsBenchmark", label: "vs $200K Benchmark" },
   { value: "annualBurnProxy",     label: "Annual Burn" },
   { value: "runwayProxyMonths",   label: "Runway Months" },
-  { value: "aiIntensityScore",    label: "AI Intensity Score" },
 ]
 
-const TOP_N_OPTIONS = [10, 15, 20, 30]
+const TOP_N_OPTIONS = [10, 15, 20, 30, 50]
 
-// Green → yellow → orange → red ramp for qualitative health columns
+// ────────────────────────────────────────────────────────
+// Color ramps
+// ────────────────────────────────────────────────────────
+
 const RAMP_STOPS = ["#16a34a", "#22c55e", "#84cc16", "#eab308", "#f97316", "#ef4444", "#dc2626"]
 
 function rampColor(t: number): string {
@@ -139,24 +164,21 @@ function rampColor(t: number): string {
   const scaled = clamped * (RAMP_STOPS.length - 1)
   const lo = Math.floor(scaled)
   const hi = Math.min(lo + 1, RAMP_STOPS.length - 1)
-  return d3.interpolateRgb(RAMP_STOPS[lo], RAMP_STOPS[hi])(scaled - lo)
+  return d3Interpolate(RAMP_STOPS[lo], RAMP_STOPS[hi], scaled - lo)
 }
 
-// Green → red for qualitative columns (index 0 = green/good, last = red/bad)
 function qualColor(levelIndex: number, totalLevels: number): string {
   if (totalLevels <= 1) return RAMP_STOPS[0]
   return rampColor(levelIndex / (totalLevels - 1))
 }
 
-// Neutral blue intensity for descriptive columns and neutral numeric columns
-// Avoids implying good/bad — just shows relative magnitude
 const NEUTRAL_STOPS = ["#1e3a5f", "#2563eb", "#60a5fa"]
 function neutralColor(t: number): string {
   const clamped = Math.max(0, Math.min(1, t))
   const scaled = clamped * (NEUTRAL_STOPS.length - 1)
   const lo = Math.floor(scaled)
   const hi = Math.min(lo + 1, NEUTRAL_STOPS.length - 1)
-  return d3.interpolateRgb(NEUTRAL_STOPS[lo], NEUTRAL_STOPS[hi])(scaled - lo)
+  return d3Interpolate(NEUTRAL_STOPS[lo], NEUTRAL_STOPS[hi], scaled - lo)
 }
 
 function descColor(levelIndex: number, totalLevels: number): string {
@@ -164,35 +186,110 @@ function descColor(levelIndex: number, totalLevels: number): string {
   return neutralColor(levelIndex / (totalLevels - 1))
 }
 
-/** Metric descriptions shown below the chart (matches column display order) */
-const METRIC_DESCRIPTIONS: { label: string; description: string; color: "neutral" | "health" }[] = [
-  { label: "Size", color: "neutral", description: "Company headcount bucket: Large (250+), Medium (50-249), Small (<50). Shown in blue — size is context, not a health indicator." },
-  { label: "AI Intens.", color: "neutral", description: "AI Intensity — rated from product and technology signals. High = core AI/ML product with deep learning, generative AI, or simulation-driven AI. Medium = AI-augmented features. Low = minimal or no AI. Shown in blue — descriptive, not a health rating." },
-  { label: "Cloud", color: "neutral", description: "Cloud delivery model classified from Operating Model Tags. Cloud-Native = cloud HPC or usage-based billing; SaaS = subscription cloud; Hybrid = cloud + on-prem; Edge/HW = hardware-centric; Traditional = on-prem/perpetual license. Shown in blue — descriptive." },
-  { label: "Fin. Health", color: "health", description: "Composite score from Airtable (0-40) combining revenue strength, burn sustainability, and funding trajectory. Excellent (30+), Healthy (20-29), Moderate (10-19), Weak (<10)." },
-  { label: "Cap. Eff.", color: "health", description: "Capital Efficiency from Airtable — how well the company converts total funding raised into revenue. High (green) = strong returns per dollar invested; Low (red) = poor conversion." },
-  { label: "ARR/HC", color: "neutral", description: "Annual Recurring Revenue per employee from Airtable. The Bessemer/BVP industry benchmark is $200K/employee. Above $300K signals a highly efficient revenue engine; below $100K often indicates early-stage or heavy R&D spend. Shown in blue — absolute number." },
-  { label: "ARR Eff. %", color: "neutral", description: "ARR Efficiency — (Estimated ARR / Total Funding) x 100. Measures how many cents of recurring revenue the company earns per dollar of capital raised. Above 100% means the company's ARR exceeds total capital raised. Shown in blue — absolute number." },
-  { label: "vs $200K", color: "neutral", description: "ARR per Employee as a percentage of the $200K Bessemer/BVP SaaS benchmark. 100% = at benchmark, 150% = 50% above, <50% = underperforming. Shown in blue — absolute number." },
-  { label: "Burn/mo", color: "neutral", description: "Monthly burn rate from Airtable (Annual Burn Proxy / 12). Shown in blue because absolute burn scales with company size — see Burn Lvl and Adj. Burn for health assessment." },
-  { label: "Burn Lvl", color: "health", description: "Net Burn Level from Airtable — annual net burn (burn minus revenue) as a percentage of total funding raised. Green = low burn relative to capital (Very Low, Low); Red = high burn (High, Very High)." },
-  { label: "Adj. Burn", color: "health", description: "Enhanced HR+Cloud+AI Burn Rate from Airtable — adjusted burn accounting for headcount costs, cloud infrastructure, and AI compute. Green = lean (Low); Red = heavy spend (Very High)." },
-  { label: "Runway", color: "neutral", description: "Estimated months of runway remaining from Airtable. Shows infinity when revenue exceeds burn. Shown in blue — see Run. Qual for health assessment." },
-  { label: "Run. Qual", color: "health", description: "Runway Quality from Airtable. Green = Very Strong (36+ months); Red = Critical (<6 months). The definitive health signal for cash position." },
-  { label: "Conf.", color: "health", description: "Financial data confidence from Airtable. Green = Strong (verified/disclosed); Red = Low (estimated from sparse data)." },
+// Simple RGB interpolation — no d3 dependency needed for just this
+function d3Interpolate(a: string, b: string, t: number): string {
+  const pa = hexToRgb(a), pb = hexToRgb(b)
+  const r = Math.round(pa[0] + (pb[0] - pa[0]) * t)
+  const g = Math.round(pa[1] + (pb[1] - pa[1]) * t)
+  const bl = Math.round(pa[2] + (pb[2] - pa[2]) * t)
+  return `rgb(${r},${g},${bl})`
+}
+
+function hexToRgb(hex: string): [number, number, number] {
+  const h = hex.replace('#', '')
+  return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)]
+}
+
+// Group header band colors
+const GROUP_COLORS: Record<string, { bg: string; text: string }> = {
+  Identity:   { bg: "bg-slate-700/60",   text: "text-slate-200" },
+  Inputs:     { bg: "bg-blue-900/60",    text: "text-blue-200" },
+  Efficiency: { bg: "bg-emerald-900/60", text: "text-emerald-200" },
+  Burn:       { bg: "bg-amber-900/60",   text: "text-amber-200" },
+  Valuation:  { bg: "bg-violet-900/60",  text: "text-violet-200" },
+  Confidence: { bg: "bg-slate-700/60",   text: "text-slate-200" },
+}
+
+const GROUP_ORDER = ["Identity", "Inputs", "Efficiency", "Burn", "Valuation", "Confidence"]
+const GROUP_LABELS: Record<string, string> = {
+  Identity: "WHO",
+  Inputs: "RAW INPUTS",
+  Efficiency: "EFFICIENCY",
+  Burn: "BURN & RUNWAY",
+  Valuation: "VALUATION",
+  Confidence: "CONFIDENCE",
+}
+
+// ────────────────────────────────────────────────────────
+// Formula entries
+// ────────────────────────────────────────────────────────
+
+interface FormulaEntry { metric: string; formula: string; explanation: string }
+
+const FORMULAS: FormulaEntry[] = [
+  { metric: "ARR / Employee", formula: "Est. Revenue ÷ Headcount", explanation: "Revenue per person. BVP benchmark = $200K." },
+  { metric: "ARR Efficiency", formula: "(Est. Revenue ÷ Total Funding) × 100", explanation: "Cents of ARR per dollar raised. >100% = capital-efficient." },
+  { metric: "Valuation", formula: "Est. Revenue × ARR Multiple", explanation: "Enterprise value from revenue multiples." },
+  { metric: "Funding Floor", formula: "Total Funding × post-money multiplier", explanation: "Minimum — worth at least what investors put in." },
 ]
 
-export function FinancialHeatmapChart({ className, filteredCompanyNames }: FinancialHeatmapChartProps) {
-  const svgRef = useRef<SVGSVGElement>(null)
-  const containerRef = useRef<HTMLDivElement>(null)
-  const tooltipRef = useRef<HTMLDivElement>(null)
+// ────────────────────────────────────────────────────────
+// Helpers
+// ────────────────────────────────────────────────────────
 
+function getCellStyle(col: ColDef, rec: FundingRecord, numScales: Map<string, { min: number; max: number }>): { bg: string; text: string } {
+  const noData = { bg: "#1e293b", text: "text-slate-500" }
+
+  if (col.type === "qual") {
+    const val = (rec[col.key] as string) || ""
+    const levelIdx = col.levels.indexOf(val)
+    if (levelIdx < 0 || !val) return noData
+    return { bg: qualColor(levelIdx, col.levels.length), text: "text-white" }
+  }
+
+  if (col.type === "desc") {
+    const val = (rec[col.key] as string) || ""
+    const levelIdx = col.levels.indexOf(val)
+    if (levelIdx < 0 || !val) return noData
+    return { bg: descColor(levelIdx, col.levels.length), text: "text-white" }
+  }
+
+  // numeric
+  const raw = (rec[col.key] as number) || 0
+  if (raw === 0) return noData
+
+  const scale = numScales.get(col.key as string)
+  if (!scale || scale.max === 0) return noData
+  const norm = Math.max(0, Math.min(1, raw / scale.max))
+
+  if (col.neutral) {
+    return { bg: neutralColor(norm), text: "text-white" }
+  }
+  const t = col.higherIsGood ? 1 - norm : norm
+  return { bg: rampColor(t), text: "text-white" }
+}
+
+function getCellText(col: ColDef, rec: FundingRecord): string {
+  if (col.type === "qual" || col.type === "desc") {
+    return (rec[col.key] as string) || "—"
+  }
+  const raw = (rec[col.key] as number) || 0
+  return raw > 0 ? col.format(raw) : "—"
+}
+
+// ────────────────────────────────────────────────────────
+// Component
+// ────────────────────────────────────────────────────────
+
+export function FinancialHeatmapChart({ className, filteredCompanyNames }: FinancialHeatmapChartProps) {
   const [fundingData, setFundingData] = useState<FundingRecord[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [sortBy, setSortBy] = useState<SortKey>("scoreFinancial")
   const [topN, setTopN] = useState(15)
   const [cloudOnly, setCloudOnly] = useState(false)
+  const [showFormulas, setShowFormulas] = useState(false)
+  const [hoveredRow, setHoveredRow] = useState<string | null>(null)
 
   useEffect(() => {
     fetch("/api/funding")
@@ -219,179 +316,25 @@ export function FinancialHeatmapChart({ className, filteredCompanyNames }: Finan
       .slice(0, topN)
   }, [fundingData, filteredCompanyNames, sortBy, topN, cloudOnly])
 
-  // Normalize numeric columns to 0-1 for color intensity
   const numScales = useMemo(() => {
-    const scales: Map<string, d3.ScaleLinear<number, number>> = new Map()
-    for (const col of NUM_COLUMNS) {
-      const max = d3.max(ranked, (r) => (r[col.key] as number) || 0) || 1
-      scales.set(col.key, d3.scaleLinear().domain([0, max]).range([0, 1]).clamp(true))
+    const scales: Map<string, { min: number; max: number }> = new Map()
+    for (const col of COLUMNS) {
+      if (col.type === "num") {
+        let max = 0
+        for (const r of ranked) {
+          const v = (r[col.key] as number) || 0
+          if (v > max) max = v
+        }
+        scales.set(col.key as string, { min: 0, max: max || 1 })
+      }
     }
     return scales
   }, [ranked])
 
-  useEffect(() => {
-    if (!svgRef.current || !containerRef.current || ranked.length === 0) return
-
-    const width = containerRef.current.clientWidth
-    if (!width) return
-
-    const rowHeight = 48
-    const margin = { top: 120, right: 60, bottom: 10, left: 280 }
-    const height = ranked.length * rowHeight + margin.top + margin.bottom
-
-    const svg = d3.select(svgRef.current)
-    svg.selectAll("*").remove()
-    svg.attr("width", width).attr("height", height)
-
-    const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`)
-    const innerWidth = width - margin.left - margin.right
-
-    const allCols = COLUMNS.map((c) => c.label)
-    const xScale = d3.scaleBand().domain(allCols).range([0, innerWidth]).padding(0.06)
-    const yScale = d3.scaleBand().domain(ranked.map((r) => r.id)).range([0, ranked.length * rowHeight]).padding(0.12)
-
-    // Column headers with description tooltips
-    const headerGroups = g.selectAll("g.col-header")
-      .data(COLUMNS)
-      .join("g")
-      .attr("class", "col-header")
-      .attr("transform", (col) => {
-        const x = (xScale(col.label) ?? 0) + xScale.bandwidth() / 2
-        return `translate(${x}, -12) rotate(-40)`
-      })
-      .style("cursor", "help")
-
-    headerGroups.append("text")
-      .attr("text-anchor", "start")
-      .attr("fill", "#cbd5e1")
-      .attr("font-size", "14px")
-      .attr("font-weight", "600")
-      .text((col) => col.label)
-
-    headerGroups.append("title")
-      .text((col) => col.tip)
-
-    // Rows
-    for (const rec of ranked) {
-      const y = yScale(rec.id) ?? 0
-      const bh = yScale.bandwidth()
-
-      // Company name
-      g.append("text")
-        .attr("x", -12)
-        .attr("y", y + bh / 2)
-        .attr("text-anchor", "end")
-        .attr("dominant-baseline", "central")
-        .attr("fill", "#cbd5e1")
-        .attr("font-size", "24px")
-        .attr("font-weight", "600")
-        .text(rec.company.length > 20 ? rec.company.slice(0, 18) + "..." : rec.company)
-
-      // Render each column cell
-      for (const col of COLUMNS) {
-        const cx = xScale(col.label) ?? 0
-        const bw = xScale.bandwidth()
-        let cellColor: string
-        let cellText: string
-
-        if (col.type === "qual") {
-          const val = (rec[col.key] as string) || ""
-          const levelIdx = col.levels.indexOf(val)
-          cellColor = levelIdx >= 0 ? qualColor(levelIdx, col.levels.length) : "#334155"
-          cellText = val || "—"
-        } else if (col.type === "desc") {
-          const val = (rec[col.key] as string) || ""
-          const levelIdx = col.levels.indexOf(val)
-          cellColor = levelIdx >= 0 ? descColor(levelIdx, col.levels.length) : "#334155"
-          cellText = val || "—"
-        } else {
-          const raw = (rec[col.key] as number) || 0
-          const norm = numScales.get(col.key)!(raw)
-          if (col.neutral) {
-            // Neutral blue — shows relative magnitude without implying good/bad
-            cellColor = raw === 0 ? "#334155" : neutralColor(norm)
-          } else {
-            const t = col.higherIsGood ? 1 - norm : norm
-            cellColor = raw === 0 ? "#334155" : rampColor(t)
-          }
-          cellText = raw > 0 ? col.format(raw) : "—"
-        }
-
-        // Clip group so text cannot spill outside the cell
-        const clipId = `clip-${rec.id}-${col.key}`
-        g.append("clipPath")
-          .attr("id", clipId)
-          .append("rect")
-          .attr("x", cx + 2).attr("y", y)
-          .attr("width", Math.max(0, bw - 4)).attr("height", bh)
-
-        g.append("rect")
-          .attr("x", cx).attr("y", y)
-          .attr("width", bw).attr("height", bh)
-          .attr("fill", cellColor).attr("rx", 4)
-          .attr("opacity", 0.85)
-          .style("cursor", "pointer")
-          .on("mouseover", (event) => showTooltip(event, rec))
-          .on("mousemove", moveTooltip)
-          .on("mouseout", hideTooltip)
-
-        // Truncate text to fit cell width (approx 7px per char at 11px font)
-        const maxChars = Math.max(2, Math.floor(bw / 7))
-        const displayText = cellText.length > maxChars ? cellText.slice(0, maxChars - 1) + "\u2026" : cellText
-
-        g.append("text")
-          .attr("x", cx + bw / 2).attr("y", y + bh / 2)
-          .attr("text-anchor", "middle").attr("dominant-baseline", "central")
-          .attr("fill", "#fff").attr("font-size", "11px").attr("font-weight", "600")
-          .attr("pointer-events", "none")
-          .attr("clip-path", `url(#${clipId})`)
-          .text(displayText)
-      }
-    }
-
-    // Remove default axis elements
-    g.selectAll(".domain").remove()
-    g.selectAll(".tick line").remove()
-
-    function showTooltip(event: MouseEvent, rec: FundingRecord) {
-      if (!tooltipRef.current) return
-      const lines = [
-        `<strong style="font-size:14px">${rec.company}</strong>`,
-        `Cloud Model: <strong>${rec.cloudModel}</strong> (${rec.cloudSaasMultiplier}x multiplier)`,
-        `AI Intensity: <strong>${rec.aiIntensity}</strong> (score: ${rec.aiIntensityScore})`,
-        ``,
-        ...COLUMNS.filter(col => col.key !== "cloudModel" && col.key !== "aiIntensity").map((col) => {
-          if (col.type === "qual" || col.type === "desc") {
-            return `${col.label}: <strong>${(rec[col.key] as string) || "—"}</strong>`
-          }
-          const v = (rec[col.key] as number) || 0
-          return `${col.label}: <strong>${v > 0 ? col.format(v) : "—"}</strong>`
-        }),
-        ``,
-        `Valuation: <strong>${formatCurrency(rec.estimatedValuation)}</strong>`,
-        `Funding Floor: <strong>${formatCurrency(rec.fundingFloor)}</strong>`,
-      ]
-      tooltipRef.current.style.visibility = "visible"
-      tooltipRef.current.style.top = `${event.pageY - 10}px`
-      tooltipRef.current.style.left = `${event.pageX + 15}px`
-      tooltipRef.current.innerHTML = lines.join("<br>")
-    }
-
-    function moveTooltip(event: MouseEvent) {
-      if (!tooltipRef.current) return
-      tooltipRef.current.style.top = `${event.pageY - 10}px`
-      tooltipRef.current.style.left = `${event.pageX + 15}px`
-    }
-
-    function hideTooltip() {
-      if (tooltipRef.current) tooltipRef.current.style.visibility = "hidden"
-    }
-  }, [ranked, numScales, sortBy])
-
   if (isLoading) {
     return (
       <Card className={cn("flex items-center justify-center min-h-[400px]", className)}>
-        <p className="text-sm text-muted-foreground">Loading financial data...</p>
+        <p className="text-sm text-muted-foreground">Loading financial data…</p>
       </Card>
     )
   }
@@ -404,8 +347,16 @@ export function FinancialHeatmapChart({ className, filteredCompanyNames }: Finan
     )
   }
 
+  // Group columns for the header band
+  const groupedCols: { group: string; cols: ColDef[] }[] = []
+  for (const gid of GROUP_ORDER) {
+    const cols = COLUMNS.filter(c => c.group === gid)
+    if (cols.length > 0) groupedCols.push({ group: gid, cols })
+  }
+
   return (
     <Card className={cn("flex flex-col", className)}>
+      {/* ── Controls ── */}
       <div className="flex flex-wrap gap-4 items-center p-3 border-b border-border">
         <div className="flex items-center gap-2">
           <label className="text-xs text-muted-foreground">Sort by</label>
@@ -444,54 +395,186 @@ export function FinancialHeatmapChart({ className, filteredCompanyNames }: Finan
           {ranked.length} of {fundingData.length} startups
         </span>
       </div>
-      <div ref={containerRef} className="flex-1 w-full min-h-0 overflow-y-auto p-2">
-        <svg ref={svgRef} className="w-full" />
-        <div
-          ref={tooltipRef}
-          style={{
-            position: "fixed",
-            visibility: "hidden",
-            background: "#1e293b",
-            border: "1px solid #334155",
-            borderRadius: "6px",
-            padding: "10px 14px",
-            fontSize: "13px",
-            color: "#f1f5f9",
-            lineHeight: "1.6",
-            pointerEvents: "none",
-            zIndex: 9999,
-            maxWidth: "340px",
-          }}
-        />
+
+      {/* ── Table ── */}
+      <div className="flex-1 w-full min-h-0 overflow-x-auto">
+        <table className="w-full border-collapse text-xs" style={{ minWidth: "1100px" }}>
+          {/* Group header band */}
+          <thead>
+            <tr>
+              <th className="sticky left-0 z-20 bg-background" style={{ minWidth: "180px" }} />
+              {groupedCols.map(({ group, cols }) => {
+                const colors = GROUP_COLORS[group]
+                return (
+                  <th
+                    key={group}
+                    colSpan={cols.length}
+                    className={cn(
+                      "text-center text-[11px] font-bold tracking-wider py-1.5 px-1",
+                      colors.bg, colors.text
+                    )}
+                  >
+                    {GROUP_LABELS[group]}
+                  </th>
+                )
+              })}
+            </tr>
+            {/* Column headers */}
+            <tr className="border-b border-border/50">
+              <th className="sticky left-0 z-20 bg-background text-left text-muted-foreground font-semibold py-2 px-3" style={{ minWidth: "180px" }}>
+                Company
+              </th>
+              {COLUMNS.map((col) => (
+                <th
+                  key={col.key}
+                  className="text-center text-muted-foreground font-semibold py-2 px-1 whitespace-nowrap cursor-help"
+                  title={col.tip}
+                  style={{ minWidth: "80px" }}
+                >
+                  {col.shortLabel}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {ranked.map((rec, rowIdx) => (
+              <tr
+                key={rec.id}
+                className={cn(
+                  "transition-colors",
+                  rowIdx % 2 === 0 ? "bg-background" : "bg-muted/20",
+                  hoveredRow === rec.id && "!bg-muted/40"
+                )}
+                onMouseEnter={() => setHoveredRow(rec.id)}
+                onMouseLeave={() => setHoveredRow(null)}
+              >
+                {/* Sticky company name column */}
+                <td
+                  className={cn(
+                    "sticky left-0 z-10 font-semibold text-sm py-2 px-3 whitespace-nowrap",
+                    rowIdx % 2 === 0 ? "bg-background" : "bg-muted/20",
+                    hoveredRow === rec.id && "!bg-muted/40",
+                    "text-foreground"
+                  )}
+                >
+                  {rec.company}
+                </td>
+                {COLUMNS.map((col) => {
+                  const style = getCellStyle(col, rec, numScales)
+                  const text = getCellText(col, rec)
+                  return (
+                    <td
+                      key={col.key}
+                      className="py-1.5 px-1 text-center"
+                      title={`${col.label}: ${text}`}
+                    >
+                      <span
+                        className={cn(
+                          "inline-block w-full rounded px-1.5 py-1 text-[11px] font-semibold whitespace-nowrap",
+                          style.text
+                        )}
+                        style={{ backgroundColor: style.bg }}
+                      >
+                        {text}
+                      </span>
+                    </td>
+                  )
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
-      {/* Metric descriptions */}
-      <div className="border-t border-border px-4 py-4">
-        <h4 className="text-sm font-semibold text-foreground mb-3">Metric Definitions</h4>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-xs text-muted-foreground">
-          {METRIC_DESCRIPTIONS.map(m => (
-            <div key={m.label}>
-              <span className="font-semibold text-foreground">{m.label}</span>
-              {" — "}{m.description}
-            </div>
-          ))}
-          <div>
-            <span className="font-semibold text-foreground">Valuation</span>
-            {" — "}Estimated enterprise value derived from ARR multiples and comparable transactions.
+
+      {/* ── Hover detail (appears below table when a row is hovered) ── */}
+      {hoveredRow && (() => {
+        const rec = ranked.find(r => r.id === hoveredRow)
+        if (!rec) return null
+        return (
+          <div className="border-t border-border px-4 py-3 bg-muted/30 text-xs leading-relaxed grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-1.5">
+            <div className="col-span-2 md:col-span-4 font-semibold text-sm text-foreground mb-1">{rec.company}</div>
+
+            <div><span className="text-muted-foreground">Size:</span> <strong>{rec.startupSizeCategory || "—"}</strong></div>
+            <div><span className="text-muted-foreground">AI:</span> <strong>{rec.aiIntensity || "—"}</strong> ({rec.aiIntensityScore})</div>
+            <div><span className="text-muted-foreground">Cloud:</span> <strong>{rec.cloudModel}</strong></div>
+            <div><span className="text-muted-foreground">Multiplier:</span> <strong>{rec.cloudSaasMultiplier}x</strong></div>
+
+            <div><span className="text-muted-foreground">Funding:</span> <strong>{formatCurrency(rec.totalFunding)}</strong></div>
+            <div><span className="text-muted-foreground">Revenue:</span> <strong>{formatCurrency(rec.estimatedRevenue)}</strong></div>
+            <div><span className="text-muted-foreground">Headcount:</span> <strong>{rec.estimatedHeadcount > 0 ? rec.estimatedHeadcount : "—"}</strong></div>
+            <div><span className="text-muted-foreground">ARR/HC:</span> <strong>{formatCurrency(rec.arrPerEmployee)}</strong></div>
+
+            <div><span className="text-muted-foreground">ARR Eff:</span> <strong>{rec.cloudArrEfficiency.toFixed(0)}%</strong> <span className="text-muted-foreground/70">= Rev÷Fund×100</span></div>
+            <div><span className="text-muted-foreground">vs $200K:</span> <strong>{rec.cloudArrVsBenchmark.toFixed(0)}%</strong></div>
+            <div><span className="text-muted-foreground">Cap Eff:</span> <strong>{rec.capitalEfficiency || "—"}</strong></div>
+            <div><span className="text-muted-foreground">Burn/mo:</span> <strong>{fmtBurnPerMonth(rec.annualBurnProxy)}</strong></div>
+
+            <div><span className="text-muted-foreground">Burn Lvl:</span> <strong>{rec.netBurnLevel || "—"}</strong></div>
+            <div><span className="text-muted-foreground">Adj Burn:</span> <strong>{rec.enhancedBurnRate || "—"}</strong></div>
+            <div><span className="text-muted-foreground">Runway:</span> <strong>{rec.runwayProxyMonths >= 999 ? "∞" : `${rec.runwayProxyMonths.toFixed(0)}mo`}</strong></div>
+            <div><span className="text-muted-foreground">Run. Qual:</span> <strong>{rec.runwayQuality || "—"}</strong></div>
+
+            <div><span className="text-muted-foreground">ARR Mult:</span> <strong>{rec.arrMultiple.toFixed(1)}x</strong></div>
+            <div><span className="text-muted-foreground">Valuation:</span> <strong>{formatCurrency(rec.estimatedValuation)}</strong> <span className="text-muted-foreground/70">= Rev×{rec.arrMultiple.toFixed(1)}x</span></div>
+            <div><span className="text-muted-foreground">Floor:</span> <strong>{formatCurrency(rec.fundingFloor)}</strong></div>
+            <div><span className="text-muted-foreground">Score:</span> <strong>{rec.scoreFinancial}/40</strong> · Conf: <strong>{rec.financialConfidence}</strong></div>
           </div>
-          <div>
-            <span className="font-semibold text-foreground">Funding Floor</span>
-            {" — "}Minimum implied valuation based on total capital raised (post-money floor).
-          </div>
+        )
+      })()}
+
+      {/* ── Reading guide ── */}
+      <div className="border-t border-border px-4 py-3">
+        <div className="flex items-center justify-between mb-2">
+          <h4 className="text-sm font-semibold text-foreground">How to Read This Chart</h4>
+          <button
+            onClick={() => setShowFormulas(!showFormulas)}
+            className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
+          >
+            {showFormulas ? "Hide formulas ▲" : "Show formulas ▼"}
+          </button>
         </div>
-        <div className="flex flex-wrap gap-4 pt-3 border-t border-border/50 mt-3">
+
+        <p className="text-xs text-muted-foreground mb-3 leading-relaxed">
+          Read left to right: <strong className="text-foreground">Identity</strong> (who) →{" "}
+          <strong className="text-blue-400">Raw Inputs</strong> (funding, revenue, headcount) →{" "}
+          <strong className="text-green-400">Efficiency</strong> (how well capital converts to revenue) →{" "}
+          <strong className="text-amber-400">Burn &amp; Runway</strong> (cash sustainability) →{" "}
+          <strong className="text-purple-400">Valuation</strong> (what it&apos;s worth) →{" "}
+          <strong className="text-slate-400">Confidence</strong> (how reliable the data is).
+          Hover any row for full details including formulas.
+        </p>
+
+        <div className="flex flex-wrap gap-4 mb-2">
           <span className="text-xs font-medium text-foreground mr-1">Health columns:</span>
-          <span className="text-xs"><span className="inline-block w-3 h-3 rounded-sm mr-1" style={{background: "#16a34a"}} />Green = strong/healthy</span>
-          <span className="text-xs"><span className="inline-block w-3 h-3 rounded-sm mr-1" style={{background: "#eab308"}} />Yellow = moderate</span>
-          <span className="text-xs"><span className="inline-block w-3 h-3 rounded-sm mr-1" style={{background: "#ef4444"}} />Red = weak/at risk</span>
+          <span className="text-xs"><span className="inline-block w-3 h-3 rounded-sm mr-1" style={{ background: "#16a34a" }} />Green = strong</span>
+          <span className="text-xs"><span className="inline-block w-3 h-3 rounded-sm mr-1" style={{ background: "#eab308" }} />Yellow = moderate</span>
+          <span className="text-xs"><span className="inline-block w-3 h-3 rounded-sm mr-1" style={{ background: "#ef4444" }} />Red = weak</span>
           <span className="text-xs font-medium text-foreground ml-2 mr-1">Neutral columns:</span>
-          <span className="text-xs"><span className="inline-block w-3 h-3 rounded-sm mr-1" style={{background: "#2563eb"}} />Blue = factual data (no good/bad implied)</span>
-          <span className="text-xs"><span className="inline-block w-3 h-3 rounded-sm mr-1" style={{background: "#334155"}} />Gray = no data</span>
+          <span className="text-xs"><span className="inline-block w-3 h-3 rounded-sm mr-1" style={{ background: "#2563eb" }} />Blue = magnitude (no judgment)</span>
+          <span className="text-xs"><span className="inline-block w-3 h-3 rounded-sm mr-1" style={{ background: "#1e293b" }} />Dark = no data</span>
         </div>
+
+        {showFormulas && (
+          <div className="border-t border-border/50 pt-3 mt-1">
+            <h5 className="text-xs font-semibold text-foreground mb-2">Calculation Logic</h5>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-xs">
+              {FORMULAS.map((f) => (
+                <div key={f.metric}>
+                  <span className="font-semibold text-foreground">{f.metric}</span>
+                  <span className="text-blue-400 ml-2 font-mono text-[11px]">= {f.formula}</span>
+                  <br />
+                  <span className="text-muted-foreground">{f.explanation}</span>
+                </div>
+              ))}
+            </div>
+            <div className="mt-3 pt-2 border-t border-border/30 text-[11px] text-muted-foreground">
+              <strong className="text-foreground">Sources:</strong>{" "}
+              <span className="text-green-400">●</span> Health ratings = Airtable qualitative assessments{" "}
+              <span className="text-blue-400">●</span> Blue metrics = derived from numeric fields{" "}
+              <span className="text-slate-400">●</span> Confidence = data quality rating
+            </div>
+          </div>
+        )}
       </div>
     </Card>
   )

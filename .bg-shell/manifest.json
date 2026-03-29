@@ -1,0 +1,16 @@
+[
+  {
+    "id": "e4acc4a5",
+    "label": "flask-review-server",
+    "command": "cd /Users/mfinocchiaro/Dropbox/Private/Obsidian/Projects/ThreadMoat-Agentic-Updates && .venv/bin/python3 review_server.py --port 5050",
+    "cwd": "/Users/mfinocchiaro/Dropbox/Private/Obsidian/Projects/threadmoat-website",
+    "ownerSessionFile": "/Users/mfinocchiaro/.gsd/sessions/--Users-mfinocchiaro-Dropbox-Private-Obsidian-Projects-threadmoat-website--/2026-03-28T16-43-30-782Z_cb19e1e5-88ad-4536-8a78-4540ade65cf3.jsonl",
+    "persistAcrossSessions": false,
+    "startedAt": 1774783462741,
+    "processType": "server",
+    "group": null,
+    "readyPattern": null,
+    "readyPort": 5050,
+    "pid": 64762
+  }
+]
