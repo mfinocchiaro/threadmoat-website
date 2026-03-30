@@ -179,7 +179,7 @@ export function TreemapChart({ data, className }: TreemapChartProps) {
         tooltipRef.current.style.visibility = "visible"
         tooltipRef.current.style.top = `${event.pageY - 10}px`
         tooltipRef.current.style.left = `${event.pageX + 15}px`
-        tooltipRef.current.innerHTML = `<div style="font-weight:bold;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:4px;margin-bottom:4px;">${company.name}</div><div style="font-size:11px;color:#94a3b8;">${d.parent?.data.name}</div><div style="margin-top:4px;">${label}: <span style="color:#3b82f6;font-weight:bold;">${val}</span></div>`
+        tooltipRef.current.innerHTML = `<div style="font-weight:bold;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:4px;margin-bottom:4px;">${company.name}</div><div style="font-size:11px;color:#94a3b8;">${d.parent?.data.name}</div><div style="margin-top:4px;">${label}: <span style="color:#3b82f6;font-weight:bold;">${val}</span></div>${company.valuationConfidence ? `<div style="font-size:11px;margin-top:2px;color:#94a3b8;">Val. Confidence: <span style="color:#e2e8f0;">${company.valuationConfidence}</span></div>` : ""}${company.reportedValuation ? `<div style="font-size:11px;color:#94a3b8;">Reported: <span style="color:#e2e8f0;">${company.reportedValuation}${company.reportedValuationYear ? ` (${company.reportedValuationYear})` : ""}</span></div>` : ""}`
       })
       .on("mousemove", (event) => {
         if (!tooltipRef.current) return

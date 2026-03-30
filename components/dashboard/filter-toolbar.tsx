@@ -31,7 +31,7 @@ const FILTER_LABELS: Record<string, string> = {
   ecosystemFlags: "Eco",
 }
 
-/* ---- Options computation (replicates viz-filter-bar.tsx lines 211-268) ---- */
+/* ---- Options computation ---- */
 
 function useFilterOptions() {
   const { companies, isLoading } = useCompanyData()

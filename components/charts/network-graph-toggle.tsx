@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { Company } from "@/lib/company-data"
+import { AccessTier } from "@/lib/tiers"
 import { NetworkGraph } from "./network-graph"
 import dynamic from "next/dynamic"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -18,13 +19,14 @@ interface NetworkGraphToggleProps {
   data: Company[]
   className?: string
   preview?: boolean
+  accessTier?: AccessTier
 }
 
-export function NetworkGraphToggle({ data, className, preview = false }: NetworkGraphToggleProps) {
+export function NetworkGraphToggle({ data, className, preview = false, accessTier = 'explorer' }: NetworkGraphToggleProps) {
   const [mode, setMode] = useState<"2d" | "3d">("2d")
 
   if (preview) {
-    return <NetworkGraph data={data} className={className} preview />
+    return <NetworkGraph data={data} className={className} preview accessTier={accessTier} />
   }
 
   return (
@@ -50,7 +52,7 @@ export function NetworkGraphToggle({ data, className, preview = false }: Network
         </Button>
       </div>
       {mode === "2d" ? (
-        <NetworkGraph data={data} className={className} />
+        <NetworkGraph data={data} className={className} accessTier={accessTier} />
       ) : (
         <NetworkGraph3D data={data} className={className} />
       )}

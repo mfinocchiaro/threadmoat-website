@@ -4,6 +4,7 @@ import { auth } from '@/auth'
 import { sql } from '@/lib/db'
 import { getUserSubscription } from '@/lib/subscription'
 import { getAccessTier } from '@/lib/tiers'
+import { validateCoupon, redeemCoupon } from '@/lib/coupons'
 import { DashboardLayoutClient } from '@/components/dashboard/layout-client'
 
 type ProfileRow = {
@@ -67,6 +68,31 @@ export default async function DashboardLayout({
       productId = subscription.productId
     } catch {
       // DB unavailable
+    }
+
+    // Login-time fallback: if user has an unredeemed invite_code and no active subscription,
+    // auto-redeem it now. This catches cases where verifyEmail coupon redemption failed.
+    if (!hasSubscription) {
+      try {
+        const userRows = await sql`SELECT invite_code FROM users WHERE id = ${userId}`
+        const pendingCode = userRows[0]?.invite_code as string | null
+        if (pendingCode) {
+          const coupon = await validateCoupon(pendingCode)
+          if (coupon) {
+            await redeemCoupon(coupon.id, userId, coupon.duration_days, coupon.product_id, coupon.grant_status)
+            await sql`UPDATE users SET invite_code = NULL WHERE id = ${userId}`
+            console.log(`[dashboard] Login-time coupon redemption: ${pendingCode} for user ${userId}`)
+            // Re-fetch subscription to pick up the new tier
+            const refreshed = await getUserSubscription(userId)
+            hasSubscription = refreshed.hasActiveSubscription
+            isExpiredTrial = refreshed.isExpiredTrial
+            daysRemaining = refreshed.daysRemaining
+            productId = refreshed.productId
+          }
+        }
+      } catch (err) {
+        console.error('[dashboard] Login-time coupon fallback failed:', err)
+      }
     }
   }
 
