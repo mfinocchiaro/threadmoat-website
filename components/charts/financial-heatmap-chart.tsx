@@ -36,6 +36,8 @@ interface FundingRecord {
   estimatedValueFinal: number
   scoreFinancial: number
   financialConfidence: string
+  valuationConfidence: string
+  reportedValuation: string
   customerSignalScore: number
   weightedStartupQualityScore: number
 }
@@ -65,15 +67,24 @@ type ColDef =
   | { type: "desc"; key: keyof FundingRecord; label: string; shortLabel: string; tip: string; levels: string[]; group: string }
 
 function fmtCurrency(v: number): string {
-  if (v >= 1e9) return `$${(v / 1e9).toFixed(1)}B`
-  if (v >= 1e6) return `$${(v / 1e6).toFixed(1)}M`
+  if (v >= 1e9) {
+    const n = v / 1e9
+    return n % 1 === 0 ? `$${n.toFixed(0)}B` : `$${n.toFixed(1)}B`
+  }
+  if (v >= 1e6) {
+    const n = v / 1e6
+    return n % 1 === 0 ? `$${n.toFixed(0)}M` : `$${n.toFixed(1)}M`
+  }
   if (v >= 1e3) return `$${(v / 1e3).toFixed(0)}K`
   return `$${v.toFixed(0)}`
 }
 
 function fmtBurnPerMonth(annual: number): string {
   const monthly = annual / 12
-  if (monthly >= 1e6) return `$${(monthly / 1e6).toFixed(1)}M/mo`
+  if (monthly >= 1e6) {
+    const n = monthly / 1e6
+    return n % 1 === 0 ? `$${n.toFixed(0)}M/mo` : `$${n.toFixed(1)}M/mo`
+  }
   if (monthly >= 1e3) return `$${(monthly / 1e3).toFixed(0)}K/mo`
   return `$${monthly.toFixed(0)}/mo`
 }
@@ -120,7 +131,7 @@ const COLUMNS: ColDef[] = [
   // ── VALUATION ──
   { type: "num", key: "arrMultiple", label: "ARR Multiple", shortLabel: "Mult", group: "Valuation",
     tip: "Revenue multiple for valuation. Based on sector comps + growth signals.",
-    format: (v: number) => `${v.toFixed(1)}x`, higherIsGood: true },
+    format: (v: number) => v % 1 === 0 ? `${v.toFixed(0)}x` : `${v.toFixed(1)}x`, higherIsGood: true },
   { type: "num", key: "estimatedValuation", label: "Valuation", shortLabel: "Value", group: "Valuation",
     tip: "= Revenue × ARR Multiple. Enterprise value estimate.",
     format: fmtCurrency, higherIsGood: true, neutral: true },
@@ -132,6 +143,9 @@ const COLUMNS: ColDef[] = [
   { type: "qual", key: "financialConfidence", label: "Data Confidence", shortLabel: "Conf", group: "Confidence",
     tip: "Strong = verified; Medium = public estimates; Low = sparse data.",
     levels: ["Strong", "Medium", "Low"] },
+  { type: "qual", key: "valuationConfidence", label: "Val. Confidence", shortLabel: "Val Conf", group: "Confidence",
+    tip: "Confidence level of the valuation estimate: Reported, Inferred, or Estimated.",
+    levels: ["Reported", "Inferred", "Estimated"] },
 ]
 
 // ── Sort ──
@@ -514,8 +528,8 @@ export function FinancialHeatmapChart({ className, filteredCompanyNames }: Finan
             <div><span className="text-muted-foreground">Runway:</span> <strong>{rec.runwayProxyMonths >= 999 ? "∞" : `${rec.runwayProxyMonths.toFixed(0)}mo`}</strong></div>
             <div><span className="text-muted-foreground">Run. Qual:</span> <strong>{rec.runwayQuality || "—"}</strong></div>
 
-            <div><span className="text-muted-foreground">ARR Mult:</span> <strong>{rec.arrMultiple.toFixed(1)}x</strong></div>
-            <div><span className="text-muted-foreground">Valuation:</span> <strong>{formatCurrency(rec.estimatedValuation)}</strong> <span className="text-muted-foreground/70">= Rev×{rec.arrMultiple.toFixed(1)}x</span></div>
+            <div><span className="text-muted-foreground">ARR Mult:</span> <strong>{rec.arrMultiple % 1 === 0 ? rec.arrMultiple.toFixed(0) : rec.arrMultiple.toFixed(1)}x</strong></div>
+            <div><span className="text-muted-foreground">Valuation:</span> <strong>{formatCurrency(rec.estimatedValuation)}</strong> <span className="text-muted-foreground/70">= Rev×{rec.arrMultiple % 1 === 0 ? rec.arrMultiple.toFixed(0) : rec.arrMultiple.toFixed(1)}x</span></div>
             <div><span className="text-muted-foreground">Floor:</span> <strong>{formatCurrency(rec.fundingFloor)}</strong></div>
             <div><span className="text-muted-foreground">Score:</span> <strong>{rec.scoreFinancial}/40</strong> · Conf: <strong>{rec.financialConfidence}</strong></div>
           </div>

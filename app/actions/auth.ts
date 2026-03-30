@@ -218,14 +218,38 @@ export async function verifyEmail(token: string): Promise<ActionResult> {
 
     // Redeem coupon now that email is confirmed — deferred from registration
     if (inviteCode) {
-      try {
-        const coupon = await validateCoupon(inviteCode)
-        if (coupon) {
-          await redeemCoupon(coupon.id, userId, coupon.duration_days, coupon.product_id, coupon.grant_status)
+      let redeemed = false
+      for (let attempt = 1; attempt <= 2; attempt++) {
+        try {
+          const coupon = await validateCoupon(inviteCode)
+          if (coupon) {
+            await redeemCoupon(coupon.id, userId, coupon.duration_days, coupon.product_id, coupon.grant_status)
+            redeemed = true
+            console.log(`[verifyEmail] Coupon ${inviteCode} redeemed for user ${userId} (attempt ${attempt})`)
+          } else {
+            console.warn(`[verifyEmail] Coupon ${inviteCode} not found or expired for user ${userId}`)
+          }
+          break
+        } catch (err) {
+          console.error(`[verifyEmail] coupon redemption failed (attempt ${attempt}):`, err)
+          if (attempt === 2) {
+            // After 2 attempts, store invite_code back so login-time fallback can retry
+            try {
+              await sql`UPDATE users SET invite_code = ${inviteCode} WHERE id = ${userId}`
+              console.warn(`[verifyEmail] Re-stored invite_code ${inviteCode} for user ${userId} — login-time fallback will retry`)
+            } catch (restoreErr) {
+              console.error(`[verifyEmail] Failed to restore invite_code:`, restoreErr)
+            }
+          }
         }
-      } catch (err) {
-        console.error('[verifyEmail] coupon redemption failed:', err)
-        // Non-fatal — user is verified; they can contact support if trial is missing
+      }
+      // If coupon failed, still give them a basic Explorer trial so they're not locked out
+      if (!redeemed) {
+        try {
+          await createExplorerTrial(userId)
+        } catch (trialErr) {
+          console.error('[verifyEmail] explorer trial fallback also failed:', trialErr)
+        }
       }
     } else {
       // No invite code — auto-create 30-day Explorer trial

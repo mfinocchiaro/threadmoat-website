@@ -123,7 +123,7 @@ export function BubbleChart({ data, className }: BubbleChartProps) {
 
     bubbles.append("title").text(
       d =>
-        `${d.name}\n${METRICS[xAxisMetric].label}: ${METRICS[xAxisMetric].format(d[xAxisMetric] as number)}\n${METRICS[yAxisMetric].label}: ${METRICS[yAxisMetric].format(d[yAxisMetric] as number)}\n${METRICS[sizeMetric].label}: ${METRICS[sizeMetric].format((d[sizeMetric] as number) || 0)}`
+        `${d.name}\n${METRICS[xAxisMetric].label}: ${METRICS[xAxisMetric].format(d[xAxisMetric] as number)}\n${METRICS[yAxisMetric].label}: ${METRICS[yAxisMetric].format(d[yAxisMetric] as number)}\n${METRICS[sizeMetric].label}: ${METRICS[sizeMetric].format((d[sizeMetric] as number) || 0)}${d.valuationConfidence ? `\nVal. Confidence: ${d.valuationConfidence}` : ""}${d.reportedValuation ? `\nReported Val.: ${d.reportedValuation}` : ""}`
     )
   }, [validData, xAxisMetric, yAxisMetric, sizeMetric])
 

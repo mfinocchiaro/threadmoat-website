@@ -30,6 +30,9 @@ interface FundingRecord {
   annualBurnProxy: number
   runwayProxyMonths: number
   financialConfidence: string
+  valuationConfidence: string
+  reportedValuation: string
+  reportedValuationYear: string
   capitalEfficiency: string
   runwayQuality: string
   scoreFinancial: number
@@ -396,6 +399,10 @@ function renderValuationCandlestick(
             <span class="font-medium">${formatCompact(d.estimatedRevenue)}</span>
             <span class="text-muted-foreground">Confidence:</span>
             <span class="font-medium" style="color: ${CONFIDENCE_COLORS[d.financialConfidence] || "#6b7280"}">${d.financialConfidence || "—"}</span>
+            <span class="text-muted-foreground">Val. Confidence:</span>
+            <span class="font-medium" style="color: ${CONFIDENCE_COLORS[d.valuationConfidence] || "#6b7280"}">${d.valuationConfidence || "—"}</span>
+            ${d.reportedValuation ? `<span class="text-muted-foreground">Reported Val.:</span><span class="font-medium">${d.reportedValuation}</span>` : ""}
+            ${d.reportedValuationYear ? `<span class="text-muted-foreground">Val. Year:</span><span class="font-medium">${d.reportedValuationYear}</span>` : ""}
           </div>
         `)
     })

@@ -4,6 +4,8 @@ import React, { useEffect, useRef, useState, useMemo, useDeferredValue, startTra
 import * as d3 from "d3"
 import { Company } from "@/lib/company-data"
 import { getInvestmentColor, INVESTMENT_LIST_COLORS } from "@/lib/investment-colors"
+import { canSeeCompanyNames } from "@/lib/name-masking"
+import { AccessTier } from "@/lib/tiers"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -20,6 +22,7 @@ interface NetworkGraphProps {
   data: Company[]
   className?: string
   preview?: boolean
+  accessTier?: AccessTier
 }
 
 type NodeType = "company" | "mfg" | "investment" | "industry" | "country" | "subsegment" | "category" | "subcategory" | "incumbent"
@@ -77,7 +80,7 @@ function normalizeMfgType(raw: string): string {
   return trimmed
 }
 
-export function NetworkGraph({ data, className, preview = false }: NetworkGraphProps) {
+export function NetworkGraph({ data, className, preview = false, accessTier = 'explorer' }: NetworkGraphProps) {
   const svgRef = useRef<SVGSVGElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const [primaryType, setPrimaryType] = useState<string>("investment")
@@ -107,8 +110,10 @@ export function NetworkGraph({ data, className, preview = false }: NetworkGraphP
   // Refs for imperative D3 updates (search highlight, annotation, zoom)
   const searchQueryRef = useRef("")
   const nodeSelRef = useRef<d3.Selection<SVGGElement, Node, SVGGElement, unknown> | null>(null)
+  const linkSelRef = useRef<d3.Selection<SVGLineElement, Link, SVGGElement, unknown> | null>(null)
   const annotLayerRef = useRef<d3.Selection<SVGGElement, unknown, null, undefined> | null>(null)
   const zoomRef = useRef<d3.ZoomBehavior<SVGSVGElement, unknown> | null>(null)
+  const showNames = canSeeCompanyNames(accessTier)
 
   useEffect(() => {
     fetch('/data/incumbents.json')
@@ -336,6 +341,8 @@ export function NetworkGraph({ data, className, preview = false }: NetworkGraphP
       .attr("stroke-width", (d: Link) => d.kind === "primary" ? 2 : 1)
       .attr("stroke-dasharray", (d: Link) => d.kind === "secondary" ? "4,3" : "none")
 
+    linkSelRef.current = link as unknown as d3.Selection<SVGLineElement, Link, SVGGElement, unknown>
+
     const node = g.append("g")
       .selectAll("g")
       .data(graphData.nodes)
@@ -398,16 +405,24 @@ export function NetworkGraph({ data, className, preview = false }: NetworkGraphP
         }
       })
 
-    // Only show labels for hub/incumbent nodes — never render company names as
-    // static SVG text to prevent bulk scraping of the startup database.
-    // Company names are still visible one-at-a-time via the hover tooltip below.
-    node.filter(d => d.type !== "company")
+    // Labels for hub/incumbent nodes — always shown.
+    // Company name labels — shown for Strategist/Admin tiers only.
+    // Explorer/Analyst see company names via hover tooltip only (scraping protection).
+    node.filter(d => d.type !== "company" || showNames)
       .append("text")
-      .text(d => d.type === "incumbent" ? d.id.replace(/^☆\s*/, "") : d.id)
+      .text(d => {
+        if (d.type === "incumbent") return d.id.replace(/^☆\s*/, "")
+        if (d.type === "company") {
+          // Truncate long names for readability
+          return d.id.length > 18 ? d.id.slice(0, 16) + "…" : d.id
+        }
+        return d.id
+      })
       .attr("x", d => getNodeRadius(d) + 5)
       .attr("y", 3)
-      .style("font-size", "10px")
-      .style("fill", "var(--foreground)")
+      .style("font-size", d => d.type === "company" ? "9px" : "10px")
+      .style("fill", d => d.type === "company" ? "var(--muted-foreground)" : "var(--foreground)")
+      .style("font-weight", d => d.type === "company" ? "500" : "400")
       .style("pointer-events", "none")
 
     if (!preview) {
@@ -437,10 +452,14 @@ export function NetworkGraph({ data, className, preview = false }: NetworkGraphP
   }, [graphData, metric])
 
   // Imperative search highlight — deferred so keystrokes never block the UI
+  // When a match is found: zoom + center, emphasize the node + its direct neighbors,
+  // highlight connected links. When filters change with a search active, re-apply
+  // the zoom to keep the selected startup centered.
   useEffect(() => {
     searchQueryRef.current = deferredQuery
 
     const nodeSel = nodeSelRef.current
+    const linkSel = linkSelRef.current
     const annotLayer = annotLayerRef.current
     const q = deferredQuery.trim().toLowerCase()
 
@@ -450,11 +469,18 @@ export function NetworkGraph({ data, className, preview = false }: NetworkGraphP
         const sel = d3.select(this)
         sel.select("circle")
           .attr("stroke", "#fff")
-          .attr("stroke-width", d.type === "company" ? moatStrokeScale(d.moat) : 1.5)
+          .attr("stroke-width", d.type === "company" ? moatStrokeScale(d.moat) : d.type === "incumbent" ? 3 : 1.5)
           .attr("opacity", 0.9)
         sel.select("text")
           .attr("opacity", d.type === "company" ? 0.8 : 1)
       })
+    }
+
+    // Reset all link styles
+    if (linkSel) {
+      linkSel
+        .attr("stroke-opacity", (d: Link) => d.kind === "primary" ? 0.5 : 0.3)
+        .attr("stroke-width", (d: Link) => d.kind === "primary" ? 2 : 1)
     }
 
     // Clear annotation
@@ -464,24 +490,63 @@ export function NetworkGraph({ data, className, preview = false }: NetworkGraphP
 
     // Find best matching company node
     const match = graphData.nodes.find(n => n.type === "company" && n.id.toLowerCase().includes(q))
+    if (!match) return
 
-    // Dim all nodes; highlight match
+    // Find neighbor node IDs (directly connected to match)
+    const neighborIds = new Set<string>()
+    neighborIds.add(match.id)
+    graphData.links.forEach(l => {
+      const srcId = typeof l.source === "string" ? l.source : (l.source as Node).id
+      const tgtId = typeof l.target === "string" ? l.target : (l.target as Node).id
+      if (srcId === match.id) neighborIds.add(tgtId)
+      if (tgtId === match.id) neighborIds.add(srcId)
+    })
+
+    // Dim non-neighbors, keep neighbors bright
     nodeSel.each(function (d) {
-      const isMatch = match && d.id === match.id
-      const dimmed = !isMatch
+      const isMatch = d.id === match.id
+      const isNeighbor = neighborIds.has(d.id)
       const sel = d3.select(this)
-      sel.select("circle").attr("opacity", dimmed ? 0.07 : 1)
-      sel.select("text").attr("opacity", dimmed ? 0.04 : (d.type === "company" ? 0.9 : 1))
+
       if (isMatch) {
+        // Highlighted match — gold ring
         sel.select("circle")
           .attr("stroke", "#fbbf24")
           .attr("stroke-width", 4)
           .attr("opacity", 1)
+        sel.select("text").attr("opacity", 1)
+      } else if (isNeighbor) {
+        // Direct neighbor — full opacity
+        sel.select("circle").attr("opacity", 0.9)
+        sel.select("text").attr("opacity", 1)
+      } else {
+        // Everything else — dimmed
+        sel.select("circle").attr("opacity", 0.08)
+        sel.select("text").attr("opacity", 0.05)
       }
     })
 
+    // Highlight connected links, dim others
+    if (linkSel) {
+      linkSel.each(function (d: Link) {
+        const srcId = typeof d.source === "string" ? d.source : (d.source as Node).id
+        const tgtId = typeof d.target === "string" ? d.target : (d.target as Node).id
+        const connected = srcId === match.id || tgtId === match.id
+        const sel = d3.select(this)
+        if (connected) {
+          sel.attr("stroke", "#fbbf24")
+            .attr("stroke-opacity", 0.8)
+            .attr("stroke-width", 3)
+            .attr("stroke-dasharray", "none")
+        } else {
+          sel.attr("stroke-opacity", 0.04)
+            .attr("stroke-width", 0.5)
+        }
+      })
+    }
+
     // Draw annotation if node has settled position
-    if (match && annotLayer && match.x !== undefined && match.y !== undefined) {
+    if (annotLayer && match.x !== undefined && match.y !== undefined) {
       const ag = annotLayer.append("g").attr("transform", `translate(${match.x},${match.y})`)
       ag.append("line")
         .attr("x1", 0).attr("y1", -14)
@@ -500,7 +565,7 @@ export function NetworkGraph({ data, className, preview = false }: NetworkGraphP
         .attr("fill", "#0f172a")
         .text(labelText)
 
-      // Auto-pan to matched node
+      // Auto-zoom to matched node — centers the node in the viewport
       if (zoomRef.current && svgRef.current && containerRef.current) {
         const w = containerRef.current.clientWidth
         const h = containerRef.current.clientHeight
@@ -513,7 +578,7 @@ export function NetworkGraph({ data, className, preview = false }: NetworkGraphP
           )
       }
     }
-  }, [deferredQuery, graphData.nodes])
+  }, [deferredQuery, graphData.nodes, graphData.links])
 
   const resetZoom = () => {
     if (!svgRef.current) return

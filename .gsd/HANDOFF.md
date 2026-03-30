@@ -2,71 +2,41 @@
 
 ## Where We Are
 
-**Milestone M001** (v1.1 UX & Data Polish) is active. Slices S01, S02, S03, S06 are done. S04 (CSV Data Refresh) and S05 (Funding & Valuation Integration) are open.
+**Milestone M001** (v1.1 UX & Data Polish) is active. Slices S01, S02, S03, S06 are done. S04 and S05 are open.
 
-**This session** restructured the Financial Heatmap chart — a standalone improvement outside the existing slice plan.
-
-## What Just Changed (Uncommitted)
-
-Three files modified, zero TypeScript errors:
+## What Changed This Session (Uncommitted)
 
 ```
-M  app/api/funding/route.ts              (+2 lines: added estimatedHeadcount field)
-M  app/dashboard/financial-heatmap/page.tsx  (updated page description)
-M  components/charts/financial-heatmap-chart.tsx  (full rewrite: 402 insertions, 160 deletions)
+M  app/api/funding/route.ts                        Cloud Model bug fix + headcount field
+M  app/dashboard/financial-heatmap/page.tsx         Updated description
+M  components/charts/financial-heatmap-chart.tsx     Complete rewrite → HTML table, clean currency
+M  app/dashboard/network/page.tsx                   Pass accessTier to ecosystem graph
+M  components/charts/network-graph-toggle.tsx        Accept + pass accessTier prop
+M  components/charts/network-graph.tsx               Company name labels, improved search
 ```
 
-### The Change
+### Financial Heatmap Changes
 
-Rewrote the Financial Heatmap from a disorganized 14-column grid into a **20-column narrative chart** with 6 labeled phases:
+1. **Cloud Model "No Data" bug** — Airtable exports `"['Cloud', 'Desktop']"` but parser didn't strip brackets/quotes. Fixed with `.replace(/[\[\]'"]/g, '')`. All 600 companies now classify correctly.
+2. **Layout** — 20-col SVG → 14-col HTML table. Sticky company names, full text in every cell, hover detail panel, colored group bands (WHO → RAW INPUTS → EFFICIENCY → BURN → VALUATION → CONFIDENCE).
+3. **Currency formatting** — `$350M` not `$350.0M`, `9x` not `9.0x`. Decimals preserved when meaningful (`$18.2M`).
+4. **Headcount field** added to funding API from Airtable.
 
-1. **WHO** — Size, Cloud Model
-2. **RAW INPUTS** — Total Funding, Est. Revenue, Headcount, AI Intensity
-3. **EFFICIENCY** — ARR/HC, ARR Eff%, vs $200K Benchmark, Capital Efficiency
-4. **BURN & RUNWAY** — Burn/mo, Burn Level, Adj. Burn, Runway, Runway Quality
-5. **VALUATION** — ARR Multiple, Valuation, Funding Floor
-6. **CONFIDENCE** — Financial Score, Data Confidence
+### Ecosystem Network Graph Changes
 
-Added: colored group header bands, collapsible "Show formulas" panel, structured tooltips with calculation logic inline, alternating row backgrounds.
+1. **Company name labels** — now shown for Strategist and Admin tiers (`canSeeCompanyNames()`). Explorer/Analyst see names via hover tooltip only (scraping protection preserved).
+2. **Search zoom+center** — searching a startup zooms in and centers it at 1.8x scale with gold highlight ring.
+3. **Neighbor emphasis** — search highlights the matched node + all directly connected neighbors. Connected links turn gold, everything else dims. Previous behavior dimmed ALL nodes which lost context.
+4. **Connected links highlighted** — links touching the matched node get gold color, full opacity, 3px width. Non-connected links dim to near-invisible.
+5. **Filter stability** — search effect re-runs when `graphData.links` changes (i.e., when filters change), so zoom stays on the selected startup and only the surrounding network updates.
 
-## What Needs to Happen Next
+### ARR Multiple (FYI — not a bug)
 
-### Immediate (before committing)
-- [ ] **Visual verification** — `npm run dev`, navigate to `/dashboard/financial-heatmap`, confirm:
-  - Group header bands render with correct colors and labels
-  - All 20 columns display data (not all "—")
-  - Tooltip shows structured phases with formulas
-  - "Show formulas" panel toggles correctly
-  - Column widths are readable at default viewport
-  - Sort, top-N, and cloud-only filters work
-- [ ] **Commit** the 3 files once verified
+6 discrete buckets (3x, 4x, 5x, 7x, 9x, 12x) — 86% get 7x or 9x. Bucketed Airtable formula, not a website issue.
 
-### Follow-up improvements (optional)
-- [ ] Column width tuning if cells are too narrow at certain viewport sizes
-- [ ] Consider making efficiency columns green→red instead of neutral blue (they ARE health indicators)
-- [ ] Add top-50 option or "show all" for power users
-- [ ] Consider linking company names to their detail/compare page
+## Next Steps
 
-### Existing open work (M001 slices)
+- [ ] Visual verification of both views
+- [ ] Commit all changes
 - **S04** — CSV Data Refresh (planned, no tasks yet)
-- **S05** — Funding & Valuation Integration (depends on S04 + external agentic pipeline)
-
-## Key Files
-
-| File | What It Does |
-|------|-------------|
-| `components/charts/financial-heatmap-chart.tsx` | The main chart component — all column definitions, color logic, D3 rendering, tooltip, formula panel |
-| `app/api/funding/route.ts` | API route reading CSVs → JSON. Source of all financial data |
-| `app/dashboard/financial-heatmap/page.tsx` | Page wrapper with thesis gating |
-| `data/Startups-Financial Health.csv` | Source data (Airtable export) |
-| `data/Startups-Grid view.csv` | Supplementary data (deployment model, investment list) |
-
-## Decisions Made
-
-- **D001**: 6-phase narrative flow for heatmap (collaborative)
-- **D002**: Expose raw headcount in funding API (agent)
-
-## GSD Artifacts
-
-- `.gsd/milestones/M001/M001-CONTEXT.md` — full session context with problem/solution/status
-- `.gsd/DECISIONS.md` — D001, D002 recorded
+- **S05** — Funding & Valuation Integration (depends on S04)

@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react"
 import { loadCompanyData } from "@/lib/company-data"
 import type { Company } from "@/lib/company-data"
-import { FilterProvider } from "@/contexts/filter-context"
 import { useFilter } from "@/contexts/filter-context"
 import { NetworkGraphToggle } from "@/components/charts/network-graph-toggle"
 import { GlobeChart } from "@/components/charts/globe-chart"
@@ -76,40 +75,38 @@ export default function ExplorePage() {
   }, [])
 
   return (
-    <FilterProvider>
-      <div className="space-y-8">
-        {/* Header */}
-        <div className="flex items-start justify-between gap-4 flex-wrap">
-          <div>
-            <h1 className="text-2xl font-bold">Explore the AI PLM Ecosystem</h1>
-            <p className="text-muted-foreground text-sm mt-1">
-              {companies.length > 0 ? `${companies.length} companies` : "Loading…"} — network relationships and global footprint.
-            </p>
-          </div>
-          <Link href="/pricing">
-            <Button className="gap-2">
-              <Lock className="h-4 w-4" />
-              Unlock full analytics
-            </Button>
-          </Link>
-        </div>
-
-        <ExploreContent companies={companies} isLoading={isLoading} />
-
-        {/* Upgrade CTA */}
-        <div className="rounded-xl border border-primary/20 bg-primary/5 p-6 text-center space-y-3">
-          <h3 className="text-lg font-semibold">Want the full picture?</h3>
-          <p className="text-sm text-muted-foreground max-w-md mx-auto">
-            Full subscribers get access to financial heatmaps, investment thesis scoring, periodic table, timeline, Marimekko analysis, and 20+ more charts across {companies.length} companies.
+    <div className="space-y-8">
+      {/* Header */}
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <h1 className="text-2xl font-bold">Explore the AI PLM Ecosystem</h1>
+          <p className="text-muted-foreground text-sm mt-1">
+            {companies.length > 0 ? `${companies.length} companies` : "Loading…"} — network relationships and global footprint.
           </p>
-          <Link href="/pricing">
-            <Button size="lg" className="gap-2">
-              <Lock className="h-4 w-4" />
-              See plans &amp; pricing
-            </Button>
-          </Link>
         </div>
+        <Link href="/pricing">
+          <Button className="gap-2">
+            <Lock className="h-4 w-4" />
+            Unlock full analytics
+          </Button>
+        </Link>
       </div>
-    </FilterProvider>
+
+      <ExploreContent companies={companies} isLoading={isLoading} />
+
+      {/* Upgrade CTA */}
+      <div className="rounded-xl border border-primary/20 bg-primary/5 p-6 text-center space-y-3">
+        <h3 className="text-lg font-semibold">Want the full picture?</h3>
+        <p className="text-sm text-muted-foreground max-w-md mx-auto">
+          Full subscribers get access to financial heatmaps, investment thesis scoring, periodic table, timeline, Marimekko analysis, and 20+ more charts across {companies.length} companies.
+        </p>
+        <Link href="/pricing">
+          <Button size="lg" className="gap-2">
+            <Lock className="h-4 w-4" />
+            See plans &amp; pricing
+          </Button>
+        </Link>
+      </div>
+    </div>
   )
 }
