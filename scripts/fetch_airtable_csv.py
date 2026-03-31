@@ -11,15 +11,9 @@ BASE_URL = f"https://api.airtable.com/v0/{BASE_ID}"
 VIEWS = [
     {
         "table": "Startups",
-        "view":   "Software-only ThreadMoat",
+        "view":   "Grid Full DB View",
         "output": "data/Startups-Grid view.csv",
         "min_records": 100,  # Safety guard: skip write if fewer records returned
-    },
-    {
-        "table": "Startups",
-        "view":   "Financial Health",
-        "output": "data/Startups-Financial Health.csv",
-        "min_records": 100,
     },
     {
         "table": "Investors",
