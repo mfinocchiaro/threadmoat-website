@@ -44,3 +44,4 @@
 {"cmd":"replan-slice","params":{"milestoneId":"M003","sliceId":"S04","blockerTaskId":"T01"},"ts":"2026-03-31T08:07:19.894Z","actor":"agent","hash":"d5f3ab5ea8bb3612","session_id":"51cd4eb9-6ccb-451e-8b38-1e01a348ba1a"}
 {"cmd":"complete-task","params":{"milestoneId":"M003","sliceId":"S04","taskId":"T02"},"ts":"2026-03-31T08:09:02.755Z","actor":"agent","hash":"815c1b107fea7593","session_id":"51cd4eb9-6ccb-451e-8b38-1e01a348ba1a"}
 {"cmd":"complete-slice","params":{"milestoneId":"M003","sliceId":"S04"},"ts":"2026-03-31T08:09:39.143Z","actor":"agent","hash":"8d0a7c61feb61866","session_id":"51cd4eb9-6ccb-451e-8b38-1e01a348ba1a"}
+{"cmd":"complete-milestone","params":{"milestoneId":"M003"},"ts":"2026-03-31T08:11:53.514Z","actor":"agent","hash":"6c994aa0e0962db9","session_id":"51cd4eb9-6ccb-451e-8b38-1e01a348ba1a"}
