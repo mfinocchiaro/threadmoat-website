@@ -118,6 +118,11 @@ function PaywallBlock({ accessTier, pathname, isExpiredTrial = false }: { access
               This visualization is exclusive to the Strategist plan — full platform access
               with all 28+ charts, exports, watchlists, and dedicated analyst support.
             </p>
+            {accessTier === 'analyst' && (
+              <p className="mt-2 text-sm text-primary font-medium">
+                As an existing Analyst subscriber, you&apos;ll receive a $4,999 credit toward your Strategist upgrade.
+              </p>
+            )}
           </>
         ) : (
           <>
@@ -139,7 +144,16 @@ function PaywallBlock({ accessTier, pathname, isExpiredTrial = false }: { access
           </Link>
 
           {/* Strategist nudge for Explorer/Analyst users on Strategist pages */}
-          {isStrategistFeature && accessTier !== 'strategist' && (
+          {isStrategistFeature && accessTier === 'analyst' && (
+            <Link
+              href="/pricing#strategist"
+              className="mt-2 flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <Shield className="h-4 w-4 text-red-500" />
+              <span>Upgrade to <strong>Strategist</strong> — your Analyst purchase gives you a <strong>$4,999 credit</strong></span>
+            </Link>
+          )}
+          {isStrategistFeature && accessTier === 'explorer' && (
             <Link
               href="/pricing#strategist"
               className="mt-2 flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"

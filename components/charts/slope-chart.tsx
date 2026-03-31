@@ -124,7 +124,7 @@ export function SlopeChart({ data, className }: SlopeChartProps) {
         tooltipRef.current.style.visibility = "visible"
         tooltipRef.current.style.top = `${event.pageY - 10}px`
         tooltipRef.current.style.left = `${event.pageX + 15}px`
-        tooltipRef.current.innerHTML = `<strong>${d.name}</strong><br>${LABELS[leftMetric]}: ${formatVal(d[leftMetric] as number, leftMetric)}<br>${LABELS[rightMetric]}: ${formatVal(d[rightMetric] as number, rightMetric)}<br>Country: ${d.country || "N/A"}<br>Category: ${(d.investmentList || "").replace(/^\d+-/, "") || "N/A"}`
+        tooltipRef.current.innerHTML = `<strong>${d.name}</strong><br>${LABELS[leftMetric]}: ${formatVal(d[leftMetric] as number, leftMetric)}<br>${LABELS[rightMetric]}: ${formatVal(d[rightMetric] as number, rightMetric)}<br>Country: ${d.country || "N/A"}<br>Category: ${(d.investmentList || "").replace(/^\d+-/, "") || "N/A"}${d.valuationConfidence ? `<br>Val. Confidence: ${d.valuationConfidence}` : ""}${d.reportedValuation ? `<br>Reported Val.: ${d.reportedValuation}` : ""}`
       })
       .on("mousemove", (event) => {
         if (!tooltipRef.current) return

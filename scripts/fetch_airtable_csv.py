@@ -13,16 +13,19 @@ VIEWS = [
         "table": "Startups",
         "view":   "Software-only ThreadMoat",
         "output": "data/Startups-Grid view.csv",
+        "min_records": 100,  # Safety guard: skip write if fewer records returned
     },
     {
         "table": "Startups",
         "view":   "Financial Health",
         "output": "data/Startups-Financial Health.csv",
+        "min_records": 100,
     },
     {
         "table": "Investors",
         "view":   "Grid view",
         "output": "data/Investors-main.csv",
+        "min_records": 50,
     },
 ]
 
@@ -72,9 +75,15 @@ def main() -> None:
     errors = []
     for cfg in VIEWS:
         table, view, output = cfg["table"], cfg["view"], cfg["output"]
+        min_records = cfg.get("min_records", 0)
         print(f"Fetching '{table}' / '{view}' ...")
         try:
             recs = fetch_all_records(table, view)
+            if min_records and len(recs) < min_records:
+                msg = f"  ⚠ Only {len(recs)} records returned (minimum {min_records}) — SKIPPING write to {output} to protect existing data"
+                print(msg)
+                errors.append(f"{table}/{view}: {msg}")
+                continue
             records_to_csv(recs, output)
         except requests.HTTPError as e:
             msg = f"  HTTP error: {e.response.status_code} — {e.response.text}"
