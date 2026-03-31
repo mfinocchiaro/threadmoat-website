@@ -126,7 +126,7 @@ export function ParallelCoordsChart({ data, className }: ParallelCoordsChartProp
             Country: ${d.country || "N/A"}<br>
             Score: ${d.weightedScore.toFixed(2)}<br>
             Funding: ${formatCurrency(d.totalFunding)}<br>
-            Category: ${(d.investmentList || "").replace(/^\d+-/, "") || "N/A"}
+            Category: ${(d.investmentList || "").replace(/^\d+-/, "") || "N/A"}${d.valuationConfidence ? `<br>Val. Confidence: ${d.valuationConfidence}` : ""}${d.reportedValuation ? `<br>Reported Val.: ${d.reportedValuation}` : ""}
           </div>`
       })
       .on("mousemove", (event) => {

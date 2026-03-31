@@ -10,7 +10,7 @@
  * Product IDs in Neon:
  *   explorer_trial / coupon_trial  → Recon
  *   analyst_annual / friends_access / investor_annual  → Analyst
- *   strategist / strategist_annual  → Strategist
+ *   strategist / strategist_annual / forge_annual  → Strategist
  */
 
 export type AccessTier = 'explorer' | 'analyst' | 'strategist' | 'admin'
@@ -99,6 +99,7 @@ export function getAccessTier(productId: string | null | undefined, isAdmin: boo
   switch (productId) {
     case 'strategist':
     case 'strategist_annual':
+    case 'forge_annual':
       return 'strategist'
     case 'analyst_annual':
     case 'investor_annual':

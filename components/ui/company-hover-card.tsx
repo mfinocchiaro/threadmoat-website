@@ -104,6 +104,24 @@ export function CompanyHoverCard({ company, onClose, className }: CompanyHoverCa
         </div>
       </div>
 
+      {/* ── Confidence & Valuation ── */}
+      {(company.valuationConfidence || company.reportedValuation) && (
+        <div className="grid grid-cols-2 divide-x divide-border border-b border-border text-center">
+          {company.valuationConfidence && (
+            <div className="p-2">
+              <p className="text-[10px] text-muted-foreground">Val. Confidence</p>
+              <p className="font-semibold text-xs">{company.valuationConfidence}</p>
+            </div>
+          )}
+          {company.reportedValuation && (
+            <div className="p-2">
+              <p className="text-[10px] text-muted-foreground">Reported Val.</p>
+              <p className="font-semibold text-xs">{company.reportedValuation}{company.reportedValuationYear ? ` (${company.reportedValuationYear})` : ""}</p>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* ── Score bars ── */}
       <div className="p-3 space-y-1.5 border-b border-border">
         {scores.map(s => (
