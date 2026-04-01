@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exported_at": "2026-04-01T21:39:03.264Z",
+  "exported_at": "2026-04-01T21:45:51.225Z",
   "milestones": [
     {
       "id": "M001",
@@ -735,11 +735,11 @@
       "completed_at": null,
       "full_summary_md": "",
       "full_uat_md": "",
-      "goal": "Add contextual onboarding for the filter toolbar — explain what filters do, how they affect charts, and the suggested workflow.",
-      "success_criteria": "First-time user sees filter explanation. Tooltip/guide dismissible. Doesn't show again after dismissal.",
-      "proof_level": "Visual verification",
-      "integration_closure": "Filter toolbar has self-documenting UX",
-      "observability_impact": "None",
+      "goal": "New dashboard visitors see a brief inline callout explaining that the filter toolbar applies to all charts simultaneously. The callout dismisses permanently on click or auto-dismisses after the user applies their first filter.",
+      "success_criteria": "- Callout appears for new users (no `filter-onboarding-dismissed` key in localStorage)\n- Callout explains the filter→chart workflow in one sentence\n- Clicking the dismiss button hides the callout and sets `filter-onboarding-dismissed` in localStorage\n- Applying any filter auto-dismisses the callout and sets the localStorage key\n- Callout does not appear on subsequent visits after dismissal\n- `npm run build` passes with no type errors\n- No hydration mismatches (localStorage reads guarded with useEffect)",
+      "proof_level": "Build verification — `npm run build` confirms type correctness and compilation. No runtime or UAT required for this low-risk UI hint.",
+      "integration_closure": "- Upstream: `components/dashboard/filter-toolbar.tsx` (insertion point), `contexts/filter-context.tsx` (`useFilter` hook, `activeFilterCount`)\n- New wiring: `FilterOnboardingGuide` component rendered inside `FilterToolbar` above the \"No filters active\" row\n- Remaining for milestone: S02 (AI Narrative Engine), S03 (Company Shortlist), S04 (Report Builder)",
+      "observability_impact": "None — purely client-side UI hint with localStorage persistence. No runtime signals, no failure surfaces beyond standard React rendering.",
       "sequence": 0,
       "replan_triggered_at": null
     },
@@ -1749,6 +1749,49 @@
       "observability_impact": "",
       "full_plan_md": "",
       "sequence": 0
+    },
+    {
+      "milestone_id": "M005",
+      "slice_id": "S01",
+      "id": "T01",
+      "title": "Created dismissable inline onboarding callout that teaches new users about the filter→chart workflow, with localStorage persistence and auto-dismiss on first filter use",
+      "status": "complete",
+      "one_liner": "Created dismissable inline onboarding callout that teaches new users about the filter→chart workflow, with localStorage persistence and auto-dismiss on first filter use",
+      "narrative": "Built FilterOnboardingGuide component with SSR-safe localStorage hydration pattern (default hidden, read in useEffect). Renders a compact info bar inside FilterToolbar's sticky container above the filter chips. Dismisses permanently on X click or auto-dismisses when activeFilterCount transitions from 0 to >0 via useRef tracking. Mounted in FilterToolbar above the chips/no-filters row.",
+      "verification_result": "All three task plan verification checks pass: npm run build succeeds cleanly, grep confirms localStorage key in component, grep confirms import in toolbar.",
+      "duration": "",
+      "completed_at": "2026-04-01T21:45:51.217Z",
+      "blocker_discovered": false,
+      "deviations": "None.",
+      "known_issues": "None.",
+      "key_files": [
+        "components/dashboard/filter-onboarding-guide.tsx",
+        "components/dashboard/filter-toolbar.tsx"
+      ],
+      "key_decisions": [
+        "SSR-safe localStorage: default to hidden, hydrate in useEffect to avoid hydration mismatch",
+        "useRef to track previous activeFilterCount for 0→>0 auto-dismiss transition"
+      ],
+      "full_summary_md": "---\nid: T01\nparent: S01\nmilestone: M005\nkey_files:\n  - components/dashboard/filter-onboarding-guide.tsx\n  - components/dashboard/filter-toolbar.tsx\nkey_decisions:\n  - SSR-safe localStorage: default to hidden, hydrate in useEffect to avoid hydration mismatch\n  - useRef to track previous activeFilterCount for 0→>0 auto-dismiss transition\nduration: \"\"\nverification_result: passed\ncompleted_at: 2026-04-01T21:45:51.218Z\nblocker_discovered: false\n---\n\n# T01: Created dismissable inline onboarding callout that teaches new users about the filter→chart workflow, with localStorage persistence and auto-dismiss on first filter use\n\n**Created dismissable inline onboarding callout that teaches new users about the filter→chart workflow, with localStorage persistence and auto-dismiss on first filter use**\n\n## What Happened\n\nBuilt FilterOnboardingGuide component with SSR-safe localStorage hydration pattern (default hidden, read in useEffect). Renders a compact info bar inside FilterToolbar's sticky container above the filter chips. Dismisses permanently on X click or auto-dismisses when activeFilterCount transitions from 0 to >0 via useRef tracking. Mounted in FilterToolbar above the chips/no-filters row.\n\n## Verification\n\nAll three task plan verification checks pass: npm run build succeeds cleanly, grep confirms localStorage key in component, grep confirms import in toolbar.\n\n## Verification Evidence\n\n| # | Command | Exit Code | Verdict | Duration |\n|---|---------|-----------|---------|----------|\n| 1 | `npm run build` | 0 | ✅ pass | 15400ms |\n| 2 | `grep -q 'filter-onboarding-dismissed' components/dashboard/filter-onboarding-guide.tsx` | 0 | ✅ pass | 50ms |\n| 3 | `grep -q 'FilterOnboardingGuide' components/dashboard/filter-toolbar.tsx` | 0 | ✅ pass | 50ms |\n\n\n## Deviations\n\nNone.\n\n## Known Issues\n\nNone.\n\n## Files Created/Modified\n\n- `components/dashboard/filter-onboarding-guide.tsx`\n- `components/dashboard/filter-toolbar.tsx`\n",
+      "description": "Create a dismissable inline callout component that appears above the filter buttons in FilterToolbar. Uses localStorage for persistent dismissal. Auto-dismisses when the user applies their first filter (via activeFilterCount from useFilter).\n\nThe component must:\n1. Read `filter-onboarding-dismissed` from localStorage in a useEffect (not during SSR) to avoid hydration mismatches\n2. Render a compact Alert-style callout with an info icon, a one-liner about filters applying to all charts, and a dismiss X button\n3. On dismiss click: set localStorage key and hide\n4. On activeFilterCount going from 0 to >0: auto-dismiss and set localStorage key\n5. When dismissed (either way), never render again\n\nMount the component inside FilterToolbar's main wrapper div, between the sticky container and the 'No filters active' row / active chips row. It should appear above both rows but inside the sticky container so it scrolls with the toolbar.",
+      "estimate": "30m",
+      "files": [
+        "components/dashboard/filter-onboarding-guide.tsx",
+        "components/dashboard/filter-toolbar.tsx"
+      ],
+      "verify": "npm run build && grep -q 'filter-onboarding-dismissed' components/dashboard/filter-onboarding-guide.tsx && grep -q 'FilterOnboardingGuide' components/dashboard/filter-toolbar.tsx",
+      "inputs": [
+        "components/dashboard/filter-toolbar.tsx",
+        "contexts/filter-context.tsx",
+        "components/ui/alert.tsx"
+      ],
+      "expected_output": [
+        "components/dashboard/filter-onboarding-guide.tsx",
+        "components/dashboard/filter-toolbar.tsx"
+      ],
+      "observability_impact": "",
+      "full_plan_md": "",
+      "sequence": 0
     }
   ],
   "decisions": [
@@ -2172,6 +2215,39 @@
       "verdict": "✅ pass — guard in place (100 for startups, 50 for investors)",
       "duration_ms": 50,
       "created_at": "2026-04-01T21:37:55.075Z"
+    },
+    {
+      "id": 38,
+      "task_id": "T01",
+      "slice_id": "S01",
+      "milestone_id": "M005",
+      "command": "npm run build",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 15400,
+      "created_at": "2026-04-01T21:45:51.217Z"
+    },
+    {
+      "id": 39,
+      "task_id": "T01",
+      "slice_id": "S01",
+      "milestone_id": "M005",
+      "command": "grep -q 'filter-onboarding-dismissed' components/dashboard/filter-onboarding-guide.tsx",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 50,
+      "created_at": "2026-04-01T21:45:51.217Z"
+    },
+    {
+      "id": 40,
+      "task_id": "T01",
+      "slice_id": "S01",
+      "milestone_id": "M005",
+      "command": "grep -q 'FilterOnboardingGuide' components/dashboard/filter-toolbar.tsx",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 50,
+      "created_at": "2026-04-01T21:45:51.217Z"
     }
   ]
 }
