@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo, useRef, useEffect } from "react"
+import { useState, useMemo, useRef, useEffect, useCallback } from "react"
 import { Company, formatCurrency } from "@/lib/company-data"
 import {
   Dialog,
@@ -14,7 +14,8 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
-import { Sparkles, ChevronRight, X, Plus } from "lucide-react"
+import { Sparkles, ChevronRight, X, Plus, Copy, Square, AlertCircle, Loader2 } from "lucide-react"
+import { useCompletion } from "@ai-sdk/react"
 import { getCustomerLogoUrl, parseKnownCustomers } from "@/lib/customer-logos"
 
 interface ReportGeneratorProps {
@@ -353,14 +354,91 @@ function generateReport(company: Company, type: string): string {
   return `${header}\n\nReport type not recognized.`
 }
 
+// ─── AI Narrative Section Renderer ──────────────────────────────────────────
+
+function AINarrativeSection({ text }: { text: string }) {
+  // Split streamed markdown into sections on "## " headings
+  const sections = useMemo(() => {
+    if (!text.trim()) return []
+    const parts: { heading: string; body: string }[] = []
+    const lines = text.split("\n")
+    let currentHeading = ""
+    let currentBody: string[] = []
+
+    for (const line of lines) {
+      if (line.startsWith("## ")) {
+        if (currentHeading || currentBody.length > 0) {
+          parts.push({ heading: currentHeading, body: currentBody.join("\n").trim() })
+        }
+        currentHeading = line.replace(/^## /, "")
+        currentBody = []
+      } else {
+        currentBody.push(line)
+      }
+    }
+    if (currentHeading || currentBody.length > 0) {
+      parts.push({ heading: currentHeading, body: currentBody.join("\n").trim() })
+    }
+    return parts
+  }, [text])
+
+  if (sections.length === 0) return null
+
+  return (
+    <div className="space-y-4">
+      {sections.map((section, i) => (
+        <div key={i}>
+          {section.heading && (
+            <h3 className="text-sm font-bold text-violet-300 mb-1.5">{section.heading}</h3>
+          )}
+          {section.body && (
+            <div className="text-xs leading-relaxed text-foreground/85 whitespace-pre-wrap">
+              {section.body}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  )
+}
+
 function IntelligenceReportTab({ data }: { data: Company[] }) {
   const [reportType, setReportType] = useState("deep-dive")
   const [companySearch, setCompanySearch] = useState("")
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [selectedCompany, setSelectedCompany] = useState<Company | null>(null)
   const [reportOutput, setReportOutput] = useState<string | null>(null)
+  const [aiError, setAiError] = useState<string | null>(null)
+  const [aiCopied, setAiCopied] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
+
+  // AI Narrative streaming via useCompletion
+  const {
+    completion,
+    complete,
+    stop,
+    isLoading: aiLoading,
+    setCompletion,
+  } = useCompletion({
+    api: "/api/ai/narrative",
+    streamProtocol: "text",
+    onError: useCallback((error: Error) => {
+      // The error message from useCompletion wraps the response body
+      const msg = error.message || "AI generation failed"
+      if (msg.includes("429") || msg.toLowerCase().includes("rate limit")) {
+        setAiError("Rate limit exceeded — try again later")
+      } else if (msg.includes("401") || msg.toLowerCase().includes("unauthorized")) {
+        setAiError("Please sign in to use AI Analysis")
+      } else if (msg.includes("404")) {
+        setAiError("Company not found")
+      } else {
+        setAiError(msg.length > 200 ? "AI generation failed" : msg)
+      }
+    }, []),
+  })
+
+  const aiStreaming = aiLoading
 
   const suggestions = useMemo(() => {
     if (!companySearch.trim()) return []
@@ -384,11 +462,30 @@ function IntelligenceReportTab({ data }: { data: Company[] }) {
     setCompanySearch(c.name)
     setShowSuggestions(false)
     setReportOutput(null)
+    setAiError(null)
+    setCompletion("")
   }
 
   const generate = () => {
     if (!selectedCompany) return
     setReportOutput(generateReport(selectedCompany, reportType))
+  }
+
+  const generateAI = () => {
+    if (!selectedCompany || aiStreaming) return
+    setAiError(null)
+    setCompletion("")
+    setAiCopied(false)
+    // useCompletion sends { prompt, ...body } to the endpoint
+    // Our server ignores prompt and reads companyId from body
+    complete("", { body: { companyId: selectedCompany.id } })
+  }
+
+  const copyAI = () => {
+    if (!completion) return
+    navigator.clipboard.writeText(completion)
+    setAiCopied(true)
+    setTimeout(() => setAiCopied(false), 2000)
   }
 
   return (
@@ -444,18 +541,32 @@ function IntelligenceReportTab({ data }: { data: Company[] }) {
           </div>
         </div>
 
-        {/* Generate button */}
-        <Button
-          onClick={generate}
-          disabled={!selectedCompany}
-          className="h-9 gap-2 shrink-0 sm:self-end"
-        >
-          <Sparkles className="h-4 w-4" />
-          Generate Intelligence
-        </Button>
+        {/* Buttons */}
+        <div className="flex gap-2 shrink-0 sm:self-end">
+          <Button
+            onClick={generate}
+            disabled={!selectedCompany}
+            className="h-9 gap-2"
+          >
+            <Sparkles className="h-4 w-4" />
+            Generate Intelligence
+          </Button>
+          <Button
+            onClick={generateAI}
+            disabled={!selectedCompany || aiStreaming}
+            className="h-9 gap-2 bg-violet-600 hover:bg-violet-500 text-white"
+          >
+            {aiStreaming ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Sparkles className="h-4 w-4" />
+            )}
+            AI Analysis
+          </Button>
+        </div>
       </div>
 
-      {/* Output */}
+      {/* Template report output */}
       {reportOutput && (
         <div className="rounded-xl border border-border bg-muted/30 p-5">
           <div className="flex items-center justify-between mb-3">
@@ -474,7 +585,71 @@ function IntelligenceReportTab({ data }: { data: Company[] }) {
         </div>
       )}
 
-      {!reportOutput && (
+      {/* AI Narrative output */}
+      {(completion || aiStreaming || aiError) && (
+        <div className="rounded-xl border border-violet-700/50 bg-violet-950/30 p-5">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2 text-sm font-semibold">
+              <Sparkles className="h-4 w-4 text-violet-400" />
+              <span className="text-violet-300">AI Analysis</span>
+              {selectedCompany && <span className="text-muted-foreground font-normal">— {selectedCompany.name}</span>}
+              {aiStreaming && (
+                <span className="inline-flex items-center gap-1.5 text-xs font-normal text-violet-400">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-violet-400 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-violet-500" />
+                  </span>
+                  Generating…
+                </span>
+              )}
+            </div>
+            <div className="flex items-center gap-1.5">
+              {aiStreaming && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 text-xs gap-1 text-red-400 hover:text-red-300 hover:bg-red-950/40"
+                  onClick={() => stop()}
+                >
+                  <Square className="h-3 w-3" />
+                  Stop
+                </Button>
+              )}
+              {completion && !aiStreaming && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 text-xs gap-1"
+                  onClick={copyAI}
+                >
+                  <Copy className="h-3 w-3" />
+                  {aiCopied ? "Copied!" : "Copy"}
+                </Button>
+              )}
+            </div>
+          </div>
+
+          {/* Error display */}
+          {aiError && (
+            <div className="flex items-start gap-2 rounded-lg bg-red-950/40 border border-red-800/40 p-3 mb-3">
+              <AlertCircle className="h-4 w-4 text-red-400 shrink-0 mt-0.5" />
+              <p className="text-xs text-red-300">{aiError}</p>
+            </div>
+          )}
+
+          {/* Streamed content */}
+          {completion ? (
+            <div className="max-h-[600px] overflow-y-auto pr-1">
+              <AINarrativeSection text={completion} />
+            </div>
+          ) : !aiError && !aiStreaming ? (
+            <p className="text-xs text-muted-foreground">No analysis generated</p>
+          ) : null}
+        </div>
+      )}
+
+      {/* Empty state — only when nothing is showing */}
+      {!reportOutput && !completion && !aiStreaming && !aiError && (
         <div className="rounded-xl border border-dashed border-border/50 h-48 flex items-center justify-center text-muted-foreground text-sm">
           Select a report type and startup, then click Generate Intelligence
         </div>

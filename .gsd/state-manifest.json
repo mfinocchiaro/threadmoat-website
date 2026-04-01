@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exported_at": "2026-04-01T21:57:26.866Z",
+  "exported_at": "2026-04-01T22:02:21.588Z",
   "milestones": [
     {
       "id": "M001",
@@ -1848,19 +1848,28 @@
       "milestone_id": "M005",
       "slice_id": "S02",
       "id": "T02",
-      "title": "Wire streaming AI narrative UI into report generator",
-      "status": "pending",
-      "one_liner": "",
-      "narrative": "",
-      "verification_result": "",
+      "title": "Wired streaming AI narrative UI with useCompletion into IntelligenceReportTab — AI Analysis button, streaming display, stop/copy controls, and error handling for rate-limit/auth/generation failures",
+      "status": "complete",
+      "one_liner": "Wired streaming AI narrative UI with useCompletion into IntelligenceReportTab — AI Analysis button, streaming display, stop/copy controls, and error handling for rate-limit/auth/generation failures",
+      "narrative": "Installed @ai-sdk/react (with --legacy-peer-deps for React 19.2.0 compat) and integrated useCompletion into the IntelligenceReportTab component. Added: (1) useCompletion hook configured with api: '/api/ai/narrative' and streamProtocol: 'text' matching T01's toTextStreamResponse(), with onError parsing 429/401/404/generic errors. (2) Violet-styled AI Analysis button next to existing Generate Intelligence, disabled when no company selected or streaming. (3) Streaming display section with pulsing indicator, AINarrativeSection component splitting markdown on ## headings. (4) Stop button during streaming. (5) Copy button after completion. (6) Error display for all failure modes. Adapted from plan: used isLoading instead of status (installed @ai-sdk/react v3.0 doesn't have status on UseCompletionHelpers). Existing template report functionality fully preserved.",
+      "verification_result": "npm run build passes with 0 type errors. All 4 task-level grep checks pass (useCompletion, ai/narrative, AI Analysis, stop()). All 6 slice-level verification checks pass.",
       "duration": "",
-      "completed_at": null,
+      "completed_at": "2026-04-01T22:02:21.580Z",
       "blocker_discovered": false,
-      "deviations": "",
-      "known_issues": "",
-      "key_files": [],
-      "key_decisions": [],
-      "full_summary_md": "",
+      "deviations": "Used isLoading:boolean instead of status enum — @ai-sdk/react v3.0 UseCompletionHelpers doesn't have status. Installed @ai-sdk/react with --legacy-peer-deps due to React 19.2.0 vs 19.2.1 peer dep gap.",
+      "known_issues": "None.",
+      "key_files": [
+        "components/charts/report-generator.tsx",
+        "package.json",
+        "package-lock.json",
+        ".gsd/KNOWLEDGE.md"
+      ],
+      "key_decisions": [
+        "Used isLoading instead of status — @ai-sdk/react v3.0 UseCompletionHelpers has isLoading:boolean, not status enum",
+        "Used streamProtocol:'text' — required because T01's endpoint uses toTextStreamResponse()",
+        "Installed @ai-sdk/react with --legacy-peer-deps due to React 19.2.0 vs 19.2.1 peer dep mismatch"
+      ],
+      "full_summary_md": "---\nid: T02\nparent: S02\nmilestone: M005\nkey_files:\n  - components/charts/report-generator.tsx\n  - package.json\n  - package-lock.json\n  - .gsd/KNOWLEDGE.md\nkey_decisions:\n  - Used isLoading instead of status — @ai-sdk/react v3.0 UseCompletionHelpers has isLoading:boolean, not status enum\n  - Used streamProtocol:'text' — required because T01's endpoint uses toTextStreamResponse()\n  - Installed @ai-sdk/react with --legacy-peer-deps due to React 19.2.0 vs 19.2.1 peer dep mismatch\nduration: \"\"\nverification_result: passed\ncompleted_at: 2026-04-01T22:02:21.580Z\nblocker_discovered: false\n---\n\n# T02: Wired streaming AI narrative UI with useCompletion into IntelligenceReportTab — AI Analysis button, streaming display, stop/copy controls, and error handling for rate-limit/auth/generation failures\n\n**Wired streaming AI narrative UI with useCompletion into IntelligenceReportTab — AI Analysis button, streaming display, stop/copy controls, and error handling for rate-limit/auth/generation failures**\n\n## What Happened\n\nInstalled @ai-sdk/react (with --legacy-peer-deps for React 19.2.0 compat) and integrated useCompletion into the IntelligenceReportTab component. Added: (1) useCompletion hook configured with api: '/api/ai/narrative' and streamProtocol: 'text' matching T01's toTextStreamResponse(), with onError parsing 429/401/404/generic errors. (2) Violet-styled AI Analysis button next to existing Generate Intelligence, disabled when no company selected or streaming. (3) Streaming display section with pulsing indicator, AINarrativeSection component splitting markdown on ## headings. (4) Stop button during streaming. (5) Copy button after completion. (6) Error display for all failure modes. Adapted from plan: used isLoading instead of status (installed @ai-sdk/react v3.0 doesn't have status on UseCompletionHelpers). Existing template report functionality fully preserved.\n\n## Verification\n\nnpm run build passes with 0 type errors. All 4 task-level grep checks pass (useCompletion, ai/narrative, AI Analysis, stop()). All 6 slice-level verification checks pass.\n\n## Verification Evidence\n\n| # | Command | Exit Code | Verdict | Duration |\n|---|---------|-----------|---------|----------|\n| 1 | `npm run build` | 0 | ✅ pass | 15800ms |\n| 2 | `grep -q 'useCompletion' components/charts/report-generator.tsx` | 0 | ✅ pass | 50ms |\n| 3 | `grep -q 'ai/narrative' components/charts/report-generator.tsx` | 0 | ✅ pass | 50ms |\n| 4 | `grep -q 'AI Analysis' components/charts/report-generator.tsx` | 0 | ✅ pass | 50ms |\n| 5 | `grep -q 'stop()' components/charts/report-generator.tsx` | 0 | ✅ pass | 50ms |\n| 6 | `test -f app/api/ai/narrative/route.ts` | 0 | ✅ pass | 50ms |\n| 7 | `grep -q 'streamText' app/api/ai/narrative/route.ts` | 0 | ✅ pass | 50ms |\n| 8 | `grep -q 'auth()' app/api/ai/narrative/route.ts` | 0 | ✅ pass | 50ms |\n| 9 | `grep -q 'rateLimit' app/api/ai/narrative/route.ts` | 0 | ✅ pass | 50ms |\n| 10 | `grep -q 'maxDuration' app/api/ai/narrative/route.ts` | 0 | ✅ pass | 50ms |\n\n\n## Deviations\n\nUsed isLoading:boolean instead of status enum — @ai-sdk/react v3.0 UseCompletionHelpers doesn't have status. Installed @ai-sdk/react with --legacy-peer-deps due to React 19.2.0 vs 19.2.1 peer dep gap.\n\n## Known Issues\n\nNone.\n\n## Files Created/Modified\n\n- `components/charts/report-generator.tsx`\n- `package.json`\n- `package-lock.json`\n- `.gsd/KNOWLEDGE.md`\n",
       "description": "## Description\n\nIntegrate the `/api/ai/narrative` streaming endpoint into the existing `IntelligenceReportTab` component in `components/charts/report-generator.tsx`. Add a new 'AI Analysis' button next to the existing 'Generate Intelligence' button. When clicked with a company selected, it calls the AI endpoint via `useCompletion` from `@ai-sdk/react` and streams the narrative into a new styled section below the existing template report output.\n\nThe AI narrative section should:\n- Show a loading/streaming indicator while generating\n- Render the streamed markdown with proper heading formatting (the four sections: Impressions, Conclusions, Beware, Overlooked Opportunities)\n- Include a Stop button to abort generation mid-stream\n- Show error messages for rate limiting, auth failures, and generation errors\n- Be clearly visually distinct from the template report (different background, \"AI Analysis\" header with Sparkles icon)\n- Include a Copy button for the completed narrative\n- Not replace or interfere with the existing template report functionality\n\nUse `useCompletion` from `@ai-sdk/react` with `api: '/api/ai/narrative'` and programmatic `complete()` call (not form-based). The `body` option passes `{ companyId }`. The `completion` string contains the accumulated streamed text. Use `status` to detect streaming state and `stop()` to abort.\n\n## Failure Modes\n\n| Dependency | On error | On timeout | On malformed response |\n|------------|----------|-----------|----------------------|\n| /api/ai/narrative | Display error message from response body. useCompletion's `onError` callback handles this. | Streaming timeout handled by server's maxDuration. Client shows 'Generation timed out' if fetch fails. | Raw text displayed as-is — markdown parsing is best-effort |\n\n## Negative Tests\n\n- **Error paths**: Rate limit 429 → shows 'Rate limit exceeded, try again later' message. Auth failure 401 → shows 'Please sign in'. No company selected → button disabled.\n- **Boundary conditions**: Very long narrative → scrollable container. Empty narrative (model returns nothing) → shows 'No analysis generated' message.\n\n## Steps\n\n1. Add `import { useCompletion } from '@ai-sdk/react'` to report-generator.tsx\n2. In `IntelligenceReportTab`, add `useCompletion` hook configured with `api: '/api/ai/narrative'` and `onError` handler that parses the error response\n3. Add state for `aiError` to display error messages\n4. Add an 'AI Analysis' button (with Sparkles icon and distinct styling, e.g. violet/purple gradient) next to the existing 'Generate Intelligence' button. Disabled when no company selected or when streaming.\n5. Wire button onClick to call `complete('', { body: { companyId: selectedCompany.id } })` — the prompt content is server-side, so client sends empty prompt with companyId in body\n6. Add AI narrative output section below the existing template report output: a styled card with 'AI Analysis' header, the streamed `completion` text rendered with basic markdown formatting (split on `## ` for section headers), a Copy button, and a Stop button visible during streaming\n7. Add loading state: while `status === 'submitted' || status === 'streaming'`, show a pulsing indicator and the Stop button\n8. Ensure existing 'Generate Intelligence' template report still works unchanged\n9. Verify: `npm run build` passes with no type errors\n\n## Must-Haves\n\n- [ ] `useCompletion` hook wired to `/api/ai/narrative`\n- [ ] AI Analysis button with distinct styling, disabled when no company selected\n- [ ] Streaming narrative display with basic markdown section formatting\n- [ ] Stop button during streaming\n- [ ] Error display for rate limit, auth, and generation failures\n- [ ] Copy button for completed narrative\n- [ ] Existing template reports unaffected\n- [ ] `npm run build` passes\n\n## Verification\n\n- `npm run build` passes with no type errors\n- `grep -q 'useCompletion' components/charts/report-generator.tsx`\n- `grep -q 'ai/narrative' components/charts/report-generator.tsx`\n- `grep -q 'AI Analysis' components/charts/report-generator.tsx`\n- `grep -q 'stop()' components/charts/report-generator.tsx`\n\n## Inputs\n\n- `app/api/ai/narrative/route.ts` — the streaming endpoint created in T01\n- `components/charts/report-generator.tsx` — existing report generator component to augment\n\n## Expected Output\n\n- `components/charts/report-generator.tsx` — updated with useCompletion hook, AI Analysis button, streaming display, error handling, and stop functionality",
       "estimate": "45m",
       "files": [
@@ -2399,6 +2408,116 @@
       "verdict": "✅ pass",
       "duration_ms": 100,
       "created_at": "2026-04-01T21:57:26.846Z"
+    },
+    {
+      "id": 47,
+      "task_id": "T02",
+      "slice_id": "S02",
+      "milestone_id": "M005",
+      "command": "npm run build",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 15800,
+      "created_at": "2026-04-01T22:02:21.580Z"
+    },
+    {
+      "id": 48,
+      "task_id": "T02",
+      "slice_id": "S02",
+      "milestone_id": "M005",
+      "command": "grep -q 'useCompletion' components/charts/report-generator.tsx",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 50,
+      "created_at": "2026-04-01T22:02:21.580Z"
+    },
+    {
+      "id": 49,
+      "task_id": "T02",
+      "slice_id": "S02",
+      "milestone_id": "M005",
+      "command": "grep -q 'ai/narrative' components/charts/report-generator.tsx",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 50,
+      "created_at": "2026-04-01T22:02:21.580Z"
+    },
+    {
+      "id": 50,
+      "task_id": "T02",
+      "slice_id": "S02",
+      "milestone_id": "M005",
+      "command": "grep -q 'AI Analysis' components/charts/report-generator.tsx",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 50,
+      "created_at": "2026-04-01T22:02:21.580Z"
+    },
+    {
+      "id": 51,
+      "task_id": "T02",
+      "slice_id": "S02",
+      "milestone_id": "M005",
+      "command": "grep -q 'stop()' components/charts/report-generator.tsx",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 50,
+      "created_at": "2026-04-01T22:02:21.580Z"
+    },
+    {
+      "id": 52,
+      "task_id": "T02",
+      "slice_id": "S02",
+      "milestone_id": "M005",
+      "command": "test -f app/api/ai/narrative/route.ts",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 50,
+      "created_at": "2026-04-01T22:02:21.580Z"
+    },
+    {
+      "id": 53,
+      "task_id": "T02",
+      "slice_id": "S02",
+      "milestone_id": "M005",
+      "command": "grep -q 'streamText' app/api/ai/narrative/route.ts",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 50,
+      "created_at": "2026-04-01T22:02:21.580Z"
+    },
+    {
+      "id": 54,
+      "task_id": "T02",
+      "slice_id": "S02",
+      "milestone_id": "M005",
+      "command": "grep -q 'auth()' app/api/ai/narrative/route.ts",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 50,
+      "created_at": "2026-04-01T22:02:21.580Z"
+    },
+    {
+      "id": 55,
+      "task_id": "T02",
+      "slice_id": "S02",
+      "milestone_id": "M005",
+      "command": "grep -q 'rateLimit' app/api/ai/narrative/route.ts",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 50,
+      "created_at": "2026-04-01T22:02:21.580Z"
+    },
+    {
+      "id": 56,
+      "task_id": "T02",
+      "slice_id": "S02",
+      "milestone_id": "M005",
+      "command": "grep -q 'maxDuration' app/api/ai/narrative/route.ts",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 50,
+      "created_at": "2026-04-01T22:02:21.580Z"
     }
   ]
 }
