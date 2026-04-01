@@ -12,6 +12,7 @@ import {
   FundingRangeDropdown,
   OceanStrategyDropdown,
 } from "./filter-toolbar-popover"
+import { FilterOnboardingGuide } from "./filter-onboarding-guide"
 
 /* ---- Filter chip label mapping ---- */
 
@@ -269,6 +270,9 @@ export function FilterToolbar() {
 
   return (
     <div className="sticky top-0 z-20 bg-background/95 backdrop-blur-sm border-b border-border/50 transition-all duration-200">
+      {/* Onboarding callout for first-time users */}
+      <FilterOnboardingGuide />
+
       {/* Active filter chips row */}
       {activeFilterCount > 0 ? (
         <ActiveFilterChips />
