@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exported_at": "2026-04-01T22:12:52.484Z",
+  "exported_at": "2026-04-01T22:15:36.171Z",
   "milestones": [
     {
       "id": "M001",
@@ -1938,19 +1938,25 @@
       "milestone_id": "M005",
       "slice_id": "S03",
       "id": "T02",
-      "title": "Add shortlist toggle button to CompanyHoverCard and build shortlist panel in filter toolbar",
-      "status": "pending",
-      "one_liner": "",
-      "narrative": "",
-      "verification_result": "",
+      "title": "Added shortlist star toggle to CompanyHoverCard and built ShortlistPanel popover in filter toolbar with badge count, company list, remove buttons, and clear-all action",
+      "status": "complete",
+      "one_liner": "Added shortlist star toggle to CompanyHoverCard and built ShortlistPanel popover in filter toolbar with badge count, company list, remove buttons, and clear-all action",
+      "narrative": "Updated CompanyHoverCard with a Star toggle button (filled amber when shortlisted, outline when not) gated behind hydration, using e.stopPropagation() to prevent hover card dismissal. Created ShortlistPanel as a Radix Popover with trigger button showing badge count, scrollable company list with per-row remove buttons, Clear All footer, and empty-state guidance. Integrated ShortlistPanel into filter-toolbar.tsx between FundingRangeDropdown and the search input.",
+      "verification_result": "npm run build passes clean with zero type errors. All grep checks confirm: useShortlist in hover card, ShortlistPanel in toolbar, shortlist-panel.tsx exists. Slice-level checks also pass: ShortlistProvider in layout, shortlistedIds in hook, localStorage key present.",
       "duration": "",
-      "completed_at": null,
+      "completed_at": "2026-04-01T22:15:36.162Z",
       "blocker_discovered": false,
-      "deviations": "",
-      "known_issues": "",
-      "key_files": [],
-      "key_decisions": [],
-      "full_summary_md": "",
+      "deviations": "None.",
+      "known_issues": "None.",
+      "key_files": [
+        "components/ui/company-hover-card.tsx",
+        "components/dashboard/shortlist-panel.tsx",
+        "components/dashboard/filter-toolbar.tsx"
+      ],
+      "key_decisions": [
+        "Used Radix Popover for shortlist panel — lightweight, anchored to toolbar trigger, consistent with existing filter dropdowns"
+      ],
+      "full_summary_md": "---\nid: T02\nparent: S03\nmilestone: M005\nkey_files:\n  - components/ui/company-hover-card.tsx\n  - components/dashboard/shortlist-panel.tsx\n  - components/dashboard/filter-toolbar.tsx\nkey_decisions:\n  - Used Radix Popover for shortlist panel — lightweight, anchored to toolbar trigger, consistent with existing filter dropdowns\nduration: \"\"\nverification_result: passed\ncompleted_at: 2026-04-01T22:15:36.162Z\nblocker_discovered: false\n---\n\n# T02: Added shortlist star toggle to CompanyHoverCard and built ShortlistPanel popover in filter toolbar with badge count, company list, remove buttons, and clear-all action\n\n**Added shortlist star toggle to CompanyHoverCard and built ShortlistPanel popover in filter toolbar with badge count, company list, remove buttons, and clear-all action**\n\n## What Happened\n\nUpdated CompanyHoverCard with a Star toggle button (filled amber when shortlisted, outline when not) gated behind hydration, using e.stopPropagation() to prevent hover card dismissal. Created ShortlistPanel as a Radix Popover with trigger button showing badge count, scrollable company list with per-row remove buttons, Clear All footer, and empty-state guidance. Integrated ShortlistPanel into filter-toolbar.tsx between FundingRangeDropdown and the search input.\n\n## Verification\n\nnpm run build passes clean with zero type errors. All grep checks confirm: useShortlist in hover card, ShortlistPanel in toolbar, shortlist-panel.tsx exists. Slice-level checks also pass: ShortlistProvider in layout, shortlistedIds in hook, localStorage key present.\n\n## Verification Evidence\n\n| # | Command | Exit Code | Verdict | Duration |\n|---|---------|-----------|---------|----------|\n| 1 | `npm run build` | 0 | ✅ pass | 15500ms |\n| 2 | `grep -q 'useShortlist' components/ui/company-hover-card.tsx` | 0 | ✅ pass | 50ms |\n| 3 | `grep -q 'ShortlistPanel\\|shortlist-panel' components/dashboard/filter-toolbar.tsx` | 0 | ✅ pass | 50ms |\n| 4 | `test -f components/dashboard/shortlist-panel.tsx` | 0 | ✅ pass | 50ms |\n| 5 | `grep -q 'shortlist' components/dashboard/filter-toolbar.tsx` | 0 | ✅ pass | 50ms |\n| 6 | `grep -q 'ShortlistProvider' components/dashboard/layout-client.tsx` | 0 | ✅ pass | 50ms |\n| 7 | `grep -q 'shortlistedIds' hooks/use-thesis-gated-data.ts` | 0 | ✅ pass | 50ms |\n| 8 | `grep -q 'threadmoat-shortlist' contexts/shortlist-context.tsx` | 0 | ✅ pass | 50ms |\n\n\n## Deviations\n\nNone.\n\n## Known Issues\n\nNone.\n\n## Files Created/Modified\n\n- `components/ui/company-hover-card.tsx`\n- `components/dashboard/shortlist-panel.tsx`\n- `components/dashboard/filter-toolbar.tsx`\n",
       "description": "## Description\n\nAdd the user-facing interaction layer: a shortlist toggle button inside `CompanyHoverCard` (enabling shortlist-add on periodic table and landscape chart), and a collapsible shortlist panel accessible from the filter toolbar with badge count, company list with remove buttons, and a clear-all action.\n\n## Steps\n\n1. Update `components/ui/company-hover-card.tsx`:\n   - Import `useShortlist` from `@/contexts/shortlist-context`\n   - Add a `Star` icon button (from lucide-react) in the header row next to the company name\n   - When `has(company.id)` is true: filled star icon with amber color (`text-amber-500`), tooltip \"Remove from shortlist\"\n   - When false: outline star icon, tooltip \"Add to shortlist\"\n   - `onClick` calls `toggle(company.id)` with `e.stopPropagation()` to prevent closing the hover card\n   - Use the `hydrated` flag from useShortlist — only show the button after hydration to avoid flash\n\n2. Create `components/dashboard/shortlist-panel.tsx`:\n   - Collapsible panel component that shows the current shortlist\n   - Uses `useShortlist()` to get `shortlistedCompanies`, `remove`, `clear`, `count`\n   - Renders as a dropdown/popover anchored to a toolbar trigger button\n   - Each company row shows: company name, subsegment badge, remove button (X icon)\n   - Footer has a \"Clear All\" button (only enabled when count > 0)\n   - Empty state: \"Click the ★ on any company card to start building your shortlist\"\n   - Panel should be scrollable if many companies (max-h with overflow-y-auto)\n\n3. Update `components/dashboard/filter-toolbar.tsx`:\n   - Import `ShortlistPanel` trigger component\n   - Add a shortlist button in the toolbar (after the filter categories area, before search): a `Star` icon + badge count showing number of shortlisted companies\n   - Badge only visible when count > 0\n   - Click opens the ShortlistPanel popover\n\n## Must-Haves\n\n- [ ] CompanyHoverCard has a star toggle button that adds/removes companies from shortlist\n- [ ] ShortlistPanel shows all shortlisted companies with remove buttons and Clear All\n- [ ] Filter toolbar has a shortlist badge/button that opens the panel\n- [ ] Star button state reflects current shortlist membership (filled=in, outline=out)\n- [ ] e.stopPropagation() on star click prevents hover card dismissal\n- [ ] npm run build passes\n\n## Verification\n\n- `npm run build` passes with zero type errors\n- `grep -q 'useShortlist' components/ui/company-hover-card.tsx` confirms toggle integration\n- `grep -q 'ShortlistPanel\\|shortlist-panel' components/dashboard/filter-toolbar.tsx` confirms toolbar integration\n- `test -f components/dashboard/shortlist-panel.tsx` confirms panel file created",
       "estimate": "1h",
       "files": [
@@ -2691,6 +2697,94 @@
       "verdict": "✅ pass",
       "duration_ms": 50,
       "created_at": "2026-04-01T22:12:52.475Z"
+    },
+    {
+      "id": 61,
+      "task_id": "T02",
+      "slice_id": "S03",
+      "milestone_id": "M005",
+      "command": "npm run build",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 15500,
+      "created_at": "2026-04-01T22:15:36.162Z"
+    },
+    {
+      "id": 62,
+      "task_id": "T02",
+      "slice_id": "S03",
+      "milestone_id": "M005",
+      "command": "grep -q 'useShortlist' components/ui/company-hover-card.tsx",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 50,
+      "created_at": "2026-04-01T22:15:36.162Z"
+    },
+    {
+      "id": 63,
+      "task_id": "T02",
+      "slice_id": "S03",
+      "milestone_id": "M005",
+      "command": "grep -q 'ShortlistPanel\\|shortlist-panel' components/dashboard/filter-toolbar.tsx",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 50,
+      "created_at": "2026-04-01T22:15:36.162Z"
+    },
+    {
+      "id": 64,
+      "task_id": "T02",
+      "slice_id": "S03",
+      "milestone_id": "M005",
+      "command": "test -f components/dashboard/shortlist-panel.tsx",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 50,
+      "created_at": "2026-04-01T22:15:36.162Z"
+    },
+    {
+      "id": 65,
+      "task_id": "T02",
+      "slice_id": "S03",
+      "milestone_id": "M005",
+      "command": "grep -q 'shortlist' components/dashboard/filter-toolbar.tsx",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 50,
+      "created_at": "2026-04-01T22:15:36.162Z"
+    },
+    {
+      "id": 66,
+      "task_id": "T02",
+      "slice_id": "S03",
+      "milestone_id": "M005",
+      "command": "grep -q 'ShortlistProvider' components/dashboard/layout-client.tsx",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 50,
+      "created_at": "2026-04-01T22:15:36.162Z"
+    },
+    {
+      "id": 67,
+      "task_id": "T02",
+      "slice_id": "S03",
+      "milestone_id": "M005",
+      "command": "grep -q 'shortlistedIds' hooks/use-thesis-gated-data.ts",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 50,
+      "created_at": "2026-04-01T22:15:36.162Z"
+    },
+    {
+      "id": 68,
+      "task_id": "T02",
+      "slice_id": "S03",
+      "milestone_id": "M005",
+      "command": "grep -q 'threadmoat-shortlist' contexts/shortlist-context.tsx",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 50,
+      "created_at": "2026-04-01T22:15:36.162Z"
     }
   ]
 }
