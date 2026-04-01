@@ -3,9 +3,11 @@
 import { Company, formatCurrency } from "@/lib/company-data"
 import { getCustomerLogoUrl, parseKnownCustomers } from "@/lib/customer-logos"
 import { normalizeLogoName } from "@/lib/utils"
-import { ExternalLink } from "lucide-react"
+import { ExternalLink, Star } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
+import { useShortlist } from "@/contexts/shortlist-context"
 
 interface CompanyHoverCardProps {
   company: Company
@@ -36,6 +38,8 @@ export function CompanyHoverCard({ company, onClose, className }: CompanyHoverCa
   const logoPath = `/logos/${normalizeLogoName(company.name)}/logo_sm.png`
   const initials = company.name.split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0]).join("").toUpperCase()
   const customers = parseKnownCustomers(company.knownCustomers)
+  const { toggle, has, hydrated } = useShortlist()
+  const isShortlisted = has(company.id)
 
   const scores = [
     { label: "Weighted",   value: company.weightedScore,       max: 5 },
@@ -79,6 +83,33 @@ export function CompanyHoverCard({ company, onClose, className }: CompanyHoverCa
           )}
           <p className="text-xs text-muted-foreground truncate">{company.hqLocation || company.country}</p>
         </div>
+        {hydrated && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={e => {
+                  e.stopPropagation()
+                  toggle(company.id)
+                }}
+                className={cn(
+                  "shrink-0 rounded p-0.5 transition-colors",
+                  isShortlisted
+                    ? "text-amber-500 hover:text-amber-600"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+                aria-label={isShortlisted ? "Remove from shortlist" : "Add to shortlist"}
+              >
+                <Star
+                  className="h-4 w-4"
+                  fill={isShortlisted ? "currentColor" : "none"}
+                />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="top" sideOffset={4}>
+              {isShortlisted ? "Remove from shortlist" : "Add to shortlist"}
+            </TooltipContent>
+          </Tooltip>
+        )}
         {onClose && (
           <button
             onClick={onClose}

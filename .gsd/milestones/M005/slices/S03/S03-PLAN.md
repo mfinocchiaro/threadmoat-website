@@ -46,7 +46,7 @@ Build the `ShortlistContext` and `useShortlist` hook that manages a persistent c
   - Estimate: 45m
   - Files: contexts/shortlist-context.tsx, components/dashboard/layout-client.tsx, hooks/use-thesis-gated-data.ts
   - Verify: npm run build && grep -q 'ShortlistProvider' components/dashboard/layout-client.tsx && grep -q 'shortlistedIds' hooks/use-thesis-gated-data.ts
-- [ ] **T02: Add shortlist toggle button to CompanyHoverCard and build shortlist panel in filter toolbar** — ## Description
+- [x] **T02: Added shortlist star toggle to CompanyHoverCard and built ShortlistPanel popover in filter toolbar with badge count, company list, remove buttons, and clear-all action** — ## Description
 
 Add the user-facing interaction layer: a shortlist toggle button inside `CompanyHoverCard` (enabling shortlist-add on periodic table and landscape chart), and a collapsible shortlist panel accessible from the filter toolbar with badge count, company list with remove buttons, and a clear-all action.
 

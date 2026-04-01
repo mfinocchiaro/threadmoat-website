@@ -13,6 +13,7 @@ import {
   OceanStrategyDropdown,
 } from "./filter-toolbar-popover"
 import { FilterOnboardingGuide } from "./filter-onboarding-guide"
+import { ShortlistPanel } from "./shortlist-panel"
 
 /* ---- Filter chip label mapping ---- */
 
@@ -341,6 +342,9 @@ export function FilterToolbar() {
           min={options.fundingMin}
           max={options.fundingMax}
         />
+
+        {/* Shortlist panel trigger */}
+        <ShortlistPanel />
 
         {/* Inline search */}
         <div className="relative ml-auto">
