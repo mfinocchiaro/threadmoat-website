@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "taskId": "T02",
+  "unitId": "M005/S02/T02",
+  "timestamp": 1775080949332,
+  "passed": true,
+  "discoverySource": "task-plan",
+  "checks": [
+    {
+      "command": "npm run build",
+      "exitCode": 0,
+      "durationMs": 16617,
+      "verdict": "pass"
+    },
+    {
+      "command": "grep -q 'useCompletion' components/charts/report-generator.tsx",
+      "exitCode": 0,
+      "durationMs": 9,
+      "verdict": "pass"
+    },
+    {
+      "command": "grep -q 'ai/narrative' components/charts/report-generator.tsx",
+      "exitCode": 0,
+      "durationMs": 6,
+      "verdict": "pass"
+    }
+  ]
+}

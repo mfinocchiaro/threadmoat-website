@@ -6,6 +6,7 @@ import { ScenarioProvider, useScenario } from "@/contexts/scenario-context"
 import { PlanProvider } from "@/contexts/plan-context"
 import { CompanyDataProvider } from "@/contexts/company-data-context"
 import { FilterProvider } from "@/contexts/filter-context"
+import { ShortlistProvider } from "@/contexts/shortlist-context"
 import { SidebarShell } from "./sidebar-shell"
 import { FreeUserGuard } from "./free-user-guard"
 import { CheckoutToast } from "@/components/checkout/checkout-toast"
@@ -87,6 +88,7 @@ export function DashboardLayoutClient({
     <PlanProvider isFreeUser={isFreeUser} accessTier={accessTier ?? 'explorer'}>
       <ScenarioProvider initialScenario={initialScenario}>
         <CompanyDataProvider>
+          <ShortlistProvider>
           <FilterProvider>
             <LayoutInner
               user={user}
@@ -101,6 +103,7 @@ export function DashboardLayoutClient({
               {children}
             </LayoutInner>
           </FilterProvider>
+          </ShortlistProvider>
         </CompanyDataProvider>
       </ScenarioProvider>
     </PlanProvider>

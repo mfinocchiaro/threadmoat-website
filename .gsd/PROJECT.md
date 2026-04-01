@@ -21,10 +21,13 @@ Converting visitors into paying dashboard subscribers through compelling market 
 - ✓ Live Stripe checkout (Analyst + Strategist) — v1.0
 - ✓ SEO (sitemap, OG images, meta tags, robots.txt) — v1.0
 - ✓ React Email templates (welcome, receipt, verification, password-reset) — v1.0
+- ✓ AI-powered narrative analysis for company reports (Impressions, Conclusions, Beware, Overlooked Opportunities) — v1.1
 - ✓ Subscriber onboarding wizard (tier-aware, 3 steps) — v1.0
 
 ### Active
 
+- [ ] Company shortlist / workspace (select companies across charts, highlight across all)
+- [ ] Custom report builder (filter + company + chart + AI narrative → PDF)
 - [ ] Compact sticky filter toolbar replacing dialog overlay (filters all charts)
 - [ ] Stripe upgrade coupon ($4,999 credit for report→subscription upgrades)
 - [ ] French translation careful review pass
@@ -43,7 +46,7 @@ Converting visitors into paying dashboard subscribers through compelling market 
 
 ## Context
 
-- **Tech stack:** Next.js 16, NextAuth, Stripe (live), Resend, React Email, D3, Recharts, Tailwind CSS, shadcn/ui, next-intl
+- **Tech stack:** Next.js 16, NextAuth, Stripe (live), Resend, React Email, D3, Recharts, Tailwind CSS, shadcn/ui, next-intl, Vercel AI SDK (ai + @ai-sdk/anthropic)
 - **Database:** Neon (Postgres)
 - **Data:** 500+ startups, investors from CSV files, market reports
 - **Scale:** 281 TypeScript files, 38.5K lines, 251 commits

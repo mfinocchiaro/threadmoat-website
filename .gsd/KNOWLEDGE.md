@@ -32,3 +32,15 @@ if (dismissed || !hydrated) return null
 **Also:** When the server uses `toTextStreamResponse()`, the client must set `streamProtocol: 'text'` in the `useCompletion` options. The default `'data'` protocol expects a different stream format and will fail silently.
 
 **Why it matters:** Type errors caught at build time, but the streamProtocol mismatch causes silent runtime failures (empty completion, no error).
+
+---
+
+## K003 — Vercel AI SDK v6 API renames
+
+**Context:** M005/S02 AI narrative endpoint
+**Pattern:** `ai@6.x` renamed several `streamText` options vs v4/v5 docs and older examples:
+- `maxTokens` → `maxOutputTokens`
+- `toDataStreamResponse()` doesn't exist → use `toTextStreamResponse()` for plain text streaming
+- Model string for Anthropic via `@ai-sdk/anthropic@3.x`: `anthropic('claude-sonnet-4-5')`
+
+**Why it matters:** Most online examples and even Context7 may reference older API shapes. TypeScript catches these at build time, but knowing the renames upfront saves a debug cycle. Always check the installed `node_modules/ai/dist/index.d.ts` types when in doubt.

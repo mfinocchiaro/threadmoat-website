@@ -5,6 +5,7 @@ import { Company, loadCompanyData } from "@/lib/company-data"
 import { useFilter } from "@/contexts/filter-context"
 import { useThesis } from "@/contexts/thesis-context"
 import { usePlan } from "@/contexts/plan-context"
+import { useShortlist } from "@/contexts/shortlist-context"
 import { maskCompanies } from "@/lib/name-masking"
 
 export function useThesisGatedData() {
@@ -13,6 +14,7 @@ export function useThesisGatedData() {
   const { filterCompany } = useFilter()
   const { activeThesis, scoreCompanies } = useThesis()
   const { accessTier } = usePlan()
+  const { ids: shortlistIds } = useShortlist()
 
   useEffect(() => {
     loadCompanyData().then(data => { setAllCompanies(data); setIsLoading(false) })
@@ -42,6 +44,11 @@ export function useThesisGatedData() {
     [displayData, accessTier]
   )
 
+  const shortlistedIds = useMemo(
+    () => new Set(shortlistIds),
+    [shortlistIds]
+  )
+
   return {
     companies: maskedCompanies,
     filtered: maskedFiltered,
@@ -51,5 +58,6 @@ export function useThesisGatedData() {
     // Unmasked versions for filter bar (needs real names for filtering)
     rawCompanies: displayData,
     rawFiltered: filtered,
+    shortlistedIds,
   }
 }

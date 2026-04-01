@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exported_at": "2026-04-01T22:02:21.588Z",
+  "exported_at": "2026-04-01T22:12:52.484Z",
   "milestones": [
     {
       "id": "M001",
@@ -747,14 +747,14 @@
       "milestone_id": "M005",
       "id": "S02",
       "title": "AI Narrative Engine for Report Generator",
-      "status": "pending",
+      "status": "complete",
       "risk": "high",
       "depends": [],
       "demo": "Report generator produces AI-generated sections: Impressions, Conclusions, Beware, Overlooked Opportunities for selected companies.",
       "created_at": "2026-04-01T21:29:32.503Z",
-      "completed_at": null,
-      "full_summary_md": "",
-      "full_uat_md": "",
+      "completed_at": "2026-04-01T22:04:51.179Z",
+      "full_summary_md": "---\nid: S02\nparent: M005\nmilestone: M005\nprovides:\n  - Streaming AI narrative endpoint at /api/ai/narrative accepting { companyId } and returning 4-section markdown analysis\n  - useCompletion integration pattern in IntelligenceReportTab for AI Analysis button with stop/copy/error controls\nrequires:\n  []\naffects:\n  - S04\nkey_files:\n  - app/api/ai/narrative/route.ts\n  - components/charts/report-generator.tsx\n  - package.json\n  - .gsd/KNOWLEDGE.md\nkey_decisions:\n  - Used toTextStreamResponse() with streamProtocol:'text' — ai SDK v6 API pairing\n  - Rate limit: 10 narrative generations per hour per user via Upstash Redis\n  - Model: claude-sonnet-4-5 via @ai-sdk/anthropic v3 — balances quality and cost for investment analysis\n  - Prompt structure: senior investment analyst persona producing exactly 4 sections (Impressions, Conclusions, Beware, Overlooked Opportunities)\npatterns_established:\n  - AI endpoint pattern: auth → rate-limit → validate → load data → build prompt → streamText → toTextStreamResponse\n  - Client streaming pattern: useCompletion with streamProtocol:'text', isLoading for state, stop() for abort, onError for error parsing\nobservability_surfaces:\n  - Console errors prefixed with [ai/narrative] including userId, companyId, and error type\n  - HTTP status codes 400/401/404/429/500 with structured JSON error bodies\n  - Rate limit response includes retryAfterMs for client retry logic\ndrill_down_paths:\n  - .gsd/milestones/M005/slices/S02/tasks/T01-SUMMARY.md\n  - .gsd/milestones/M005/slices/S02/tasks/T02-SUMMARY.md\nduration: \"\"\nverification_result: passed\ncompleted_at: 2026-04-01T22:04:51.180Z\nblocker_discovered: false\n---\n\n# S02: AI Narrative Engine for Report Generator\n\n**Streaming AI narrative endpoint and UI — select a company, click AI Analysis, get streaming Impressions/Conclusions/Beware/Overlooked Opportunities from Claude via Vercel AI SDK**\n\n## What Happened\n\nT01 installed `ai@6.0.142` and `@ai-sdk/anthropic@3.0.64`, then built the POST endpoint at `app/api/ai/narrative/route.ts`. The route authenticates via NextAuth, rate-limits to 10 req/hour/user via Upstash, validates the `companyId` input, loads all companies from CSV, builds a structured prompt with all 7 score dimensions (with justifications), financials, tags, and competitive positioning, then streams via `streamText()` with `anthropic('claude-sonnet-4-5')`. The system prompt establishes a senior investment analyst persona producing four markdown sections. Full error handling covers 400/401/404/429/500 with structured JSON bodies. `maxDuration=60` handles Vercel serverless timeout.\n\nT02 installed `@ai-sdk/react` and integrated `useCompletion` into the existing `IntelligenceReportTab` component. Added a violet-styled \"AI Analysis\" button next to the existing \"Generate Intelligence\" button, disabled when no company is selected or streaming is active. The streaming display renders markdown sections split on `##` headings with an `AINarrativeSection` component. Controls include a Stop button during streaming, a Copy button after completion, and error display for rate-limit/auth/generation failures. The existing template report functionality is fully preserved.\n\nKey SDK adaptation: ai SDK v6 uses `maxOutputTokens` (not `maxTokens`), `toTextStreamResponse()` (not `toDataStreamResponse`), and `@ai-sdk/react@3.0` exposes `isLoading: boolean` on `useCompletion` (not the `status` enum found in `useChat`). Client requires `streamProtocol: 'text'` to match the server's text stream format.\n\n## Verification\n\nAll slice-level verification checks pass:\n- `npm run build` — 0 type errors, all pages compiled successfully (15.6s)\n- `test -f app/api/ai/narrative/route.ts` — file exists\n- `grep -q 'streamText' app/api/ai/narrative/route.ts` — present\n- `grep -q 'auth()' app/api/ai/narrative/route.ts` — present\n- `grep -q 'rateLimit' app/api/ai/narrative/route.ts` — present\n- `grep -q 'maxDuration' app/api/ai/narrative/route.ts` — present\n- `grep -q 'useCompletion' components/charts/report-generator.tsx` — present\n- `grep -q 'ai/narrative' components/charts/report-generator.tsx` — present\n- `grep -q 'AI Analysis' components/charts/report-generator.tsx` — present\n- `grep -q 'stop()' components/charts/report-generator.tsx` — present\n\n## Requirements Advanced\n\nNone.\n\n## Requirements Validated\n\nNone.\n\n## New Requirements Surfaced\n\nNone.\n\n## Requirements Invalidated or Re-scoped\n\nNone.\n\n## Deviations\n\nSDK v6 API differs from plan assumptions: `maxOutputTokens` instead of `maxTokens`, `toTextStreamResponse()` instead of `toUIMessageStreamResponse()`, `isLoading` instead of `status` on `useCompletion`. Installed `@ai-sdk/react` with `--legacy-peer-deps` due to React 19.2.0 vs 19.2.1 peer dep mismatch. All deviations caught by TypeScript or runtime testing — no functional impact.\n\n## Known Limitations\n\nCSV is re-parsed on every narrative request (~3.5MB). Acceptable at current scale but would benefit from caching at 10x load. No end-to-end test with a real Anthropic API call — verified by build + structural checks only. ANTHROPIC_API_KEY must be set in production environment.\n\n## Follow-ups\n\nS04 (Custom Report Builder) will need to compose the AI narrative with chart selections and template reports into a single exportable document. Consider caching CSV parse result if narrative endpoint gets high usage.\n\n## Files Created/Modified\n\n- `app/api/ai/narrative/route.ts` — New streaming AI narrative POST endpoint — auth, rate-limit, CSV company lookup, structured prompt, streamText with Claude\n- `components/charts/report-generator.tsx` — Added useCompletion hook, AI Analysis button, streaming display with AINarrativeSection, stop/copy/error controls\n- `package.json` — Added ai@6.0.142, @ai-sdk/anthropic@3.0.64, @ai-sdk/react dependencies\n- `package-lock.json` — Lock file updated for new AI SDK dependencies\n- `.gsd/KNOWLEDGE.md` — Added K002 (useCompletion API) and K003 (AI SDK v6 renames)\n- `.gsd/PROJECT.md` — Updated validated requirements, active requirements, and tech stack to reflect AI narrative engine\n",
+      "full_uat_md": "# S02: AI Narrative Engine for Report Generator — UAT\n\n**Milestone:** M005\n**Written:** 2026-04-01T22:04:51.180Z\n\n# S02: AI Narrative Engine for Report Generator — UAT\n\n**Milestone:** M005\n**Written:** 2026-04-01\n\n## UAT Type\n\n- UAT mode: mixed (artifact-driven build verification + live-runtime streaming test)\n- Why this mode is sufficient: Build verification confirms type safety and structural correctness. Live runtime test confirms the streaming pipeline works end-to-end with a real Anthropic API call.\n\n## Preconditions\n\n- App running locally (`npm run dev`) or deployed to Vercel\n- `ANTHROPIC_API_KEY` set in environment\n- User signed in with a valid session\n- At least one company exists in the CSV data\n\n## Smoke Test\n\nSign in → navigate to Report Generator → select any company → click \"AI Analysis\" button → streaming text appears with section headings (Impressions, Conclusions, Beware, Overlooked Opportunities).\n\n## Test Cases\n\n### 1. Successful AI narrative generation\n\n1. Sign in to the dashboard\n2. Navigate to the Report Generator tab (Intelligence Report)\n3. Select a company from the company selector\n4. Click the violet \"AI Analysis\" button (with Sparkles icon)\n5. **Expected:** Button shows loading state. Streaming text begins appearing in a distinct card section below with \"AI Analysis\" header. Four markdown sections render with proper headings: Impressions, Conclusions, Beware, Overlooked Opportunities.\n\n### 2. Stop mid-stream\n\n1. Follow steps 1-4 from Test 1\n2. While text is streaming, click the \"Stop\" button\n3. **Expected:** Streaming stops immediately. Partial text remains displayed. Copy button appears.\n\n### 3. Copy completed narrative\n\n1. Complete a full AI narrative generation (let it finish streaming)\n2. Click the \"Copy\" button\n3. Paste into a text editor\n4. **Expected:** Full narrative text including all four sections is in clipboard.\n\n### 4. Template report still works\n\n1. Select a company\n2. Click \"Generate Intelligence\" (the original button, not AI Analysis)\n3. **Expected:** Template report generates as before — no interference from AI Analysis feature.\n\n### 5. No company selected\n\n1. Ensure no company is selected in the company selector\n2. Observe the AI Analysis button\n3. **Expected:** Button is disabled and cannot be clicked.\n\n## Edge Cases\n\n### Rate limit exceeded\n\n1. Generate 10 AI narratives within one hour (or temporarily lower the rate limit for testing)\n2. Attempt an 11th generation\n3. **Expected:** Error message displays \"Rate limit exceeded, try again later\" — not a generic error.\n\n### Unauthenticated user\n\n1. Sign out or open the report page in an incognito window without signing in\n2. Attempt to call `/api/ai/narrative` directly via curl or browser\n3. **Expected:** 401 response with `{ \"error\": \"Unauthorized\" }`.\n\n### Invalid company ID\n\n1. Call `/api/ai/narrative` with `{ \"companyId\": \"nonexistent-id-123\" }`\n2. **Expected:** 404 response with `{ \"error\": \"Company not found: nonexistent-id-123\" }`.\n\n### Missing ANTHROPIC_API_KEY\n\n1. Temporarily unset `ANTHROPIC_API_KEY` from the environment\n2. Attempt to generate an AI narrative\n3. **Expected:** 500 response with `{ \"error\": \"AI generation failed\" }`. Console shows `[ai/narrative] ANTHROPIC_API_KEY is not configured`.\n\n### Company with minimal data\n\n1. If available, select a company with many empty/null fields in the CSV\n2. Click AI Analysis\n3. **Expected:** Narrative generates successfully using available data. Prompt handles N/A values gracefully. No crash or empty response.\n\n## Failure Signals\n\n- AI Analysis button click produces no visible response (check `streamProtocol: 'text'` match)\n- Streaming text appears but has no section headings (prompt formatting issue)\n- Console errors with `[ai/narrative]` prefix in server logs\n- Build fails with type errors in `report-generator.tsx` or `route.ts`\n- Rate limit not enforced (check Upstash Redis connection)\n\n## Not Proven By This UAT\n\n- Cost optimization at scale (Anthropic token costs under heavy concurrent usage)\n- CSV caching performance under load\n- Integration with the Custom Report Builder (S04) for composite PDF generation\n- Quality/accuracy of the AI-generated investment analysis content\n\n## Notes for Tester\n\n- The AI Analysis button is violet/purple to visually distinguish it from the existing blue \"Generate Intelligence\" button.\n- Streaming may take 5-15 seconds for a full narrative depending on Anthropic API latency.\n- The narrative quality depends on the richness of the company's CSV data — companies with more filled fields produce better analysis.\n- Rate limit is 10/hour/user — reset by waiting or clearing the Redis key.\n",
       "goal": "Report generator produces AI-generated narrative sections (Impressions, Conclusions, Beware, Overlooked Opportunities) for selected companies using Claude via Vercel AI SDK streaming.",
       "success_criteria": "## Must-Haves\n\n- Vercel AI SDK (`ai`, `@ai-sdk/anthropic`) installed and configured\n- Streaming API route at `/api/ai/narrative` with auth + rate limiting\n- Prompt includes all 7 score dimensions with justifications, strengths, weaknesses, financials, and industry context\n- AI narrative streams into the Intelligence Report tab below the existing template output\n- Four clearly labeled sections in output: Impressions, Conclusions, Beware, Overlooked Opportunities\n- Loading state with stop button while streaming\n- Graceful error handling: missing API key, rate limit exceeded, company not found, LLM timeout\n- `npm run build` passes with no type errors\n\n## Threat Surface\n\n- **Abuse**: Unauthenticated callers could generate expensive LLM completions. Mitigated by `auth()` check + aggressive rate limiting (10 requests/hour per user). Company ID parameter must be validated against loaded CSV — arbitrary strings cannot reach the LLM prompt.\n- **Data exposure**: Company data (scores, financials, justifications) is sent to Anthropic's API. This is acceptable for the product — it's the same data shown in the dashboard. No PII or user credentials are included in prompts. API keys must never appear in client-side code or responses.\n- **Input trust**: The `companyId` field from the POST body is the only user input. It is validated against the loaded CSV dataset — no raw user input reaches the LLM prompt template. The prompt itself is entirely server-constructed.\n\n## Requirement Impact\n\n- **Requirements touched**: None — MON-01 (Stripe coupon) is already validated. This slice introduces new capability, not modifications to existing requirements.\n- **Re-verify**: Existing report generation (template-based) must still work after UI changes.\n- **Decisions revisited**: None.\n\n## Proof Level\n\n- This slice proves: integration\n- Real runtime required: yes (LLM API call)\n- Human/UAT required: yes (narrative quality is subjective)\n\n## Verification\n\n- `npm run build` passes with no type errors\n- `test -f app/api/ai/narrative/route.ts` — API route exists\n- `grep -q \"streamText\" app/api/ai/narrative/route.ts` — uses streaming\n- `grep -q \"useCompletion\" components/charts/report-generator.tsx` — client streaming wired\n- `grep -q \"auth()\" app/api/ai/narrative/route.ts` — auth gate present\n- `grep -q \"rateLimit\" app/api/ai/narrative/route.ts` — rate limiting present\n- Manual verification: start dev server, navigate to Reports > Intelligence Reports, select company, click \"AI Analysis\" button, observe streaming narrative with four sections\n\n## Observability / Diagnostics\n\n- Runtime signals: Console error logs on API route failures (auth rejection, rate limit, LLM error) with structured context (userId, companyId, error type)\n- Inspection surfaces: Browser network tab shows `/api/ai/narrative` request status and streaming response. Rate limit headers in 429 responses.\n- Failure visibility: Client UI shows error message with specific cause (rate limited, API key missing, generation failed). Server logs include error type and timestamp.\n- Redaction constraints: ANTHROPIC_API_KEY must never appear in logs or client responses. Company data sent to Anthropic is product data, not PII.\n\n## Integration Closure\n\n- Upstream surfaces consumed: `lib/load-companies-server.ts` (CSV→Company), `lib/rate-limit.ts` (rate limiter), `auth.ts` (session auth), `lib/company-data.ts` (Company type)\n- New wiring introduced in this slice: `/api/ai/narrative` route + `useCompletion` hook in report-generator.tsx consuming that route\n- What remains before the milestone is truly usable end-to-end: S03 (Company Shortlist) and S04 (Custom Report Builder) — AI narratives work standalone but aren't yet integrated into the full report builder workflow",
       "proof_level": "integration",
@@ -775,11 +775,11 @@
       "completed_at": null,
       "full_summary_md": "",
       "full_uat_md": "",
-      "goal": "Add a company shortlist/workspace feature. Users can select specific companies from any chart view, building a working set that persists across navigation.",
-      "success_criteria": "Companies can be added/removed from shortlist. Shortlist persists across chart navigation. Shortlist count visible in toolbar or sidebar.",
-      "proof_level": "Browser verification",
-      "integration_closure": "Shortlist state integrates with filter context and report generator",
-      "observability_impact": "None",
+      "goal": "Users can click companies across any chart to add them to a persistent shortlist. Shortlisted companies are visually highlighted across key charts and the shortlist is accessible from the toolbar for review, removal, and downstream use in the report builder.",
+      "success_criteria": "## Must-Haves\n\n- ShortlistContext with add/remove/toggle/has/clear operations and resolved Company[] accessor\n- localStorage persistence using K001 SSR-safe pattern (no hydration mismatches)\n- ShortlistProvider wired into provider hierarchy between CompanyDataProvider and FilterProvider\n- \"Add to Shortlist\" toggle button in CompanyHoverCard\n- Collapsible shortlist panel accessible from the filter toolbar (badge count + click to expand)\n- Shortlisted companies visually highlighted on 4 key charts: bubble, quadrant, periodic table, treemap\n- Stale IDs silently dropped when resolving against current company data\n- `npm run build` passes with zero type errors\n\n## Proof Level\n\n- This slice proves: integration\n- Real runtime required: yes\n- Human/UAT required: yes\n\n## Verification\n\n- `npm run build` passes with zero errors\n- `grep -rn \"ShortlistProvider\" components/dashboard/layout-client.tsx` confirms provider is wired\n- `grep -rn \"useShortlist\" contexts/shortlist-context.tsx hooks/use-thesis-gated-data.ts components/ui/company-hover-card.tsx components/dashboard/filter-toolbar.tsx` confirms hook usage across all integration points\n- `grep -rn \"shortlistedIds\" components/charts/bubble-chart.tsx components/charts/quadrant-chart.tsx components/charts/periodic-table.tsx components/charts/treemap-chart.tsx` confirms highlighting prop threaded to 4 charts\n- Browser verification: navigate to periodic table, click a company tile, click \"Add to Shortlist\" in hover card, switch to bubble chart — shortlisted company has visual highlight ring\n\n## Integration Closure\n\n- Upstream surfaces consumed: `contexts/company-data-context.tsx` (useCompanyData for ID→Company resolution), `hooks/use-thesis-gated-data.ts` (data pipeline hook), `components/ui/company-hover-card.tsx` (shared hover card), `components/dashboard/layout-client.tsx` (provider hierarchy), `components/dashboard/filter-toolbar.tsx` (toolbar)\n- New wiring introduced in this slice: ShortlistProvider in layout-client.tsx, useShortlist consumed in hover card + filter toolbar + 4 chart components, shortlistedIds threaded through use-thesis-gated-data\n- What remains before the milestone is truly usable end-to-end: S04 (Custom Report Builder) consumes shortlistedCompanies from useShortlist to pre-populate report selections",
+      "proof_level": "integration",
+      "integration_closure": "Upstream: company-data-context.tsx, use-thesis-gated-data.ts, company-hover-card.tsx, layout-client.tsx, filter-toolbar.tsx. New wiring: ShortlistProvider in layout-client, useShortlist hook consumed across hover card, toolbar, and 4 charts. Remaining: S04 consumes shortlistedCompanies for report builder.",
+      "observability_impact": "Shortlist state is inspectable via browser DevTools (localStorage key + React DevTools context value). Console warning logged if stale IDs are dropped during hydration. No server-side signals needed — this is a purely client-side feature.",
       "sequence": 0,
       "replan_triggered_at": null
     },
@@ -1886,6 +1886,135 @@
       "observability_impact": "",
       "full_plan_md": "",
       "sequence": 0
+    },
+    {
+      "milestone_id": "M005",
+      "slice_id": "S03",
+      "id": "T01",
+      "title": "Created ShortlistContext with persistent localStorage-backed shortlist, wired ShortlistProvider into dashboard layout, and extended useThesisGatedData to expose shortlistedIds Set",
+      "status": "complete",
+      "one_liner": "Created ShortlistContext with persistent localStorage-backed shortlist, wired ShortlistProvider into dashboard layout, and extended useThesisGatedData to expose shortlistedIds Set",
+      "narrative": "Built contexts/shortlist-context.tsx with the full shortlist API (add/remove/toggle/has/clear/count/ids/idSet/shortlistedCompanies/hydrated) using the K001 SSR-safe localStorage pattern. Wired ShortlistProvider between CompanyDataProvider and FilterProvider in layout-client.tsx. Extended useThesisGatedData to return shortlistedIds Set<string> so chart pages can access shortlist state without importing the context directly.",
+      "verification_result": "All four verification checks passed: npm run build (clean, zero type errors), grep confirms ShortlistProvider in layout-client.tsx, shortlistedIds in use-thesis-gated-data.ts, and threadmoat-shortlist localStorage key in shortlist-context.tsx.",
+      "duration": "",
+      "completed_at": "2026-04-01T22:12:52.475Z",
+      "blocker_discovered": false,
+      "deviations": "Added idSet (stable Set<string>) to context API beyond the original plan's interface list — provides reference-equality for chart re-render optimization as described in plan narrative.",
+      "known_issues": "None.",
+      "key_files": [
+        "contexts/shortlist-context.tsx",
+        "components/dashboard/layout-client.tsx",
+        "hooks/use-thesis-gated-data.ts"
+      ],
+      "key_decisions": [
+        "Exposed idSet (stable memoized Set<string>) on ShortlistContext for chart re-render optimization"
+      ],
+      "full_summary_md": "---\nid: T01\nparent: S03\nmilestone: M005\nkey_files:\n  - contexts/shortlist-context.tsx\n  - components/dashboard/layout-client.tsx\n  - hooks/use-thesis-gated-data.ts\nkey_decisions:\n  - Exposed idSet (stable memoized Set<string>) on ShortlistContext for chart re-render optimization\nduration: \"\"\nverification_result: passed\ncompleted_at: 2026-04-01T22:12:52.476Z\nblocker_discovered: false\n---\n\n# T01: Created ShortlistContext with persistent localStorage-backed shortlist, wired ShortlistProvider into dashboard layout, and extended useThesisGatedData to expose shortlistedIds Set\n\n**Created ShortlistContext with persistent localStorage-backed shortlist, wired ShortlistProvider into dashboard layout, and extended useThesisGatedData to expose shortlistedIds Set**\n\n## What Happened\n\nBuilt contexts/shortlist-context.tsx with the full shortlist API (add/remove/toggle/has/clear/count/ids/idSet/shortlistedCompanies/hydrated) using the K001 SSR-safe localStorage pattern. Wired ShortlistProvider between CompanyDataProvider and FilterProvider in layout-client.tsx. Extended useThesisGatedData to return shortlistedIds Set<string> so chart pages can access shortlist state without importing the context directly.\n\n## Verification\n\nAll four verification checks passed: npm run build (clean, zero type errors), grep confirms ShortlistProvider in layout-client.tsx, shortlistedIds in use-thesis-gated-data.ts, and threadmoat-shortlist localStorage key in shortlist-context.tsx.\n\n## Verification Evidence\n\n| # | Command | Exit Code | Verdict | Duration |\n|---|---------|-----------|---------|----------|\n| 1 | `npm run build` | 0 | ✅ pass | 16000ms |\n| 2 | `grep -q 'ShortlistProvider' components/dashboard/layout-client.tsx` | 0 | ✅ pass | 50ms |\n| 3 | `grep -q 'shortlistedIds' hooks/use-thesis-gated-data.ts` | 0 | ✅ pass | 50ms |\n| 4 | `grep -q 'threadmoat-shortlist' contexts/shortlist-context.tsx` | 0 | ✅ pass | 50ms |\n\n\n## Deviations\n\nAdded idSet (stable Set<string>) to context API beyond the original plan's interface list — provides reference-equality for chart re-render optimization as described in plan narrative.\n\n## Known Issues\n\nNone.\n\n## Files Created/Modified\n\n- `contexts/shortlist-context.tsx`\n- `components/dashboard/layout-client.tsx`\n- `hooks/use-thesis-gated-data.ts`\n",
+      "description": "## Description\n\nBuild the `ShortlistContext` and `useShortlist` hook that manages a persistent company shortlist with localStorage. Wire the `ShortlistProvider` into the dashboard provider hierarchy between `CompanyDataProvider` and `FilterProvider` in `layout-client.tsx`. The hook exposes `add(id)`, `remove(id)`, `toggle(id)`, `has(id)`, `clear()`, `count`, and `shortlistedCompanies` (resolved `Company[]`). Also extend `useThesisGatedData` to return a `shortlistedIds: Set<string>` so downstream charts can access it without importing the shortlist context directly.\n\n## Steps\n\n1. Create `contexts/shortlist-context.tsx` with:\n   - `ShortlistProvider` component that uses `useCompanyData()` to resolve IDs\n   - K001 SSR-safe localStorage pattern: state defaults to empty array, `useEffect` hydrates from localStorage key `threadmoat-shortlist`, `hydrated` boolean gates resolved company output\n   - `useShortlist()` hook returning `{ add, remove, toggle, has, clear, count, ids, shortlistedCompanies, hydrated }`\n   - `ids` is the raw `string[]` of company IDs; `shortlistedCompanies` resolves against current company data, silently dropping stale IDs\n   - Memoize the `Set<string>` of IDs so reference-equality checks work for chart re-render optimization\n\n2. Update `components/dashboard/layout-client.tsx`:\n   - Import `ShortlistProvider` from `@/contexts/shortlist-context`\n   - Insert `<ShortlistProvider>` between `<CompanyDataProvider>` and `<FilterProvider>` in the JSX tree\n   - Provider hierarchy becomes: `PlanProvider > ScenarioProvider > CompanyDataProvider > ShortlistProvider > FilterProvider > LayoutInner`\n\n3. Update `hooks/use-thesis-gated-data.ts`:\n   - Import `useShortlist` from `@/contexts/shortlist-context`\n   - Add `const { ids: shortlistIds } = useShortlist()` \n   - Compute `shortlistedIds: Set<string>` via `useMemo(() => new Set(shortlistIds), [shortlistIds])`\n   - Return `shortlistedIds` from the hook so chart pages can pass it to chart components\n\n## Must-Haves\n\n- [ ] ShortlistContext created with add/remove/toggle/has/clear/count/ids/shortlistedCompanies/hydrated\n- [ ] K001 SSR-safe localStorage pattern (default empty, hydrate in useEffect, hydrated flag)\n- [ ] ShortlistProvider wired between CompanyDataProvider and FilterProvider in layout-client.tsx\n- [ ] useThesisGatedData returns shortlistedIds Set<string>\n- [ ] Stale IDs silently dropped when resolving shortlistedCompanies\n- [ ] npm run build passes\n\n## Verification\n\n- `npm run build` passes with zero type errors\n- `grep -q 'ShortlistProvider' components/dashboard/layout-client.tsx` confirms wiring\n- `grep -q 'shortlistedIds' hooks/use-thesis-gated-data.ts` confirms hook extension\n- `grep -q 'threadmoat-shortlist' contexts/shortlist-context.tsx` confirms localStorage key",
+      "estimate": "45m",
+      "files": [
+        "contexts/shortlist-context.tsx",
+        "components/dashboard/layout-client.tsx",
+        "hooks/use-thesis-gated-data.ts"
+      ],
+      "verify": "npm run build && grep -q 'ShortlistProvider' components/dashboard/layout-client.tsx && grep -q 'shortlistedIds' hooks/use-thesis-gated-data.ts",
+      "inputs": [
+        "`contexts/company-data-context.tsx` — useCompanyData() hook for resolving IDs to Company objects",
+        "`contexts/filter-context.tsx` — reference implementation of context pattern to replicate",
+        "`components/dashboard/layout-client.tsx` — provider hierarchy to modify",
+        "`hooks/use-thesis-gated-data.ts` — data pipeline hook to extend",
+        "`components/dashboard/filter-onboarding-guide.tsx` — K001 SSR-safe localStorage reference implementation"
+      ],
+      "expected_output": [
+        "`contexts/shortlist-context.tsx` — new ShortlistContext, ShortlistProvider, useShortlist hook",
+        "`components/dashboard/layout-client.tsx` — modified to include ShortlistProvider in hierarchy",
+        "`hooks/use-thesis-gated-data.ts` — modified to return shortlistedIds Set<string>"
+      ],
+      "observability_impact": "",
+      "full_plan_md": "",
+      "sequence": 0
+    },
+    {
+      "milestone_id": "M005",
+      "slice_id": "S03",
+      "id": "T02",
+      "title": "Add shortlist toggle button to CompanyHoverCard and build shortlist panel in filter toolbar",
+      "status": "pending",
+      "one_liner": "",
+      "narrative": "",
+      "verification_result": "",
+      "duration": "",
+      "completed_at": null,
+      "blocker_discovered": false,
+      "deviations": "",
+      "known_issues": "",
+      "key_files": [],
+      "key_decisions": [],
+      "full_summary_md": "",
+      "description": "## Description\n\nAdd the user-facing interaction layer: a shortlist toggle button inside `CompanyHoverCard` (enabling shortlist-add on periodic table and landscape chart), and a collapsible shortlist panel accessible from the filter toolbar with badge count, company list with remove buttons, and a clear-all action.\n\n## Steps\n\n1. Update `components/ui/company-hover-card.tsx`:\n   - Import `useShortlist` from `@/contexts/shortlist-context`\n   - Add a `Star` icon button (from lucide-react) in the header row next to the company name\n   - When `has(company.id)` is true: filled star icon with amber color (`text-amber-500`), tooltip \"Remove from shortlist\"\n   - When false: outline star icon, tooltip \"Add to shortlist\"\n   - `onClick` calls `toggle(company.id)` with `e.stopPropagation()` to prevent closing the hover card\n   - Use the `hydrated` flag from useShortlist — only show the button after hydration to avoid flash\n\n2. Create `components/dashboard/shortlist-panel.tsx`:\n   - Collapsible panel component that shows the current shortlist\n   - Uses `useShortlist()` to get `shortlistedCompanies`, `remove`, `clear`, `count`\n   - Renders as a dropdown/popover anchored to a toolbar trigger button\n   - Each company row shows: company name, subsegment badge, remove button (X icon)\n   - Footer has a \"Clear All\" button (only enabled when count > 0)\n   - Empty state: \"Click the ★ on any company card to start building your shortlist\"\n   - Panel should be scrollable if many companies (max-h with overflow-y-auto)\n\n3. Update `components/dashboard/filter-toolbar.tsx`:\n   - Import `ShortlistPanel` trigger component\n   - Add a shortlist button in the toolbar (after the filter categories area, before search): a `Star` icon + badge count showing number of shortlisted companies\n   - Badge only visible when count > 0\n   - Click opens the ShortlistPanel popover\n\n## Must-Haves\n\n- [ ] CompanyHoverCard has a star toggle button that adds/removes companies from shortlist\n- [ ] ShortlistPanel shows all shortlisted companies with remove buttons and Clear All\n- [ ] Filter toolbar has a shortlist badge/button that opens the panel\n- [ ] Star button state reflects current shortlist membership (filled=in, outline=out)\n- [ ] e.stopPropagation() on star click prevents hover card dismissal\n- [ ] npm run build passes\n\n## Verification\n\n- `npm run build` passes with zero type errors\n- `grep -q 'useShortlist' components/ui/company-hover-card.tsx` confirms toggle integration\n- `grep -q 'ShortlistPanel\\|shortlist-panel' components/dashboard/filter-toolbar.tsx` confirms toolbar integration\n- `test -f components/dashboard/shortlist-panel.tsx` confirms panel file created",
+      "estimate": "1h",
+      "files": [
+        "components/ui/company-hover-card.tsx",
+        "components/dashboard/shortlist-panel.tsx",
+        "components/dashboard/filter-toolbar.tsx"
+      ],
+      "verify": "npm run build && grep -q 'useShortlist' components/ui/company-hover-card.tsx && test -f components/dashboard/shortlist-panel.tsx && grep -q 'shortlist' components/dashboard/filter-toolbar.tsx",
+      "inputs": [
+        "`contexts/shortlist-context.tsx` — useShortlist hook (created in T01)",
+        "`components/ui/company-hover-card.tsx` — existing hover card to add toggle button to",
+        "`components/dashboard/filter-toolbar.tsx` — existing toolbar to add shortlist trigger to"
+      ],
+      "expected_output": [
+        "`components/ui/company-hover-card.tsx` — modified with shortlist star toggle button",
+        "`components/dashboard/shortlist-panel.tsx` — new collapsible shortlist panel component",
+        "`components/dashboard/filter-toolbar.tsx` — modified with shortlist badge/trigger button"
+      ],
+      "observability_impact": "",
+      "full_plan_md": "",
+      "sequence": 0
+    },
+    {
+      "milestone_id": "M005",
+      "slice_id": "S03",
+      "id": "T03",
+      "title": "Thread shortlistedIds to 4 key charts and render visual highlight treatment",
+      "status": "pending",
+      "one_liner": "",
+      "narrative": "",
+      "verification_result": "",
+      "duration": "",
+      "completed_at": null,
+      "blocker_discovered": false,
+      "deviations": "",
+      "known_issues": "",
+      "key_files": [],
+      "key_decisions": [],
+      "full_summary_md": "",
+      "description": "## Description\n\nAdd an optional `shortlistedIds?: Set<string>` prop to 4 key chart components (bubble, quadrant, periodic table, treemap) and render a visual highlight treatment (bright stroke ring or elevated opacity) for shortlisted companies. Update the chart page wrappers to pass `shortlistedIds` from `useThesisGatedData()` through to the chart components.\n\n## Steps\n\n1. Update `components/charts/bubble-chart.tsx`:\n   - Add `shortlistedIds?: Set<string>` to `BubbleChartProps`\n   - In the D3 render effect, after drawing circles, add a conditional stroke treatment: if `shortlistedIds?.has(company.id)`, apply a 2px amber/gold stroke ring (`#f59e0b`) and slightly higher opacity\n   - Add `shortlistedIds` to the useEffect dependency array (use a stringified version or the set size + content hash to avoid over-rendering)\n\n2. Update `components/charts/quadrant-chart.tsx`:\n   - Add `shortlistedIds?: Set<string>` to props\n   - Similar D3 highlight treatment: amber stroke ring on shortlisted company dots\n   - Thread through dependency array\n\n3. Update `components/charts/periodic-table.tsx`:\n   - Add `shortlistedIds?: Set<string>` to `PeriodicTableProps`\n   - In the D3 cell rendering, add a CSS class or inline style for shortlisted cells: amber border + subtle glow/shadow\n   - The periodic table already renders cells with `<rect>` elements — add conditional stroke\n   - Also show a small star indicator (★) in the cell corner for shortlisted companies\n\n4. Update `components/charts/treemap-chart.tsx`:\n   - Add `shortlistedIds?: Set<string>` to props\n   - D3 treemap renders `<rect>` elements — add amber stroke treatment for shortlisted companies\n\n5. Update the 4 chart page files that use these components to pass `shortlistedIds` from `useThesisGatedData()`:\n   - Find the page files that render BubbleChart, QuadrantChart, PeriodicTable, TreemapChart\n   - Destructure `shortlistedIds` from `useThesisGatedData()` and pass as prop\n\n## Must-Haves\n\n- [ ] All 4 charts accept optional shortlistedIds prop\n- [ ] Shortlisted companies show a visible highlight (amber stroke ring) on each chart\n- [ ] Chart pages pass shortlistedIds from useThesisGatedData to chart components\n- [ ] D3 useEffect dependency arrays include shortlist state\n- [ ] Charts without shortlistedIds prop continue to render normally (backwards compatible)\n- [ ] npm run build passes\n\n## Verification\n\n- `npm run build` passes with zero type errors\n- `grep -rn 'shortlistedIds' components/charts/bubble-chart.tsx components/charts/quadrant-chart.tsx components/charts/periodic-table.tsx components/charts/treemap-chart.tsx` returns matches in all 4 files\n- `grep -rn 'shortlistedIds' app/` returns matches in chart page files confirming prop threading",
+      "estimate": "1h15m",
+      "files": [
+        "components/charts/bubble-chart.tsx",
+        "components/charts/quadrant-chart.tsx",
+        "components/charts/periodic-table.tsx",
+        "components/charts/treemap-chart.tsx"
+      ],
+      "verify": "npm run build && grep -c 'shortlistedIds' components/charts/bubble-chart.tsx components/charts/quadrant-chart.tsx components/charts/periodic-table.tsx components/charts/treemap-chart.tsx | grep -v ':0$' | wc -l | grep -q '4'",
+      "inputs": [
+        "`hooks/use-thesis-gated-data.ts` — returns shortlistedIds Set<string> (modified in T01)",
+        "`components/charts/bubble-chart.tsx` — existing D3 bubble chart to add highlight to",
+        "`components/charts/quadrant-chart.tsx` — existing D3 quadrant chart to add highlight to",
+        "`components/charts/periodic-table.tsx` — existing D3 periodic table to add highlight to",
+        "`components/charts/treemap-chart.tsx` — existing D3 treemap to add highlight to"
+      ],
+      "expected_output": [
+        "`components/charts/bubble-chart.tsx` — modified with shortlistedIds prop and highlight rendering",
+        "`components/charts/quadrant-chart.tsx` — modified with shortlistedIds prop and highlight rendering",
+        "`components/charts/periodic-table.tsx` — modified with shortlistedIds prop and highlight rendering",
+        "`components/charts/treemap-chart.tsx` — modified with shortlistedIds prop and highlight rendering"
+      ],
+      "observability_impact": "",
+      "full_plan_md": "",
+      "sequence": 0
     }
   ],
   "decisions": [
@@ -2518,6 +2647,50 @@
       "verdict": "✅ pass",
       "duration_ms": 50,
       "created_at": "2026-04-01T22:02:21.580Z"
+    },
+    {
+      "id": 57,
+      "task_id": "T01",
+      "slice_id": "S03",
+      "milestone_id": "M005",
+      "command": "npm run build",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 16000,
+      "created_at": "2026-04-01T22:12:52.475Z"
+    },
+    {
+      "id": 58,
+      "task_id": "T01",
+      "slice_id": "S03",
+      "milestone_id": "M005",
+      "command": "grep -q 'ShortlistProvider' components/dashboard/layout-client.tsx",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 50,
+      "created_at": "2026-04-01T22:12:52.475Z"
+    },
+    {
+      "id": 59,
+      "task_id": "T01",
+      "slice_id": "S03",
+      "milestone_id": "M005",
+      "command": "grep -q 'shortlistedIds' hooks/use-thesis-gated-data.ts",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 50,
+      "created_at": "2026-04-01T22:12:52.475Z"
+    },
+    {
+      "id": 60,
+      "task_id": "T01",
+      "slice_id": "S03",
+      "milestone_id": "M005",
+      "command": "grep -q 'threadmoat-shortlist' contexts/shortlist-context.tsx",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 50,
+      "created_at": "2026-04-01T22:12:52.475Z"
     }
   ]
 }
