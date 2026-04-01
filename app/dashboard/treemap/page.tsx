@@ -6,7 +6,7 @@ import { TreemapChart } from "@/components/charts/treemap-chart"
 import { Skeleton } from "@/components/ui/skeleton"
 
 function TreemapInner() {
-  const { filtered, isLoading } = useThesisGatedData()
+  const { filtered, isLoading, shortlistedIds } = useThesisGatedData()
 
   return (
     <div className="space-y-4">
@@ -19,7 +19,7 @@ function TreemapInner() {
       {isLoading ? (
         <Skeleton className="h-[600px] rounded-xl" />
       ) : (
-          <TreemapChart data={filtered} className="h-[640px]" />
+          <TreemapChart data={filtered} className="h-[640px]" shortlistedIds={shortlistedIds} />
       )}
     </div>
   )

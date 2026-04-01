@@ -16,7 +16,7 @@ const LandscapeChart = dynamic(
 )
 
 function MarketInner() {
-  const { filtered, isLoading } = useThesisGatedData()
+  const { filtered, isLoading, shortlistedIds } = useThesisGatedData()
 
   if (isLoading) {
     return (
@@ -48,7 +48,7 @@ function MarketInner() {
           href="/dashboard/quadrant"
           icon={GitBranch}
         >
-          <QuadrantChart data={filtered} className="h-full" />
+          <QuadrantChart data={filtered} className="h-full" shortlistedIds={shortlistedIds} />
         </ChartCard>
 
         <ChartCard
@@ -57,7 +57,7 @@ function MarketInner() {
           href="/dashboard/bubbles"
           icon={Circle}
         >
-          <BubbleChart data={filtered} className="h-full" />
+          <BubbleChart data={filtered} className="h-full" shortlistedIds={shortlistedIds} />
         </ChartCard>
 
         <ChartCard
@@ -66,7 +66,7 @@ function MarketInner() {
           href="/dashboard/periodic-table"
           icon={Table2}
         >
-          <PeriodicTable data={filtered} compact preview />
+          <PeriodicTable data={filtered} compact preview shortlistedIds={shortlistedIds} />
         </ChartCard>
 
         <ChartCard

@@ -18,11 +18,12 @@ import { getInvestmentColor } from "@/lib/investment-colors"
 interface QuadrantChartProps {
   data: Company[]
   className?: string
+  shortlistedIds?: Set<string>
 }
 
 type ChartDatum = Company & { _x: number; _y: number; _val: number }
 
-export function QuadrantChart({ data, className }: QuadrantChartProps) {
+export function QuadrantChart({ data, className, shortlistedIds }: QuadrantChartProps) {
   const svgRef = useRef<SVGSVGElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const [xMetric, setXMetric] = useState("techDifferentiation")
@@ -151,12 +152,18 @@ export function QuadrantChart({ data, className }: QuadrantChartProps) {
     nodes.append("circle")
       .attr("r", d => radiusScale(d._val))
       .attr("fill", d => getInvestmentColor(d.investmentList || "Other"))
-      .attr("fill-opacity", 0.7)
-      .attr("stroke", "#fff")
-      .attr("stroke-width", 1.5)
+      .attr("fill-opacity", d => shortlistedIds?.has(d.id) ? 1 : 0.7)
+      .attr("stroke", d => shortlistedIds?.has(d.id) ? "#f59e0b" : "#fff")
+      .attr("stroke-width", d => shortlistedIds?.has(d.id) ? 2.5 : 1.5)
       .style("cursor", "pointer")
-      .on("mouseover", function () { d3.select(this).attr("stroke", "var(--primary)").attr("stroke-width", 3).attr("fill-opacity", 1) })
-      .on("mouseout", function () { d3.select(this).attr("stroke", "#fff").attr("stroke-width", 1.5).attr("fill-opacity", 0.7) })
+      .on("mouseover", function (_, d) {
+        const isShortlisted = shortlistedIds?.has(d.id)
+        d3.select(this).attr("stroke", isShortlisted ? "#fbbf24" : "var(--primary)").attr("stroke-width", 3).attr("fill-opacity", 1)
+      })
+      .on("mouseout", function (_, d) {
+        const isShortlisted = shortlistedIds?.has(d.id)
+        d3.select(this).attr("stroke", isShortlisted ? "#f59e0b" : "#fff").attr("stroke-width", isShortlisted ? 2.5 : 1.5).attr("fill-opacity", isShortlisted ? 1 : 0.7)
+      })
 
     nodes.append("text")
       .text(d => d.name)
@@ -167,7 +174,7 @@ export function QuadrantChart({ data, className }: QuadrantChartProps) {
       .style("pointer-events", "none")
 
     nodes.append("title").text(d => `${d.name}\nX: ${d._x.toFixed(1)}\nY: ${d._y.toFixed(1)}`)
-  }, [chartData, spreadMode])
+  }, [chartData, spreadMode, shortlistedIds])
 
   const resetZoom = () => {
     if (!svgRef.current) return

@@ -6,7 +6,7 @@ import { QuadrantChart } from "@/components/charts/quadrant-chart"
 import { Skeleton } from "@/components/ui/skeleton"
 
 function QuadrantInner() {
-  const { filtered, isLoading } = useThesisGatedData()
+  const { filtered, isLoading, shortlistedIds } = useThesisGatedData()
 
   return (
     <div className="space-y-4">
@@ -17,7 +17,7 @@ function QuadrantInner() {
       {isLoading ? (
         <Skeleton className="h-[calc(100vh-12rem)] rounded-xl" />
       ) : (
-          <QuadrantChart data={filtered} />
+          <QuadrantChart data={filtered} shortlistedIds={shortlistedIds} />
       )}
     </div>
   )

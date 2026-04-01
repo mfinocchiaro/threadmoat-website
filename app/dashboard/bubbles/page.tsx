@@ -6,7 +6,7 @@ import { BubbleChart } from "@/components/charts/bubble-chart"
 import { Skeleton } from "@/components/ui/skeleton"
 
 function BubblesInner() {
-  const { filtered, isLoading } = useThesisGatedData()
+  const { filtered, isLoading, shortlistedIds } = useThesisGatedData()
 
   return (
     <div className="space-y-4">
@@ -18,7 +18,7 @@ function BubblesInner() {
         <Skeleton className="h-[600px] rounded-xl" />
       ) : (
           <div className="w-full" style={{ aspectRatio: "1 / 1", maxHeight: "85vh" }}>
-            <BubbleChart data={filtered} className="h-full" />
+            <BubbleChart data={filtered} className="h-full" shortlistedIds={shortlistedIds} />
           </div>
       )}
     </div>

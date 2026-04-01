@@ -6,7 +6,7 @@ import { PeriodicTable } from "@/components/charts/periodic-table"
 import { Skeleton } from "@/components/ui/skeleton"
 
 function PeriodicTableInner() {
-  const { filtered, isLoading } = useThesisGatedData()
+  const { filtered, isLoading, shortlistedIds } = useThesisGatedData()
 
   if (isLoading) {
     return (
@@ -23,7 +23,7 @@ function PeriodicTableInner() {
 
   return (
     <div className="flex flex-col" style={{ height: "calc(100vh - 80px)" }}>
-      <PeriodicTable data={filtered} />
+      <PeriodicTable data={filtered} shortlistedIds={shortlistedIds} />
     </div>
   )
 }

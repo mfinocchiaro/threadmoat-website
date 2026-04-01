@@ -12,6 +12,7 @@ interface PeriodicTableProps {
     data: Company[];
     compact?: boolean;
     preview?: boolean;
+    shortlistedIds?: Set<string>;
 }
 
 const INVESTMENT_COLORS: Record<string, string> = {
@@ -88,7 +89,7 @@ const getBroadFunding = (round: string): string => {
     return round;
 };
 
-export function PeriodicTable({ data, compact = false, preview = false }: PeriodicTableProps) {
+export function PeriodicTable({ data, compact = false, preview = false, shortlistedIds }: PeriodicTableProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const [groupBy, setGroupBy] = useState<"investment" | "discipline" | "lifecycle" | "subsegment">("investment");
     const [sortBy, setSortBy] = useState<"score" | "valuation" | "funding" | "headcount" | "name">("score");
@@ -209,8 +210,9 @@ export function PeriodicTable({ data, compact = false, preview = false }: Period
                     const categoryID = getInvestmentCategoryID(company.investmentList || "");
                     const isDarkText = ["02", "03", "05", "06", "07"].includes(categoryID);
 
+                    const isShortlisted = shortlistedIds?.has(company.id);
                     const element = elementsContainer.append("div")
-                        .attr("class", `pt-element ${isDarkText ? "pt-contrast-dark" : ""}`)
+                        .attr("class", `pt-element ${isDarkText ? "pt-contrast-dark" : ""} ${isShortlisted ? "pt-shortlisted" : ""}`)
                         .style("background-color", () => {
                             switch (colorBy) {
                                 case "investment": return getInvestmentColor(company.investmentList);
@@ -220,7 +222,22 @@ export function PeriodicTable({ data, compact = false, preview = false }: Period
                                 default: return getInvestmentColor(company.investmentList);
                             }
                         })
+                        .style("outline", isShortlisted ? "2.5px solid #f59e0b" : "none")
+                        .style("outline-offset", isShortlisted ? "-1px" : "0")
+                        .style("box-shadow", isShortlisted ? "0 0 8px rgba(245, 158, 11, 0.5)" : "none")
+                        .style("position", "relative")
                         .on("click", () => { if (!preview) setSelectedElement(company); });
+
+                    if (isShortlisted) {
+                        element.append("div")
+                            .style("position", "absolute")
+                            .style("top", "1px")
+                            .style("right", "3px")
+                            .style("font-size", "10px")
+                            .style("line-height", "1")
+                            .style("color", "#f59e0b")
+                            .text("★");
+                    }
 
                     if (activeMode !== "linkedin") {
                         element.append("div").attr("class", "pt-score").text(company.weightedScore || "—");
@@ -300,7 +317,7 @@ export function PeriodicTable({ data, compact = false, preview = false }: Period
         } else {
             renderGroups(sortedGroups, mainGrid);
         }
-    }, [data, groupBy, sortBy, colorBy, showLogos, activeMode, customList, globalTilesPerRow, customTilesPerRow, showCompanyNames, showCountry]);
+    }, [data, groupBy, sortBy, colorBy, showLogos, activeMode, customList, globalTilesPerRow, customTilesPerRow, showCompanyNames, showCountry, shortlistedIds]);
 
     return (
         <div className={cn("relative w-full h-full flex flex-col", compact && "p-0 overflow-hidden")}>

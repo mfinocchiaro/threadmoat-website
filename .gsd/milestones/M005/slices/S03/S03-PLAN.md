@@ -93,7 +93,7 @@ Add the user-facing interaction layer: a shortlist toggle button inside `Company
   - Estimate: 1h
   - Files: components/ui/company-hover-card.tsx, components/dashboard/shortlist-panel.tsx, components/dashboard/filter-toolbar.tsx
   - Verify: npm run build && grep -q 'useShortlist' components/ui/company-hover-card.tsx && test -f components/dashboard/shortlist-panel.tsx && grep -q 'shortlist' components/dashboard/filter-toolbar.tsx
-- [ ] **T03: Thread shortlistedIds to 4 key charts and render visual highlight treatment** — ## Description
+- [x] **T03: Added optional shortlistedIds prop to bubble, quadrant, periodic table, and treemap charts with amber stroke highlight, threaded from useThesisGatedData through all 6 page files** — ## Description
 
 Add an optional `shortlistedIds?: Set<string>` prop to 4 key chart components (bubble, quadrant, periodic table, treemap) and render a visual highlight treatment (bright stroke ring or elevated opacity) for shortlisted companies. Update the chart page wrappers to pass `shortlistedIds` from `useThesisGatedData()` through to the chart components.
 

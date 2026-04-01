@@ -17,6 +17,7 @@ import { getInvestmentColor } from "@/lib/investment-colors"
 interface BubbleChartProps {
   data: Company[]
   className?: string
+  shortlistedIds?: Set<string>
 }
 
 const METRICS = {
@@ -31,7 +32,7 @@ const METRICS = {
   industryImpact: { label: "Industry Impact", format: (v: number) => v.toFixed(1) },
 }
 
-export function BubbleChart({ data, className }: BubbleChartProps) {
+export function BubbleChart({ data, className, shortlistedIds }: BubbleChartProps) {
   const svgRef = useRef<SVGSVGElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const [xAxisMetric, setXAxisMetric] = useState<keyof typeof METRICS>("totalFunding")
@@ -117,15 +118,15 @@ export function BubbleChart({ data, className }: BubbleChartProps) {
       .attr("cy", d => yScale(d[yAxisMetric] as number))
       .attr("r", d => sizeScale((d[sizeMetric] as number) || 0))
       .attr("fill", d => getInvestmentColor(d.investmentList || "Other"))
-      .attr("fill-opacity", 0.7)
-      .attr("stroke", "hsl(var(--background))")
-      .attr("stroke-width", 1)
+      .attr("fill-opacity", d => shortlistedIds?.has(d.id) ? 1 : 0.7)
+      .attr("stroke", d => shortlistedIds?.has(d.id) ? "#f59e0b" : "hsl(var(--background))")
+      .attr("stroke-width", d => shortlistedIds?.has(d.id) ? 2.5 : 1)
 
     bubbles.append("title").text(
       d =>
         `${d.name}\n${METRICS[xAxisMetric].label}: ${METRICS[xAxisMetric].format(d[xAxisMetric] as number)}\n${METRICS[yAxisMetric].label}: ${METRICS[yAxisMetric].format(d[yAxisMetric] as number)}\n${METRICS[sizeMetric].label}: ${METRICS[sizeMetric].format((d[sizeMetric] as number) || 0)}${d.valuationConfidence ? `\nVal. Confidence: ${d.valuationConfidence}` : ""}${d.reportedValuation ? `\nReported Val.: ${d.reportedValuation}` : ""}`
     )
-  }, [validData, xAxisMetric, yAxisMetric, sizeMetric])
+  }, [validData, xAxisMetric, yAxisMetric, sizeMetric, shortlistedIds])
 
   return (
     <Card className={cn("flex flex-col", className)}>
