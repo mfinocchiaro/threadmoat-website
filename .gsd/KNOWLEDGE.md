@@ -21,3 +21,14 @@ if (dismissed || !hydrated) return null
 ```
 
 **Why it matters:** Several dashboard components may need localStorage persistence (preferences, dismissed states, shortlist). This pattern prevents the common "content flash" or React hydration error.
+
+---
+
+## K002 — @ai-sdk/react useCompletion: isLoading not status
+
+**Context:** M005/S02 AI narrative integration
+**Pattern:** The installed `@ai-sdk/react@3.0.x` `useCompletion` hook returns `isLoading: boolean`, not `status: string`. The `status` enum (`submitted | streaming | ready | error`) exists only in `useChat`, not `useCompletion`. Context7 docs may reference a newer version's API — always verify against the installed `node_modules/@ai-sdk/react/dist/index.d.ts` types.
+
+**Also:** When the server uses `toTextStreamResponse()`, the client must set `streamProtocol: 'text'` in the `useCompletion` options. The default `'data'` protocol expects a different stream format and will fail silently.
+
+**Why it matters:** Type errors caught at build time, but the streamProtocol mismatch causes silent runtime failures (empty completion, no error).

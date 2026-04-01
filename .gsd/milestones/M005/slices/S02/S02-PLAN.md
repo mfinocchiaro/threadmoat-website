@@ -77,7 +77,7 @@ The prompt must instruct the model to produce four clearly labeled markdown sect
   - Estimate: 45m
   - Files: package.json, app/api/ai/narrative/route.ts, lib/load-companies-server.ts, lib/rate-limit.ts, auth.ts, lib/company-data.ts
   - Verify: npm run build && test -f app/api/ai/narrative/route.ts && grep -q 'streamText' app/api/ai/narrative/route.ts && grep -q 'auth()' app/api/ai/narrative/route.ts && grep -q 'rateLimit' app/api/ai/narrative/route.ts
-- [ ] **T02: Wire streaming AI narrative UI into report generator** — ## Description
+- [x] **T02: Wired streaming AI narrative UI with useCompletion into IntelligenceReportTab — AI Analysis button, streaming display, stop/copy controls, and error handling for rate-limit/auth/generation failures** — ## Description
 
 Integrate the `/api/ai/narrative` streaming endpoint into the existing `IntelligenceReportTab` component in `components/charts/report-generator.tsx`. Add a new 'AI Analysis' button next to the existing 'Generate Intelligence' button. When clicked with a company selected, it calls the AI endpoint via `useCompletion` from `@ai-sdk/react` and streams the narrative into a new styled section below the existing template report output.
 
