@@ -1,7 +1,7 @@
 # GSD State
 
-**Active Milestone:** M004: M004
-**Active Slice:** S01: Complete UAT Execution
+**Active Milestone:** M005: M005
+**Active Slice:** S01: Filter Workflow Onboarding
 **Phase:** planning
 **Requirements Status:** 0 active · 9 validated · 0 deferred · 0 out of scope
 
@@ -9,7 +9,9 @@
 - ✅ **M001:** v1.1 UX & Data Polish
 - ✅ **M002:** M002: v1.2 Onboarding Fix, Cleanup & Chart Verification
 - ✅ **M003:** M003: v1.3 Tier Fixes, Upgrade CTAs & UAT Completion
-- 🔄 **M004:** M004
+- ✅ **M004:** M004: v1.4 Verification & Sign-Off
+- 🔄 **M005:** M005
+- ⬜ **M006:** M006
 
 ## Recent Decisions
 - None recorded
