@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exported_at": "2026-03-31T08:11:53.513Z",
+  "exported_at": "2026-04-01T13:13:30.524Z",
   "milestones": [
     {
       "id": "M001",
@@ -150,6 +150,71 @@
       ],
       "requirement_coverage": "TIER-01 (forge/red_keep tier mapping fix), UX-06 (upgrade CTAs), DATA-04 (confidence metadata in all charts), QA-02 (UAT execution)",
       "boundary_map_markdown": "| Slice | Produces | Consumes |\n|-------|----------|----------|\n| S01 | Fixed tier mapping for forge/red_keep, cleaned up dead coupons | tiers.ts, DB coupons table |\n| S02 | Upgrade CTAs for expired explorer and analyst→strategist | free-user-guard.tsx, tier system |\n| S03 | Confidence metadata in all valuation charts | Chart components, Company data model |\n| S04 | UAT verification evidence for M001+M002 | Running dev server, all prior changes |"
+    },
+    {
+      "id": "M004",
+      "title": "",
+      "status": "queued",
+      "depends_on": [],
+      "created_at": "2026-04-01T13:12:29.777Z",
+      "completed_at": null,
+      "vision": "Close all verification gaps from M001-M003: execute every UAT item, test the Stripe coupon end-to-end, get French translation sign-off, and confirm the Airtable full DB sync works in production.",
+      "success_criteria": [
+        "All 56 UAT checkbox items verified pass/fail in browser",
+        "Stripe $4,999 upgrade coupon verified working end-to-end",
+        "French translations signed off by Michael",
+        "Airtable Full DB View sync confirmed delivering 600 records",
+        "Zero open regressions"
+      ],
+      "key_risks": [
+        {
+          "risk": "Stripe coupon UAT requires a real or test Stripe checkout flow",
+          "whyItMatters": "Cannot verify $4,999 credit appears on checkout page without triggering a Stripe session"
+        },
+        {
+          "risk": "French translation review requires Michael's judgment — not automatable",
+          "whyItMatters": "Only a native/fluent speaker can confirm natural B2B language quality"
+        },
+        {
+          "risk": "Some UAT items may reveal regressions from M002/M003 changes",
+          "whyItMatters": "Fixing regressions could expand scope beyond verification"
+        }
+      ],
+      "proof_strategy": [
+        {
+          "riskOrUnknown": "UAT checkboxes never formally executed",
+          "retireIn": "S01",
+          "whatWillBeProven": "Every UAT item walked through in browser with documented pass/fail"
+        },
+        {
+          "riskOrUnknown": "Stripe coupon never tested end-to-end",
+          "retireIn": "S02",
+          "whatWillBeProven": "Checkout session shows $4,999 discount for analyst upgrader"
+        },
+        {
+          "riskOrUnknown": "French translations not reviewed by human",
+          "retireIn": "S03",
+          "whatWillBeProven": "Michael confirms quality or corrections applied"
+        },
+        {
+          "riskOrUnknown": "Full DB View sync not confirmed in production",
+          "retireIn": "S04",
+          "whatWillBeProven": "GitHub Action log shows 600 records fetched, production CSV correct"
+        }
+      ],
+      "verification_contract": "All UAT items pass or failures documented. Build passes.",
+      "verification_integration": "Stripe checkout, French pages, Airtable sync all verified end-to-end.",
+      "verification_operational": "Production deployment renders full dataset. Stripe coupon works in production or test mode.",
+      "verification_uat": "This IS the UAT milestone — all prior UAT items formally executed.",
+      "definition_of_done": [
+        "All 56 UAT checkbox items walked through in browser with pass/fail documented",
+        "Stripe $4,999 upgrade coupon verified in Stripe test mode or production",
+        "French translations confirmed correct by Michael or corrections applied",
+        "Airtable Full DB View sync confirmed delivering 600 records to production",
+        "Any failures discovered during UAT are fixed or documented as known issues"
+      ],
+      "requirement_coverage": "QA-03 (full UAT execution), MON-02 (Stripe coupon end-to-end), I18N-07 (French sign-off), DATA-05 (Airtable full sync confirmation)",
+      "boundary_map_markdown": "| Slice | Produces | Consumes |\n|-------|----------|----------|\n| S01 | All 56 UAT checkboxes verified pass/fail | Running dev server, full dataset, admin login |\n| S02 | Stripe coupon verified in test mode | Stripe test keys, analyst test user |\n| S03 | French translation sign-off or corrections | messages/fr/*.json, Michael's review |\n| S04 | Airtable full DB sync confirmed working | GitHub Action output, production data |"
     }
   ],
   "slices": [
@@ -445,6 +510,86 @@
       "success_criteria": "All UAT checklist items marked pass or fail with evidence.",
       "proof_level": "Browser verification with screenshots",
       "integration_closure": "Full product verification against all delivered features",
+      "observability_impact": "None",
+      "sequence": 0,
+      "replan_triggered_at": null
+    },
+    {
+      "milestone_id": "M004",
+      "id": "S01",
+      "title": "Complete UAT Execution",
+      "status": "pending",
+      "risk": "medium",
+      "depends": [],
+      "demo": "All 56 UAT items verified with pass/fail evidence. UAT markdown files updated with checked boxes.",
+      "created_at": "2026-04-01T13:13:28.713Z",
+      "completed_at": null,
+      "full_summary_md": "",
+      "full_uat_md": "",
+      "goal": "Walk through every UAT checklist item from M001, M002, and M003 in the browser. Check each box pass or fail. Fix any failures found.",
+      "success_criteria": "All 56 UAT items checked. Any failures fixed or documented. UAT files updated.",
+      "proof_level": "Browser verification with screenshots",
+      "integration_closure": "Complete product verification against all delivered features",
+      "observability_impact": "None",
+      "sequence": 0,
+      "replan_triggered_at": null
+    },
+    {
+      "milestone_id": "M004",
+      "id": "S02",
+      "title": "Stripe Upgrade Coupon End-to-End Test",
+      "status": "pending",
+      "risk": "medium",
+      "depends": [],
+      "demo": "Stripe checkout page shows $4,999 discount for an analyst user upgrading to strategist.",
+      "created_at": "2026-04-01T13:13:28.714Z",
+      "completed_at": null,
+      "full_summary_md": "",
+      "full_uat_md": "",
+      "goal": "Test the Stripe upgrade coupon end-to-end: create a checkout session as an analyst user upgrading to strategist, verify the $4,999 credit appears.",
+      "success_criteria": "Coupon appears in Stripe dashboard. Checkout shows $4,999 discount. Non-analyst checkout shows no discount.",
+      "proof_level": "Stripe dashboard or checkout page screenshot",
+      "integration_closure": "Stripe coupon auto-creation and application verified",
+      "observability_impact": "None",
+      "sequence": 0,
+      "replan_triggered_at": null
+    },
+    {
+      "milestone_id": "M004",
+      "id": "S03",
+      "title": "French Translation Sign-Off",
+      "status": "pending",
+      "risk": "low",
+      "depends": [],
+      "demo": "Michael confirms French translations are natural B2B language, or corrections applied.",
+      "created_at": "2026-04-01T13:13:28.714Z",
+      "completed_at": null,
+      "full_summary_md": "",
+      "full_uat_md": "",
+      "goal": "Get Michael's sign-off on French translations across all 5 public pages, or apply any corrections he identifies.",
+      "success_criteria": "Michael reviews /fr pages and confirms quality or provides corrections that are applied.",
+      "proof_level": "Human review sign-off",
+      "integration_closure": "French language quality confirmed by domain expert",
+      "observability_impact": "None",
+      "sequence": 0,
+      "replan_triggered_at": null
+    },
+    {
+      "milestone_id": "M004",
+      "id": "S04",
+      "title": "Airtable Full DB Sync Confirmation",
+      "status": "pending",
+      "risk": "low",
+      "depends": [],
+      "demo": "GitHub Action log shows successful sync from Full DB View with 600 records. Production site renders all companies.",
+      "created_at": "2026-04-01T13:13:28.714Z",
+      "completed_at": null,
+      "full_summary_md": "",
+      "full_uat_md": "",
+      "goal": "Confirm the Airtable sync GitHub Action successfully pulls from Grid Full DB View and delivers the full dataset to production.",
+      "success_criteria": "Action log shows 600 records fetched. Production CSV has 600+ rows. Charts render with full data.",
+      "proof_level": "GitHub Action log + production verification",
+      "integration_closure": "Data pipeline from Airtable to production verified end-to-end",
       "observability_impact": "None",
       "sequence": 0,
       "replan_triggered_at": null
