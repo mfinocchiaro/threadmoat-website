@@ -38,3 +38,11 @@
 - Reused existing LanguageSwitcher component which uses useLocale() internally instead of accepting currentLocale prop
 - Wrote translations manually rather than using Ollama qwen2.5 which returned untranslated content
 - Used native Unicode characters for language labels (Francais, Espanol, Italiano, Deutsch)
+
+---
+
+## Decisions Table
+
+| # | When | Scope | Decision | Choice | Rationale | Revisable? | Made By |
+|---|------|-------|----------|--------|-----------|------------|---------|
+| D001 |  | product | How to handle dashboard UX feedback requesting narrative reports, new heatmaps, and interactive report builder workflow | Capture as product direction for M005+ planning. Do not scope into M004 (which is verification-only). | The feedback describes a significant product evolution (analysis workbench with AI narrative). M004 is scoped for verification/sign-off only. This feedback should inform M005 planning after M004 closes. | Yes | collaborative |
