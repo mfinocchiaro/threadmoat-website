@@ -13,6 +13,7 @@ type MetricKey = "totalFunding" | "headcount" | "estimatedMarketValue" | "weight
 interface TreemapChartProps {
   data: Company[]
   className?: string
+  shortlistedIds?: Set<string>
 }
 
 interface ViewState {
@@ -93,7 +94,7 @@ function buildHierarchy(data: Company[], mode: HierarchyMode): TreeData {
   return hData
 }
 
-export function TreemapChart({ data, className }: TreemapChartProps) {
+export function TreemapChart({ data, className, shortlistedIds }: TreemapChartProps) {
   const svgRef = useRef<SVGSVGElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const [currentView, setCurrentView] = useState<ViewState | null>(null)
@@ -163,8 +164,14 @@ export function TreemapChart({ data, className }: TreemapChartProps) {
             : d.parent?.data.name ?? ""
         return getInvestmentColor(colorTarget || "Other")
       })
-      .attr("stroke", "#fff")
-      .attr("stroke-width", 0.5)
+      .attr("stroke", (d) => {
+        const company = d.data as unknown as Company
+        return shortlistedIds?.has(company.id) ? "#f59e0b" : "#fff"
+      })
+      .attr("stroke-width", (d) => {
+        const company = d.data as unknown as Company
+        return shortlistedIds?.has(company.id) ? 2.5 : 0.5
+      })
       .style("cursor", "pointer")
       .on("mouseover", (event, d) => {
         if (!tooltipRef.current) return
@@ -264,7 +271,7 @@ export function TreemapChart({ data, className }: TreemapChartProps) {
         .style("pointer-events", "none")
         .style("opacity", "0.9")
     }
-  }, [data, currentView, mode, metric])
+  }, [data, currentView, mode, metric, shortlistedIds])
 
   return (
     <Card className={cn("flex flex-col", className)}>

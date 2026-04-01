@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exported_at": "2026-04-01T22:15:36.171Z",
+  "exported_at": "2026-04-01T22:20:16.355Z",
   "milestones": [
     {
       "id": "M001",
@@ -1983,19 +1983,34 @@
       "milestone_id": "M005",
       "slice_id": "S03",
       "id": "T03",
-      "title": "Thread shortlistedIds to 4 key charts and render visual highlight treatment",
-      "status": "pending",
-      "one_liner": "",
-      "narrative": "",
-      "verification_result": "",
+      "title": "Added optional shortlistedIds prop to bubble, quadrant, periodic table, and treemap charts with amber stroke highlight, threaded from useThesisGatedData through all 6 page files",
+      "status": "complete",
+      "one_liner": "Added optional shortlistedIds prop to bubble, quadrant, periodic table, and treemap charts with amber stroke highlight, threaded from useThesisGatedData through all 6 page files",
+      "narrative": "Added shortlistedIds?: Set<string> prop to all 4 key chart components with visual highlight treatment: amber stroke (#f59e0b) on SVG charts (bubble, quadrant, treemap) and CSS outline + glow + ★ indicator on periodic table HTML cells. Updated 6 page files (4 dedicated + 2 tab overviews) to destructure shortlistedIds from useThesisGatedData() and pass through. All props optional — charts render normally without shortlistedIds. Fixed a D3 type issue where .style() doesn't accept null for HTML selections.",
+      "verification_result": "npm run build passes with zero type errors. grep confirms shortlistedIds present in all 4 chart files and all 6 page files. All slice-level checks pass: ShortlistProvider wired, shortlistedIds in hook, localStorage key present.",
       "duration": "",
-      "completed_at": null,
+      "completed_at": "2026-04-01T22:20:16.346Z",
       "blocker_discovered": false,
-      "deviations": "",
-      "known_issues": "",
-      "key_files": [],
-      "key_decisions": [],
-      "full_summary_md": "",
+      "deviations": "D3 .style() typing doesn't accept null for HTML selections — used 'none'/'0' strings instead. No functional impact.",
+      "known_issues": "None.",
+      "key_files": [
+        "components/charts/bubble-chart.tsx",
+        "components/charts/quadrant-chart.tsx",
+        "components/charts/periodic-table.tsx",
+        "components/charts/treemap-chart.tsx",
+        "app/dashboard/bubbles/page.tsx",
+        "app/dashboard/quadrant/page.tsx",
+        "app/dashboard/periodic-table/page.tsx",
+        "app/dashboard/treemap/page.tsx",
+        "app/dashboard/tab/market/page.tsx",
+        "app/dashboard/tab/financial/page.tsx"
+      ],
+      "key_decisions": [
+        "Used amber #f59e0b with 2.5px stroke for shortlist highlight across all charts",
+        "Periodic table uses CSS outline (not border) to avoid layout shift, plus ★ corner indicator",
+        "Optional prop pattern: all charts accept Set<string> | undefined, backwards compatible"
+      ],
+      "full_summary_md": "---\nid: T03\nparent: S03\nmilestone: M005\nkey_files:\n  - components/charts/bubble-chart.tsx\n  - components/charts/quadrant-chart.tsx\n  - components/charts/periodic-table.tsx\n  - components/charts/treemap-chart.tsx\n  - app/dashboard/bubbles/page.tsx\n  - app/dashboard/quadrant/page.tsx\n  - app/dashboard/periodic-table/page.tsx\n  - app/dashboard/treemap/page.tsx\n  - app/dashboard/tab/market/page.tsx\n  - app/dashboard/tab/financial/page.tsx\nkey_decisions:\n  - Used amber #f59e0b with 2.5px stroke for shortlist highlight across all charts\n  - Periodic table uses CSS outline (not border) to avoid layout shift, plus ★ corner indicator\n  - Optional prop pattern: all charts accept Set<string> | undefined, backwards compatible\nduration: \"\"\nverification_result: passed\ncompleted_at: 2026-04-01T22:20:16.346Z\nblocker_discovered: false\n---\n\n# T03: Added optional shortlistedIds prop to bubble, quadrant, periodic table, and treemap charts with amber stroke highlight, threaded from useThesisGatedData through all 6 page files\n\n**Added optional shortlistedIds prop to bubble, quadrant, periodic table, and treemap charts with amber stroke highlight, threaded from useThesisGatedData through all 6 page files**\n\n## What Happened\n\nAdded shortlistedIds?: Set<string> prop to all 4 key chart components with visual highlight treatment: amber stroke (#f59e0b) on SVG charts (bubble, quadrant, treemap) and CSS outline + glow + ★ indicator on periodic table HTML cells. Updated 6 page files (4 dedicated + 2 tab overviews) to destructure shortlistedIds from useThesisGatedData() and pass through. All props optional — charts render normally without shortlistedIds. Fixed a D3 type issue where .style() doesn't accept null for HTML selections.\n\n## Verification\n\nnpm run build passes with zero type errors. grep confirms shortlistedIds present in all 4 chart files and all 6 page files. All slice-level checks pass: ShortlistProvider wired, shortlistedIds in hook, localStorage key present.\n\n## Verification Evidence\n\n| # | Command | Exit Code | Verdict | Duration |\n|---|---------|-----------|---------|----------|\n| 1 | `npm run build` | 0 | ✅ pass | 16300ms |\n| 2 | `grep -c shortlistedIds components/charts/bubble-chart.tsx` | 0 | ✅ pass | 100ms |\n| 3 | `grep -c shortlistedIds components/charts/quadrant-chart.tsx` | 0 | ✅ pass | 100ms |\n| 4 | `grep -c shortlistedIds components/charts/periodic-table.tsx` | 0 | ✅ pass | 100ms |\n| 5 | `grep -c shortlistedIds components/charts/treemap-chart.tsx` | 0 | ✅ pass | 100ms |\n| 6 | `grep -q ShortlistProvider components/dashboard/layout-client.tsx` | 0 | ✅ pass | 100ms |\n| 7 | `grep -q shortlistedIds hooks/use-thesis-gated-data.ts` | 0 | ✅ pass | 100ms |\n| 8 | `grep -q threadmoat-shortlist contexts/shortlist-context.tsx` | 0 | ✅ pass | 100ms |\n\n\n## Deviations\n\nD3 .style() typing doesn't accept null for HTML selections — used 'none'/'0' strings instead. No functional impact.\n\n## Known Issues\n\nNone.\n\n## Files Created/Modified\n\n- `components/charts/bubble-chart.tsx`\n- `components/charts/quadrant-chart.tsx`\n- `components/charts/periodic-table.tsx`\n- `components/charts/treemap-chart.tsx`\n- `app/dashboard/bubbles/page.tsx`\n- `app/dashboard/quadrant/page.tsx`\n- `app/dashboard/periodic-table/page.tsx`\n- `app/dashboard/treemap/page.tsx`\n- `app/dashboard/tab/market/page.tsx`\n- `app/dashboard/tab/financial/page.tsx`\n",
       "description": "## Description\n\nAdd an optional `shortlistedIds?: Set<string>` prop to 4 key chart components (bubble, quadrant, periodic table, treemap) and render a visual highlight treatment (bright stroke ring or elevated opacity) for shortlisted companies. Update the chart page wrappers to pass `shortlistedIds` from `useThesisGatedData()` through to the chart components.\n\n## Steps\n\n1. Update `components/charts/bubble-chart.tsx`:\n   - Add `shortlistedIds?: Set<string>` to `BubbleChartProps`\n   - In the D3 render effect, after drawing circles, add a conditional stroke treatment: if `shortlistedIds?.has(company.id)`, apply a 2px amber/gold stroke ring (`#f59e0b`) and slightly higher opacity\n   - Add `shortlistedIds` to the useEffect dependency array (use a stringified version or the set size + content hash to avoid over-rendering)\n\n2. Update `components/charts/quadrant-chart.tsx`:\n   - Add `shortlistedIds?: Set<string>` to props\n   - Similar D3 highlight treatment: amber stroke ring on shortlisted company dots\n   - Thread through dependency array\n\n3. Update `components/charts/periodic-table.tsx`:\n   - Add `shortlistedIds?: Set<string>` to `PeriodicTableProps`\n   - In the D3 cell rendering, add a CSS class or inline style for shortlisted cells: amber border + subtle glow/shadow\n   - The periodic table already renders cells with `<rect>` elements — add conditional stroke\n   - Also show a small star indicator (★) in the cell corner for shortlisted companies\n\n4. Update `components/charts/treemap-chart.tsx`:\n   - Add `shortlistedIds?: Set<string>` to props\n   - D3 treemap renders `<rect>` elements — add amber stroke treatment for shortlisted companies\n\n5. Update the 4 chart page files that use these components to pass `shortlistedIds` from `useThesisGatedData()`:\n   - Find the page files that render BubbleChart, QuadrantChart, PeriodicTable, TreemapChart\n   - Destructure `shortlistedIds` from `useThesisGatedData()` and pass as prop\n\n## Must-Haves\n\n- [ ] All 4 charts accept optional shortlistedIds prop\n- [ ] Shortlisted companies show a visible highlight (amber stroke ring) on each chart\n- [ ] Chart pages pass shortlistedIds from useThesisGatedData to chart components\n- [ ] D3 useEffect dependency arrays include shortlist state\n- [ ] Charts without shortlistedIds prop continue to render normally (backwards compatible)\n- [ ] npm run build passes\n\n## Verification\n\n- `npm run build` passes with zero type errors\n- `grep -rn 'shortlistedIds' components/charts/bubble-chart.tsx components/charts/quadrant-chart.tsx components/charts/periodic-table.tsx components/charts/treemap-chart.tsx` returns matches in all 4 files\n- `grep -rn 'shortlistedIds' app/` returns matches in chart page files confirming prop threading",
       "estimate": "1h15m",
       "files": [
@@ -2785,6 +2800,94 @@
       "verdict": "✅ pass",
       "duration_ms": 50,
       "created_at": "2026-04-01T22:15:36.162Z"
+    },
+    {
+      "id": 69,
+      "task_id": "T03",
+      "slice_id": "S03",
+      "milestone_id": "M005",
+      "command": "npm run build",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 16300,
+      "created_at": "2026-04-01T22:20:16.346Z"
+    },
+    {
+      "id": 70,
+      "task_id": "T03",
+      "slice_id": "S03",
+      "milestone_id": "M005",
+      "command": "grep -c shortlistedIds components/charts/bubble-chart.tsx",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 100,
+      "created_at": "2026-04-01T22:20:16.346Z"
+    },
+    {
+      "id": 71,
+      "task_id": "T03",
+      "slice_id": "S03",
+      "milestone_id": "M005",
+      "command": "grep -c shortlistedIds components/charts/quadrant-chart.tsx",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 100,
+      "created_at": "2026-04-01T22:20:16.346Z"
+    },
+    {
+      "id": 72,
+      "task_id": "T03",
+      "slice_id": "S03",
+      "milestone_id": "M005",
+      "command": "grep -c shortlistedIds components/charts/periodic-table.tsx",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 100,
+      "created_at": "2026-04-01T22:20:16.346Z"
+    },
+    {
+      "id": 73,
+      "task_id": "T03",
+      "slice_id": "S03",
+      "milestone_id": "M005",
+      "command": "grep -c shortlistedIds components/charts/treemap-chart.tsx",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 100,
+      "created_at": "2026-04-01T22:20:16.346Z"
+    },
+    {
+      "id": 74,
+      "task_id": "T03",
+      "slice_id": "S03",
+      "milestone_id": "M005",
+      "command": "grep -q ShortlistProvider components/dashboard/layout-client.tsx",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 100,
+      "created_at": "2026-04-01T22:20:16.346Z"
+    },
+    {
+      "id": 75,
+      "task_id": "T03",
+      "slice_id": "S03",
+      "milestone_id": "M005",
+      "command": "grep -q shortlistedIds hooks/use-thesis-gated-data.ts",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 100,
+      "created_at": "2026-04-01T22:20:16.346Z"
+    },
+    {
+      "id": 76,
+      "task_id": "T03",
+      "slice_id": "S03",
+      "milestone_id": "M005",
+      "command": "grep -q threadmoat-shortlist contexts/shortlist-context.tsx",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 100,
+      "created_at": "2026-04-01T22:20:16.346Z"
     }
   ]
 }

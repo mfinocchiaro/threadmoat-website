@@ -22,7 +22,7 @@ const PatternsChart = dynamic(
 )
 
 function FinancialInner() {
-  const { filtered, isLoading } = useThesisGatedData()
+  const { filtered, isLoading, shortlistedIds } = useThesisGatedData()
 
   if (isLoading) {
     return (
@@ -63,7 +63,7 @@ function FinancialInner() {
           href="/dashboard/treemap"
           icon={TreePine}
         >
-          <TreemapChart data={filtered} className="h-full" />
+          <TreemapChart data={filtered} className="h-full" shortlistedIds={shortlistedIds} />
         </ChartCard>
 
         <ChartCard
