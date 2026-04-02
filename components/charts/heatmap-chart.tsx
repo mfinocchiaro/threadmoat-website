@@ -38,6 +38,13 @@ export function HeatmapChart({ data, className }: HeatmapChartProps) {
     const width = containerRef.current.clientWidth
     if (!width) return
 
+    // Theme-aware colors from CSS custom properties
+    const rootStyle = getComputedStyle(containerRef.current)
+    const mutedFgRaw = rootStyle.getPropertyValue('--muted-foreground').trim()
+    const borderRaw = rootStyle.getPropertyValue('--border').trim()
+    const axisColor = mutedFgRaw ? `hsl(${mutedFgRaw})` : '#64748b'
+    const borderColor = borderRaw ? `hsl(${borderRaw})` : '#1e293b'
+
     const margin = { top: 40, right: 30, bottom: 80, left: 160 }
 
     const xGroups = Array.from(new Set(data.map((d) => (d[xAxis] as string) || "Unknown"))).sort()
@@ -80,7 +87,7 @@ export function HeatmapChart({ data, className }: HeatmapChartProps) {
       .attr("width", xScale.bandwidth())
       .attr("height", yScale.bandwidth())
       .attr("fill", (d) => colorScale((d[metric] as number) || 0))
-      .attr("stroke", "#1e293b")
+      .attr("stroke", borderColor)
       .attr("stroke-width", 0.5)
       .style("cursor", "pointer")
       .on("mouseover", (event, d) => {
@@ -111,14 +118,14 @@ export function HeatmapChart({ data, className }: HeatmapChartProps) {
       .attr("dx", "-.8em")
       .attr("dy", ".15em")
       .attr("transform", "rotate(-45)")
-      .attr("fill", "#94a3b8")
+      .attr("fill", axisColor)
       .style("font-size", "10px")
 
     // Y axis
     g.append("g")
       .call(d3.axisLeft(yScale))
       .selectAll("text")
-      .attr("fill", "#94a3b8")
+      .attr("fill", axisColor)
       .style("font-size", "10px")
 
     // Remove axis lines
@@ -142,8 +149,8 @@ export function HeatmapChart({ data, className }: HeatmapChartProps) {
       .attr("fill", "url(#heatmap-legend-grad)")
       .attr("rx", 2)
 
-    legendSvg.append("text").attr("x", 0).attr("y", 20).attr("fill", "#64748b").attr("font-size", "9px").text("Low")
-    legendSvg.append("text").attr("x", legendWidth).attr("y", 20).attr("fill", "#64748b").attr("font-size", "9px").attr("text-anchor", "end").text("High")
+    legendSvg.append("text").attr("x", 0).attr("y", 20).attr("fill", axisColor).attr("font-size", "9px").text("Low")
+    legendSvg.append("text").attr("x", legendWidth).attr("y", 20).attr("fill", axisColor).attr("font-size", "9px").attr("text-anchor", "end").text("High")
   }, [data, metric, xAxis])
 
   return (
@@ -177,12 +184,12 @@ export function HeatmapChart({ data, className }: HeatmapChartProps) {
           style={{
             position: "fixed",
             visibility: "hidden",
-            background: "#1e293b",
-            border: "1px solid #334155",
+            background: "var(--popover, #1e293b)",
+            border: "1px solid var(--border, #334155)",
             borderRadius: "6px",
             padding: "8px 12px",
             fontSize: "12px",
-            color: "#f1f5f9",
+            color: "var(--popover-foreground, #f1f5f9)",
             pointerEvents: "none",
             zIndex: 9999,
           }}
