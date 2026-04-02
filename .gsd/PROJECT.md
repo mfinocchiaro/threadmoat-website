@@ -23,10 +23,10 @@ Converting visitors into paying dashboard subscribers through compelling market 
 - ✓ React Email templates (welcome, receipt, verification, password-reset) — v1.0
 - ✓ AI-powered narrative analysis for company reports (Impressions, Conclusions, Beware, Overlooked Opportunities) — v1.1
 - ✓ Subscriber onboarding wizard (tier-aware, 3 steps) — v1.0
+- ✓ Company shortlist / workspace (click companies across charts, amber highlight, toolbar panel) — v1.1
 
 ### Active
 
-- [ ] Company shortlist / workspace (select companies across charts, highlight across all)
 - [ ] Custom report builder (filter + company + chart + AI narrative → PDF)
 - [ ] Compact sticky filter toolbar replacing dialog overlay (filters all charts)
 - [ ] Stripe upgrade coupon ($4,999 credit for report→subscription upgrades)
@@ -91,4 +91,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-24 after v1.0 milestone*
+*Last updated: 2026-04-01 after M005/S03 shortlist slice*
