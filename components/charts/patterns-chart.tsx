@@ -92,6 +92,13 @@ export function PatternsChart({ companies, className }: PatternsChartProps) {
     const svg = d3.select(svgRef.current)
     svg.selectAll("*").remove()
 
+    // Theme-aware colors from CSS custom properties
+    const rootStyle = getComputedStyle(svgRef.current)
+    const mutedFgRaw = rootStyle.getPropertyValue('--muted-foreground').trim()
+    const fgRaw = rootStyle.getPropertyValue('--foreground').trim()
+    const axisColor = mutedFgRaw ? `hsl(${mutedFgRaw})` : '#64748b'
+    const labelColor = fgRaw ? `hsl(${fgRaw})` : '#cbd5e1'
+
     const margin = { top: 40, right: 20, bottom: 90, left: 300 }
     const cellSize = 44
     const innerWidth = FUNDING_STAGES.length * cellSize
@@ -132,8 +139,8 @@ export function PatternsChart({ companies, className }: PatternsChartProps) {
       .attr("width", cellW)
       .attr("height", cellH)
       .attr("rx", 4)
-      .attr("fill", d => d.count === 0 ? "rgba(255,255,255,0.04)" : colorScale(d.count))
-      .attr("stroke", "rgba(255,255,255,0.06)")
+      .attr("fill", d => d.count === 0 ? "rgba(128,128,128,0.08)" : colorScale(d.count))
+      .attr("stroke", "rgba(128,128,128,0.12)")
       .attr("stroke-width", 1)
       .style("cursor", d => d.count > 0 ? "pointer" : "default")
       .on("mouseover", (event, d) => {
@@ -193,7 +200,7 @@ export function PatternsChart({ companies, className }: PatternsChartProps) {
         .attr("text-anchor", "end")
         .attr("dominant-baseline", "middle")
         .attr("font-size", 12)
-        .attr("fill", "#cbd5e1")
+        .attr("fill", labelColor)
         .text(list)
     })
 
@@ -206,7 +213,7 @@ export function PatternsChart({ companies, className }: PatternsChartProps) {
         .attr("text-anchor", "end")
         .attr("transform", `rotate(-40, ${xScale(stage)! + cellW / 2}, 0)`)
         .attr("font-size", 11)
-        .attr("fill", "#94a3b8")
+        .attr("fill", axisColor)
         .text(STAGE_SHORT[stage] ?? stage)
     })
 
@@ -222,11 +229,11 @@ export function PatternsChart({ companies, className }: PatternsChartProps) {
         .attr("y", 0)
         .attr("width", legendW / legendSteps)
         .attr("height", 10)
-        .attr("fill", val === 0 ? "rgba(255,255,255,0.04)" : legendScale(val))
+        .attr("fill", val === 0 ? "rgba(128,128,128,0.08)" : legendScale(val))
     }
-    legendG.append("text").attr("x", 0).attr("y", 22).attr("font-size", 9).attr("fill", "#64748b").text("0")
-    legendG.append("text").attr("x", legendW).attr("y", 22).attr("text-anchor", "end").attr("font-size", 9).attr("fill", "#64748b").text(maxCount)
-    legendG.append("text").attr("x", legendW / 2).attr("y", 22).attr("text-anchor", "middle").attr("font-size", 9).attr("fill", "#64748b").text("companies")
+    legendG.append("text").attr("x", 0).attr("y", 22).attr("font-size", 9).attr("fill", axisColor).text("0")
+    legendG.append("text").attr("x", legendW).attr("y", 22).attr("text-anchor", "end").attr("font-size", 9).attr("fill", axisColor).text(maxCount)
+    legendG.append("text").attr("x", legendW / 2).attr("y", 22).attr("text-anchor", "middle").attr("font-size", 9).attr("fill", axisColor).text("companies")
 
   }, [matrix, maxCount])
 
@@ -235,7 +242,7 @@ export function PatternsChart({ companies, className }: PatternsChartProps) {
       <svg ref={svgRef} className="block" />
       <div
         ref={tooltipRef}
-        className="fixed z-50 hidden pointer-events-none bg-slate-900 border border-slate-700 rounded-lg px-3 py-2.5 shadow-xl max-w-xs"
+        className="fixed z-50 hidden pointer-events-none bg-popover text-popover-foreground border border-border rounded-lg px-3 py-2.5 shadow-xl max-w-xs"
       />
     </div>
   )

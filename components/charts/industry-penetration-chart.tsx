@@ -135,6 +135,17 @@ export function IndustryPenetrationChart({ data, className, shortlistedIds }: In
     const width = containerRef.current.clientWidth
     if (!width) return
 
+    // Theme-aware colors from CSS custom properties
+    const rootStyle = getComputedStyle(containerRef.current)
+    const mutedFgRaw = rootStyle.getPropertyValue('--muted-foreground').trim()
+    const borderRaw = rootStyle.getPropertyValue('--border').trim()
+    const fgRaw = rootStyle.getPropertyValue('--foreground').trim()
+    const axisColor = mutedFgRaw ? `hsl(${mutedFgRaw})` : '#64748b'
+    const borderColor = borderRaw ? `hsl(${borderRaw})` : '#1e293b'
+    const fgColor = fgRaw ? `hsl(${fgRaw})` : '#f1f5f9'
+    const emptyBg = mutedFgRaw ? `hsla(${mutedFgRaw}, 0.08)` : 'rgba(128,128,128,0.08)'
+    const emptyStroke = mutedFgRaw ? `hsla(${mutedFgRaw}, 0.15)` : 'rgba(128,128,128,0.15)'
+
     const margin = { top: 10, right: 30, bottom: 140, left: 200 }
     const cellSize = Math.max(28, Math.min(40, (width - margin.left - margin.right) / industries.length))
     const innerWidth = industries.length * cellSize
@@ -173,8 +184,8 @@ export function IndustryPenetrationChart({ data, className, shortlistedIds }: In
           // Empty cell
           g.append("rect")
             .attr("x", x).attr("y", y).attr("width", w).attr("height", h)
-            .attr("fill", "#1e1e2e")
-            .attr("stroke", "#2a2a3e")
+            .attr("fill", emptyBg)
+            .attr("stroke", emptyStroke)
             .attr("stroke-width", 0.5)
             .attr("rx", 2)
           continue
@@ -186,7 +197,7 @@ export function IndustryPenetrationChart({ data, className, shortlistedIds }: In
         g.append("rect")
           .attr("x", x).attr("y", y).attr("width", w).attr("height", h)
           .attr("fill", colorScale(val))
-          .attr("stroke", hasShortlisted ? "#f59e0b" : "#1e293b")
+          .attr("stroke", hasShortlisted ? "#f59e0b" : borderColor)
           .attr("stroke-width", hasShortlisted ? 2.5 : 0.5)
           .attr("rx", 2)
           .style("cursor", "pointer")
@@ -230,7 +241,7 @@ export function IndustryPenetrationChart({ data, className, shortlistedIds }: In
             .attr("y", y + h / 2)
             .attr("text-anchor", "middle")
             .attr("dominant-baseline", "central")
-            .attr("fill", val > maxVal * 0.6 ? "#fff" : "#94a3b8")
+            .attr("fill", val > maxVal * 0.6 ? fgColor : axisColor)
             .attr("font-size", "10px")
             .attr("font-weight", "500")
             .attr("pointer-events", "none")
@@ -248,14 +259,14 @@ export function IndustryPenetrationChart({ data, className, shortlistedIds }: In
       .attr("dx", "-.8em")
       .attr("dy", ".15em")
       .attr("transform", "rotate(-55)")
-      .attr("fill", "#94a3b8")
+      .attr("fill", axisColor)
       .style("font-size", "10px")
 
     // Y axis
     g.append("g")
       .call(d3.axisLeft(yScale))
       .selectAll("text")
-      .attr("fill", "#94a3b8")
+      .attr("fill", axisColor)
       .style("font-size", "10px")
 
     // Remove axis lines
@@ -282,8 +293,8 @@ export function IndustryPenetrationChart({ data, className, shortlistedIds }: In
       .attr("rx", 2)
 
     const labelText = valueMode === "count" ? "Startups" : valueMode === "avgScore" ? "Avg Score" : "Avg Funding ($M)"
-    legendG.append("text").attr("x", 0).attr("y", 20).attr("fill", "#64748b").attr("font-size", "9px").text(`0 ${labelText}`)
-    legendG.append("text").attr("x", legendWidth).attr("y", 20).attr("fill", "#64748b").attr("font-size", "9px").attr("text-anchor", "end")
+    legendG.append("text").attr("x", 0).attr("y", 20).attr("fill", axisColor).attr("font-size", "9px").text(`0 ${labelText}`)
+    legendG.append("text").attr("x", legendWidth).attr("y", 20).attr("fill", axisColor).attr("font-size", "9px").attr("text-anchor", "end")
       .text(valueMode === "count" ? String(Math.round(maxVal)) : valueMode === "avgScore" ? maxVal.toFixed(1) : `$${maxVal.toFixed(0)}M`)
   }, [cells, cellLookup, industries, yGroups, valueMode, shortlistedIds])
 
@@ -352,12 +363,12 @@ export function IndustryPenetrationChart({ data, className, shortlistedIds }: In
           style={{
             position: "fixed",
             visibility: "hidden",
-            background: "#1e293b",
-            border: "1px solid #334155",
+            background: "var(--popover, #1e293b)",
+            border: "1px solid var(--border, #334155)",
             borderRadius: "6px",
             padding: "8px 12px",
             fontSize: "12px",
-            color: "#f1f5f9",
+            color: "var(--popover-foreground, #f1f5f9)",
             pointerEvents: "none",
             zIndex: 9999,
             maxWidth: "320px",
