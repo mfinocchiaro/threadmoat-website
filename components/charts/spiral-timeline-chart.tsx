@@ -54,8 +54,17 @@ export function SpiralTimelineChart({ data, className }: SpiralTimelineChartProp
     svg.attr("width", width).attr("height", height)
 
     const validData = data.filter((d) => d.founded && d.founded > 1990 && d.founded <= 2026)
+
+    // Theme-aware colors from CSS custom properties
+    const rootStyle = getComputedStyle(svgRef.current)
+    const axisColor = rootStyle.getPropertyValue('--muted-foreground').trim() || '148 163 184'
+    const labelColor = rootStyle.getPropertyValue('--foreground').trim() || '241 245 249'
+    const borderColor = rootStyle.getPropertyValue('--border').trim() || '51 65 85'
+    const popoverBg = rootStyle.getPropertyValue('--popover').trim() || '15 23 42'
+    const popoverFg = rootStyle.getPropertyValue('--popover-foreground').trim() || '241 245 249'
+
     if (validData.length === 0) {
-      svg.append("text").attr("x", width / 2).attr("y", height / 2).attr("text-anchor", "middle").attr("fill", "#94a3b8").text("No companies with founding year data")
+      svg.append("text").attr("x", width / 2).attr("y", height / 2).attr("text-anchor", "middle").attr("fill", `hsl(${axisColor})`).text("No companies with founding year data")
       return
     }
 
@@ -101,7 +110,7 @@ export function SpiralTimelineChart({ data, className }: SpiralTimelineChartProp
       .datum(spiralPts)
       .attr("d", d3.line().curve(d3.curveNatural))
       .attr("fill", "none")
-      .attr("stroke", "#334155")
+      .attr("stroke", `hsl(${borderColor})`)
       .attr("stroke-width", 1.5)
       .attr("stroke-dasharray", "4,4")
       .attr("opacity", 0.4)
@@ -118,7 +127,7 @@ export function SpiralTimelineChart({ data, className }: SpiralTimelineChartProp
         .attr("x", x)
         .attr("y", y - 10)
         .attr("text-anchor", "middle")
-        .attr("fill", "#94a3b8")
+        .attr("fill", `hsl(${axisColor})`)
         .attr("font-size", 11)
         .attr("font-weight", "600")
         .text(yr)
@@ -132,12 +141,12 @@ export function SpiralTimelineChart({ data, className }: SpiralTimelineChartProp
       .append("div")
       .attr("class", "spiral-tooltip")
       .style("position", "fixed")
-      .style("background", "rgba(15,23,42,0.95)")
-      .style("border", "1px solid #334155")
+      .style("background", `hsl(${popoverBg})`)
+      .style("border", `1px solid hsl(${borderColor})`)
       .style("border-radius", "6px")
       .style("padding", "8px 12px")
       .style("font-size", "12px")
-      .style("color", "#f1f5f9")
+      .style("color", `hsl(${popoverFg})`)
       .style("pointer-events", "none")
       .style("opacity", "0")
       .style("z-index", "9999")
@@ -192,7 +201,7 @@ export function SpiralTimelineChart({ data, className }: SpiralTimelineChartProp
             : sizeMetric === "score" ? `Score: ${company.weightedScore?.toFixed(2)}`
             : `Headcount: ${company.headcount ?? 0}`
           tooltip.style("opacity", "1").html(
-            `<strong>${company.name}</strong><br>Founded: ${company.founded}<br>${metricText}<br><em style="font-size:11px;color:#64748b">Click for details</em>`
+            `<strong>${company.name}</strong><br>Founded: ${company.founded}<br>${metricText}<br><em style="font-size:11px;color:hsl(${axisColor})">Click for details</em>`
           )
         })
         .on("mousemove", (event: MouseEvent) => {
@@ -210,7 +219,7 @@ export function SpiralTimelineChart({ data, className }: SpiralTimelineChartProp
       .attr("x", width / 2)
       .attr("y", 26)
       .attr("text-anchor", "middle")
-      .attr("fill", "#f1f5f9")
+      .attr("fill", `hsl(${labelColor})`)
       .attr("font-size", 16)
       .attr("font-weight", "700")
       .text("Startup Ecosystem Evolution — Spiral Through Time")

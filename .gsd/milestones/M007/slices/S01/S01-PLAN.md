@@ -17,7 +17,7 @@ Files: box-plot-chart.tsx (7), correlation-matrix-chart.tsx (14), distribution-c
   - Estimate: 30min
   - Files: components/charts/box-plot-chart.tsx, components/charts/correlation-matrix-chart.tsx, components/charts/distribution-chart.tsx, components/charts/financial-heatmap-chart.tsx, components/charts/landscape-chart.tsx, components/charts/map-chart.tsx, components/charts/marimekko-chart.tsx
   - Verify: npm run build && grep -c '94a3b8\|64748b\|#1e293b\|#334155\|#1e1e2e\|#f1f5f9\|#cbd5e1\|slate-900\|slate-700' for each file shows 0 for axis/label/tooltip contexts
-- [ ] **T02: Fix theme colors in parallel-coords, radar, sankey, slope, spiral-timeline, splom charts** — Same pattern as T01 for the remaining 6 D3 SVG charts.
+- [x] **T02: Replace hardcoded slate hex colors with CSS custom property lookups in 6 D3 chart files for theme-aware rendering** — Same pattern as T01 for the remaining 6 D3 SVG charts.
 
 Files: parallel-coords-chart.tsx (8), radar-chart.tsx (3), sankey-chart.tsx (3), slope-chart.tsx (11), spiral-timeline-chart.tsx (8), splom-chart.tsx (5)
   - Estimate: 20min
