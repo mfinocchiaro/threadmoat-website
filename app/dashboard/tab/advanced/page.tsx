@@ -10,10 +10,11 @@ import { ParallelCoordsChart } from "@/components/charts/parallel-coords-chart"
 import { BoxPlotChart } from "@/components/charts/box-plot-chart"
 import { DistributionChart } from "@/components/charts/distribution-chart"
 import { WordcloudChart } from "@/components/charts/wordcloud-chart"
-import { Radar, Flame, SlidersHorizontal, BoxSelect, Activity, Type } from "lucide-react"
+import { IndustryPenetrationChart } from "@/components/charts/industry-penetration-chart"
+import { Radar, Flame, SlidersHorizontal, BoxSelect, Activity, Type, Globe2 } from "lucide-react"
 
 function AdvancedInner() {
-  const { filtered, isLoading } = useThesisGatedData()
+  const { filtered, isLoading, shortlistedIds } = useThesisGatedData()
 
   if (isLoading) {
     return (
@@ -91,6 +92,15 @@ function AdvancedInner() {
           icon={Type}
         >
           <WordcloudChart data={filtered} className="h-full" />
+        </ChartCard>
+
+        <ChartCard
+          title="Industry Penetration"
+          subtitle="Startup density by industry"
+          href="/dashboard/industry-penetration"
+          icon={Globe2}
+        >
+          <IndustryPenetrationChart data={filtered} shortlistedIds={shortlistedIds} className="h-full" />
         </ChartCard>
       </div>
     </div>
