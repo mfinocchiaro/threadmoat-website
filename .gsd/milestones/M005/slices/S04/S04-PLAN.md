@@ -118,7 +118,7 @@ Add report content composition to `CustomReportTab`. When the user clicks Genera
   - Estimate: 1.5h
   - Files: components/charts/custom-report-tab.tsx
   - Verify: npm run build && grep -q 'ai/narrative' components/charts/custom-report-tab.tsx && grep -q 'clipboard' components/charts/custom-report-tab.tsx
-- [ ] **T03: Install PDF dependencies, capture chart snapshots, and assemble PDF export** — ## Description
+- [x] **T03: Installed jspdf and html-to-image, built offscreen chart capture with toPng, and assembled full PDF export with cover page, per-company text sections, chart images, and markdown rendering** — ## Description
 
 Install `jspdf` and `html-to-image`, build a hidden offscreen chart rendering container that mounts the 4 chart components at fixed dimensions, capture them as PNG via `toPng()`, and compose the full PDF document with jsPDF. The PDF includes: a cover page with report metadata (title, date, company count), per-company sections with text content (profile, scores, AI narrative), and chart images. Text sections use jsPDF's text API with a lightweight markdown parser for headings/bold/bullets. Chart images are embedded at fixed width.
 
