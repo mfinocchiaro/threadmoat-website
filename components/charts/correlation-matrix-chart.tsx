@@ -63,6 +63,13 @@ export function CorrelationMatrixChart({ data, className }: CorrelationMatrixCha
     svg.selectAll("*").remove()
     svg.attr("width", size + margin.right).attr("height", height)
 
+    // Theme-aware colors from CSS custom properties
+    const rootStyle = getComputedStyle(svgRef.current)
+    const axisColor = rootStyle.getPropertyValue('--muted-foreground').trim() || '#64748b'
+    const labelColor = rootStyle.getPropertyValue('--foreground').trim() || '#f1f5f9'
+    const borderColor = rootStyle.getPropertyValue('--border').trim() || '#334155'
+    const bgColor = rootStyle.getPropertyValue('--background').trim() || '#0f172a'
+
     // Build correlations
     interface CorrCell {
       xi: number; yi: number
@@ -84,7 +91,7 @@ export function CorrelationMatrixChart({ data, className }: CorrelationMatrixCha
 
     const colorScale = d3.scaleLinear<string>()
       .domain([-1, 0, 1])
-      .range(["#ef4444", "#1e293b", "#10b981"])
+      .range(["#ef4444", bgColor, "#10b981"])
 
     const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`)
 
@@ -93,12 +100,12 @@ export function CorrelationMatrixChart({ data, className }: CorrelationMatrixCha
       .append("div")
       .attr("class", "corr-tooltip")
       .style("position", "fixed")
-      .style("background", "rgba(15,23,42,0.95)")
-      .style("border", "1px solid #334155")
+      .style("background", `color-mix(in srgb, ${bgColor} 95%, transparent)`)
+      .style("border", `1px solid ${borderColor}`)
       .style("border-radius", "6px")
       .style("padding", "8px 12px")
       .style("font-size", "12px")
-      .style("color", "#f1f5f9")
+      .style("color", labelColor)
       .style("pointer-events", "none")
       .style("opacity", "0")
       .style("z-index", "9999")
@@ -114,7 +121,7 @@ export function CorrelationMatrixChart({ data, className }: CorrelationMatrixCha
       .attr("height", cellSize)
       .attr("fill", (d) => colorScale(d.value))
       .attr("fill-opacity", (d) => Math.abs(d.value) * 0.75 + 0.25)
-      .attr("stroke", "#0f172a")
+      .attr("stroke", bgColor)
       .attr("stroke-width", 1)
       .style("cursor", "pointer")
       .on("mouseover", function (event, d) {
@@ -122,7 +129,7 @@ export function CorrelationMatrixChart({ data, className }: CorrelationMatrixCha
         const strength = Math.abs(d.value) > 0.7 ? "Strong" : Math.abs(d.value) > 0.4 ? "Moderate" : "Weak"
         const direction = d.value > 0.01 ? "positive" : d.value < -0.01 ? "negative" : "no"
         tooltip.style("opacity", "1").html(
-          `<strong>${d.l1}</strong><br>× ${d.l2}<br>r = <span style="font-weight:700;color:${colorScale(d.value)}">${d.value.toFixed(3)}</span><br><em style="font-size:11px;color:#64748b">${strength} ${direction} correlation</em>`
+          `<strong>${d.l1}</strong><br>× ${d.l2}<br>r = <span style="font-weight:700;color:${colorScale(d.value)}">${d.value.toFixed(3)}</span><br><em style="font-size:11px;opacity:0.7">${strength} ${direction} correlation</em>`
         )
       })
       .on("mousemove", (event: MouseEvent) => {
@@ -142,7 +149,7 @@ export function CorrelationMatrixChart({ data, className }: CorrelationMatrixCha
       .attr("y", (d) => d.yi * cellSize + cellSize / 2)
       .attr("text-anchor", "middle")
       .attr("dominant-baseline", "middle")
-      .attr("fill", (d) => (Math.abs(d.value) > 0.55 ? "#0f172a" : "#f1f5f9"))
+      .attr("fill", (d) => (Math.abs(d.value) > 0.55 ? bgColor : labelColor))
       .attr("font-size", Math.max(8, cellSize * 0.28))
       .attr("font-weight", "600")
       .attr("pointer-events", "none")
@@ -155,7 +162,7 @@ export function CorrelationMatrixChart({ data, className }: CorrelationMatrixCha
       .attr("class", "x-lbl")
       .attr("transform", (_, i) => `rotate(-45,${i * cellSize + cellSize / 2},-8) translate(${i * cellSize + cellSize / 2},-8)`)
       .attr("text-anchor", "end")
-      .attr("fill", "#94a3b8")
+      .attr("fill", axisColor)
       .attr("font-size", 10)
       .attr("font-weight", "600")
       .text((d) => d.shortLabel)
@@ -169,7 +176,7 @@ export function CorrelationMatrixChart({ data, className }: CorrelationMatrixCha
       .attr("y", (_, i) => i * cellSize + cellSize / 2)
       .attr("text-anchor", "end")
       .attr("dominant-baseline", "middle")
-      .attr("fill", "#94a3b8")
+      .attr("fill", axisColor)
       .attr("font-size", 10)
       .attr("font-weight", "600")
       .text((d) => d.shortLabel)
@@ -180,7 +187,7 @@ export function CorrelationMatrixChart({ data, className }: CorrelationMatrixCha
       .attr("x", (size + margin.right) / 2)
       .attr("y", 22)
       .attr("text-anchor", "middle")
-      .attr("fill", "#f1f5f9")
+      .attr("fill", labelColor)
       .attr("font-size", 15)
       .attr("font-weight", "700")
       .text("Performance Metrics — Pearson Correlation Matrix")
@@ -190,7 +197,7 @@ export function CorrelationMatrixChart({ data, className }: CorrelationMatrixCha
       .attr("x", (size + margin.right) / 2)
       .attr("y", 40)
       .attr("text-anchor", "middle")
-      .attr("fill", "#94a3b8")
+      .attr("fill", axisColor)
       .attr("font-size", 11)
       .text(`${data.length} companies · Green = positive · Red = negative`)
 
@@ -204,13 +211,13 @@ export function CorrelationMatrixChart({ data, className }: CorrelationMatrixCha
     const defs = svg.append("defs")
     const grad = defs.append("linearGradient").attr("id", gradId).attr("x1", "0%").attr("x2", "0%").attr("y1", "100%").attr("y2", "0%")
     grad.append("stop").attr("offset", "0%").attr("stop-color", "#ef4444")
-    grad.append("stop").attr("offset", "50%").attr("stop-color", "#1e293b")
+    grad.append("stop").attr("offset", "50%").attr("stop-color", bgColor)
     grad.append("stop").attr("offset", "100%").attr("stop-color", "#10b981")
 
-    svg.append("rect").attr("x", lgX).attr("y", lgY).attr("width", lgW).attr("height", lgH).attr("fill", `url(#${gradId})`).attr("stroke", "#334155")
-    svg.append("text").attr("x", lgX + lgW + 5).attr("y", lgY + 8).attr("fill", "#94a3b8").attr("font-size", 10).text("+1.0")
-    svg.append("text").attr("x", lgX + lgW + 5).attr("y", lgY + lgH / 2).attr("fill", "#94a3b8").attr("font-size", 10).attr("dominant-baseline", "middle").text("0")
-    svg.append("text").attr("x", lgX + lgW + 5).attr("y", lgY + lgH - 4).attr("fill", "#94a3b8").attr("font-size", 10).text("-1.0")
+    svg.append("rect").attr("x", lgX).attr("y", lgY).attr("width", lgW).attr("height", lgH).attr("fill", `url(#${gradId})`).attr("stroke", borderColor)
+    svg.append("text").attr("x", lgX + lgW + 5).attr("y", lgY + 8).attr("fill", axisColor).attr("font-size", 10).text("+1.0")
+    svg.append("text").attr("x", lgX + lgW + 5).attr("y", lgY + lgH / 2).attr("fill", axisColor).attr("font-size", 10).attr("dominant-baseline", "middle").text("0")
+    svg.append("text").attr("x", lgX + lgW + 5).attr("y", lgY + lgH - 4).attr("fill", axisColor).attr("font-size", 10).text("-1.0")
 
     return () => {
       d3.selectAll(".corr-tooltip").remove()

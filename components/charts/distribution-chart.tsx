@@ -64,8 +64,13 @@ export function DistributionChart({ data, className }: DistributionChartProps) {
     svg.selectAll("*").remove()
     svg.attr("width", width).attr("height", height)
 
+    // Theme-aware colors from CSS custom properties
+    const rootStyle = getComputedStyle(svgRef.current)
+    const axisColor = rootStyle.getPropertyValue('--muted-foreground').trim() || '#64748b'
+    const labelColor = rootStyle.getPropertyValue('--foreground').trim() || '#f1f5f9'
+
     if (summaryData.length === 0) {
-      svg.append("text").attr("x", width / 2).attr("y", height / 2).attr("text-anchor", "middle").attr("fill", "#94a3b8").text("No data matches the current filters")
+      svg.append("text").attr("x", width / 2).attr("y", height / 2).attr("text-anchor", "middle").attr("fill", axisColor).text("No data matches the current filters")
       return
     }
 
@@ -82,16 +87,16 @@ export function DistributionChart({ data, className }: DistributionChartProps) {
     const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`)
 
     // Title
-    svg.append("text").attr("x", width / 2).attr("y", 28).attr("text-anchor", "middle").attr("fill", "#f1f5f9").attr("font-size", "15px").attr("font-weight", "600").text("Funding Distribution by Investment Category")
+    svg.append("text").attr("x", width / 2).attr("y", 28).attr("text-anchor", "middle").attr("fill", labelColor).attr("font-size", "15px").attr("font-weight", "600").text("Funding Distribution by Investment Category")
 
     // Axes
     g.append("g").attr("transform", `translate(0,${innerHeight})`).call(d3.axisBottom(xScale))
-      .selectAll("text").attr("transform", "rotate(-45)").style("text-anchor", "end").attr("fill", "#94a3b8").style("font-size", "10px")
-    g.append("g").call(d3.axisLeft(yScale).tickFormat((d) => formatCurrency(d as number))).selectAll("text").attr("fill", "#94a3b8")
+      .selectAll("text").attr("transform", "rotate(-45)").style("text-anchor", "end").attr("fill", axisColor).style("font-size", "10px")
+    g.append("g").call(d3.axisLeft(yScale).tickFormat((d) => formatCurrency(d as number))).selectAll("text").attr("fill", axisColor)
 
     // Labels
-    g.append("text").attr("x", innerWidth / 2).attr("y", innerHeight + 95).attr("text-anchor", "middle").attr("fill", "#64748b").attr("font-size", "11px").text("Investment List")
-    g.append("text").attr("transform", "rotate(-90)").attr("x", -innerHeight / 2).attr("y", -75).attr("text-anchor", "middle").attr("fill", "#64748b").attr("font-size", "11px").text("Total Funding")
+    g.append("text").attr("x", innerWidth / 2).attr("y", innerHeight + 95).attr("text-anchor", "middle").attr("fill", axisColor).attr("font-size", "11px").text("Investment List")
+    g.append("text").attr("transform", "rotate(-90)").attr("x", -innerHeight / 2).attr("y", -75).attr("text-anchor", "middle").attr("fill", axisColor).attr("font-size", "11px").text("Total Funding")
 
     const boxWidth = xScale.bandwidth()
     const tooltip = d3.select(tooltipRef.current!)
@@ -105,7 +110,7 @@ export function DistributionChart({ data, className }: DistributionChartProps) {
       .on("mouseover", function (event, d) {
         d3.select(this).select("rect").attr("stroke-width", 3)
         tooltip.style("visibility", "visible").style("top", `${event.pageY - 10}px`).style("left", `${event.pageX + 10}px`)
-          .html(`<strong>${d.key.replace(/^\d+-/, "")}</strong><br>Companies: ${d.values.length}<br>Median: ${formatCurrency(d.median)}<br>Q3: ${formatCurrency(d.q3)}<br>Q1: ${formatCurrency(d.q1)}<br>Max: ${formatCurrency(d.max)}<br>Min: ${formatCurrency(d.min)}<br><em style="font-size:0.8em;color:#94a3b8;">Click to explore</em>`)
+          .html(`<strong>${d.key.replace(/^\d+-/, "")}</strong><br>Companies: ${d.values.length}<br>Median: ${formatCurrency(d.median)}<br>Q3: ${formatCurrency(d.q3)}<br>Q1: ${formatCurrency(d.q1)}<br>Max: ${formatCurrency(d.max)}<br>Min: ${formatCurrency(d.min)}<br><em style="font-size:0.8em;opacity:0.7">Click to explore</em>`)
       })
       .on("mousemove", (event) => {
         tooltip.style("top", `${event.pageY - 10}px`).style("left", `${event.pageX + 10}px`)
@@ -117,7 +122,7 @@ export function DistributionChart({ data, className }: DistributionChartProps) {
       .on("click", (_, d) => setModal({ summary: d }))
 
     // Whisker
-    boxes.append("line").attr("x1", boxWidth / 2).attr("x2", boxWidth / 2).attr("y1", (d) => yScale(d.min)).attr("y2", (d) => yScale(d.max)).attr("stroke", "#94a3b8").attr("stroke-width", 1.5)
+    boxes.append("line").attr("x1", boxWidth / 2).attr("x2", boxWidth / 2).attr("y1", (d) => yScale(d.min)).attr("y2", (d) => yScale(d.max)).attr("stroke", axisColor).attr("stroke-width", 1.5)
 
     // Box rect
     boxes.append("rect")
@@ -129,8 +134,8 @@ export function DistributionChart({ data, className }: DistributionChartProps) {
     boxes.append("line").attr("x1", 0).attr("x2", boxWidth).attr("y1", (d) => yScale(d.median)).attr("y2", (d) => yScale(d.median)).attr("stroke", "white").attr("stroke-width", 2)
 
     // Min/max caps
-    boxes.append("line").attr("x1", boxWidth * 0.25).attr("x2", boxWidth * 0.75).attr("y1", (d) => yScale(d.min)).attr("y2", (d) => yScale(d.min)).attr("stroke", "#94a3b8").attr("stroke-width", 1.5)
-    boxes.append("line").attr("x1", boxWidth * 0.25).attr("x2", boxWidth * 0.75).attr("y1", (d) => yScale(d.max)).attr("y2", (d) => yScale(d.max)).attr("stroke", "#94a3b8").attr("stroke-width", 1.5)
+    boxes.append("line").attr("x1", boxWidth * 0.25).attr("x2", boxWidth * 0.75).attr("y1", (d) => yScale(d.min)).attr("y2", (d) => yScale(d.min)).attr("stroke", axisColor).attr("stroke-width", 1.5)
+    boxes.append("line").attr("x1", boxWidth * 0.25).attr("x2", boxWidth * 0.75).attr("y1", (d) => yScale(d.max)).attr("y2", (d) => yScale(d.max)).attr("stroke", axisColor).attr("stroke-width", 1.5)
   }, [data])
 
   const sortedCompanies = modal
@@ -146,7 +151,7 @@ export function DistributionChart({ data, className }: DistributionChartProps) {
     <Card className={cn("flex flex-col", className)}>
       <div ref={containerRef} className="flex-1 w-full min-h-0 relative">
         <svg ref={svgRef} className="w-full h-full" />
-        <div ref={tooltipRef} style={{ position: "fixed", visibility: "hidden", background: "#1e293b", border: "1px solid #334155", borderRadius: "6px", padding: "8px 12px", fontSize: "12px", color: "#f1f5f9", pointerEvents: "none", zIndex: 9999 }} />
+        <div ref={tooltipRef} className="fixed invisible pointer-events-none z-[9999] bg-popover text-popover-foreground border border-border rounded-md px-3 py-2 text-xs shadow-xl" />
       </div>
 
       {modal && (

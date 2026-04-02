@@ -377,6 +377,14 @@ export function MapChart({ data = [], className, preview = false }: MapChartProp
     const svg = d3.select(svgRef.current);
     svg.selectAll("*").remove();
 
+    // Theme-aware colors from CSS custom properties
+    const rootStyle = getComputedStyle(svgRef.current);
+    const axisColor = rootStyle.getPropertyValue('--muted-foreground').trim() || '#94a3b8';
+    const labelColor = rootStyle.getPropertyValue('--foreground').trim() || '#e2e8f0';
+    const borderColor = rootStyle.getPropertyValue('--border').trim() || '#334155';
+    const bgColor = rootStyle.getPropertyValue('--background').trim() || '#020617';
+    const mutedColor = rootStyle.getPropertyValue('--muted').trim() || '#1e293b';
+
     const g = svg.append("g");
     const projection = d3.geoNaturalEarth1().fitSize([width, height], geoData);
     projectionRef.current = projection;
@@ -407,7 +415,7 @@ export function MapChart({ data = [], className, preview = false }: MapChartProp
     g.append("path")
       .datum({ type: "Sphere" } as any)
       .attr("d", path as any)
-      .attr("fill", "#020617");
+      .attr("fill", bgColor);
 
     const tooltip = d3.select("#map-tooltip");
 
@@ -420,10 +428,10 @@ export function MapChart({ data = [], className, preview = false }: MapChartProp
       .attr("fill", (d: any) => {
         const country = resolveGeoName(d.properties?.name || "");
         const stats = countryStats.get(country);
-        if (!stats || stats.count === 0) return "#1e293b"; // grey for no startups
+        if (!stats || stats.count === 0) return mutedColor; // no startups
         return choroplethScale(stats.count) as string;
       })
-      .attr("stroke", "#334155")
+      .attr("stroke", borderColor)
       .attr("stroke-width", 0.5)
       .style("cursor", "pointer")
       .on("mouseover", function (event: MouseEvent, d: any) {
@@ -525,7 +533,7 @@ export function MapChart({ data = [], className, preview = false }: MapChartProp
             .attr("dy", 3)
             .attr("text-anchor", "start")
             .style("font-size", "9px")
-            .style("fill", "#e2e8f0")
+            .style("fill", labelColor)
             .style("pointer-events", "none")
             .style("text-shadow", "0 1px 3px rgba(0,0,0,0.8)")
             .text(`${d.name} (${d.count})`);
@@ -573,8 +581,8 @@ export function MapChart({ data = [], className, preview = false }: MapChartProp
         .attr("width", 14)
         .attr("height", legendHeight)
         .attr("rx", 2)
-        .attr("fill", "#1e293b")
-        .attr("stroke", "#475569")
+        .attr("fill", mutedColor)
+        .attr("stroke", borderColor)
         .attr("stroke-width", 0.5);
 
       legendG
@@ -583,7 +591,7 @@ export function MapChart({ data = [], className, preview = false }: MapChartProp
         .attr("y", legendHeight + 12)
         .attr("text-anchor", "middle")
         .style("font-size", "9px")
-        .style("fill", "#94a3b8")
+        .style("fill", axisColor)
         .text("0");
 
       legendG
@@ -591,7 +599,7 @@ export function MapChart({ data = [], className, preview = false }: MapChartProp
         .attr("x", 0)
         .attr("y", legendHeight + 12)
         .style("font-size", "9px")
-        .style("fill", "#94a3b8")
+        .style("fill", axisColor)
         .text("1");
 
       legendG
@@ -600,7 +608,7 @@ export function MapChart({ data = [], className, preview = false }: MapChartProp
         .attr("y", legendHeight + 12)
         .attr("text-anchor", "end")
         .style("font-size", "9px")
-        .style("fill", "#94a3b8")
+        .style("fill", axisColor)
         .text(maxCount.toString());
 
       legendG
@@ -609,7 +617,7 @@ export function MapChart({ data = [], className, preview = false }: MapChartProp
         .attr("y", -4)
         .attr("text-anchor", "middle")
         .style("font-size", "9px")
-        .style("fill", "#94a3b8")
+        .style("fill", axisColor)
         .text("Startups per country");
     }
   }, [geoData, dimensions, countryStats, choroplethScale, selectedCountry, cityBubbles, cityScales, preview, resolveGeoName, zoomToFeature, handleHubClick]);
@@ -625,7 +633,7 @@ export function MapChart({ data = [], className, preview = false }: MapChartProp
   return (
     <div
       className={cn(
-        "relative w-full bg-slate-950 rounded-lg overflow-hidden group/map min-h-[500px]",
+        "relative w-full bg-background rounded-lg overflow-hidden group/map min-h-[500px]",
         className,
       )}
       ref={containerRef}
@@ -634,7 +642,7 @@ export function MapChart({ data = [], className, preview = false }: MapChartProp
 
       {/* Selected country badge */}
       {selectedCountry && (
-        <div className="absolute top-4 left-4 flex items-center gap-2 rounded-lg bg-slate-900/90 backdrop-blur border border-slate-700 px-3 py-1.5 text-sm text-white shadow-xl">
+        <div className="absolute top-4 left-4 flex items-center gap-2 rounded-lg bg-popover/90 backdrop-blur border border-border px-3 py-1.5 text-sm text-popover-foreground shadow-xl">
           {COUNTRY_ISO[selectedCountry] && (
             <img
               src={`https://flagcdn.com/w40/${COUNTRY_ISO[selectedCountry]}.png`}
@@ -644,7 +652,7 @@ export function MapChart({ data = [], className, preview = false }: MapChartProp
             />
           )}
           <span className="font-medium">{selectedCountry}</span>
-          <span className="text-xs text-slate-400">
+          <span className="text-xs text-muted-foreground">
             {countryStats.get(selectedCountry)?.count || 0} startups
           </span>
         </div>
@@ -655,7 +663,7 @@ export function MapChart({ data = [], className, preview = false }: MapChartProp
           variant="outline"
           size="icon"
           onClick={resetView}
-          className="size-8 bg-slate-900/80 backdrop-blur border-slate-700 pointer-events-auto hover:bg-slate-800 shadow-xl text-white"
+          className="size-8 bg-popover/80 backdrop-blur border-border pointer-events-auto hover:bg-muted shadow-xl text-foreground"
         >
           <RotateCcw className="size-4" />
         </Button>
@@ -679,7 +687,7 @@ export function MapChart({ data = [], className, preview = false }: MapChartProp
 
       <div
         id="map-tooltip"
-        className="fixed invisible pointer-events-none z-[9999] bg-slate-900/95 text-white p-3 rounded-lg border border-white/10 backdrop-blur-md shadow-2xl text-sm"
+        className="fixed invisible pointer-events-none z-[9999] bg-popover/95 text-popover-foreground p-3 rounded-lg border border-border backdrop-blur-md shadow-2xl text-sm"
       />
     </div>
   );

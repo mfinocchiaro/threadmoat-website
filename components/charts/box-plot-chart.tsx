@@ -60,6 +60,12 @@ export function BoxPlotChart({ data, className }: BoxPlotChartProps) {
     const height = containerRef.current.clientHeight
     if (!width || !height) return
 
+    // Theme-aware colors from CSS custom properties
+    const rootStyle = getComputedStyle(svgRef.current)
+    const axisColor = rootStyle.getPropertyValue('--muted-foreground').trim() || '#64748b'
+    const labelColor = rootStyle.getPropertyValue('--foreground').trim() || '#f1f5f9'
+    const borderColor = rootStyle.getPropertyValue('--border').trim() || '#334155'
+
     const margin = { top: 50, right: 40, bottom: 100, left: 80 }
     const innerWidth = width - margin.left - margin.right
     const innerHeight = height - margin.top - margin.bottom
@@ -112,7 +118,7 @@ export function BoxPlotChart({ data, className }: BoxPlotChartProps) {
     svg.attr("width", width).attr("height", height)
 
     if (boxData.length === 0) {
-      svg.append("text").attr("x", width / 2).attr("y", height / 2).attr("text-anchor", "middle").attr("fill", "#94a3b8").text("No data available")
+      svg.append("text").attr("x", width / 2).attr("y", height / 2).attr("text-anchor", "middle").attr("fill", axisColor).text("No data available")
       return
     }
 
@@ -123,19 +129,19 @@ export function BoxPlotChart({ data, className }: BoxPlotChartProps) {
     const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`)
 
     // Title
-    svg.append("text").attr("x", width / 2).attr("y", 28).attr("text-anchor", "middle").attr("fill", "#f1f5f9").attr("font-size", "15px").attr("font-weight", "600")
+    svg.append("text").attr("x", width / 2).attr("y", 28).attr("text-anchor", "middle").attr("fill", labelColor).attr("font-size", "15px").attr("font-weight", "600")
       .text(`${METRIC_LABELS[metric] || metric} Distribution by ${METRIC_LABELS[groupBy] || groupBy}`)
 
     // Grid
     g.append("g").call(d3.axisLeft(yScale).tickSize(-innerWidth).tickFormat(() => ""))
-      .selectAll("line").attr("stroke", "#334155").attr("stroke-dasharray", "2,2")
+      .selectAll("line").attr("stroke", borderColor).attr("stroke-dasharray", "2,2")
     g.select(".domain").remove()
 
     // Axes
     const fmt = isCurrencyMetric(metric) ? (d: d3.NumberValue) => formatCurrency(d as number) : (d: d3.NumberValue) => String(d3.format(".1f")(d as number))
     g.append("g").attr("transform", `translate(0,${innerHeight})`).call(d3.axisBottom(xScale))
-      .selectAll("text").attr("transform", "rotate(-45)").style("text-anchor", "end").attr("fill", "#94a3b8").style("font-size", "10px")
-    g.append("g").call(d3.axisLeft(yScale).tickFormat(fmt)).selectAll("text").attr("fill", "#94a3b8")
+      .selectAll("text").attr("transform", "rotate(-45)").style("text-anchor", "end").attr("fill", axisColor).style("font-size", "10px")
+    g.append("g").call(d3.axisLeft(yScale).tickFormat(fmt)).selectAll("text").attr("fill", axisColor)
 
     // Draw boxes
     boxData.forEach((box) => {
@@ -170,7 +176,7 @@ export function BoxPlotChart({ data, className }: BoxPlotChartProps) {
         })
         .on("mouseout", () => { if (tooltipRef.current) tooltipRef.current.style.visibility = "hidden" })
       // Median line
-      bg.append("line").attr("x1", x).attr("x2", x + bw).attr("y1", yScale(box.median)).attr("y2", yScale(box.median)).attr("stroke", "#f1f5f9").attr("stroke-width", 3)
+      bg.append("line").attr("x1", x).attr("x2", x + bw).attr("y1", yScale(box.median)).attr("y2", yScale(box.median)).attr("stroke", labelColor).attr("stroke-width", 3)
 
       // Outliers
       if (showOutliers) {
@@ -221,7 +227,7 @@ export function BoxPlotChart({ data, className }: BoxPlotChartProps) {
       </div>
       <div ref={containerRef} className="flex-1 w-full min-h-0 relative">
         <svg ref={svgRef} className="w-full h-full" />
-        <div ref={tooltipRef} style={{ position: "fixed", visibility: "hidden", background: "#1e293b", border: "1px solid #334155", borderRadius: "6px", padding: "8px 12px", fontSize: "12px", color: "#f1f5f9", pointerEvents: "none", zIndex: 9999 }} />
+        <div ref={tooltipRef} className="fixed invisible pointer-events-none z-[9999] bg-popover text-popover-foreground border border-border rounded-md px-3 py-2 text-xs shadow-xl" />
       </div>
     </Card>
   )
