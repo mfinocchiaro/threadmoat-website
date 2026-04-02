@@ -14,9 +14,10 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
-import { Sparkles, ChevronRight, X, Plus, Copy, Square, AlertCircle, Loader2 } from "lucide-react"
+import { Sparkles, ChevronRight, X, Plus, Copy, Square, AlertCircle, Loader2, FileText } from "lucide-react"
 import { useCompletion } from "@ai-sdk/react"
 import { getCustomerLogoUrl, parseKnownCustomers } from "@/lib/customer-logos"
+import { CustomReportTab } from "@/components/charts/custom-report-tab"
 
 interface ReportGeneratorProps {
   data: Company[]
@@ -1055,6 +1056,10 @@ export function ReportGenerator({ data, className }: ReportGeneratorProps) {
           <TabsTrigger value="ic-memos">IC Memos</TabsTrigger>
           <TabsTrigger value="intelligence">Intelligence Reports</TabsTrigger>
           <TabsTrigger value="scenario">Scenario Reports</TabsTrigger>
+          <TabsTrigger value="custom-report" className="gap-1.5">
+            <FileText className="h-3.5 w-3.5" />
+            Custom Report
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="intelligence">
@@ -1063,6 +1068,10 @@ export function ReportGenerator({ data, className }: ReportGeneratorProps) {
 
         <TabsContent value="scenario">
           <ScenarioReportTab data={data} />
+        </TabsContent>
+
+        <TabsContent value="custom-report">
+          <CustomReportTab data={data} />
         </TabsContent>
 
         <TabsContent value="ic-memos">

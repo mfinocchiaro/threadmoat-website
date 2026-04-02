@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exported_at": "2026-04-01T22:20:16.355Z",
+  "exported_at": "2026-04-02T05:52:33.563Z",
   "milestones": [
     {
       "id": "M001",
@@ -767,14 +767,14 @@
       "milestone_id": "M005",
       "id": "S03",
       "title": "Company Shortlist / Workspace",
-      "status": "pending",
+      "status": "complete",
       "risk": "medium",
       "depends": [],
       "demo": "User clicks companies across any chart to add them to a shortlist. Shortlisted companies are highlighted across all charts and available in the report builder.",
       "created_at": "2026-04-01T21:29:32.503Z",
-      "completed_at": null,
-      "full_summary_md": "",
-      "full_uat_md": "",
+      "completed_at": "2026-04-01T22:23:08.498Z",
+      "full_summary_md": "---\nid: S03\nparent: M005\nmilestone: M005\nprovides:\n  - ShortlistContext with full API (add/remove/toggle/has/clear/count/ids/idSet/shortlistedCompanies/hydrated)\n  - shortlistedIds: Set<string> on useThesisGatedData() return value\n  - Amber highlight visual treatment on 4 chart types (bubble, quadrant, periodic-table, treemap)\n  - ShortlistPanel popover accessible from filter toolbar\nrequires:\n  []\naffects:\n  - S04\nkey_files:\n  - contexts/shortlist-context.tsx\n  - components/dashboard/shortlist-panel.tsx\n  - components/ui/company-hover-card.tsx\n  - components/dashboard/filter-toolbar.tsx\n  - hooks/use-thesis-gated-data.ts\n  - components/charts/bubble-chart.tsx\n  - components/charts/quadrant-chart.tsx\n  - components/charts/periodic-table.tsx\n  - components/charts/treemap-chart.tsx\nkey_decisions:\n  - Radix Popover for shortlist panel — consistent with existing filter dropdowns (D002)\n  - Amber #f59e0b with 2.5px stroke for shortlist highlight across all charts; CSS outline on periodic table HTML cells to avoid layout shift (D003)\n  - Optional shortlistedIds prop pattern — charts backwards compatible without the prop\n  - Exposed idSet (stable memoized Set<string>) on ShortlistContext for chart re-render optimization\npatterns_established:\n  - Optional Set<string> prop pattern for cross-cutting chart features (K005)\n  - K001 SSR-safe localStorage reused for shortlist persistence (same pattern as onboarding guide)\nobservability_surfaces:\n  - none\ndrill_down_paths:\n  - .gsd/milestones/M005/slices/S03/tasks/T01-SUMMARY.md\n  - .gsd/milestones/M005/slices/S03/tasks/T02-SUMMARY.md\n  - .gsd/milestones/M005/slices/S03/tasks/T03-SUMMARY.md\nduration: \"\"\nverification_result: passed\ncompleted_at: 2026-04-01T22:23:08.499Z\nblocker_discovered: false\n---\n\n# S03: Company Shortlist / Workspace\n\n**Users can click companies across any chart to add them to a persistent shortlist with amber highlights across all chart types and a toolbar panel for review/removal.**\n\n## What Happened\n\nBuilt a complete company shortlist feature in three tasks spanning the full stack from state management to visual rendering.\n\n**T01 — ShortlistContext & state layer.** Created `contexts/shortlist-context.tsx` with the full shortlist API (add/remove/toggle/has/clear/count/ids/idSet/shortlistedCompanies/hydrated) using the K001 SSR-safe localStorage pattern (key: `threadmoat-shortlist`). Wired `ShortlistProvider` into the dashboard provider hierarchy between `CompanyDataProvider` and `FilterProvider` in `layout-client.tsx`. Extended `useThesisGatedData` to return `shortlistedIds: Set<string>` so chart pages access shortlist state without importing the context directly. Added a stable memoized `idSet` (Set<string>) for reference-equality checks in chart re-render optimization.\n\n**T02 — Interaction layer.** Added a Star toggle button to `CompanyHoverCard` — filled amber when shortlisted, outline when not, gated behind hydration to avoid flash. Built `ShortlistPanel` as a Radix Popover with trigger button in the filter toolbar showing a badge count, scrollable company list with per-row remove buttons, Clear All footer action, and empty-state guidance text. Integrated into `filter-toolbar.tsx` between FundingRangeDropdown and search input.\n\n**T03 — Chart highlight layer.** Added optional `shortlistedIds?: Set<string>` prop to 4 chart components (bubble, quadrant, periodic table, treemap) with visual highlight: amber stroke (#f59e0b, 2.5px) on SVG charts, CSS outline + glow + ★ corner indicator on periodic table HTML cells. Updated 6 page files (4 dedicated chart pages + 2 tab overview pages) to destructure and pass `shortlistedIds` from `useThesisGatedData()`. All props optional for backwards compatibility.\n\nNo blockers discovered. Build passes clean throughout.\n\n## Verification\n\nAll slice-level verification checks pass:\n\n1. `npm run build` — exits 0, zero type errors, all routes compile\n2. `grep -q 'ShortlistProvider' components/dashboard/layout-client.tsx` — confirms provider wiring\n3. `grep -q 'shortlistedIds' hooks/use-thesis-gated-data.ts` — confirms hook extension\n4. `grep -q 'threadmoat-shortlist' contexts/shortlist-context.tsx` — confirms localStorage key\n5. `grep -q 'useShortlist' components/ui/company-hover-card.tsx` — confirms hover card toggle\n6. `test -f components/dashboard/shortlist-panel.tsx` — confirms panel file exists\n7. `grep -q 'shortlist' components/dashboard/filter-toolbar.tsx` — confirms toolbar integration\n8. `grep -c 'shortlistedIds'` returns non-zero counts for all 4 chart files (bubble: 6, quadrant: 8, periodic-table: 4, treemap: 5)\n9. `grep -rn 'shortlistedIds' app/` — returns matches in all 6 page files confirming prop threading\n\n## Requirements Advanced\n\n- I18N-06 — Not directly related to this slice — I18N-06 was already validated in a prior slice\n\n## Requirements Validated\n\nNone.\n\n## New Requirements Surfaced\n\nNone.\n\n## Requirements Invalidated or Re-scoped\n\nNone.\n\n## Deviations\n\nT01: Added `idSet` (stable memoized Set&lt;string&gt;) to context API beyond original plan — provides reference-equality for chart re-render optimization. T03: D3 `.style()` typing doesn't accept null for HTML selections — used 'none'/'0' strings instead of null. No functional impact.\n\n## Known Limitations\n\nNone.\n\n## Follow-ups\n\nS04 (Custom Report Builder) is the primary downstream consumer — needs to read shortlistedCompanies from ShortlistContext to populate company selection in the report builder.\n\n## Files Created/Modified\n\n- `contexts/shortlist-context.tsx` — New file — ShortlistContext with full shortlist API, localStorage persistence, SSR-safe hydration\n- `components/dashboard/layout-client.tsx` — Added ShortlistProvider between CompanyDataProvider and FilterProvider\n- `hooks/use-thesis-gated-data.ts` — Extended to return shortlistedIds: Set<string> from ShortlistContext\n- `components/ui/company-hover-card.tsx` — Added Star toggle button for shortlist add/remove\n- `components/dashboard/shortlist-panel.tsx` — New file — Radix Popover panel with company list, remove buttons, clear all\n- `components/dashboard/filter-toolbar.tsx` — Added ShortlistPanel trigger with badge count\n- `components/charts/bubble-chart.tsx` — Added optional shortlistedIds prop with amber stroke highlight\n- `components/charts/quadrant-chart.tsx` — Added optional shortlistedIds prop with amber stroke highlight\n- `components/charts/periodic-table.tsx` — Added optional shortlistedIds prop with CSS outline + star indicator\n- `components/charts/treemap-chart.tsx` — Added optional shortlistedIds prop with amber stroke highlight\n- `app/dashboard/bubbles/page.tsx` — Passes shortlistedIds from useThesisGatedData to BubbleChart\n- `app/dashboard/quadrant/page.tsx` — Passes shortlistedIds from useThesisGatedData to QuadrantChart\n- `app/dashboard/periodic-table/page.tsx` — Passes shortlistedIds from useThesisGatedData to PeriodicTable\n- `app/dashboard/treemap/page.tsx` — Passes shortlistedIds from useThesisGatedData to TreemapChart\n- `app/dashboard/tab/market/page.tsx` — Passes shortlistedIds to QuadrantChart, BubbleChart, PeriodicTable\n- `app/dashboard/tab/financial/page.tsx` — Passes shortlistedIds to TreemapChart\n",
+      "full_uat_md": "# S03: Company Shortlist / Workspace — UAT\n\n**Milestone:** M005\n**Written:** 2026-04-01T22:23:08.499Z\n\n## UAT: S03 — Company Shortlist / Workspace\n\n### Preconditions\n- App running locally (`npm run dev`) or deployed\n- User logged in with dashboard access (any tier)\n- At least one chart page loaded with company data visible\n\n---\n\n### TC-01: Add company to shortlist via hover card\n\n1. Navigate to the Periodic Table chart (`/dashboard/periodic-table`)\n2. Hover over any company cell to open the CompanyHoverCard\n3. **Expected:** A star icon (outline, not filled) appears next to the company name\n4. Click the star icon\n5. **Expected:** Star fills with amber color (`text-amber-500`), company is added to shortlist\n6. **Expected:** The hover card does NOT close (e.stopPropagation works)\n7. Click the star icon again\n8. **Expected:** Star returns to outline, company removed from shortlist\n\n### TC-02: Shortlist badge appears in toolbar\n\n1. Open any chart page\n2. Click the star on a company hover card to add it to the shortlist\n3. Look at the filter toolbar\n4. **Expected:** A star icon with a badge showing \"1\" appears in the toolbar\n5. Add two more companies\n6. **Expected:** Badge updates to \"3\"\n\n### TC-03: ShortlistPanel popover — view and manage\n\n1. With 3+ companies shortlisted, click the shortlist badge/button in the toolbar\n2. **Expected:** A popover panel opens showing all shortlisted companies\n3. **Expected:** Each row shows company name, subsegment badge, and an X remove button\n4. **Expected:** Panel is scrollable if many companies\n5. Click the X button on one company\n6. **Expected:** Company removed from list, badge count decrements\n7. Click \"Clear All\" at the bottom of the panel\n8. **Expected:** All companies removed, badge disappears, panel shows empty state\n9. **Expected:** Empty state reads \"Click the ★ on any company card to start building your shortlist\"\n\n### TC-04: Shortlist highlights on Bubble Chart\n\n1. Shortlist 2-3 companies\n2. Navigate to Bubble Chart (`/dashboard/bubbles`)\n3. **Expected:** Shortlisted companies show an amber stroke ring (#f59e0b, ~2.5px) around their bubble\n4. **Expected:** Non-shortlisted companies render normally without amber stroke\n\n### TC-05: Shortlist highlights on Quadrant Chart\n\n1. With companies still shortlisted, navigate to Quadrant Chart (`/dashboard/quadrant`)\n2. **Expected:** Shortlisted company dots show amber stroke ring\n3. **Expected:** Non-shortlisted dots render normally\n\n### TC-06: Shortlist highlights on Periodic Table\n\n1. Navigate to Periodic Table (`/dashboard/periodic-table`)\n2. **Expected:** Shortlisted company cells show amber CSS outline + subtle glow\n3. **Expected:** A small ★ indicator appears in the corner of shortlisted cells\n4. **Expected:** Non-shortlisted cells render normally without outline or indicator\n\n### TC-07: Shortlist highlights on Treemap Chart\n\n1. Navigate to Treemap Chart (`/dashboard/treemap`)\n2. **Expected:** Shortlisted company rectangles show amber stroke ring\n3. **Expected:** Non-shortlisted rectangles render normally\n\n### TC-08: Highlights on Tab Overview pages\n\n1. Navigate to Market tab (`/dashboard/tab/market`)\n2. **Expected:** Shortlisted companies highlighted on all chart previews (quadrant, bubble, periodic table) within the tab\n3. Navigate to Financial tab (`/dashboard/tab/financial`)\n4. **Expected:** Shortlisted companies highlighted on treemap preview\n\n### TC-09: Persistence across page navigation\n\n1. Shortlist 2 companies on the Periodic Table page\n2. Navigate to Bubble Chart page\n3. **Expected:** Same 2 companies are highlighted\n4. Navigate to the ShortlistPanel via toolbar\n5. **Expected:** Same 2 companies listed in panel\n\n### TC-10: Persistence across browser refresh (localStorage)\n\n1. Shortlist 3 companies\n2. Hard refresh the browser (Cmd+Shift+R)\n3. **Expected:** After page loads, shortlisted companies are still highlighted\n4. Open ShortlistPanel\n5. **Expected:** Same 3 companies present\n6. **Expected:** No flash or momentary empty state during hydration (K001 pattern)\n\n### TC-11: Stale ID handling\n\n1. Shortlist a company\n2. (Simulate: if the company ID is removed from the dataset in a future data refresh)\n3. **Expected:** The stale ID is silently dropped from `shortlistedCompanies` resolution\n4. **Expected:** The raw `ids` array may still contain the stale ID, but no error is thrown\n\n### TC-12: Empty shortlist — no highlight artifacts\n\n1. Clear the entire shortlist (Clear All)\n2. Navigate through all chart pages\n3. **Expected:** No amber highlights visible on any chart\n4. **Expected:** No badge visible in toolbar\n5. **Expected:** Toolbar star icon is present but without badge count\n\n### TC-13: Star button hydration gate\n\n1. Hard refresh any chart page\n2. Immediately hover over a company before JS fully loads\n3. **Expected:** Star toggle button does NOT appear until hydration completes (no flash of incorrect state)\n",
       "goal": "Users can click companies across any chart to add them to a persistent shortlist. Shortlisted companies are visually highlighted across key charts and the shortlist is accessible from the toolbar for review, removal, and downstream use in the report builder.",
       "success_criteria": "## Must-Haves\n\n- ShortlistContext with add/remove/toggle/has/clear operations and resolved Company[] accessor\n- localStorage persistence using K001 SSR-safe pattern (no hydration mismatches)\n- ShortlistProvider wired into provider hierarchy between CompanyDataProvider and FilterProvider\n- \"Add to Shortlist\" toggle button in CompanyHoverCard\n- Collapsible shortlist panel accessible from the filter toolbar (badge count + click to expand)\n- Shortlisted companies visually highlighted on 4 key charts: bubble, quadrant, periodic table, treemap\n- Stale IDs silently dropped when resolving against current company data\n- `npm run build` passes with zero type errors\n\n## Proof Level\n\n- This slice proves: integration\n- Real runtime required: yes\n- Human/UAT required: yes\n\n## Verification\n\n- `npm run build` passes with zero errors\n- `grep -rn \"ShortlistProvider\" components/dashboard/layout-client.tsx` confirms provider is wired\n- `grep -rn \"useShortlist\" contexts/shortlist-context.tsx hooks/use-thesis-gated-data.ts components/ui/company-hover-card.tsx components/dashboard/filter-toolbar.tsx` confirms hook usage across all integration points\n- `grep -rn \"shortlistedIds\" components/charts/bubble-chart.tsx components/charts/quadrant-chart.tsx components/charts/periodic-table.tsx components/charts/treemap-chart.tsx` confirms highlighting prop threaded to 4 charts\n- Browser verification: navigate to periodic table, click a company tile, click \"Add to Shortlist\" in hover card, switch to bubble chart — shortlisted company has visual highlight ring\n\n## Integration Closure\n\n- Upstream surfaces consumed: `contexts/company-data-context.tsx` (useCompanyData for ID→Company resolution), `hooks/use-thesis-gated-data.ts` (data pipeline hook), `components/ui/company-hover-card.tsx` (shared hover card), `components/dashboard/layout-client.tsx` (provider hierarchy), `components/dashboard/filter-toolbar.tsx` (toolbar)\n- New wiring introduced in this slice: ShortlistProvider in layout-client.tsx, useShortlist consumed in hover card + filter toolbar + 4 chart components, shortlistedIds threaded through use-thesis-gated-data\n- What remains before the milestone is truly usable end-to-end: S04 (Custom Report Builder) consumes shortlistedCompanies from useShortlist to pre-populate report selections",
       "proof_level": "integration",
@@ -798,11 +798,11 @@
       "completed_at": null,
       "full_summary_md": "",
       "full_uat_md": "",
-      "goal": "Build the full report builder workflow: filters → chart selection → company selection → generate narrative document combining data, visualizations, and AI-generated expert analysis.",
-      "success_criteria": "User can select filters + companies + charts and generate a narrative document. Document includes selected charts, company data, and AI narrative sections.",
-      "proof_level": "Generated report quality review",
-      "integration_closure": "Complete workflow from exploration to deliverable report",
-      "observability_impact": "Report generation metrics",
+      "goal": "User selects filters, picks companies from shortlist, chooses report sections (profiles, AI analysis, charts), clicks Generate — gets a narrative document with all selections and AI analysis, exportable as PDF or copyable as markdown.",
+      "success_criteria": "## Must-Haves\n\n- \"Custom Report\" tab added to ReportGenerator's Tabs structure\n- Company selection pre-populated from ShortlistContext, with typeahead add/remove\n- Section toggles: company profiles, score breakdowns, AI narrative, chart snapshots (bubble, quadrant, periodic-table, treemap)\n- AI narrative fetched per-company via `/api/ai/narrative` with rate-limit warning\n- Scrollable markdown preview of composed report\n- Copy-to-clipboard for full report markdown\n- PDF export via jsPDF with text sections and chart image embeds\n- Chart snapshots captured via html-to-image from offscreen rendered charts\n- `npm run build` passes with zero type errors\n\n## Threat Surface\n\n- **Abuse**: AI narrative rate limit already enforced server-side (10/hour/user via Upstash). Report builder shows warning before consuming budget. No new server endpoints — only client-side composition.\n- **Data exposure**: None — all company data is already loaded client-side. PDF generated in browser, never sent to server.\n- **Input trust**: None — no new API routes or user input reaching backend. Company selection is filtered against loaded dataset.\n\n## Proof Level\n\n- This slice proves: final-assembly\n- Real runtime required: yes (AI narrative streaming, chart D3 rendering, PDF generation)\n- Human/UAT required: yes (visual verification of PDF output quality)\n\n## Verification\n\n- `npm run build` exits 0 with zero type errors\n- `test -f components/charts/custom-report-tab.tsx` — new component file exists\n- `grep -q 'custom-report' components/charts/report-generator.tsx` — tab value wired\n- `grep -q 'CustomReportTab' components/charts/report-generator.tsx` — component imported\n- `grep -q 'useShortlist' components/charts/custom-report-tab.tsx` — shortlist integration\n- `grep -q 'jsPDF\\|jspdf' components/charts/custom-report-tab.tsx` — PDF export wired\n- `grep -q 'html-to-image\\|toPng' components/charts/custom-report-tab.tsx` — chart capture wired\n- `grep -q 'jspdf' package.json` — dependency installed\n- `grep -q 'html-to-image' package.json` — dependency installed\n- `grep -q 'ai/narrative' components/charts/custom-report-tab.tsx` — AI endpoint integration\n\n## Observability / Diagnostics\n\n- Runtime signals: Console warnings for AI rate limit budget usage; error state exposed in UI for failed narrative fetches and chart capture failures\n- Inspection surfaces: Report preview pane shows composed content before export; PDF download triggers visible in browser\n- Failure visibility: Per-company AI fetch status (loading/complete/error) visible in UI; chart capture errors surfaced as inline warnings in report preview\n- Redaction constraints: None — no secrets handled client-side\n\n## Integration Closure\n\n- Upstream surfaces consumed: `useShortlist()` from `contexts/shortlist-context.tsx` (S03), `/api/ai/narrative` endpoint (S02), 4 chart components with `data`+`shortlistedIds` props (S03), `generateReport()` from `report-generator.tsx`, `useThesisGatedData()` for full company dataset\n- New wiring introduced in this slice: CustomReportTab imported into ReportGenerator's Tabs; jsPDF + html-to-image dependencies; hidden chart render container for snapshot capture\n- What remains before the milestone is truly usable end-to-end: nothing — this is the final assembly slice",
+      "proof_level": "final-assembly — composes all prior M005 slices (filters, shortlist, AI narratives, charts) into exportable report",
+      "integration_closure": "Upstream: useShortlist() (S03), /api/ai/narrative (S02), 4 chart components (bubble/quadrant/periodic-table/treemap). New wiring: CustomReportTab in ReportGenerator Tabs, jsPDF + html-to-image deps, hidden chart container. Nothing remains after this slice.",
+      "observability_impact": "Per-company AI fetch status in UI (loading/complete/error), chart capture error warnings in preview, console warnings for rate limit budget",
       "sequence": 0,
       "replan_triggered_at": null
     },
@@ -2036,6 +2036,127 @@
       "observability_impact": "",
       "full_plan_md": "",
       "sequence": 0
+    },
+    {
+      "milestone_id": "M005",
+      "slice_id": "S04",
+      "id": "T01",
+      "title": "Created CustomReportTab component with shortlist-preloaded company selection, typeahead search, 7 section toggles with AI rate-limit warning, and generate button wired as 4th tab in ReportGenerator",
+      "status": "complete",
+      "one_liner": "Created CustomReportTab component with shortlist-preloaded company selection, typeahead search, 7 section toggles with AI rate-limit warning, and generate button wired as 4th tab in ReportGenerator",
+      "narrative": "Built components/charts/custom-report-tab.tsx with two modes (configure/preview). Configure mode provides: company selection pre-populated from useShortlist() with typeahead search and chip removal, 7 section checkboxes in two groups (content and charts) with sensible defaults and AI rate-limit warning, and a generate button that transitions to preview mode. Wired as 4th tab in report-generator.tsx with FileText icon.",
+      "verification_result": "All 5 verification checks pass: npm run build exits 0, custom-report-tab.tsx exists, report-generator.tsx contains custom-report tab value and CustomReportTab import, custom-report-tab.tsx uses useShortlist.",
+      "duration": "",
+      "completed_at": "2026-04-02T05:52:33.553Z",
+      "blocker_discovered": false,
+      "deviations": "None.",
+      "known_issues": "None.",
+      "key_files": [
+        "components/charts/custom-report-tab.tsx",
+        "components/charts/report-generator.tsx"
+      ],
+      "key_decisions": [
+        "Pre-populate company selection from shortlist on first mount only to avoid confusing re-syncs",
+        "SectionCheckbox reusable pattern with clickable row, icon, description, and conditional warning"
+      ],
+      "full_summary_md": "---\nid: T01\nparent: S04\nmilestone: M005\nkey_files:\n  - components/charts/custom-report-tab.tsx\n  - components/charts/report-generator.tsx\nkey_decisions:\n  - Pre-populate company selection from shortlist on first mount only to avoid confusing re-syncs\n  - SectionCheckbox reusable pattern with clickable row, icon, description, and conditional warning\nduration: \"\"\nverification_result: passed\ncompleted_at: 2026-04-02T05:52:33.553Z\nblocker_discovered: false\n---\n\n# T01: Created CustomReportTab component with shortlist-preloaded company selection, typeahead search, 7 section toggles with AI rate-limit warning, and generate button wired as 4th tab in ReportGenerator\n\n**Created CustomReportTab component with shortlist-preloaded company selection, typeahead search, 7 section toggles with AI rate-limit warning, and generate button wired as 4th tab in ReportGenerator**\n\n## What Happened\n\nBuilt components/charts/custom-report-tab.tsx with two modes (configure/preview). Configure mode provides: company selection pre-populated from useShortlist() with typeahead search and chip removal, 7 section checkboxes in two groups (content and charts) with sensible defaults and AI rate-limit warning, and a generate button that transitions to preview mode. Wired as 4th tab in report-generator.tsx with FileText icon.\n\n## Verification\n\nAll 5 verification checks pass: npm run build exits 0, custom-report-tab.tsx exists, report-generator.tsx contains custom-report tab value and CustomReportTab import, custom-report-tab.tsx uses useShortlist.\n\n## Verification Evidence\n\n| # | Command | Exit Code | Verdict | Duration |\n|---|---------|-----------|---------|----------|\n| 1 | `npm run build` | 0 | ✅ pass | 16600ms |\n| 2 | `test -f components/charts/custom-report-tab.tsx` | 0 | ✅ pass | 10ms |\n| 3 | `grep -q 'custom-report' components/charts/report-generator.tsx` | 0 | ✅ pass | 10ms |\n| 4 | `grep -q 'CustomReportTab' components/charts/report-generator.tsx` | 0 | ✅ pass | 10ms |\n| 5 | `grep -q 'useShortlist' components/charts/custom-report-tab.tsx` | 0 | ✅ pass | 10ms |\n\n\n## Deviations\n\nNone.\n\n## Known Issues\n\nNone.\n\n## Files Created/Modified\n\n- `components/charts/custom-report-tab.tsx`\n- `components/charts/report-generator.tsx`\n",
+      "description": "## Description\n\nCreate the `CustomReportTab` component in a new file (`components/charts/custom-report-tab.tsx`) and wire it as a fourth tab in the existing `ReportGenerator` Tabs structure. The tab provides: (1) company selection pre-populated from `useShortlist()` with a typeahead search to add more companies from the full dataset, (2) section toggles (checkboxes) for which report sections to include (Company Profile, Score Breakdown, AI Analysis, Charts), (3) a Generate button that transitions to a preview pane. This task proves the UI flow works end-to-end — content composition and export are T02 and T03.\n\n## Steps\n\n1. Create `components/charts/custom-report-tab.tsx`. Import `useShortlist` from `contexts/shortlist-context.tsx`. Accept `data: Company[]` prop (full filtered dataset, same as other tabs receive).\n2. Build the company selection section:\n   - Default selected companies from `useShortlist().shortlistedCompanies`\n   - Typeahead input to search `data` by name, add to selection\n   - Selected company chips with X remove button\n   - Clear all / Reset to shortlist buttons\n3. Build section configuration with checkboxes:\n   - Company Profile (on by default)\n   - Score Breakdown (on by default)\n   - AI Analysis (off by default — warn about rate limit: \"Uses 1 AI generation per company (10/hour limit)\")\n   - Charts: Bubble Chart, Quadrant Chart, Periodic Table, Treemap (all off by default)\n4. Build Generate button — disabled when no companies selected. On click, set `mode` state from 'configure' to 'preview'. The preview pane is a placeholder div with \"Report preview will appear here\" — T02 fills it in.\n5. In `components/charts/report-generator.tsx`: import `CustomReportTab`, add `<TabsTrigger value=\"custom-report\">Custom Report</TabsTrigger>` to TabsList, add `<TabsContent value=\"custom-report\"><CustomReportTab data={data} /></TabsContent>`.\n6. Verify `npm run build` passes.\n\n## Must-Haves\n\n- [ ] `CustomReportTab` component exists in its own file\n- [ ] Wired as 4th tab in ReportGenerator\n- [ ] Company selection pre-populated from shortlist\n- [ ] Typeahead search for adding companies from full dataset\n- [ ] Section toggles with sensible defaults\n- [ ] AI Analysis checkbox shows rate limit warning\n- [ ] Generate button disabled when no companies selected\n- [ ] Build passes with zero type errors\n\n## Verification\n\n- `npm run build` exits 0\n- `test -f components/charts/custom-report-tab.tsx`\n- `grep -q 'custom-report' components/charts/report-generator.tsx`\n- `grep -q 'CustomReportTab' components/charts/report-generator.tsx`\n- `grep -q 'useShortlist' components/charts/custom-report-tab.tsx`\n\n## Inputs\n\n- `components/charts/report-generator.tsx` — existing Tabs structure to add new tab\n- `contexts/shortlist-context.tsx` — useShortlist() API for pre-populating companies\n- `lib/company-data.ts` — Company type\n\n## Expected Output\n\n- `components/charts/custom-report-tab.tsx` — new component file\n- `components/charts/report-generator.tsx` — modified to include 4th tab",
+      "estimate": "1h",
+      "files": [
+        "components/charts/custom-report-tab.tsx",
+        "components/charts/report-generator.tsx"
+      ],
+      "verify": "npm run build && test -f components/charts/custom-report-tab.tsx && grep -q 'custom-report' components/charts/report-generator.tsx && grep -q 'useShortlist' components/charts/custom-report-tab.tsx",
+      "inputs": [
+        "`components/charts/report-generator.tsx` — existing Tabs structure to add new tab",
+        "`contexts/shortlist-context.tsx` — useShortlist() API for pre-populating companies",
+        "`lib/company-data.ts` — Company type"
+      ],
+      "expected_output": [
+        "`components/charts/custom-report-tab.tsx` — new Custom Report Tab component",
+        "`components/charts/report-generator.tsx` — modified with 4th tab wiring"
+      ],
+      "observability_impact": "",
+      "full_plan_md": "",
+      "sequence": 0
+    },
+    {
+      "milestone_id": "M005",
+      "slice_id": "S04",
+      "id": "T02",
+      "title": "Build report composition engine with AI narratives and markdown preview",
+      "status": "pending",
+      "one_liner": "",
+      "narrative": "",
+      "verification_result": "",
+      "duration": "",
+      "completed_at": null,
+      "blocker_discovered": false,
+      "deviations": "",
+      "known_issues": "",
+      "key_files": [],
+      "key_decisions": [],
+      "full_summary_md": "",
+      "description": "## Description\n\nAdd report content composition to `CustomReportTab`. When the user clicks Generate, the component: (1) composes company profile sections from the Company data (reusing the text generation patterns from `generateReport()` in `report-generator.tsx`), (2) fetches AI narratives per-company sequentially via `/api/ai/narrative` (raw fetch, not useCompletion — need multiple sequential requests), (3) renders everything in a scrollable markdown preview pane, (4) provides copy-to-clipboard for the full composed report. The AI narrative fetch should show per-company progress (loading/complete/error) and cache results in component state so re-generating doesn't re-call the API.\n\n## Failure Modes\n\n| Dependency | On error | On timeout | On malformed response |\n|------------|----------|-----------|----------------------|\n| `/api/ai/narrative` | Show error badge per company, continue with remaining companies | 60s timeout per request (matches maxDuration), mark as error | Show raw text or \"AI analysis unavailable\" fallback |\n\n## Negative Tests\n\n- **Error paths**: AI endpoint returns 429 (rate limit) — show \"Rate limit reached\" per-company, skip remaining AI fetches\n- **Boundary conditions**: 0 companies selected (Generate disabled from T01), 1 company (no multi-company edge cases), AI Analysis unchecked (skip all narrative fetches entirely)\n\n## Steps\n\n1. In `custom-report-tab.tsx`, add a `composeReport()` function that builds a markdown string from selected companies and enabled sections:\n   - For each company, include enabled sections: Company Profile header (name, location, founded, lifecycle phase, funding), Score Breakdown (7 score dimensions with justifications), AI Analysis placeholder\n   - Use the same data formatting patterns as `generateReport()` in report-generator.tsx (reference its structure for consistency)\n2. Add AI narrative fetching: when AI Analysis is enabled, iterate selected companies sequentially. For each, POST to `/api/ai/narrative` with `{ companyId: company.id }`, collect the streamed text via a ReadableStream reader. Store results in a `Map<string, { status: 'loading' | 'complete' | 'error', text: string }>` state. Cache completed results — if composeReport is called again with the same company, reuse cached narrative.\n3. Show rate limit warning before generation starts: \"This will use N of your 10 AI generations per hour\" (where N = number of companies with AI Analysis enabled). Require confirmation if N > 5.\n4. Build the preview pane: scrollable div rendering the composed markdown. Use the existing `AINarrativeSection` component pattern (split on `##` headings) for rendering AI sections. Show per-company status badges (spinner for loading, checkmark for complete, error icon for failed).\n5. Add a Copy button that copies the full composed markdown to clipboard via `navigator.clipboard.writeText()`.\n6. Verify `npm run build` passes.\n\n## Must-Haves\n\n- [ ] Report composition produces markdown with company profiles and score breakdowns\n- [ ] AI narratives fetched sequentially per-company via raw fetch to `/api/ai/narrative`\n- [ ] Per-company fetch status visible in UI (loading/complete/error)\n- [ ] Rate limit warning shown before generation when AI Analysis enabled\n- [ ] Results cached in component state — no re-fetch on re-generate\n- [ ] Copy-to-clipboard button for full report markdown\n- [ ] Build passes with zero type errors\n\n## Verification\n\n- `npm run build` exits 0\n- `grep -q 'ai/narrative' components/charts/custom-report-tab.tsx`\n- `grep -q 'clipboard' components/charts/custom-report-tab.tsx`\n- `grep -q 'composeReport\\|compose' components/charts/custom-report-tab.tsx`\n\n## Observability Impact\n\n- Signals added: Per-company AI fetch status (loading/complete/error) in component state, console.error for failed narrative fetches with company ID context\n- Failure state exposed: Error badge per company in preview, rate-limit-exceeded state halts further fetches\n\n## Inputs\n\n- `components/charts/custom-report-tab.tsx` — T01 output, the tab UI to extend with composition logic\n- `components/charts/report-generator.tsx` — reference for `generateReport()` text patterns and `AINarrativeSection` rendering\n- `app/api/ai/narrative/route.ts` — the endpoint contract (POST with `{ companyId }`, streams text)\n- `lib/company-data.ts` — Company type and `formatCurrency()`\n\n## Expected Output\n\n- `components/charts/custom-report-tab.tsx` — extended with report composition engine, AI fetching, markdown preview, and copy button",
+      "estimate": "1.5h",
+      "files": [
+        "components/charts/custom-report-tab.tsx"
+      ],
+      "verify": "npm run build && grep -q 'ai/narrative' components/charts/custom-report-tab.tsx && grep -q 'clipboard' components/charts/custom-report-tab.tsx",
+      "inputs": [
+        "`components/charts/custom-report-tab.tsx` — T01 output with tab UI shell",
+        "`components/charts/report-generator.tsx` — reference for generateReport() patterns and AINarrativeSection",
+        "`app/api/ai/narrative/route.ts` — endpoint contract for AI narrative streaming",
+        "`lib/company-data.ts` — Company type and formatCurrency()"
+      ],
+      "expected_output": [
+        "`components/charts/custom-report-tab.tsx` — extended with report composition, AI narrative fetching, markdown preview, copy-to-clipboard"
+      ],
+      "observability_impact": "",
+      "full_plan_md": "",
+      "sequence": 0
+    },
+    {
+      "milestone_id": "M005",
+      "slice_id": "S04",
+      "id": "T03",
+      "title": "Install PDF dependencies, capture chart snapshots, and assemble PDF export",
+      "status": "pending",
+      "one_liner": "",
+      "narrative": "",
+      "verification_result": "",
+      "duration": "",
+      "completed_at": null,
+      "blocker_discovered": false,
+      "deviations": "",
+      "known_issues": "",
+      "key_files": [],
+      "key_decisions": [],
+      "full_summary_md": "",
+      "description": "## Description\n\nInstall `jspdf` and `html-to-image`, build a hidden offscreen chart rendering container that mounts the 4 chart components at fixed dimensions, capture them as PNG via `toPng()`, and compose the full PDF document with jsPDF. The PDF includes: a cover page with report metadata (title, date, company count), per-company sections with text content (profile, scores, AI narrative), and chart images. Text sections use jsPDF's text API with a lightweight markdown parser for headings/bold/bullets. Chart images are embedded at fixed width.\n\n## Failure Modes\n\n| Dependency | On error | On timeout | On malformed response |\n|------------|----------|-----------|----------------------|\n| `html-to-image toPng()` | Log warning, skip chart image, continue with text-only section | 10s timeout per chart capture | Show \"Chart capture failed\" placeholder in PDF |\n| `jsPDF` | Surface error to user (\"PDF generation failed\"), preserve markdown preview as fallback | N/A (synchronous) | N/A |\n\n## Negative Tests\n\n- **Error paths**: Chart container not rendered (charts disabled) — skip chart capture entirely, produce text-only PDF\n- **Boundary conditions**: 0 charts selected (no capture needed), single company (minimal PDF), 10+ companies (multi-page PDF with correct page breaks)\n\n## Steps\n\n1. Install dependencies: `npm install jspdf html-to-image` (no `--legacy-peer-deps` needed — neither has React peer deps). Verify both appear in `package.json`.\n2. In `custom-report-tab.tsx`, build a hidden chart render container. Use a div with `position: fixed; left: -9999px; visibility: hidden; width: 800px; height: 500px`. Conditionally mount the selected chart components (`BubbleChart`, `QuadrantChart`, `PeriodicTable`, `TreemapChart`) into this container, passing the report's selected companies as `data` and shortlisted IDs. Important: do NOT use `display: none` — charts need real dimensions to render. Use refs to access each chart's container div.\n3. Build `captureCharts()` async function: for each enabled chart, call `toPng(chartContainerRef.current, { pixelRatio: 2 })` from `html-to-image`. Store results as `Map<string, string>` (chart ID → data URL). Handle capture errors per-chart (log warning, continue). Add a brief `await new Promise(r => setTimeout(r, 500))` delay between chart mounts to ensure D3 useEffect has run.\n4. Build `generatePDF()` function using jsPDF:\n   - Create `new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })`\n   - Cover page: title (\"ThreadMoat Custom Report\"), date, company count, section summary\n   - Per-company pages: company name header, profile text, score breakdown, AI narrative text (if included). Use `doc.splitTextToSize(text, pageWidth - margins)` for line wrapping. Track Y position and call `doc.addPage()` when approaching page bottom.\n   - Chart pages: for each captured chart, `doc.addImage(dataUrl, 'PNG', x, y, width, height)`. One chart per half-page or one per page depending on content.\n   - Build a lightweight markdown-to-jsPDF renderer that handles: `## ` headings (larger bold font), `**bold**` (bold font), `- ` bullet items (indented with bullet char), and plain paragraphs. Strip other markdown.\n   - Call `doc.save('threadmoat-report.pdf')` to trigger download.\n5. Add an \"Export PDF\" button next to the existing Copy button in the preview pane. Show a loading spinner during chart capture + PDF generation. Disable button during generation.\n6. Verify `npm run build` passes and dependencies are in package.json.\n\n## Must-Haves\n\n- [ ] `jspdf` and `html-to-image` installed in package.json\n- [ ] Hidden offscreen container renders charts at fixed 800×500 dimensions\n- [ ] Chart snapshots captured via `toPng()` with `pixelRatio: 2`\n- [ ] PDF generated with cover page, per-company text sections, chart images\n- [ ] Basic markdown rendering in PDF (headings, bold, bullets)\n- [ ] Page overflow handled with `splitTextToSize` and `addPage()`\n- [ ] Export PDF button in preview pane with loading state\n- [ ] Chart capture errors handled gracefully (text-only fallback)\n- [ ] Build passes with zero type errors\n\n## Verification\n\n- `npm run build` exits 0\n- `grep -q 'jspdf' package.json`\n- `grep -q 'html-to-image' package.json`\n- `grep -q 'jsPDF\\|jspdf' components/charts/custom-report-tab.tsx`\n- `grep -q 'toPng\\|html-to-image' components/charts/custom-report-tab.tsx`\n- `grep -q 'addPage\\|splitTextToSize' components/charts/custom-report-tab.tsx`\n\n## Observability Impact\n\n- Signals added: Console warnings for failed chart captures with chart ID; PDF generation timing logged to console\n- Failure state exposed: Per-chart capture status in component state; \"Export PDF\" button error state if generation fails\n\n## Inputs\n\n- `components/charts/custom-report-tab.tsx` — T02 output with report composition and markdown preview\n- `components/charts/bubble-chart.tsx` — BubbleChart component (props: `data: Company[], shortlistedIds?: Set<string>`)\n- `components/charts/quadrant-chart.tsx` — QuadrantChart component (props: `data: Company[], shortlistedIds?: Set<string>`)\n- `components/charts/periodic-table.tsx` — PeriodicTable component (props: `data: Company[], shortlistedIds?: Set<string>`)\n- `components/charts/treemap-chart.tsx` — TreemapChart component (props: `data: Company[], shortlistedIds?: Set<string>`)\n- `package.json` — to add jspdf and html-to-image dependencies\n\n## Expected Output\n\n- `components/charts/custom-report-tab.tsx` — extended with chart capture container, PDF generation, and export button\n- `package.json` — updated with jspdf and html-to-image dependencies\n- `package-lock.json` — updated lock file",
+      "estimate": "2h",
+      "files": [
+        "components/charts/custom-report-tab.tsx",
+        "package.json",
+        "package-lock.json"
+      ],
+      "verify": "npm run build && grep -q 'jspdf' package.json && grep -q 'html-to-image' package.json && grep -q 'jsPDF\\|jspdf' components/charts/custom-report-tab.tsx && grep -q 'toPng\\|html-to-image' components/charts/custom-report-tab.tsx",
+      "inputs": [
+        "`components/charts/custom-report-tab.tsx` — T02 output with report composition and preview",
+        "`components/charts/bubble-chart.tsx` — BubbleChart component for chart snapshot",
+        "`components/charts/quadrant-chart.tsx` — QuadrantChart component for chart snapshot",
+        "`components/charts/periodic-table.tsx` — PeriodicTable component for chart snapshot",
+        "`components/charts/treemap-chart.tsx` — TreemapChart component for chart snapshot",
+        "`package.json` — to add new dependencies"
+      ],
+      "expected_output": [
+        "`components/charts/custom-report-tab.tsx` — extended with chart capture and PDF export",
+        "`package.json` — updated with jspdf and html-to-image",
+        "`package-lock.json` — updated lock file"
+      ],
+      "observability_impact": "",
+      "full_plan_md": "",
+      "sequence": 0
     }
   ],
   "decisions": [
@@ -2049,6 +2170,30 @@
       "rationale": "The feedback describes a significant product evolution (analysis workbench with AI narrative). M004 is scoped for verification/sign-off only. This feedback should inform M005 planning after M004 closes.",
       "revisable": "Yes",
       "made_by": "collaborative",
+      "superseded_by": null
+    },
+    {
+      "seq": 2,
+      "id": "D002",
+      "when_context": "M005/S03",
+      "scope": "ui-pattern",
+      "decision": "How to present shortlist panel in dashboard toolbar",
+      "choice": "Radix Popover anchored to toolbar trigger button with badge count",
+      "rationale": "Consistent with existing filter category dropdowns (all Radix Popover). Lightweight, anchored positioning, no full dialog overlay that blocks chart interaction.",
+      "revisable": "Yes",
+      "made_by": "agent",
+      "superseded_by": null
+    },
+    {
+      "seq": 3,
+      "id": "D003",
+      "when_context": "M005/S03",
+      "scope": "design",
+      "decision": "Visual highlight treatment for shortlisted companies on charts",
+      "choice": "Amber #f59e0b with 2.5px stroke (SVG) or CSS outline (HTML) across all 4 chart types",
+      "rationale": "Amber is distinct from the existing color scales (blues, greens, categorical), visible on both light and dark backgrounds. CSS outline on periodic table HTML cells avoids layout shift that border would cause. Consistent across chart types.",
+      "revisable": "Yes",
+      "made_by": "agent",
       "superseded_by": null
     }
   ],
@@ -2888,6 +3033,61 @@
       "verdict": "✅ pass",
       "duration_ms": 100,
       "created_at": "2026-04-01T22:20:16.346Z"
+    },
+    {
+      "id": 77,
+      "task_id": "T01",
+      "slice_id": "S04",
+      "milestone_id": "M005",
+      "command": "npm run build",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 16600,
+      "created_at": "2026-04-02T05:52:33.553Z"
+    },
+    {
+      "id": 78,
+      "task_id": "T01",
+      "slice_id": "S04",
+      "milestone_id": "M005",
+      "command": "test -f components/charts/custom-report-tab.tsx",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 10,
+      "created_at": "2026-04-02T05:52:33.553Z"
+    },
+    {
+      "id": 79,
+      "task_id": "T01",
+      "slice_id": "S04",
+      "milestone_id": "M005",
+      "command": "grep -q 'custom-report' components/charts/report-generator.tsx",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 10,
+      "created_at": "2026-04-02T05:52:33.553Z"
+    },
+    {
+      "id": 80,
+      "task_id": "T01",
+      "slice_id": "S04",
+      "milestone_id": "M005",
+      "command": "grep -q 'CustomReportTab' components/charts/report-generator.tsx",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 10,
+      "created_at": "2026-04-02T05:52:33.553Z"
+    },
+    {
+      "id": 81,
+      "task_id": "T01",
+      "slice_id": "S04",
+      "milestone_id": "M005",
+      "command": "grep -q 'useShortlist' components/charts/custom-report-tab.tsx",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 10,
+      "created_at": "2026-04-02T05:52:33.553Z"
     }
   ]
 }

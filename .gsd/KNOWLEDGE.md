@@ -44,3 +44,21 @@ if (dismissed || !hydrated) return null
 - Model string for Anthropic via `@ai-sdk/anthropic@3.x`: `anthropic('claude-sonnet-4-5')`
 
 **Why it matters:** Most online examples and even Context7 may reference older API shapes. TypeScript catches these at build time, but knowing the renames upfront saves a debug cycle. Always check the installed `node_modules/ai/dist/index.d.ts` types when in doubt.
+
+---
+
+## K004 — D3 .style() does not accept null on HTML selections
+
+**Context:** M005/S03 periodic table shortlist highlight
+**Pattern:** D3's `.style(name, value)` on HTML element selections (e.g., `d3.select<HTMLDivElement, ...>`) does not accept `null` as the value — TypeScript rejects it. Use empty string `''` or `'none'`/`'0'` instead of `null` to clear a style. SVG selections (`d3.select<SVGElement, ...>`) are unaffected since they go through `.attr()`.
+
+**Why it matters:** When conditionally applying styles (e.g., highlight when shortlisted, clear when not), the natural instinct is `.style('outline', shortlisted ? '2px solid #f59e0b' : null)`. This compiles for SVG but fails for HTML. Use `'none'` or `''` as the falsy branch.
+
+---
+
+## K005 — Chart extensibility via optional prop pattern
+
+**Context:** M005/S03 shortlist highlighting across charts
+**Pattern:** When adding cross-cutting features to chart components (like shortlist highlighting), use an optional prop (`shortlistedIds?: Set<string>`) rather than requiring it. Inside the chart, guard all highlight logic with `shortlistedIds?.has(id)`. This keeps charts backwards compatible — existing renders without the prop continue working, and new features can be threaded through incrementally.
+
+**Why it matters:** The dashboard has 4+ chart types rendered from 6+ page files. Making the prop required would force simultaneous updates everywhere. Optional props let you thread features through one chart at a time during development.
