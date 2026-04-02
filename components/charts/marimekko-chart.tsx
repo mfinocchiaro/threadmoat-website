@@ -93,13 +93,20 @@ export function MarimekkoChart({ data, className }: MarimekkoChartProps) {
     svg.selectAll("*").remove()
     svg.attr("width", width).attr("height", height)
 
+    // Theme-aware colors from CSS custom properties
+    const rootStyle = getComputedStyle(svgRef.current)
+    const axisColor = rootStyle.getPropertyValue('--muted-foreground').trim() || '#64748b'
+    const labelColor = rootStyle.getPropertyValue('--foreground').trim() || '#f1f5f9'
+    const borderColor = rootStyle.getPropertyValue('--border').trim() || '#334155'
+    const bgColor = rootStyle.getPropertyValue('--background').trim() || '#1e293b'
+
     if (widthDim === heightDim) {
       svg
         .append("text")
         .attr("x", width / 2)
         .attr("y", height / 2)
         .attr("text-anchor", "middle")
-        .attr("fill", "#94a3b8")
+        .attr("fill", axisColor)
         .text("Width and Height dimensions must be different")
       return
     }
@@ -172,12 +179,12 @@ export function MarimekkoChart({ data, className }: MarimekkoChartProps) {
       .append("div")
       .attr("class", "marimekko-tooltip")
       .style("position", "fixed")
-      .style("background", "rgba(15,23,42,0.95)")
-      .style("border", "1px solid #334155")
+      .style("background", `color-mix(in srgb, ${bgColor} 95%, transparent)`)
+      .style("border", `1px solid ${borderColor}`)
       .style("border-radius", "6px")
       .style("padding", "8px 12px")
       .style("font-size", "12px")
-      .style("color", "#f1f5f9")
+      .style("color", labelColor)
       .style("pointer-events", "none")
       .style("opacity", "0")
       .style("z-index", "9999")
@@ -191,7 +198,7 @@ export function MarimekkoChart({ data, className }: MarimekkoChartProps) {
       .attr("width", (c) => c.w)
       .attr("height", (c) => c.h)
       .attr("fill", (c) => colorScale(c.value))
-      .attr("stroke", "#1e293b")
+      .attr("stroke", bgColor)
       .attr("stroke-width", 1)
       .attr("opacity", 0.85)
       .style("cursor", "pointer")
@@ -218,7 +225,7 @@ export function MarimekkoChart({ data, className }: MarimekkoChartProps) {
       .attr("y", (c) => c.y + c.h / 2)
       .attr("text-anchor", "middle")
       .attr("dominant-baseline", "middle")
-      .attr("fill", "#f1f5f9")
+      .attr("fill", labelColor)
       .attr("font-size", 10)
       .attr("font-weight", "600")
       .attr("pointer-events", "none")
@@ -232,14 +239,14 @@ export function MarimekkoChart({ data, className }: MarimekkoChartProps) {
         .attr("x", xLbl + catW / 2)
         .attr("y", innerHeight + 14)
         .attr("text-anchor", "middle")
-        .attr("fill", "#94a3b8")
+        .attr("fill", axisColor)
         .attr("font-size", 10)
         .text(cat.length > 14 ? cat.slice(0, 12) + "…" : cat)
       g.append("text")
         .attr("x", xLbl + catW / 2)
         .attr("y", innerHeight + 28)
         .attr("text-anchor", "middle")
-        .attr("fill", "#64748b")
+        .attr("fill", axisColor)
         .attr("font-size", 9)
         .text(formatValue(widthTotals.get(cat) ?? 0, metric))
       xLbl += catW
@@ -254,7 +261,7 @@ export function MarimekkoChart({ data, className }: MarimekkoChartProps) {
         .attr("y", yLbl + catH / 2)
         .attr("text-anchor", "end")
         .attr("dominant-baseline", "middle")
-        .attr("fill", "#94a3b8")
+        .attr("fill", axisColor)
         .attr("font-size", 10)
         .text(cat.length > 14 ? cat.slice(0, 12) + "…" : cat)
       yLbl += catH
@@ -266,7 +273,7 @@ export function MarimekkoChart({ data, className }: MarimekkoChartProps) {
       .attr("x", width / 2)
       .attr("y", height - 10)
       .attr("text-anchor", "middle")
-      .attr("fill", "#cbd5e1")
+      .attr("fill", labelColor)
       .attr("font-size", 12)
       .attr("font-weight", "600")
       .text(getDimLabel(widthDim))
@@ -277,7 +284,7 @@ export function MarimekkoChart({ data, className }: MarimekkoChartProps) {
       .attr("x", -height / 2)
       .attr("y", 14)
       .attr("text-anchor", "middle")
-      .attr("fill", "#cbd5e1")
+      .attr("fill", labelColor)
       .attr("font-size", 12)
       .attr("font-weight", "600")
       .text(getDimLabel(heightDim))
@@ -287,7 +294,7 @@ export function MarimekkoChart({ data, className }: MarimekkoChartProps) {
       .attr("x", width / 2)
       .attr("y", 22)
       .attr("text-anchor", "middle")
-      .attr("fill", "#f1f5f9")
+      .attr("fill", labelColor)
       .attr("font-size", 15)
       .attr("font-weight", "700")
       .text(`Market Concentration: ${getDimLabel(widthDim)} × ${getDimLabel(heightDim)}`)
@@ -297,7 +304,7 @@ export function MarimekkoChart({ data, className }: MarimekkoChartProps) {
       .attr("x", width / 2)
       .attr("y", 42)
       .attr("text-anchor", "middle")
-      .attr("fill", "#94a3b8")
+      .attr("fill", axisColor)
       .attr("font-size", 11)
       .text(`Cell size = ${getMetricLabel(metric).toLowerCase()} · ${data.length} companies`)
 

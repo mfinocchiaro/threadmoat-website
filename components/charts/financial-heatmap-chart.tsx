@@ -216,12 +216,12 @@ function hexToRgb(hex: string): [number, number, number] {
 
 // Group header band colors
 const GROUP_COLORS: Record<string, { bg: string; text: string }> = {
-  Identity:   { bg: "bg-slate-700/60",   text: "text-slate-200" },
+  Identity:   { bg: "bg-muted/60",            text: "text-muted-foreground" },
   Inputs:     { bg: "bg-blue-900/60",    text: "text-blue-200" },
   Efficiency: { bg: "bg-emerald-900/60", text: "text-emerald-200" },
   Burn:       { bg: "bg-amber-900/60",   text: "text-amber-200" },
   Valuation:  { bg: "bg-violet-900/60",  text: "text-violet-200" },
-  Confidence: { bg: "bg-slate-700/60",   text: "text-slate-200" },
+  Confidence: { bg: "bg-muted/60",            text: "text-muted-foreground" },
 }
 
 const GROUP_ORDER = ["Identity", "Inputs", "Efficiency", "Burn", "Valuation", "Confidence"]
@@ -252,7 +252,7 @@ const FORMULAS: FormulaEntry[] = [
 // ────────────────────────────────────────────────────────
 
 function getCellStyle(col: ColDef, rec: FundingRecord, numScales: Map<string, { min: number; max: number }>): { bg: string; text: string } {
-  const noData = { bg: "#1e293b", text: "text-slate-500" }
+  const noData = { bg: "var(--muted, #1e293b)", text: "text-muted-foreground" }
 
   if (col.type === "qual") {
     const val = (rec[col.key] as string) || ""
@@ -554,7 +554,7 @@ export function FinancialHeatmapChart({ className, filteredCompanyNames }: Finan
           <strong className="text-green-400">Efficiency</strong> (how well capital converts to revenue) →{" "}
           <strong className="text-amber-400">Burn &amp; Runway</strong> (cash sustainability) →{" "}
           <strong className="text-purple-400">Valuation</strong> (what it&apos;s worth) →{" "}
-          <strong className="text-slate-400">Confidence</strong> (how reliable the data is).
+          <strong className="text-muted-foreground">Confidence</strong> (how reliable the data is).
           Hover any row for full details including formulas.
         </p>
 
@@ -565,7 +565,7 @@ export function FinancialHeatmapChart({ className, filteredCompanyNames }: Finan
           <span className="text-xs"><span className="inline-block w-3 h-3 rounded-sm mr-1" style={{ background: "#ef4444" }} />Red = weak</span>
           <span className="text-xs font-medium text-foreground ml-2 mr-1">Neutral columns:</span>
           <span className="text-xs"><span className="inline-block w-3 h-3 rounded-sm mr-1" style={{ background: "#2563eb" }} />Blue = magnitude (no judgment)</span>
-          <span className="text-xs"><span className="inline-block w-3 h-3 rounded-sm mr-1" style={{ background: "#1e293b" }} />Dark = no data</span>
+          <span className="text-xs"><span className="inline-block w-3 h-3 rounded-sm mr-1" style={{ background: "var(--muted, #1e293b)" }} />Dark = no data</span>
         </div>
 
         {showFormulas && (
@@ -585,7 +585,7 @@ export function FinancialHeatmapChart({ className, filteredCompanyNames }: Finan
               <strong className="text-foreground">Sources:</strong>{" "}
               <span className="text-green-400">●</span> Health ratings = Airtable qualitative assessments{" "}
               <span className="text-blue-400">●</span> Blue metrics = derived from numeric fields{" "}
-              <span className="text-slate-400">●</span> Confidence = data quality rating
+              <span className="text-muted-foreground">●</span> Confidence = data quality rating
             </div>
           </div>
         )}

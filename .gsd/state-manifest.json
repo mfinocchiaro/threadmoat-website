@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exported_at": "2026-04-02T06:07:36.178Z",
+  "exported_at": "2026-04-02T22:34:56.337Z",
   "milestones": [
     {
       "id": "M001",
@@ -344,6 +344,66 @@
       ],
       "requirement_coverage": "HEAT-01 (market momentum), HEAT-02 (industry penetration), HEAT-03 (customer profile), HEAT-04 (IP dependency)",
       "boundary_map_markdown": "| Slice | Produces | Consumes |\n|-------|----------|----------|\n| S01 | Market Momentum heatmap | Customer acquisition data (new Airtable fields or derived) |\n| S02 | Industry Penetration heatmap | Customer industry classification data |\n| S03 | Target Customer Profile heatmap | Company size, industry, geography, supply chain role data |\n| S04 | IP Dependency analysis view | IP ownership data, third-party dependency data |"
+    },
+    {
+      "id": "M007",
+      "title": "",
+      "status": "queued",
+      "depends_on": [],
+      "created_at": "2026-04-02T22:24:53.106Z",
+      "completed_at": null,
+      "vision": "Make every chart in the dashboard legible on both light and dark themes by replacing 160+ hardcoded dark-mode color values with CSS custom properties, and commit the latest Airtable data export so the production site has fresh data.",
+      "success_criteria": [
+        "All 26 unfixed chart components use CSS custom properties (--muted-foreground, --foreground, --border) instead of hardcoded hex colors for axes, labels, tooltips, and empty cells",
+        "npm run build passes with zero errors after all changes",
+        "No hardcoded dark-theme hex values (#94a3b8, #64748b, #1e293b, #334155, #1e1e2e, #f1f5f9, #cbd5e1, #e2e8f0, #0f172a) remain in any chart component for axis/label/tooltip fills",
+        "Latest Airtable CSV data committed and deployed to production",
+        "M006 roadmap annotated as superseded by ad-hoc delivery"
+      ],
+      "key_risks": [
+        {
+          "risk": "CSS custom property values use oklch() not hsl() — wrapping in hsl() produces invalid colors",
+          "whyItMatters": "Already hit this bug. The fix pattern is established (use raw getPropertyValue) but must be applied consistently across 26 files."
+        },
+        {
+          "risk": "Some charts use hardcoded colors for semantic meaning (e.g. red=bad, green=good) not just theming",
+          "whyItMatters": "Blindly replacing all hex colors could break intentional color semantics. Need to distinguish theme colors from data colors."
+        },
+        {
+          "risk": "3D charts (three.js/react-three-fiber) may not support CSS custom properties the same way",
+          "whyItMatters": "customer-network-3d, investor-network-3d, network-graph-3d, globe-chart use WebGL rendering where CSS vars may not be accessible."
+        }
+      ],
+      "proof_strategy": [
+        {
+          "riskOrUnknown": "oklch color var handling",
+          "retireIn": "S01",
+          "whatWillBeProven": "Established pattern from 6 already-fixed charts works across all D3 chart types"
+        },
+        {
+          "riskOrUnknown": "Semantic vs theme colors",
+          "retireIn": "S01",
+          "whatWillBeProven": "grep audit distinguishes theme fills from data-semantic fills before replacing"
+        },
+        {
+          "riskOrUnknown": "3D chart compatibility",
+          "retireIn": "S02",
+          "whatWillBeProven": "Test CSS var reading in three.js components or use JS-side color resolution"
+        }
+      ],
+      "verification_contract": "npm run build passes. grep for hardcoded dark-theme hex values in chart components returns zero matches for axis/label/tooltip contexts.",
+      "verification_integration": "All charts render readable text on both light and dark themes.",
+      "verification_operational": "No runtime errors from invalid color values. Console clean.",
+      "verification_uat": "Navigate to each chart page, toggle light/dark mode, verify axis labels and tooltips are legible in both.",
+      "definition_of_done": [
+        "All 26 chart files updated with theme-aware colors",
+        "Build passes",
+        "Data CSV committed",
+        "M006 annotated as superseded",
+        "Pushed to production"
+      ],
+      "requirement_coverage": "No formal requirements — this is a polish/maintenance milestone addressing the user-reported light-theme legibility issue across the full chart suite.",
+      "boundary_map_markdown": "```\\nS01 (D3 Charts) → S02 (3D/WebGL Charts) → S03 (Data Sync)\\nS01 establishes the pattern, S02 adapts it for WebGL, S03 is independent\\n```"
     }
   ],
   "slices": [
@@ -882,6 +942,68 @@
       "success_criteria": "IP view renders with available data or data collection pipeline scoped and documented.",
       "proof_level": "Visual verification or data collection plan",
       "integration_closure": "May require new research pipeline for IP data",
+      "observability_impact": "None",
+      "sequence": 0,
+      "replan_triggered_at": null
+    },
+    {
+      "milestone_id": "M007",
+      "id": "S01",
+      "title": "Theme-aware colors for D3 SVG charts (batch 1: 13 charts)",
+      "status": "pending",
+      "risk": "low",
+      "depends": [],
+      "demo": "13 D3 charts have legible axes and tooltips on both light and dark themes",
+      "created_at": "2026-04-02T22:25:27.797Z",
+      "completed_at": null,
+      "full_summary_md": "",
+      "full_uat_md": "",
+      "goal": "Apply the established getPropertyValue pattern to 13 D3 SVG chart components",
+      "success_criteria": "All 13 charts use CSS custom properties for axis colors, labels, tooltips, and empty cells. npm run build passes. Zero hardcoded dark-theme hex in these files for theme contexts.",
+      "proof_level": "build + grep",
+      "integration_closure": "Charts render correctly in existing dashboard pages",
+      "observability_impact": "None",
+      "sequence": 0,
+      "replan_triggered_at": null
+    },
+    {
+      "milestone_id": "M007",
+      "id": "S02",
+      "title": "Theme-aware colors for remaining charts (batch 2: 13 charts incl. 3D)",
+      "status": "pending",
+      "risk": "medium",
+      "depends": [
+        "S01"
+      ],
+      "demo": "All remaining charts including 3D/WebGL have legible text on both themes",
+      "created_at": "2026-04-02T22:25:27.797Z",
+      "completed_at": null,
+      "full_summary_md": "",
+      "full_uat_md": "",
+      "goal": "Apply theme-aware colors to remaining 13 charts including 4 three.js/WebGL and miscellaneous D3 charts",
+      "success_criteria": "All 13 remaining charts use theme-aware colors. npm run build passes. grep audit clean.",
+      "proof_level": "build + grep",
+      "integration_closure": "Full chart suite works on both themes",
+      "observability_impact": "None",
+      "sequence": 0,
+      "replan_triggered_at": null
+    },
+    {
+      "milestone_id": "M007",
+      "id": "S03",
+      "title": "Data sync and M006 cleanup",
+      "status": "pending",
+      "risk": "low",
+      "depends": [],
+      "demo": "Production site has fresh Airtable data. M006 annotated as superseded.",
+      "created_at": "2026-04-02T22:25:27.797Z",
+      "completed_at": null,
+      "full_summary_md": "",
+      "full_uat_md": "",
+      "goal": "Commit latest Airtable CSV export and annotate M006 as superseded",
+      "success_criteria": "data/Startups-Grid view.csv committed with fresh data. M006 roadmap has superseded note. Vercel build passes.",
+      "proof_level": "build + git diff",
+      "integration_closure": "Site loads fresh data without errors",
       "observability_impact": "None",
       "sequence": 0,
       "replan_triggered_at": null
@@ -2172,6 +2294,209 @@
       "observability_impact": "",
       "full_plan_md": "",
       "sequence": 0
+    },
+    {
+      "milestone_id": "M007",
+      "slice_id": "S01",
+      "id": "T01",
+      "title": "Replace hardcoded slate hex colors with CSS custom property lookups in 7 D3/chart files for theme-aware rendering",
+      "status": "complete",
+      "one_liner": "Replace hardcoded slate hex colors with CSS custom property lookups in 7 D3/chart files for theme-aware rendering",
+      "narrative": "Applied the getComputedStyle pattern from patterns-chart.tsx reference to box-plot, correlation-matrix, distribution, financial-heatmap, landscape, map, and marimekko charts. Each D3 SVG chart now reads --muted-foreground, --foreground, --border, --background, and --muted CSS custom properties at render time. Tooltips converted to semantic Tailwind classes or interpolated CSS var values. Financial heatmap HTML table converted slate-* Tailwind classes to semantic equivalents. Map chart JSX also converted. Landscape chart was already theme-aware — no changes needed. Data-semantic colors (category palettes, color scales) left unchanged.",
+      "verification_result": "npm run build succeeded with exit code 0. Grep verification confirmed zero hardcoded axis/label/tooltip hex colors remain in any of the 7 files — all remaining hex values are CSS var fallbacks or data-semantic visualization colors.",
+      "duration": "",
+      "completed_at": "2026-04-02T22:34:56.325Z",
+      "blocker_discovered": false,
+      "deviations": "Landscape chart required no changes (already used Tailwind semantic classes). Financial heatmap used var(--muted) CSS fallback pattern instead of getComputedStyle since it's JSX, not D3 SVG. Map chart also had Tailwind slate-* classes in JSX that were converted to semantic equivalents.",
+      "known_issues": "None.",
+      "key_files": [
+        "components/charts/box-plot-chart.tsx",
+        "components/charts/correlation-matrix-chart.tsx",
+        "components/charts/distribution-chart.tsx",
+        "components/charts/financial-heatmap-chart.tsx",
+        "components/charts/landscape-chart.tsx",
+        "components/charts/map-chart.tsx",
+        "components/charts/marimekko-chart.tsx"
+      ],
+      "key_decisions": [
+        "Used getComputedStyle pattern from patterns-chart.tsx as the standard D3 theme integration approach",
+        "Tooltips use bg-popover/text-popover-foreground Tailwind classes or interpolated CSS vars for D3-appended elements",
+        "Data-semantic colors (palette, scale endpoints) intentionally preserved unchanged"
+      ],
+      "full_summary_md": "---\nid: T01\nparent: S01\nmilestone: M007\nkey_files:\n  - components/charts/box-plot-chart.tsx\n  - components/charts/correlation-matrix-chart.tsx\n  - components/charts/distribution-chart.tsx\n  - components/charts/financial-heatmap-chart.tsx\n  - components/charts/landscape-chart.tsx\n  - components/charts/map-chart.tsx\n  - components/charts/marimekko-chart.tsx\nkey_decisions:\n  - Used getComputedStyle pattern from patterns-chart.tsx as the standard D3 theme integration approach\n  - Tooltips use bg-popover/text-popover-foreground Tailwind classes or interpolated CSS vars for D3-appended elements\n  - Data-semantic colors (palette, scale endpoints) intentionally preserved unchanged\nduration: \"\"\nverification_result: passed\ncompleted_at: 2026-04-02T22:34:56.326Z\nblocker_discovered: false\n---\n\n# T01: Replace hardcoded slate hex colors with CSS custom property lookups in 7 D3/chart files for theme-aware rendering\n\n**Replace hardcoded slate hex colors with CSS custom property lookups in 7 D3/chart files for theme-aware rendering**\n\n## What Happened\n\nApplied the getComputedStyle pattern from patterns-chart.tsx reference to box-plot, correlation-matrix, distribution, financial-heatmap, landscape, map, and marimekko charts. Each D3 SVG chart now reads --muted-foreground, --foreground, --border, --background, and --muted CSS custom properties at render time. Tooltips converted to semantic Tailwind classes or interpolated CSS var values. Financial heatmap HTML table converted slate-* Tailwind classes to semantic equivalents. Map chart JSX also converted. Landscape chart was already theme-aware — no changes needed. Data-semantic colors (category palettes, color scales) left unchanged.\n\n## Verification\n\nnpm run build succeeded with exit code 0. Grep verification confirmed zero hardcoded axis/label/tooltip hex colors remain in any of the 7 files — all remaining hex values are CSS var fallbacks or data-semantic visualization colors.\n\n## Verification Evidence\n\n| # | Command | Exit Code | Verdict | Duration |\n|---|---------|-----------|---------|----------|\n| 1 | `npm run build` | 0 | ✅ pass | 24000ms |\n| 2 | `grep -c hardcoded colors in axis/label/tooltip context across 7 files` | 0 | ✅ pass | 500ms |\n\n\n## Deviations\n\nLandscape chart required no changes (already used Tailwind semantic classes). Financial heatmap used var(--muted) CSS fallback pattern instead of getComputedStyle since it's JSX, not D3 SVG. Map chart also had Tailwind slate-* classes in JSX that were converted to semantic equivalents.\n\n## Known Issues\n\nNone.\n\n## Files Created/Modified\n\n- `components/charts/box-plot-chart.tsx`\n- `components/charts/correlation-matrix-chart.tsx`\n- `components/charts/distribution-chart.tsx`\n- `components/charts/financial-heatmap-chart.tsx`\n- `components/charts/landscape-chart.tsx`\n- `components/charts/map-chart.tsx`\n- `components/charts/marimekko-chart.tsx`\n",
+      "description": "For each of the 7 chart files:\n1. Read the file\n2. Add getComputedStyle() block at top of useEffect to read --muted-foreground, --foreground, --border\n3. Replace all hardcoded #94a3b8, #64748b, #cbd5e1, #e2e8f0 axis/label fills with axisColor/labelColor\n4. Replace #1e293b, #334155, #1e1e2e stroke/border with borderColor\n5. Replace tooltip background/border/color with CSS var() fallback pattern\n6. Replace rgba(255,255,255,...) empty fills with neutral rgba or color-mix\n7. Do NOT replace data-semantic colors (color scales, category colors)\n\nFiles: box-plot-chart.tsx (7), correlation-matrix-chart.tsx (14), distribution-chart.tsx (11), financial-heatmap-chart.tsx (4), landscape-chart.tsx (2), map-chart.tsx (11), marimekko-chart.tsx (12)",
+      "estimate": "30min",
+      "files": [
+        "components/charts/box-plot-chart.tsx",
+        "components/charts/correlation-matrix-chart.tsx",
+        "components/charts/distribution-chart.tsx",
+        "components/charts/financial-heatmap-chart.tsx",
+        "components/charts/landscape-chart.tsx",
+        "components/charts/map-chart.tsx",
+        "components/charts/marimekko-chart.tsx"
+      ],
+      "verify": "npm run build && grep -c '94a3b8\\|64748b\\|#1e293b\\|#334155\\|#1e1e2e\\|#f1f5f9\\|#cbd5e1\\|slate-900\\|slate-700' for each file shows 0 for axis/label/tooltip contexts",
+      "inputs": [
+        "components/charts/patterns-chart.tsx as reference pattern"
+      ],
+      "expected_output": [
+        "7 chart files updated with theme-aware colors"
+      ],
+      "observability_impact": "",
+      "full_plan_md": "",
+      "sequence": 0
+    },
+    {
+      "milestone_id": "M007",
+      "slice_id": "S01",
+      "id": "T02",
+      "title": "Fix theme colors in parallel-coords, radar, sankey, slope, spiral-timeline, splom charts",
+      "status": "pending",
+      "one_liner": "",
+      "narrative": "",
+      "verification_result": "",
+      "duration": "",
+      "completed_at": null,
+      "blocker_discovered": false,
+      "deviations": "",
+      "known_issues": "",
+      "key_files": [],
+      "key_decisions": [],
+      "full_summary_md": "",
+      "description": "Same pattern as T01 for the remaining 6 D3 SVG charts.\n\nFiles: parallel-coords-chart.tsx (8), radar-chart.tsx (3), sankey-chart.tsx (3), slope-chart.tsx (11), spiral-timeline-chart.tsx (8), splom-chart.tsx (5)",
+      "estimate": "20min",
+      "files": [
+        "components/charts/parallel-coords-chart.tsx",
+        "components/charts/radar-chart.tsx",
+        "components/charts/sankey-chart.tsx",
+        "components/charts/slope-chart.tsx",
+        "components/charts/spiral-timeline-chart.tsx",
+        "components/charts/splom-chart.tsx"
+      ],
+      "verify": "npm run build passes. grep audit clean for all 6 files.",
+      "inputs": [
+        "T01 pattern established"
+      ],
+      "expected_output": [
+        "6 chart files updated with theme-aware colors"
+      ],
+      "observability_impact": "",
+      "full_plan_md": "",
+      "sequence": 0
+    },
+    {
+      "milestone_id": "M007",
+      "slice_id": "S02",
+      "id": "T01",
+      "title": "Fix theme colors in 9 remaining D3/SVG charts",
+      "status": "pending",
+      "one_liner": "",
+      "narrative": "",
+      "verification_result": "",
+      "duration": "",
+      "completed_at": null,
+      "blocker_discovered": false,
+      "deviations": "",
+      "known_issues": "",
+      "key_files": [],
+      "key_decisions": [],
+      "full_summary_md": "",
+      "description": "Fix 9 remaining D3/SVG charts that don't need special 3D handling.\n\nFiles: chord-chart.tsx (2), customer-network.tsx (5), investor-network.tsx (6), investor-stats-chart.tsx (9), network-graph.tsx (7), periodic-table.tsx (1), timeline-chart.tsx (2), treemap-chart.tsx (4), wordcloud-chart.tsx (3)\n\nSame getPropertyValue pattern. For files with only 1-2 hardcoded colors, the fix is minimal.",
+      "estimate": "25min",
+      "files": [
+        "components/charts/chord-chart.tsx",
+        "components/charts/customer-network.tsx",
+        "components/charts/investor-network.tsx",
+        "components/charts/investor-stats-chart.tsx",
+        "components/charts/network-graph.tsx",
+        "components/charts/periodic-table.tsx",
+        "components/charts/timeline-chart.tsx",
+        "components/charts/treemap-chart.tsx",
+        "components/charts/wordcloud-chart.tsx"
+      ],
+      "verify": "npm run build passes. grep audit clean for all 9 files.",
+      "inputs": [
+        "S01 pattern established"
+      ],
+      "expected_output": [
+        "9 chart files updated"
+      ],
+      "observability_impact": "",
+      "full_plan_md": "",
+      "sequence": 0
+    },
+    {
+      "milestone_id": "M007",
+      "slice_id": "S02",
+      "id": "T02",
+      "title": "Fix theme colors in 4 three.js/WebGL charts",
+      "status": "pending",
+      "one_liner": "",
+      "narrative": "",
+      "verification_result": "",
+      "duration": "",
+      "completed_at": null,
+      "blocker_discovered": false,
+      "deviations": "",
+      "known_issues": "",
+      "key_files": [],
+      "key_decisions": [],
+      "full_summary_md": "",
+      "description": "Fix 4 three.js/WebGL chart components. These use react-three-fiber or raw three.js where CSS vars aren't directly accessible from the WebGL context.\n\nApproach: Read CSS vars via getComputedStyle on a DOM ref, then pass the resolved color strings to three.js materials/lights.\n\nFiles: customer-network-3d.tsx (2), globe-chart.tsx (2), investor-network-3d.tsx (3), network-graph-3d.tsx (6)\n\nIf the hardcoded colors are used in three.js Color() constructors, resolve the CSS var first via JS and pass the hex result.",
+      "estimate": "20min",
+      "files": [
+        "components/charts/customer-network-3d.tsx",
+        "components/charts/globe-chart.tsx",
+        "components/charts/investor-network-3d.tsx",
+        "components/charts/network-graph-3d.tsx"
+      ],
+      "verify": "npm run build passes. grep audit shows reduced hardcoded dark-theme colors in 3D files.",
+      "inputs": [
+        "S01/S02-T01 pattern",
+        "three.js Color class reference"
+      ],
+      "expected_output": [
+        "4 3D chart files updated"
+      ],
+      "observability_impact": "",
+      "full_plan_md": "",
+      "sequence": 0
+    },
+    {
+      "milestone_id": "M007",
+      "slice_id": "S03",
+      "id": "T01",
+      "title": "Commit fresh CSV data and annotate M006 as superseded",
+      "status": "pending",
+      "one_liner": "",
+      "narrative": "",
+      "verification_result": "",
+      "duration": "",
+      "completed_at": null,
+      "blocker_discovered": false,
+      "deviations": "",
+      "known_issues": "",
+      "key_files": [],
+      "key_decisions": [],
+      "full_summary_md": "",
+      "description": "1. git add data/Startups-Grid view.csv (fresh Airtable export from today)\n2. Verify the file has 600+ companies and correct headers\n3. Add a note to M006-ROADMAP.md: '## Status\\nSuperseded — all 4 heatmaps delivered ad-hoc during M005 close-out and post-M005 session. See M007 for cleanup.'\n4. Commit both files\n5. npm run build to verify site loads without errors\n6. Push to origin main",
+      "estimate": "10min",
+      "files": [
+        "data/Startups-Grid view.csv",
+        ".gsd/milestones/M006/M006-ROADMAP.md"
+      ],
+      "verify": "npm run build passes. git log shows commit with both files. git diff HEAD~1 confirms CSV has 600+ rows.",
+      "inputs": [
+        "data/Startups-Grid view.csv (already on disk, updated today)"
+      ],
+      "expected_output": [
+        "data/Startups-Grid view.csv committed",
+        "M006-ROADMAP.md annotated",
+        "Vercel deploy triggered"
+      ],
+      "observability_impact": "",
+      "full_plan_md": "",
+      "sequence": 0
     }
   ],
   "decisions": [
@@ -3269,6 +3594,28 @@
       "verdict": "✅ pass",
       "duration_ms": 50,
       "created_at": "2026-04-02T06:01:00.126Z"
+    },
+    {
+      "id": 96,
+      "task_id": "T01",
+      "slice_id": "S01",
+      "milestone_id": "M007",
+      "command": "npm run build",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 24000,
+      "created_at": "2026-04-02T22:34:56.325Z"
+    },
+    {
+      "id": 97,
+      "task_id": "T01",
+      "slice_id": "S01",
+      "milestone_id": "M007",
+      "command": "grep -c hardcoded colors in axis/label/tooltip context across 7 files",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 500,
+      "created_at": "2026-04-02T22:34:56.325Z"
     }
   ]
 }
