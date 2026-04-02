@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exported_at": "2026-04-02T05:56:37.419Z",
+  "exported_at": "2026-04-02T06:01:00.137Z",
   "milestones": [
     {
       "id": "M001",
@@ -2127,19 +2127,27 @@
       "milestone_id": "M005",
       "slice_id": "S04",
       "id": "T03",
-      "title": "Install PDF dependencies, capture chart snapshots, and assemble PDF export",
-      "status": "pending",
-      "one_liner": "",
-      "narrative": "",
-      "verification_result": "",
+      "title": "Installed jspdf and html-to-image, built offscreen chart capture with toPng, and assembled full PDF export with cover page, per-company text sections, chart images, and markdown rendering",
+      "status": "complete",
+      "one_liner": "Installed jspdf and html-to-image, built offscreen chart capture with toPng, and assembled full PDF export with cover page, per-company text sections, chart images, and markdown rendering",
+      "narrative": "Installed jspdf (v4.2.1) and html-to-image (v1.11.13). Built hidden offscreen chart container at 800×500px that conditionally mounts BubbleChart, QuadrantChart, PeriodicTable, and TreemapChart. Implemented captureChartImage() with 10s timeout and graceful fallback. Built handleExportPDF() with jsPDF producing A4 portrait PDF: cover page with metadata, per-company text sections with markdown rendering (headings, bold, bullets, page breaks), and chart pages with embedded PNG images. Added Export PDF button with loading spinner and error state alongside existing Copy Markdown button.",
+      "verification_result": "npm run build exits 0. All 6 task verification grep checks pass. All 5 slice-level checks pass.",
       "duration": "",
-      "completed_at": null,
+      "completed_at": "2026-04-02T06:01:00.126Z",
       "blocker_discovered": false,
-      "deviations": "",
-      "known_issues": "",
-      "key_files": [],
-      "key_decisions": [],
-      "full_summary_md": "",
+      "deviations": "Used --legacy-peer-deps for npm install due to pre-existing React 19 peer dep conflicts. Chart container renders all enabled charts simultaneously rather than one at a time.",
+      "known_issues": "None.",
+      "key_files": [
+        "components/charts/custom-report-tab.tsx",
+        "package.json",
+        "package-lock.json"
+      ],
+      "key_decisions": [
+        "Used --legacy-peer-deps for npm install due to existing React 19 peer dependency conflicts",
+        "Hidden chart container uses position:fixed + visibility:hidden to preserve D3 rendering dimensions",
+        "Lightweight markdown-to-jsPDF renderer handling headings, bold, bullets, horizontal rules, and page breaks"
+      ],
+      "full_summary_md": "---\nid: T03\nparent: S04\nmilestone: M005\nkey_files:\n  - components/charts/custom-report-tab.tsx\n  - package.json\n  - package-lock.json\nkey_decisions:\n  - Used --legacy-peer-deps for npm install due to existing React 19 peer dependency conflicts\n  - Hidden chart container uses position:fixed + visibility:hidden to preserve D3 rendering dimensions\n  - Lightweight markdown-to-jsPDF renderer handling headings, bold, bullets, horizontal rules, and page breaks\nduration: \"\"\nverification_result: passed\ncompleted_at: 2026-04-02T06:01:00.126Z\nblocker_discovered: false\n---\n\n# T03: Installed jspdf and html-to-image, built offscreen chart capture with toPng, and assembled full PDF export with cover page, per-company text sections, chart images, and markdown rendering\n\n**Installed jspdf and html-to-image, built offscreen chart capture with toPng, and assembled full PDF export with cover page, per-company text sections, chart images, and markdown rendering**\n\n## What Happened\n\nInstalled jspdf (v4.2.1) and html-to-image (v1.11.13). Built hidden offscreen chart container at 800×500px that conditionally mounts BubbleChart, QuadrantChart, PeriodicTable, and TreemapChart. Implemented captureChartImage() with 10s timeout and graceful fallback. Built handleExportPDF() with jsPDF producing A4 portrait PDF: cover page with metadata, per-company text sections with markdown rendering (headings, bold, bullets, page breaks), and chart pages with embedded PNG images. Added Export PDF button with loading spinner and error state alongside existing Copy Markdown button.\n\n## Verification\n\nnpm run build exits 0. All 6 task verification grep checks pass. All 5 slice-level checks pass.\n\n## Verification Evidence\n\n| # | Command | Exit Code | Verdict | Duration |\n|---|---------|-----------|---------|----------|\n| 1 | `npm run build` | 0 | ✅ pass | 16600ms |\n| 2 | `grep -q 'jspdf' package.json` | 0 | ✅ pass | 50ms |\n| 3 | `grep -q 'html-to-image' package.json` | 0 | ✅ pass | 50ms |\n| 4 | `grep -q 'jsPDF|jspdf' components/charts/custom-report-tab.tsx` | 0 | ✅ pass | 50ms |\n| 5 | `grep -q 'toPng|html-to-image' components/charts/custom-report-tab.tsx` | 0 | ✅ pass | 50ms |\n| 6 | `grep -q 'addPage|splitTextToSize' components/charts/custom-report-tab.tsx` | 0 | ✅ pass | 50ms |\n\n\n## Deviations\n\nUsed --legacy-peer-deps for npm install due to pre-existing React 19 peer dep conflicts. Chart container renders all enabled charts simultaneously rather than one at a time.\n\n## Known Issues\n\nNone.\n\n## Files Created/Modified\n\n- `components/charts/custom-report-tab.tsx`\n- `package.json`\n- `package-lock.json`\n",
       "description": "## Description\n\nInstall `jspdf` and `html-to-image`, build a hidden offscreen chart rendering container that mounts the 4 chart components at fixed dimensions, capture them as PNG via `toPng()`, and compose the full PDF document with jsPDF. The PDF includes: a cover page with report metadata (title, date, company count), per-company sections with text content (profile, scores, AI narrative), and chart images. Text sections use jsPDF's text API with a lightweight markdown parser for headings/bold/bullets. Chart images are embedded at fixed width.\n\n## Failure Modes\n\n| Dependency | On error | On timeout | On malformed response |\n|------------|----------|-----------|----------------------|\n| `html-to-image toPng()` | Log warning, skip chart image, continue with text-only section | 10s timeout per chart capture | Show \"Chart capture failed\" placeholder in PDF |\n| `jsPDF` | Surface error to user (\"PDF generation failed\"), preserve markdown preview as fallback | N/A (synchronous) | N/A |\n\n## Negative Tests\n\n- **Error paths**: Chart container not rendered (charts disabled) — skip chart capture entirely, produce text-only PDF\n- **Boundary conditions**: 0 charts selected (no capture needed), single company (minimal PDF), 10+ companies (multi-page PDF with correct page breaks)\n\n## Steps\n\n1. Install dependencies: `npm install jspdf html-to-image` (no `--legacy-peer-deps` needed — neither has React peer deps). Verify both appear in `package.json`.\n2. In `custom-report-tab.tsx`, build a hidden chart render container. Use a div with `position: fixed; left: -9999px; visibility: hidden; width: 800px; height: 500px`. Conditionally mount the selected chart components (`BubbleChart`, `QuadrantChart`, `PeriodicTable`, `TreemapChart`) into this container, passing the report's selected companies as `data` and shortlisted IDs. Important: do NOT use `display: none` — charts need real dimensions to render. Use refs to access each chart's container div.\n3. Build `captureCharts()` async function: for each enabled chart, call `toPng(chartContainerRef.current, { pixelRatio: 2 })` from `html-to-image`. Store results as `Map<string, string>` (chart ID → data URL). Handle capture errors per-chart (log warning, continue). Add a brief `await new Promise(r => setTimeout(r, 500))` delay between chart mounts to ensure D3 useEffect has run.\n4. Build `generatePDF()` function using jsPDF:\n   - Create `new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })`\n   - Cover page: title (\"ThreadMoat Custom Report\"), date, company count, section summary\n   - Per-company pages: company name header, profile text, score breakdown, AI narrative text (if included). Use `doc.splitTextToSize(text, pageWidth - margins)` for line wrapping. Track Y position and call `doc.addPage()` when approaching page bottom.\n   - Chart pages: for each captured chart, `doc.addImage(dataUrl, 'PNG', x, y, width, height)`. One chart per half-page or one per page depending on content.\n   - Build a lightweight markdown-to-jsPDF renderer that handles: `## ` headings (larger bold font), `**bold**` (bold font), `- ` bullet items (indented with bullet char), and plain paragraphs. Strip other markdown.\n   - Call `doc.save('threadmoat-report.pdf')` to trigger download.\n5. Add an \"Export PDF\" button next to the existing Copy button in the preview pane. Show a loading spinner during chart capture + PDF generation. Disable button during generation.\n6. Verify `npm run build` passes and dependencies are in package.json.\n\n## Must-Haves\n\n- [ ] `jspdf` and `html-to-image` installed in package.json\n- [ ] Hidden offscreen container renders charts at fixed 800×500 dimensions\n- [ ] Chart snapshots captured via `toPng()` with `pixelRatio: 2`\n- [ ] PDF generated with cover page, per-company text sections, chart images\n- [ ] Basic markdown rendering in PDF (headings, bold, bullets)\n- [ ] Page overflow handled with `splitTextToSize` and `addPage()`\n- [ ] Export PDF button in preview pane with loading state\n- [ ] Chart capture errors handled gracefully (text-only fallback)\n- [ ] Build passes with zero type errors\n\n## Verification\n\n- `npm run build` exits 0\n- `grep -q 'jspdf' package.json`\n- `grep -q 'html-to-image' package.json`\n- `grep -q 'jsPDF\\|jspdf' components/charts/custom-report-tab.tsx`\n- `grep -q 'toPng\\|html-to-image' components/charts/custom-report-tab.tsx`\n- `grep -q 'addPage\\|splitTextToSize' components/charts/custom-report-tab.tsx`\n\n## Observability Impact\n\n- Signals added: Console warnings for failed chart captures with chart ID; PDF generation timing logged to console\n- Failure state exposed: Per-chart capture status in component state; \"Export PDF\" button error state if generation fails\n\n## Inputs\n\n- `components/charts/custom-report-tab.tsx` — T02 output with report composition and markdown preview\n- `components/charts/bubble-chart.tsx` — BubbleChart component (props: `data: Company[], shortlistedIds?: Set<string>`)\n- `components/charts/quadrant-chart.tsx` — QuadrantChart component (props: `data: Company[], shortlistedIds?: Set<string>`)\n- `components/charts/periodic-table.tsx` — PeriodicTable component (props: `data: Company[], shortlistedIds?: Set<string>`)\n- `components/charts/treemap-chart.tsx` — TreemapChart component (props: `data: Company[], shortlistedIds?: Set<string>`)\n- `package.json` — to add jspdf and html-to-image dependencies\n\n## Expected Output\n\n- `components/charts/custom-report-tab.tsx` — extended with chart capture container, PDF generation, and export button\n- `package.json` — updated with jspdf and html-to-image dependencies\n- `package-lock.json` — updated lock file",
       "estimate": "2h",
       "files": [
@@ -3183,6 +3191,72 @@
       "verdict": "✅ pass",
       "duration_ms": 10,
       "created_at": "2026-04-02T05:56:37.408Z"
+    },
+    {
+      "id": 90,
+      "task_id": "T03",
+      "slice_id": "S04",
+      "milestone_id": "M005",
+      "command": "npm run build",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 16600,
+      "created_at": "2026-04-02T06:01:00.126Z"
+    },
+    {
+      "id": 91,
+      "task_id": "T03",
+      "slice_id": "S04",
+      "milestone_id": "M005",
+      "command": "grep -q 'jspdf' package.json",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 50,
+      "created_at": "2026-04-02T06:01:00.126Z"
+    },
+    {
+      "id": 92,
+      "task_id": "T03",
+      "slice_id": "S04",
+      "milestone_id": "M005",
+      "command": "grep -q 'html-to-image' package.json",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 50,
+      "created_at": "2026-04-02T06:01:00.126Z"
+    },
+    {
+      "id": 93,
+      "task_id": "T03",
+      "slice_id": "S04",
+      "milestone_id": "M005",
+      "command": "grep -q 'jsPDF|jspdf' components/charts/custom-report-tab.tsx",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 50,
+      "created_at": "2026-04-02T06:01:00.126Z"
+    },
+    {
+      "id": 94,
+      "task_id": "T03",
+      "slice_id": "S04",
+      "milestone_id": "M005",
+      "command": "grep -q 'toPng|html-to-image' components/charts/custom-report-tab.tsx",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 50,
+      "created_at": "2026-04-02T06:01:00.126Z"
+    },
+    {
+      "id": 95,
+      "task_id": "T03",
+      "slice_id": "S04",
+      "milestone_id": "M005",
+      "command": "grep -q 'addPage|splitTextToSize' components/charts/custom-report-tab.tsx",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 50,
+      "created_at": "2026-04-02T06:01:00.126Z"
     }
   ]
 }

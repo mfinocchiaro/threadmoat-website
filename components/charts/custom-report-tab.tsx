@@ -22,7 +22,14 @@ import {
   Check,
   Loader2,
   AlertCircle,
+  Download,
 } from "lucide-react"
+import { jsPDF } from "jspdf"
+import { toPng } from "html-to-image"
+import { BubbleChart } from "@/components/charts/bubble-chart"
+import { QuadrantChart } from "@/components/charts/quadrant-chart"
+import { PeriodicTable } from "@/components/charts/periodic-table"
+import { TreemapChart } from "@/components/charts/treemap-chart"
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -270,6 +277,164 @@ function AINarrativePreview({ text }: { text: string }) {
   )
 }
 
+// ─── PDF Generation Utilities ────────────────────────────────────────────────
+
+const PDF_PAGE_WIDTH = 210 // A4 mm
+const PDF_PAGE_HEIGHT = 297
+const PDF_MARGIN = 15
+const PDF_CONTENT_WIDTH = PDF_PAGE_WIDTH - 2 * PDF_MARGIN
+const PDF_BOTTOM_LIMIT = PDF_PAGE_HEIGHT - PDF_MARGIN - 10
+
+type ChartKey = "bubbleChart" | "quadrantChart" | "periodicTable" | "treemap"
+
+const CHART_LABELS: Record<ChartKey, string> = {
+  bubbleChart: "Bubble Chart – Funding vs. Revenue",
+  quadrantChart: "Quadrant Chart – Opportunity vs. Moat",
+  periodicTable: "Periodic Table – Category Grid",
+  treemap: "Treemap – Funding by Segment",
+}
+
+/** Lightweight markdown→jsPDF renderer. Handles ## headings, **bold**, - bullets, plain text. */
+function renderMarkdownToPDF(
+  doc: jsPDF,
+  text: string,
+  startY: number,
+  maxWidth: number,
+  leftX: number,
+): number {
+  let y = startY
+  const lines = text.split("\n")
+  const lineHeight = 5
+
+  for (const raw of lines) {
+    const line = raw.trimEnd()
+
+    // Empty line — add small spacing
+    if (!line) {
+      y += lineHeight * 0.6
+      if (y > PDF_BOTTOM_LIMIT) {
+        doc.addPage()
+        y = PDF_MARGIN
+      }
+      continue
+    }
+
+    // Heading: ## Title
+    if (line.startsWith("## ")) {
+      const heading = line.replace(/^## /, "")
+      y += lineHeight * 0.5
+      doc.setFont("helvetica", "bold")
+      doc.setFontSize(12)
+      const wrapped = doc.splitTextToSize(heading, maxWidth)
+      for (const wl of wrapped) {
+        if (y > PDF_BOTTOM_LIMIT) {
+          doc.addPage()
+          y = PDF_MARGIN
+        }
+        doc.text(wl, leftX, y)
+        y += lineHeight + 1
+      }
+      doc.setFont("helvetica", "normal")
+      doc.setFontSize(10)
+      continue
+    }
+
+    // H1: # Title
+    if (line.startsWith("# ")) {
+      const heading = line.replace(/^# /, "")
+      y += lineHeight * 0.5
+      doc.setFont("helvetica", "bold")
+      doc.setFontSize(14)
+      const wrapped = doc.splitTextToSize(heading, maxWidth)
+      for (const wl of wrapped) {
+        if (y > PDF_BOTTOM_LIMIT) {
+          doc.addPage()
+          y = PDF_MARGIN
+        }
+        doc.text(wl, leftX, y)
+        y += lineHeight + 2
+      }
+      doc.setFont("helvetica", "normal")
+      doc.setFontSize(10)
+      continue
+    }
+
+    // Horizontal rule
+    if (line.startsWith("---")) {
+      y += 2
+      if (y > PDF_BOTTOM_LIMIT) {
+        doc.addPage()
+        y = PDF_MARGIN
+      }
+      doc.setDrawColor(180, 180, 180)
+      doc.line(leftX, y, leftX + maxWidth, y)
+      y += 4
+      continue
+    }
+
+    // Bullet item: - text
+    if (line.startsWith("- ")) {
+      const bulletText = line.slice(2)
+      const cleaned = bulletText.replace(/\*\*(.*?)\*\*/g, "$1")
+      const wrapped = doc.splitTextToSize(cleaned, maxWidth - 8)
+      for (let i = 0; i < wrapped.length; i++) {
+        if (y > PDF_BOTTOM_LIMIT) {
+          doc.addPage()
+          y = PDF_MARGIN
+        }
+        if (i === 0) {
+          doc.text("•", leftX + 2, y)
+        }
+        doc.text(wrapped[i], leftX + 8, y)
+        y += lineHeight
+      }
+      continue
+    }
+
+    // Plain or bold text — strip markdown bold markers for simplicity
+    const cleaned = line.replace(/\*\*(.*?)\*\*/g, "$1")
+    // Check for bold prefix like **Strengths:**
+    const hasBold = /^\*\*/.test(line)
+    if (hasBold) {
+      doc.setFont("helvetica", "bold")
+    }
+    const wrapped = doc.splitTextToSize(cleaned, maxWidth)
+    for (const wl of wrapped) {
+      if (y > PDF_BOTTOM_LIMIT) {
+        doc.addPage()
+        y = PDF_MARGIN
+      }
+      doc.text(wl, leftX, y)
+      y += lineHeight
+    }
+    if (hasBold) {
+      doc.setFont("helvetica", "normal")
+    }
+  }
+
+  return y
+}
+
+/** Capture a single chart container to a PNG data URL with timeout handling. */
+async function captureChartImage(
+  container: HTMLElement,
+  chartId: string,
+  timeoutMs: number = 10000,
+): Promise<string | null> {
+  try {
+    const result = await Promise.race([
+      toPng(container, { pixelRatio: 2, cacheBust: true }),
+      new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error("Chart capture timeout")), timeoutMs),
+      ),
+    ])
+    return result
+  } catch (err) {
+    console.warn(`[custom-report] Chart capture failed for ${chartId}:`, err)
+    return null
+  }
+}
+
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export function CustomReportTab({ data }: CustomReportTabProps) {
@@ -296,6 +461,15 @@ export function CustomReportTab({ data }: CustomReportTabProps) {
   const [showRateLimitConfirm, setShowRateLimitConfirm] = useState(false)
   const [copied, setCopied] = useState(false)
   const abortRef = useRef<AbortController | null>(null)
+
+  // Chart capture refs and PDF state
+  const chartContainerRef = useRef<HTMLDivElement>(null)
+  const bubbleChartRef = useRef<HTMLDivElement>(null)
+  const quadrantChartRef = useRef<HTMLDivElement>(null)
+  const periodicTableRef = useRef<HTMLDivElement>(null)
+  const treemapChartRef = useRef<HTMLDivElement>(null)
+  const [isExportingPDF, setIsExportingPDF] = useState(false)
+  const [pdfError, setPdfError] = useState<string | null>(null)
 
   // Pre-populate from shortlist on mount / when shortlist changes
   useEffect(() => {
@@ -515,6 +689,152 @@ export function CustomReportTab({ data }: CustomReportTabProps) {
     }
   }, [selectedCompanies, sections, narrativeCache])
 
+  // ─── Chart capture & PDF generation ──────────────────────────────────────
+
+  const hasAnyChart = sections.bubbleChart || sections.quadrantChart || sections.periodicTable || sections.treemap
+
+  const captureCharts = useCallback(async (): Promise<Map<string, string>> => {
+    const captures = new Map<string, string>()
+    if (!hasAnyChart) return captures
+
+    const chartRefs: [ChartKey, React.RefObject<HTMLDivElement | null>][] = [
+      ["bubbleChart", bubbleChartRef],
+      ["quadrantChart", quadrantChartRef],
+      ["periodicTable", periodicTableRef],
+      ["treemap", treemapChartRef],
+    ]
+
+    // Wait for D3 charts to render after mount
+    await new Promise((r) => setTimeout(r, 800))
+
+    for (const [chartId, ref] of chartRefs) {
+      if (!sections[chartId] || !ref.current) continue
+      const dataUrl = await captureChartImage(ref.current, chartId)
+      if (dataUrl) {
+        captures.set(chartId, dataUrl)
+      }
+      // Brief delay between captures for D3 stability
+      await new Promise((r) => setTimeout(r, 300))
+    }
+
+    return captures
+  }, [hasAnyChart, sections])
+
+  const handleExportPDF = useCallback(async () => {
+    setIsExportingPDF(true)
+    setPdfError(null)
+    const startTime = performance.now()
+
+    try {
+      // 1. Capture chart snapshots if any charts are selected
+      const chartImages = await captureCharts()
+
+      // 2. Build the PDF
+      const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" })
+      let y = PDF_MARGIN
+
+      // ─── Cover page ───────────────────────────────────────────────
+      doc.setFont("helvetica", "bold")
+      doc.setFontSize(24)
+      doc.text("ThreadMoat Custom Report", PDF_MARGIN, y + 20)
+
+      doc.setFont("helvetica", "normal")
+      doc.setFontSize(11)
+      y += 32
+      doc.text(`Generated: ${new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}`, PDF_MARGIN, y)
+      y += 7
+      doc.text(`Companies: ${selectedCompanies.length}`, PDF_MARGIN, y)
+      y += 7
+
+      // Section summary
+      const activeSections = SECTION_OPTIONS.filter((s) => sections[s.key]).map((s) => s.label)
+      doc.text(`Sections: ${activeSections.join(", ")}`, PDF_MARGIN, y)
+      y += 7
+
+      if (chartImages.size > 0) {
+        doc.text(`Charts captured: ${chartImages.size}`, PDF_MARGIN, y)
+        y += 7
+      }
+
+      // Separator
+      y += 5
+      doc.setDrawColor(100, 100, 100)
+      doc.line(PDF_MARGIN, y, PDF_MARGIN + PDF_CONTENT_WIDTH, y)
+
+      // ─── Per-company sections ─────────────────────────────────────
+      for (const company of selectedCompanies) {
+        doc.addPage()
+        y = PDF_MARGIN
+
+        // Company markdown
+        const companySections: string[] = []
+
+        if (sections.companyProfile) {
+          companySections.push(composeCompanyProfile(company))
+        } else {
+          companySections.push(`# ${company.name}`)
+        }
+
+        if (sections.scoreBreakdown) {
+          companySections.push(composeScoreBreakdown(company))
+        }
+
+        if (sections.aiAnalysis) {
+          const cached = narrativeCache.get(company.id)
+          if (cached?.status === "complete" && cached.text) {
+            companySections.push(`## AI Analysis\n\n${cached.text}`)
+          } else if (cached?.status === "rate-limited") {
+            companySections.push(`## AI Analysis\n\n*Rate limit reached — analysis unavailable.*`)
+          } else if (cached?.status === "error") {
+            companySections.push(`## AI Analysis\n\n*AI analysis unavailable for this company.*`)
+          }
+        }
+
+        const companyMarkdown = companySections.join("\n\n")
+        y = renderMarkdownToPDF(doc, companyMarkdown, y, PDF_CONTENT_WIDTH, PDF_MARGIN)
+      }
+
+      // ─── Chart pages ──────────────────────────────────────────────
+      if (chartImages.size > 0) {
+        for (const [chartId, dataUrl] of chartImages) {
+          doc.addPage()
+          y = PDF_MARGIN
+
+          // Chart title
+          const label = CHART_LABELS[chartId as ChartKey] || chartId
+          doc.setFont("helvetica", "bold")
+          doc.setFontSize(14)
+          doc.text(label, PDF_MARGIN, y)
+          y += 10
+
+          // Embed chart image — fit to page width
+          const imgWidth = PDF_CONTENT_WIDTH
+          const imgHeight = imgWidth * (500 / 800) // maintain 800:500 aspect ratio
+          if (y + imgHeight > PDF_BOTTOM_LIMIT) {
+            doc.addPage()
+            y = PDF_MARGIN
+          }
+          doc.addImage(dataUrl, "PNG", PDF_MARGIN, y, imgWidth, imgHeight)
+          y += imgHeight + 5
+
+          doc.setFont("helvetica", "normal")
+          doc.setFontSize(10)
+        }
+      }
+
+      // Save
+      doc.save("threadmoat-report.pdf")
+
+      const elapsed = Math.round(performance.now() - startTime)
+      console.log(`[custom-report] PDF generated in ${elapsed}ms (${selectedCompanies.length} companies, ${chartImages.size} charts)`)
+    } catch (err) {
+      console.error("[custom-report] PDF generation failed:", err)
+      setPdfError("PDF generation failed. Use Copy Markdown as a fallback.")
+    } finally {
+      setIsExportingPDF(false)
+    }
+  }, [selectedCompanies, sections, narrativeCache, captureCharts])
+
   // Composed markdown for preview
   const composedMarkdown = useMemo(
     () => composeReport(selectedCompanies, sections, narrativeCache),
@@ -549,25 +869,54 @@ export function CustomReportTab({ data }: CustomReportTabProps) {
               {selectedCompanies.length} companies · {activeSectionCount} sections
             </span>
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            className="gap-1.5 text-xs"
-            onClick={handleCopyReport}
-          >
-            {copied ? (
-              <>
-                <Check className="h-3.5 w-3.5 text-emerald-400" />
-                Copied
-              </>
-            ) : (
-              <>
-                <Copy className="h-3.5 w-3.5" />
-                Copy Markdown
-              </>
-            )}
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5 text-xs"
+              onClick={handleCopyReport}
+            >
+              {copied ? (
+                <>
+                  <Check className="h-3.5 w-3.5 text-emerald-400" />
+                  Copied
+                </>
+              ) : (
+                <>
+                  <Copy className="h-3.5 w-3.5" />
+                  Copy Markdown
+                </>
+              )}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5 text-xs"
+              onClick={handleExportPDF}
+              disabled={isExportingPDF}
+            >
+              {isExportingPDF ? (
+                <>
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  Generating PDF…
+                </>
+              ) : (
+                <>
+                  <Download className="h-3.5 w-3.5" />
+                  Export PDF
+                </>
+              )}
+            </Button>
+          </div>
         </div>
+
+        {/* PDF error message */}
+        {pdfError && (
+          <div className="flex items-center gap-2 rounded-lg border border-red-800/40 bg-red-950/20 px-3 py-2">
+            <AlertCircle className="h-3.5 w-3.5 text-red-400 shrink-0" />
+            <span className="text-xs text-red-400">{pdfError}</span>
+          </div>
+        )}
 
         {/* Per-company AI status badges */}
         {sections.aiAnalysis && (
@@ -751,6 +1100,44 @@ export function CustomReportTab({ data }: CustomReportTabProps) {
             ))}
           </div>
         </div>
+
+        {/* Hidden offscreen chart container for PDF capture */}
+        {hasAnyChart && (
+          <div
+            ref={chartContainerRef}
+            style={{
+              position: "fixed",
+              left: "-9999px",
+              top: 0,
+              visibility: "hidden",
+              width: "800px",
+              height: "500px",
+              overflow: "hidden",
+              background: "#09090b", // dark bg matching theme
+            }}
+          >
+            {sections.bubbleChart && (
+              <div ref={bubbleChartRef} style={{ width: 800, height: 500 }}>
+                <BubbleChart data={selectedCompanies} shortlistedIds={selectedIds} />
+              </div>
+            )}
+            {sections.quadrantChart && (
+              <div ref={quadrantChartRef} style={{ width: 800, height: 500 }}>
+                <QuadrantChart data={selectedCompanies} shortlistedIds={selectedIds} />
+              </div>
+            )}
+            {sections.periodicTable && (
+              <div ref={periodicTableRef} style={{ width: 800, height: 500 }}>
+                <PeriodicTable data={selectedCompanies} shortlistedIds={selectedIds} />
+              </div>
+            )}
+            {sections.treemap && (
+              <div ref={treemapChartRef} style={{ width: 800, height: 500 }}>
+                <TreemapChart data={selectedCompanies} shortlistedIds={selectedIds} />
+              </div>
+            )}
+          </div>
+        )}
       </div>
     )
   }
