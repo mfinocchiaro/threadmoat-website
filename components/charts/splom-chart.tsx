@@ -58,6 +58,14 @@ export function SplomChart({ data, className }: SplomChartProps) {
     svg.selectAll("*").remove()
     svg.attr("width", width).attr("height", height)
 
+    // Theme-aware colors from CSS custom properties
+    const rootStyle = getComputedStyle(svgRef.current)
+    const axisColor = rootStyle.getPropertyValue('--muted-foreground').trim() || '148 163 184'
+    const borderColor = rootStyle.getPropertyValue('--border').trim() || '51 65 85'
+    const popoverBg = rootStyle.getPropertyValue('--popover').trim() || '15 23 42'
+    const popoverFg = rootStyle.getPropertyValue('--popover-foreground').trim() || '241 245 249'
+    const mutedBg = rootStyle.getPropertyValue('--muted').trim() || '30 41 59'
+
     const investmentCategories = Array.from(new Set(data.map((d) => d.investmentList || "Other")))
     const colorScale = d3.scaleOrdinal(COLORS).domain(investmentCategories)
 
@@ -83,12 +91,12 @@ export function SplomChart({ data, className }: SplomChartProps) {
       .append("div")
       .attr("class", "splom-tooltip")
       .style("position", "fixed")
-      .style("background", "rgba(15,23,42,0.95)")
-      .style("border", "1px solid #334155")
+      .style("background", `hsl(${popoverBg})`)
+      .style("border", `1px solid hsl(${borderColor})`)
       .style("border-radius", "6px")
       .style("padding", "8px 12px")
       .style("font-size", "12px")
-      .style("color", "#f1f5f9")
+      .style("color", `hsl(${popoverFg})`)
       .style("pointer-events", "none")
       .style("opacity", "0")
       .style("z-index", "9999")
@@ -104,8 +112,8 @@ export function SplomChart({ data, className }: SplomChartProps) {
 
     cell
       .append("rect")
-      .attr("fill", "rgba(30,41,59,0.4)")
-      .attr("stroke", "#334155")
+      .attr("fill", `hsl(${mutedBg} / 0.4)`)
+      .attr("stroke", `hsl(${borderColor})`)
       .attr("x", padding / 2)
       .attr("y", padding / 2)
       .attr("width", size - padding)
@@ -138,7 +146,7 @@ export function SplomChart({ data, className }: SplomChartProps) {
           .attr("width", (b) => Math.max(0, histScale(b.x1 ?? 0) - histScale(b.x0 ?? 0) - 1))
           .attr("y", (b) => histY(b.length))
           .attr("height", (b) => size - padding / 2 - histY(b.length))
-          .attr("fill", "#3b82f6")
+          .attr("fill", "hsl(var(--primary))")
           .attr("fill-opacity", 0.7)
       })
 
@@ -179,7 +187,7 @@ export function SplomChart({ data, className }: SplomChartProps) {
       .attr("class", "col-label")
       .attr("transform", (_, i) => `translate(${i * size + size / 2},-8)`)
       .attr("text-anchor", "middle")
-      .attr("fill", "#94a3b8")
+      .attr("fill", `hsl(${axisColor})`)
       .attr("font-size", 9)
       .attr("font-weight", "600")
       .text((d) => d.name)
@@ -191,7 +199,7 @@ export function SplomChart({ data, className }: SplomChartProps) {
       .attr("class", "row-label")
       .attr("transform", (_, j) => `translate(-8,${j * size + size / 2}) rotate(-90)`)
       .attr("text-anchor", "middle")
-      .attr("fill", "#94a3b8")
+      .attr("fill", `hsl(${axisColor})`)
       .attr("font-size", 9)
       .attr("font-weight", "600")
       .text((d) => d.name)

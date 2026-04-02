@@ -60,6 +60,13 @@ export function SlopeChart({ data, className }: SlopeChartProps) {
     const height = containerRef.current.clientHeight
     if (!width || !height) return
 
+    // Theme-aware colors from CSS custom properties
+    const rootStyle = getComputedStyle(svgRef.current)
+    const axisColor = rootStyle.getPropertyValue('--muted-foreground').trim() || '148 163 184'
+    const labelColor = rootStyle.getPropertyValue('--foreground').trim() || '241 245 249'
+    const borderColor = rootStyle.getPropertyValue('--border').trim() || '51 65 85'
+    const mutedColor = rootStyle.getPropertyValue('--muted').trim() || '203 213 225'
+
     const margin = { top: 70, right: 160, bottom: 40, left: 160 }
     const innerWidth = width - margin.left - margin.right
     const innerHeight = height - margin.top - margin.bottom
@@ -78,13 +85,13 @@ export function SlopeChart({ data, className }: SlopeChartProps) {
     svg.attr("width", width).attr("height", height)
 
     if (validData.length === 0) {
-      svg.append("text").attr("x", width / 2).attr("y", height / 2).attr("text-anchor", "middle").attr("fill", "#94a3b8").text("No data available for selected metrics")
+      svg.append("text").attr("x", width / 2).attr("y", height / 2).attr("text-anchor", "middle").attr("fill", `hsl(${axisColor})`).text("No data available for selected metrics")
       return
     }
 
     // Title
-    svg.append("text").attr("x", width / 2).attr("y", 28).attr("text-anchor", "middle").attr("fill", "#f1f5f9").attr("font-size", "16px").attr("font-weight", "600").text(`${LABELS[leftMetric]} → ${LABELS[rightMetric]}`)
-    svg.append("text").attr("x", width / 2).attr("y", 48).attr("text-anchor", "middle").attr("fill", "#94a3b8").attr("font-size", "12px").text(`Top ${validData.length} companies by ${LABELS[rightMetric]}`)
+    svg.append("text").attr("x", width / 2).attr("y", 28).attr("text-anchor", "middle").attr("fill", `hsl(${labelColor})`).attr("font-size", "16px").attr("font-weight", "600").text(`${LABELS[leftMetric]} → ${LABELS[rightMetric]}`)
+    svg.append("text").attr("x", width / 2).attr("y", 48).attr("text-anchor", "middle").attr("fill", `hsl(${axisColor})`).attr("font-size", "12px").text(`Top ${validData.length} companies by ${LABELS[rightMetric]}`)
 
     const leftScale = d3.scaleLinear().domain([0, (d3.max(validData, (d) => d[leftMetric] as number) ?? 1) * 1.1]).range([innerHeight, 0])
     const rightScale = d3.scaleLinear().domain([0, (d3.max(validData, (d) => d[rightMetric] as number) ?? 1) * 1.1]).range([innerHeight, 0])
@@ -93,16 +100,16 @@ export function SlopeChart({ data, className }: SlopeChartProps) {
 
     // Grid
     g.append("g").call(d3.axisLeft(leftScale).tickSize(-innerWidth).tickFormat(() => ""))
-      .selectAll("line").attr("stroke", "#334155").attr("stroke-dasharray", "2,2")
+      .selectAll("line").attr("stroke", `hsl(${borderColor})`).attr("stroke-dasharray", "2,2")
     g.select(".domain").remove()
 
     // Left axis
-    g.append("g").call(d3.axisLeft(leftScale).tickFormat((d) => formatVal(d as number, leftMetric))).selectAll("text").attr("fill", "#94a3b8").style("font-size", "10px")
-    g.append("text").attr("x", -margin.left / 2).attr("y", -20).attr("text-anchor", "middle").attr("fill", "#f1f5f9").attr("font-size", "13px").attr("font-weight", "600").text(LABELS[leftMetric])
+    g.append("g").call(d3.axisLeft(leftScale).tickFormat((d) => formatVal(d as number, leftMetric))).selectAll("text").attr("fill", `hsl(${axisColor})`).style("font-size", "10px")
+    g.append("text").attr("x", -margin.left / 2).attr("y", -20).attr("text-anchor", "middle").attr("fill", `hsl(${labelColor})`).attr("font-size", "13px").attr("font-weight", "600").text(LABELS[leftMetric])
 
     // Right axis
-    g.append("g").attr("transform", `translate(${innerWidth},0)`).call(d3.axisRight(rightScale).tickFormat((d) => formatVal(d as number, rightMetric))).selectAll("text").attr("fill", "#94a3b8").style("font-size", "10px")
-    g.append("text").attr("x", innerWidth + margin.right / 2).attr("y", -20).attr("text-anchor", "middle").attr("fill", "#f1f5f9").attr("font-size", "13px").attr("font-weight", "600").text(LABELS[rightMetric])
+    g.append("g").attr("transform", `translate(${innerWidth},0)`).call(d3.axisRight(rightScale).tickFormat((d) => formatVal(d as number, rightMetric))).selectAll("text").attr("fill", `hsl(${axisColor})`).style("font-size", "10px")
+    g.append("text").attr("x", innerWidth + margin.right / 2).attr("y", -20).attr("text-anchor", "middle").attr("fill", `hsl(${labelColor})`).attr("font-size", "13px").attr("font-weight", "600").text(LABELS[rightMetric])
 
     // Draw slope lines
     const lines = g.selectAll<SVGLineElement, Company>(".slope-line")
@@ -169,7 +176,7 @@ export function SlopeChart({ data, className }: SlopeChartProps) {
         .attr("y", (d) => leftScale(d[leftMetric] as number))
         .attr("dy", "0.35em")
         .attr("text-anchor", "end")
-        .attr("fill", "#cbd5e1")
+        .attr("fill", `hsl(${axisColor})`)
         .attr("font-size", "10px")
         .text((d) => d.name.length > 15 ? d.name.slice(0, 13) + "…" : d.name)
 
@@ -181,7 +188,7 @@ export function SlopeChart({ data, className }: SlopeChartProps) {
         .attr("y", (d) => rightScale(d[rightMetric] as number))
         .attr("dy", "0.35em")
         .attr("text-anchor", "start")
-        .attr("fill", "#cbd5e1")
+        .attr("fill", `hsl(${axisColor})`)
         .attr("font-size", "10px")
         .text((d) => d.name.length > 15 ? d.name.slice(0, 13) + "…" : d.name)
     }
@@ -213,7 +220,7 @@ export function SlopeChart({ data, className }: SlopeChartProps) {
       </div>
       <div ref={containerRef} className="flex-1 w-full min-h-0 relative">
         <svg ref={svgRef} className="w-full h-full" />
-        <div ref={tooltipRef} style={{ position: "fixed", visibility: "hidden", background: "#1e293b", border: "1px solid #334155", borderRadius: "6px", padding: "8px 12px", fontSize: "12px", color: "#f1f5f9", pointerEvents: "none", zIndex: 9999 }} />
+        <div ref={tooltipRef} className="fixed invisible pointer-events-none z-[9999] bg-popover text-popover-foreground border border-border rounded-md px-3 py-2 text-xs shadow-xl" />
       </div>
     </Card>
   )

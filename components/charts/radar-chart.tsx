@@ -204,18 +204,7 @@ export function RadarChart({ data, className }: RadarChartProps) {
         )}
         <div
           ref={tooltipRef}
-          style={{
-            position: "fixed",
-            visibility: "hidden",
-            background: "#1e293b",
-            border: "1px solid #334155",
-            borderRadius: "6px",
-            padding: "8px 12px",
-            fontSize: "11px",
-            color: "#f1f5f9",
-            pointerEvents: "none",
-            zIndex: 9999,
-          }}
+          className="fixed invisible pointer-events-none z-[9999] bg-popover text-popover-foreground border border-border rounded-md px-3 py-2 text-xs shadow-xl"
         />
       </div>
     </Card>

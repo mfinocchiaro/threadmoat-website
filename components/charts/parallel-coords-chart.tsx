@@ -60,6 +60,12 @@ export function ParallelCoordsChart({ data, className }: ParallelCoordsChartProp
     const metrics = METRIC_PRESETS[preset]
     const validData = data.filter((d) => d.name && d.weightedScore > 0)
 
+    // Theme-aware colors from CSS custom properties
+    const rootStyle = getComputedStyle(svgRef.current)
+    const axisColor = rootStyle.getPropertyValue('--muted-foreground').trim() || '148 163 184'
+    const labelColor = rootStyle.getPropertyValue('--foreground').trim() || '241 245 249'
+    const borderColor = rootStyle.getPropertyValue('--border').trim() || '51 65 85'
+
     const colorScale = (il: string) => getInvestmentColor(il)
 
     // Build y scales
@@ -85,8 +91,8 @@ export function ParallelCoordsChart({ data, className }: ParallelCoordsChartProp
     svg.attr("width", width).attr("height", height)
 
     // Title
-    svg.append("text").attr("x", width / 2).attr("y", 28).attr("text-anchor", "middle").attr("fill", "#f1f5f9").attr("font-size", "16px").attr("font-weight", "600").text("Multi-Dimensional Company Analysis")
-    svg.append("text").attr("x", width / 2).attr("y", 48).attr("text-anchor", "middle").attr("fill", "#94a3b8").attr("font-size", "12px").text(`${validData.length} companies • Drag on axes to filter`)
+    svg.append("text").attr("x", width / 2).attr("y", 28).attr("text-anchor", "middle").attr("fill", `hsl(${labelColor})`).attr("font-size", "16px").attr("font-weight", "600").text("Multi-Dimensional Company Analysis")
+    svg.append("text").attr("x", width / 2).attr("y", 48).attr("text-anchor", "middle").attr("fill", `hsl(${axisColor})`).attr("font-size", "12px").text(`${validData.length} companies • Drag on axes to filter`)
 
     const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`)
 
@@ -122,7 +128,7 @@ export function ParallelCoordsChart({ data, className }: ParallelCoordsChartProp
         tooltipRef.current.style.left = `${event.pageX + 15}px`
         tooltipRef.current.innerHTML = `
           <strong>${d.name}</strong>
-          <div style="margin-top:4px;font-size:11px;color:#94a3b8;">
+          <div style="margin-top:4px;font-size:11px;color:hsl(${axisColor})">
             Country: ${d.country || "N/A"}<br>
             Score: ${d.weightedScore.toFixed(2)}<br>
             Funding: ${formatCurrency(d.totalFunding)}<br>
@@ -159,9 +165,9 @@ export function ParallelCoordsChart({ data, className }: ParallelCoordsChartProp
       )
 
       // Style tick labels
-      axisG.selectAll("text").attr("fill", "#94a3b8").attr("font-size", "9px")
-      axisG.selectAll("line").attr("stroke", "#64748b")
-      axisG.select(".domain").attr("stroke", "#64748b")
+      axisG.selectAll("text").attr("fill", `hsl(${axisColor})`).attr("font-size", "9px")
+      axisG.selectAll("line").attr("stroke", `hsl(${borderColor})`)
+      axisG.select(".domain").attr("stroke", `hsl(${borderColor})`)
 
       // Axis label (multi-line)
       const labelLines = metric.label.split("\n")
@@ -171,7 +177,7 @@ export function ParallelCoordsChart({ data, className }: ParallelCoordsChartProp
           .append("text")
           .attr("y", i * 14)
           .attr("text-anchor", "middle")
-          .attr("fill", "#f1f5f9")
+          .attr("fill", `hsl(${labelColor})`)
           .attr("font-size", "11px")
           .attr("font-weight", "600")
           .style("cursor", "pointer")
@@ -233,7 +239,7 @@ export function ParallelCoordsChart({ data, className }: ParallelCoordsChartProp
         <svg ref={svgRef} className="w-full h-full" />
         <div
           ref={tooltipRef}
-          style={{ position: "fixed", visibility: "hidden", background: "#1e293b", border: "1px solid #334155", borderRadius: "6px", padding: "8px 12px", fontSize: "12px", color: "#f1f5f9", pointerEvents: "none", zIndex: 9999 }}
+          className="fixed invisible pointer-events-none z-[9999] bg-popover text-popover-foreground border border-border rounded-md px-3 py-2 text-xs shadow-xl"
         />
       </div>
     </Card>
