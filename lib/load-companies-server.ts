@@ -107,6 +107,21 @@ export async function loadCompaniesFromCSV(): Promise<Company[]> {
   const parsed = Papa.parse(csvContent, { header: true, skipEmptyLines: true })
   const rawData = parsed.data as Record<string, string>[]
 
+  // Load heatmap enrichment data (semicolon-delimited sidecar file)
+  const enrichPath = path.join(process.cwd(), 'data', 'heatmap_enrichment.csv')
+  let enrichMap = new Map<string, Record<string, string>>()
+  try {
+    let enrichContent = await fs.readFile(enrichPath, 'utf-8')
+    if (enrichContent.charCodeAt(0) === 0xFEFF) enrichContent = enrichContent.slice(1)
+    const enrichParsed = Papa.parse(enrichContent, { header: true, skipEmptyLines: true, delimiter: ';' })
+    for (const row of enrichParsed.data as Record<string, string>[]) {
+      const name = (row['Name'] || '').trim()
+      if (name) enrichMap.set(name.toLowerCase(), row)
+    }
+  } catch {
+    // Enrichment file missing — proceed without it
+  }
+
   const validData = rawData.filter(row => {
     const name = (row['Company'] || '').trim()
     if (!name) return false
@@ -116,9 +131,12 @@ export async function loadCompaniesFromCSV(): Promise<Company[]> {
     return true
   })
 
-  return validData.map((row, i) => ({
+  return validData.map((row, i) => {
+    const companyName = row['Company'] || ''
+    const enrich = enrichMap.get(companyName.toLowerCase()) || {}
+    return {
     id: String(i + 1),
-    name: row['Company'] || '',
+    name: companyName,
     url: row['Company URL'] || '',
     hqLocation: normalizeHqLocation(row['HQ Location'] || ''),
     country: row['Country'] || '',
@@ -227,7 +245,12 @@ export async function loadCompaniesFromCSV(): Promise<Company[]> {
     flagBain: parseBool(row['Bain']),
     flagFidelity: parseBool(row['Fidelity']),
     flagBrowserBased: parseBool(row[' Browser-based'] || row['Browser-based']),
-  }))
+    // Heatmap enrichment (from sidecar CSV)
+    techIndependenceScore: parseInt(enrich['Technology Independence Score']) || 0,
+    ecosystemDependencies: (enrich['Ecosystem Dependencies'] || '').split(',').map(s => s.trim()).filter(s => s && s !== 'None'),
+    growthMomentumTier: enrich['Growth Momentum Tier'] || 'Unknown',
+    buyerPersona: enrich['Buyer Persona'] || 'Unknown',
+  }})
 }
 
 /**

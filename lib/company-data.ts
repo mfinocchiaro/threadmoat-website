@@ -101,6 +101,11 @@ export interface Company {
   flagBain: boolean
   flagFidelity: boolean
   flagBrowserBased: boolean
+  // Heatmap enrichment columns
+  techIndependenceScore: number
+  ecosystemDependencies: string[]
+  growthMomentumTier: string
+  buyerPersona: string
 }
 
 export interface Investor {

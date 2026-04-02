@@ -10,6 +10,7 @@ import {
   SlidersHorizontal, BoxSelect, Activity, MoveRight, Type,
   Link2, ScatterChart, BarChart3, RefreshCw, Users, GridIcon, FileText, Eye,
   Compass, Focus, Rocket, Building2, Layers, ChevronDown, Globe2,
+  Shield, Zap, UserCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -144,6 +145,9 @@ const ADMIN_ITEMS = [
   { href: "/dashboard/investor-stats",    icon: Users,     label: "Investor Stats" },
   { href: "/dashboard/financial-heatmap", icon: Flame,     label: "Financial Heatmap" },
   { href: "/dashboard/industry-penetration", icon: Globe2, label: "Industry Penetration" },
+  { href: "/dashboard/tech-independence", icon: Shield,    label: "Tech Independence" },
+  { href: "/dashboard/growth-momentum",   icon: Zap,       label: "Growth Momentum" },
+  { href: "/dashboard/buyer-persona",     icon: UserCircle, label: "Buyer Persona" },
   { href: "/dashboard/correlation",       icon: GridIcon,  label: "Correlation Matrix" },
   { href: "/dashboard/reports",           icon: FileText,  label: "Report Generator" },
   { href: "/dashboard/investor-views",    icon: Eye,       label: "Investor Views" },
@@ -161,6 +165,9 @@ const ADMIN_VIZ_HREFS = new Set([
   "/dashboard/investor-stats",
   "/dashboard/financial-heatmap",
   "/dashboard/industry-penetration",
+  "/dashboard/tech-independence",
+  "/dashboard/growth-momentum",
+  "/dashboard/buyer-persona",
   "/dashboard/correlation",
   "/dashboard/reports",
   "/dashboard/investor-views",
