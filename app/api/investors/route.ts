@@ -19,7 +19,7 @@ export async function GET() {
 
   try {
     // Build startup name → investment list lookup from Startups CSV
-    const startupCsvPath = path.join(process.cwd(), 'data', 'Startups-Grid view.csv')
+    const startupCsvPath = path.join(process.cwd(), 'data', 'Startups-Grid Full DB View.csv')
     let startupCsv = await fs.readFile(startupCsvPath, 'utf-8')
     if (startupCsv.charCodeAt(0) === 0xFEFF) startupCsv = startupCsv.slice(1)
     const startupParsed = Papa.parse(startupCsv, { header: true, skipEmptyLines: true })

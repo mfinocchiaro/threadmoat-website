@@ -9,7 +9,7 @@ import {
   Settings, TrendingUp, TreePine, Wind, Radar, Flame, Clock,
   SlidersHorizontal, BoxSelect, Activity, MoveRight, Type,
   Link2, ScatterChart, BarChart3, RefreshCw, Users, GridIcon, FileText, Eye,
-  Compass, Focus, Rocket, Building2, Layers, ChevronDown,
+  Compass, Focus, Rocket, Building2, Layers, ChevronDown, Globe2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -129,6 +129,7 @@ export const TAB_GROUPS: TabGroup[] = [
     items: [
       { href: "/dashboard/radar",        icon: Radar,            label: "Radar Chart" },
       { href: "/dashboard/heatmap",      icon: Flame,            label: "Heatmap" },
+      { href: "/dashboard/industry-penetration", icon: Globe2,  label: "Industry Penetration" },
       { href: "/dashboard/parallel",     icon: SlidersHorizontal, label: "Parallel Coords" },
       { href: "/dashboard/box-plot",     icon: BoxSelect,        label: "Box Plot" },
       { href: "/dashboard/distribution", icon: Activity,         label: "Distribution" },

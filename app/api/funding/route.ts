@@ -77,7 +77,7 @@ export async function GET() {
     // Load both CSVs in parallel
     const [financialContent, gridContent] = await Promise.all([
       fs.readFile(path.join(process.cwd(), 'data', 'Startups-Financial Health.csv'), 'utf-8'),
-      fs.readFile(path.join(process.cwd(), 'data', 'Startups-Grid view.csv'), 'utf-8'),
+      fs.readFile(path.join(process.cwd(), 'data', 'Startups-Grid Full DB View.csv'), 'utf-8'),
     ])
 
     const stripBOM = (s: string) => s.charCodeAt(0) === 0xFEFF ? s.slice(1) : s

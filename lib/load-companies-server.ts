@@ -96,7 +96,7 @@ function normalizeHqLocation(raw: string): string {
  * Used by both the API route and server components (homepage).
  */
 export async function loadCompaniesFromCSV(): Promise<Company[]> {
-  const csvPath = path.join(process.cwd(), 'data', 'Startups-Grid view.csv')
+  const csvPath = path.join(process.cwd(), 'data', 'Startups-Grid Full DB View.csv')
   let csvContent = await fs.readFile(csvPath, 'utf-8')
 
   // Strip BOM if present
