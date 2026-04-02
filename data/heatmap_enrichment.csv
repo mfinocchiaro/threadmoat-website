@@ -1,0 +1,741 @@
+Name;Company URL;Technology Independence Score;Ecosystem Dependencies;Growth Momentum Tier;Buyer Persona
+Quartic.ai;https://quartic.ai;55;None;Accelerating;Manufacturing / OT
+Mind Device, Inc.;https://factorian.io/;55;None;Early/Pre-revenue;Manufacturing / OT
+BuildCheck;https://buildcheck.ai/;63;None;Early/Pre-revenue;Design Engineering
+Cybeletech;https://cybeletech.com/;55;None;Early/Pre-revenue;Operations Executives
+Relay Ace;https://relayace.com/;55;None;Early/Pre-revenue;Manufacturing / OT
+explore;https://explore.de;55;None;Early/Pre-revenue;Manufacturing / OT
+PrimusAI;https://primis.ai/;60;None;Early/Pre-revenue;R&D Leadership
+DataProphet;https://dataprophet.com;55;None;Accelerating;Manufacturing / OT
+ORIS Connect;https://www.oris-connect.com/;55;None;Accelerating;Design Engineering
+Bombiix;https://bombiix.com;43;Dassault, PTC, Siemens;Early/Pre-revenue;Manufacturing / OT
+Shaper Tools;https://www.shapertools.com/;55;None;Early/Pre-revenue;Manufacturing / OT
+Uncountable;https://www.uncountable.com/;43;Dassault, PTC, Siemens;Accelerating;Quality / Inspection
+Forge Robotics;https://forge-robotics.com;55;None;Early/Pre-revenue;Manufacturing / OT
+Mohara;;50;None;Stalled;Manufacturing / OT
+Korso;https://www.korsoai.com/;43;Dassault, PTC, Siemens;Early/Pre-revenue;Manufacturing / OT
+Intenseye;https://www.intenseye.com/;55;None;High Growth;Operations Executives
+Phantasma Labs;https://www.phantasma.global/;55;None;Early/Pre-revenue;Manufacturing / OT
+polySpectra (neThing.xyz);https://nething.xyz/;65;None;Early/Pre-revenue;Simulation Teams
+Efference;https://efference.ai;55;None;Early/Pre-revenue;Manufacturing / OT
+Arena Physica;https://arena-ai.com/;49;Autodesk, Dassault, PTC, Siemens;Accelerating;Simulation Teams
+Quanscient;https://quanscient.com;55;Dassault, Siemens;Accelerating;Simulation Teams
+InUse;https://inuse.eu;40;None;Accelerating;Manufacturing / OT
+Zelos Cloud;https://zeloscloud.io;55;None;Early/Pre-revenue;Simulation Teams
+FVMat;https://fvmat.com/;55;Dassault, Siemens;Early/Pre-revenue;Simulation Teams
+Field AI;https://www.fieldai.com;55;None;Accelerating;Manufacturing / OT
+StatStream;https://www.statstream.ai/;55;None;Early/Pre-revenue;Operations Executives
+United Manufacturing Hub;https://www.umh.app;55;None;Early/Pre-revenue;Manufacturing / OT
+KronosAI;https://kronosai.co/;55;None;Early/Pre-revenue;Simulation Teams
+Godela.ai;https://godela.ai;55;Dassault, Siemens;Early/Pre-revenue;Simulation Teams
+Qonic;https://www.qonic.com/;55;None;Early/Pre-revenue;Design Engineering
+PhysicsX;https://physicsx.ai;55;None;Accelerating;Simulation Teams
+Dive CAE;https://divecae.com;63;None;Accelerating;Simulation Teams
+BobYard;https://www.bobyard.com/;63;None;Early/Pre-revenue;Design Engineering
+MorphoAI;https://morpho.ai;40;None;Early/Pre-revenue;Design Engineering
+V3D Printing;https://www.v3d-printing.com/;48;None;Early/Pre-revenue;Manufacturing / OT
+TwinMo;https://www.twinmo.ai/;65;None;Early/Pre-revenue;Simulation Teams
+BetterFutures;https://betterfutures.ai/;55;None;Early/Pre-revenue;Quality / Inspection
+Canvas Envision;https://www.canvasgfx.com/;70;None;Accelerating;Manufacturing / OT
+Assemblio;https://www.assemblio.com;55;None;Accelerating;Manufacturing / OT
+CVector;https://www.cvector.ai;55;None;Early/Pre-revenue;Operations Executives
+ChipAgents;https://chipagents.ai/;48;None;Accelerating;R&D Leadership
+ABĒMIS llc;https://www.abemis.com/;57;None;Early/Pre-revenue;Manufacturing / OT
+Yondu;https://yondu.ai;63;None;Early/Pre-revenue;Supply Chain / Logistics
+Canvass AI;https://canvass.io/;55;None;Accelerating;Manufacturing / OT
+Castor (filed for bankruptcy in 2025);https://www.3dcastor.com;55;None;Early/Pre-revenue;Manufacturing / OT
+Poka Labs;https://www.pokalabs.com/;55;None;Early/Pre-revenue;Manufacturing / OT
+Optellix;https://www.optellix.com;47;Autodesk, Dassault, PTC, Siemens;Early/Pre-revenue;Design Engineering
+Wilya (FKA Gig and Take);https://wilya.com;55;None;Accelerating;Operations Executives
+OpsMate;https://www.opsmateai.com;55;None;Accelerating;Manufacturing / OT
+Airshaper;https://airshaper.com;63;None;Accelerating;Simulation Teams
+Aixma;https://aixima.de/;55;None;Early/Pre-revenue;Simulation Teams
+Variant3D;https://www.variant3d.io/;55;None;Early/Pre-revenue;Manufacturing / OT
+Drishti Technologies (acquired by Apple in 2023);https://drishti.com;55;None;Early/Pre-revenue;Quality / Inspection
+Toolhouse.Build;https://www.toolhouse.build/;40;None;Early/Pre-revenue;Design Engineering
+Alliance Bernstein;;50;None;Stalled;Manufacturing / OT
+Response;https://tryresponse.com;40;None;Early/Pre-revenue;Supply Chain / Logistics
+AutoPallet Robotics;https://autopallet.bot;55;None;Early/Pre-revenue;Operations Executives
+Abelara;;50;None;Stalled;Manufacturing / OT
+Energy Robotics;https://www.energy-robotics.com;55;None;Early/Pre-revenue;Quality / Inspection
+Tiny;https://www.tiny.dev;55;None;Early/Pre-revenue;Manufacturing / OT
+Common Sense Machines;https://www.csm.ai;65;None;Accelerating;Manufacturing / OT
+Nyfty.ai;https://nyfty.ai;65;None;Early/Pre-revenue;Design Engineering
+Green Factory AI;https://greenfactory.ai;55;None;Early/Pre-revenue;Manufacturing / OT
+Quix;https://quix.io;65;None;Accelerating;Manufacturing / OT
+artifact.engineer;https://www.artifact.engineer/;65;None;Early/Pre-revenue;Design Engineering
+BQP;https://www.bqpsim.com;65;None;Accelerating;Simulation Teams
+Artura3D;https://www.artura3d.com/;39;Autodesk, Dassault, PTC, Siemens;Early/Pre-revenue;Design Engineering
+Luminary Cloud;https://www.luminarycloud.com/;55;None;Accelerating;Simulation Teams
+Voxshell;https://voxshell.com/;65;None;Early/Pre-revenue;Simulation Teams
+Encycam;https://encycam.com;57;None;Accelerating;Manufacturing / OT
+Nureo AG;https://www.nureo.ch;39;Autodesk, Dassault, PTC, Siemens;Early/Pre-revenue;Design Engineering
+General Lattice;https://www.generallattice.com;47;Autodesk, Dassault, Siemens;Early/Pre-revenue;Manufacturing / OT
+VulcanForms;https://www.vulcanforms.com;47;Autodesk, Dassault, Siemens;Accelerating;Manufacturing / OT
+Tensor9;https://www.tensor9.com;65;None;Early/Pre-revenue;Simulation Teams
+Azimuth;https://azimuth-ai.com/;55;None;Early/Pre-revenue;Manufacturing / OT
+Barbara;https://barbara-edge.io;55;None;Accelerating;Manufacturing / OT
+SmartUQ;https://www.smartuq.com/;65;None;Accelerating;Simulation Teams
+Parsable (acquired by CAI Software in 2024};https://parsable.com/;55;None;Accelerating;Manufacturing / OT
+Klutch AI;https://klutch.ai/;63;None;Early/Pre-revenue;Operations Executives
+Fictiv (Acquired by MISUMI in 2025);https://www.fictiv.com/;55;None;Accelerating;Manufacturing / OT
+Kenesto;https://www.kenesto.com;40;Dassault;Steady;Design Engineering
+Twinzo;https://www.twinzo.eu;55;None;Accelerating;Manufacturing / OT
+Dirac;http://diracinc.com;40;Siemens;Steady;Manufacturing / OT
+Archaas;https://www.archaas.com/;53;Autodesk;Early/Pre-revenue;Design Engineering
+MecAgent;https://mecagent.com;25;Dassault;Early/Pre-revenue;Design Engineering
+Adam;https://adam.new;63;None;Accelerating;Design Engineering
+Silimate;https://www.silimate.com/;55;None;Early/Pre-revenue;R&D Leadership
+AnkerDB;https://www.ankerdb.com/;55;None;Early/Pre-revenue;Design Engineering
+AMP Robotics;https://ampsortation.com;55;None;High Growth;Operations Executives
+SyncTwin;https://www.synctwin.app;55;None;Early/Pre-revenue;Manufacturing / OT
+FlowFuse;https://flowfuse.com;55;None;Accelerating;Operations Executives
+Morphorm;https://www.morphorm.com/;55;None;Early/Pre-revenue;Design Engineering
+Giraffe;https://www.giraffe360.com;65;None;High Growth;Design Engineering
+MachineMetrics;https://www.machinemetrics.com/;55;None;Accelerating;Manufacturing / OT
+CoLab;https://www.colabsoftware.com;25;Dassault, PTC, Siemens;High Growth;Design Engineering
+SWAPP;https://swapp.ai/;63;None;Accelerating;Design Engineering
+SiteVue;https://www.sitevue.ai/;63;None;Early/Pre-revenue;Operations Executives
+Ewake;https://www.ewake.ai/;55;None;Early/Pre-revenue;Manufacturing / OT
+Wakeo;https://wakeo.co;50;None;Accelerating;Supply Chain / Logistics
+Make a BIM;https://makeabim.com;65;None;Early/Pre-revenue;Design Engineering
+ShapesXR;https://shapesxr.com;53;Autodesk;Early/Pre-revenue;Operations Executives
+Ballista Labs;https://ballista.ai;65;None;Early/Pre-revenue;Simulation Teams
+Flyingshapes Gmbh;https://www.flyingshapes.ai/;47;Autodesk, Dassault, PTC, Siemens;Early/Pre-revenue;Design Engineering
+Path Robotics;https://www.path-robotics.com/;55;None;Accelerating;Manufacturing / OT
+Vinci 4D;https://getvinci.ai;63;None;Early/Pre-revenue;Simulation Teams
+Teleo;https://www.teleo.co;55;None;Accelerating;Operations Executives
+Matrac;https://www.materialsinformation.com/;65;None;Early/Pre-revenue;Manufacturing / OT
+QuotationFactory;https://www.quotationfactory.com;63;None;Accelerating;Manufacturing / OT
+OpenSpace;https://openspace.ai;55;None;High Growth;Operations Executives
+Arch Systems;https://archsys.io;55;None;Accelerating;Manufacturing / OT
+Share PLM;https://shareplm.com;55;None;Early/Pre-revenue;Manufacturing / OT
+Alitheon;https://alitheon.com;55;None;Early/Pre-revenue;Quality / Inspection
+IoTFlows;https://www.iotflows.com/;55;None;Early/Pre-revenue;Manufacturing / OT
+Akselos;https://www.akselos.com;55;None;Accelerating;Simulation Teams
+Lightberry;https://lightberry.com;55;None;Early/Pre-revenue;Manufacturing / OT
+Aletiq;https://www.aletiq.com/;55;None;Early/Pre-revenue;Manufacturing / OT
+GroundControl;https://groundcontrol.ai;55;None;Accelerating;Quality / Inspection
+Vendorvue;https://www.vendorvue.io;40;None;Early/Pre-revenue;Supply Chain / Logistics
+Augmentir;https://www.augmentir.com;55;None;Accelerating;Manufacturing / OT
+Photonium;https://www.photonium.ai/;39;Autodesk, Dassault, PTC, Siemens;Early/Pre-revenue;R&D Leadership
+Avathon;https://avathon.com/;55;None;Early/Pre-revenue;Design Engineering
+ArchiLabs;https://archilabs.ai/;55;None;Early/Pre-revenue;Design Engineering
+Fuzzy Logic Robotics;https://flr.io/;55;None;Early/Pre-revenue;Manufacturing / OT
+SP3D;https://spare-parts-3d.com;63;None;Early/Pre-revenue;Manufacturing / OT
+Besso;https://www.besso.com;40;None;Early/Pre-revenue;Supply Chain / Logistics
+Mimic Robotics;https://www.mimicrobotics.com/;55;None;Accelerating;Manufacturing / OT
+Relief;https://www.reliefapp.ai;55;None;Early/Pre-revenue;Manufacturing / OT
+Arcway;https://arcway.ai/;63;None;Early/Pre-revenue;Design Engineering
+Vento;https://www.vento-cfd.com/;55;Dassault, Siemens;Early/Pre-revenue;Simulation Teams
+LineWise;https://www.linewise.io/;55;None;Early/Pre-revenue;Manufacturing / OT
+Nextmv;https://nextmv.io;65;None;Accelerating;Operations Executives
+Ricursive Intelligence;https://www.ricursive.com/;39;Autodesk, Dassault, PTC, Siemens;Early/Pre-revenue;Design Engineering
+Rev1;https://rev1.so;50;Dassault, Siemens;Early/Pre-revenue;Design Engineering
+Superluminal;https://www.superluminal.tech;55;None;Early/Pre-revenue;R&D Leadership
+Metafold 3D;https://www.metafold3d.com/;65;None;Steady;Simulation Teams
+Antaris;https://www.antaris.space/;43;Dassault, PTC, Siemens;Accelerating;Simulation Teams
+Planarific;https://planarific.com/;55;None;Early/Pre-revenue;Manufacturing / OT
+Instrumental;https://instrumental.com;55;None;Accelerating;Manufacturing / OT
+Pivot Robotics;https://pivotrobotics.com/;47;Autodesk, Dassault, Siemens;Accelerating;Manufacturing / OT
+3YOURMIND;https://3yourmind.com;50;None;Steady;Manufacturing / OT
+Mulin;https://mulin.ai/;55;None;Early/Pre-revenue;Manufacturing / OT
+Redwood EDA;https://www.redwoodeda.com;63;None;Early/Pre-revenue;Design Engineering
+Turing Education;https://turing.edu;34;Autodesk, Dassault, PTC, Siemens;Steady;Educators
+AnyLog;https://www.anylog.network/;55;None;Early/Pre-revenue;Operations Executives
+NexCAD;https://nexcad.ai;48;Dassault;Early/Pre-revenue;Design Engineering
+Inductiva;https://inductiva.ai/;34;Autodesk, Dassault, PTC, Siemens;Early/Pre-revenue;Simulation Teams
+Neofactory;https://neofactory.ai;55;None;Early/Pre-revenue;Manufacturing / OT
+Carbonfact;https://www.carbonfact.com;43;Dassault, PTC, Siemens;Accelerating;Operations Executives
+Skydio;https://www.skydio.com;40;None;Accelerating;Operations Executives
+Nitrexo;https://www.nitrexo.com/;47;Dassault, Siemens;Early/Pre-revenue;Simulation Teams
+ViewAR;https://www.viewar.com;70;None;Steady;Manufacturing / OT
+Santinela;https://www.santinela.com/;55;None;Early/Pre-revenue;Manufacturing / OT
+BotBuilt;https://www.botbuilt.com;63;None;Accelerating;Manufacturing / OT
+Werk24;https://werk24.io;65;None;Early/Pre-revenue;Manufacturing / OT
+Tanso;https://www.tanso.de;55;None;High Growth;Manufacturing / OT
+Alloyed;https://alloyed.com;55;None;Accelerating;Manufacturing / OT
+Fuuz;https://www.fuuz.com/;55;None;Accelerating;Manufacturing / OT
+First Resonance;https://www.firstresonance.io;55;None;Accelerating;Manufacturing / OT
+BeyondMath;https://beyondmath.com/;63;None;Accelerating;Simulation Teams
+PAILOT;https://en.pailot.com;55;None;Early/Pre-revenue;Manufacturing / OT
+Boltline;https://www.boltline.com/;65;None;Early/Pre-revenue;Simulation Teams
+Augmenta;https://www.augmenta.ai/;53;Autodesk;Early/Pre-revenue;Design Engineering
+Sudozi;https://www.sudozi.com;40;None;Accelerating;Supply Chain / Logistics
+BildAI;https://www.bild.ai;63;None;Early/Pre-revenue;Design Engineering
+Violet Labs;https://violetlabs.com;55;None;Accelerating;R&D Leadership
+Vizcom;https://www.vizcom.com;48;None;Accelerating;Manufacturing / OT
+SmarterChains;https://www.smarterchains.com/;40;None;Early/Pre-revenue;Operations Executives
+Speckle;https://speckle.systems/;60;Autodesk;Accelerating;Design Engineering
+Uptake;https://uptake.com;40;None;Accelerating;Operations Executives
+NYNE Gmbh;https://nyne.cloud;55;None;Early/Pre-revenue;Design Engineering
+Motif;https://www.motif.io;53;Autodesk;Early/Pre-revenue;Design Engineering
+Geminus.ai;https://www.geminus.ai/;65;None;Accelerating;Operations Executives
+Opti-Technologies;https://www.opti-fab.com/;55;None;Steady;Manufacturing / OT
+CLO Virtual Fashion;https://clo3d.com;72;None;Accelerating;Simulation Teams
+Solesca;https://solesca.com/;55;None;Accelerating;Simulation Teams
+RBF MORPH;https://rbfmorph.com/;57;Dassault, Siemens;Early/Pre-revenue;Simulation Teams
+Campfire;https://campfire3d.com/;51;Autodesk, Dassault, PTC, Siemens;Accelerating;Design Engineering
+Normal;https://www.normalcomputing.com;55;None;Early/Pre-revenue;Manufacturing / OT
+Asimov;https://tryasimov.ai/;63;None;Early/Pre-revenue;R&D Leadership
+Covariant (acquired by Amazon Robotics in 2024);https://covariant.ai;55;None;Accelerating;Operations Executives
+TVARIT;https://tvarit.com;55;None;Accelerating;Manufacturing / OT
+Pictorus;https://www.pictor.us/;45;Siemens;Accelerating;Quality / Inspection
+MapShots;https://www.mapshots.com;53;Autodesk;Steady;Operations Executives
+Periodic Labs;https://periodic.com/;34;Autodesk, Dassault, PTC, Siemens;Early/Pre-revenue;R&D Leadership
+Nox Metals;https://noxmetals.co/;47;Autodesk, Dassault, Siemens;Early/Pre-revenue;Manufacturing / OT
+C-Infinity;https://c-infinity.ai;63;None;Accelerating;R&D Leadership
+Womp;https://womp.com;63;None;Steady;Design Engineering
+Desktop Metal (acquired by Nano Dimension in 2025);https://desktopmetal.com;47;Autodesk, Dassault, Siemens;Early/Pre-revenue;Manufacturing / OT
+Stargazr;https://stargazr.ai;55;None;Early/Pre-revenue;Manufacturing / OT
+Layup Parts;https://layupparts.com/;47;Autodesk, Dassault, Siemens;Early/Pre-revenue;Manufacturing / OT
+EthonAI;https://ethon.ai;55;None;Accelerating;Quality / Inspection
+IntelliAM (IPO in 2024);https://intelliam.ai;55;None;High Growth;Manufacturing / OT
+Kalam Labs;https://www.kalamlabs.com;55;None;Accelerating;Simulation Teams
+Tulip Interfaces;https://tulip.co/;65;None;High Growth;Manufacturing / OT
+Vectary;https://www.vectary.com;63;None;Accelerating;Design Engineering
+Mbodi AI;https://mbodi.ai/;55;None;Early/Pre-revenue;Manufacturing / OT
+Freeform;https://freeform.co;47;Autodesk, Dassault, Siemens;Early/Pre-revenue;Manufacturing / OT
+TwinThread;https://www.twinthread.com/home;65;None;Accelerating;Manufacturing / OT
+Matterport (acquired by CoStar Group in 2025 - $1.6B);https://matterport.com/;53;Autodesk;Accelerating;Operations Executives
+Sight Machine;https://www.sightmachine.com;55;None;Accelerating;Manufacturing / OT
+Tellia;https://tell-ia.com;55;None;Early/Pre-revenue;Operations Executives
+KCF Technologies;https://kcftech.com/;55;None;Accelerating;Manufacturing / OT
+Ressio;https://www.ressiosoftware.com/;63;None;Early/Pre-revenue;Operations Executives
+Yoshu;https://www.yoshu.ai;55;None;Early/Pre-revenue;Operations Executives
+Pivot;https://pivotapp.ai;40;None;Accelerating;Supply Chain / Logistics
+Golioth;https://golioth.io;55;None;Accelerating;Manufacturing / OT
+Flexify;https://flexify.ai;55;None;Early/Pre-revenue;Operations Executives
+UptimeAI;https://www.uptimeai.com;55;None;Accelerating;Operations Executives
+Atum Works;https://atum.works/;47;Autodesk, Dassault, Siemens;Early/Pre-revenue;Manufacturing / OT
+Phaidra;https://www.phaidra.ai;55;None;Accelerating;Operations Executives
+Software Defined Automation;https://www.softwaredefinedautomation.io/;55;None;Accelerating;Manufacturing / OT
+formfactories;https://www.formfactories.com/;55;None;Early/Pre-revenue;Manufacturing / OT
+Dados;https://dadostech.com/;60;None;Early/Pre-revenue;Manufacturing / OT
+Glacier;https://endwaste.io;55;None;Accelerating;Manufacturing / OT
+Lila;https://lila.ai;55;None;High Growth;R&D Leadership
+Intelcyx;https://www.intelycx.com/;55;None;Early/Pre-revenue;Manufacturing / OT
+Rescale;https://rescale.com;55;None;High Growth;Simulation Teams
+Synera;https://synera.io;57;None;Accelerating;Manufacturing / OT
+xNilio;https://xnilio.com;65;None;Early/Pre-revenue;Design Engineering
+Fabera;https://www.fabera.fr;55;None;Early/Pre-revenue;Manufacturing / OT
+Ausmosys;https://ausmosys.com;43;Dassault, PTC, Siemens;Early/Pre-revenue;Manufacturing / OT
+Mercateam;https://merca.team;55;None;Early/Pre-revenue;Operations Executives
+DigitalCNC;https://digitalnc.ai;25;Autodesk, Siemens;Accelerating;Manufacturing / OT
+COSMON;https://www.cosmon.com/;65;None;Early/Pre-revenue;R&D Leadership
+Fabrio;https://www.fabriodesign.com;63;None;Early/Pre-revenue;Educators
+Electra Vehicles;https://www.electravehicles.com/;55;None;Early/Pre-revenue;Operations Executives
+VayanData;https://www.vayandata.com/;55;None;Early/Pre-revenue;Manufacturing / OT
+Charge Robotics;https://chargerobotics.com;63;None;Early/Pre-revenue;Manufacturing / OT
+XYZ Reality;https://www.xyzreality.com;70;None;High Growth;Quality / Inspection
+CoreForm;https://coreform.com;57;None;Steady;R&D Leadership
+juna.ai;https://juna.ai;55;None;Early/Pre-revenue;Operations Executives
+Dalus;https://dalus.io;55;None;Early/Pre-revenue;Design Engineering
+Vertex;https://vertex3d.com;63;None;Steady;Design Engineering
+Tensr;https://tensr.com/;47;Autodesk, Dassault, Siemens;Early/Pre-revenue;Manufacturing / OT
+Fabriom;https://www.fabriom.com;55;None;Early/Pre-revenue;Manufacturing / OT
+COSMODOT;https://www.thecosmodot.com;55;None;Accelerating;Manufacturing / OT
+Bucket Robotics;https://bucket.bot/;55;None;Early/Pre-revenue;Quality / Inspection
+Specira;https://specira.ai/;34;Autodesk, Dassault, PTC, Siemens;Early/Pre-revenue;R&D Leadership
+Samp;https://samp.ai;55;None;Early/Pre-revenue;Quality / Inspection
+Formic;https://formic.co;40;None;Accelerating;Manufacturing / OT
+Orthogonal;https://www.orthogonal.io;55;None;Early/Pre-revenue;Simulation Teams
+Swapp;https://www.swapp.ai;55;None;Accelerating;Design Engineering
+Flow Engineering;https://flowengineering.com;50;None;Accelerating;Manufacturing / OT
+ExLattice;https://exlattice.com/;55;None;Early/Pre-revenue;Manufacturing / OT
+Flow Software;https://www.flow-software.com/;55;None;Early/Pre-revenue;Manufacturing / OT
+CELUS;https://celus.io;55;None;Accelerating;Design Engineering
+Elevating Patterns;https://www.elevating-patterns.com/;55;None;Early/Pre-revenue;Manufacturing / OT
+DGG - The 3D Pipeline Company;https://rapidpipeline.com/;65;None;Accelerating;Manufacturing / OT
+Matchory;https://matchory.com;40;None;Accelerating;Supply Chain / Logistics
+Oden Technologies;https://oden.io/;55;None;Accelerating;Manufacturing / OT
+Flowlity;https://www.flowlity.com;40;None;Accelerating;Supply Chain / Logistics
+GreenLite;https://greenlite.com;55;None;Accelerating;Operations Executives
+Open Orion;https://openorion.org/;65;None;Early/Pre-revenue;Design Engineering
+Remy AI;https://www.tryremy.ai;55;None;Early/Pre-revenue;Supply Chain / Logistics
+Evolinq;https://evolinq.io;40;None;Early/Pre-revenue;Supply Chain / Logistics
+Dyndrite;https://www.dyndrite.com;55;Siemens;Accelerating;Manufacturing / OT
+Kyten Technologies;https://kytentech.com;47;Autodesk, Dassault, Siemens;Early/Pre-revenue;Manufacturing / OT
+Paperless Parts;https://www.paperlessparts.com;55;None;Accelerating;Manufacturing / OT
+ControlRooms.ai;https://controlrooms.ai;55;None;Accelerating;Manufacturing / OT
+The Robot Learning Company;https://robot-learning.co;63;None;Early/Pre-revenue;Manufacturing / OT
+Quaoar Studio;https://quaoar-studio.com/;59;Autodesk, Dassault, PTC, Siemens;Early/Pre-revenue;Design Engineering
+Weave Robotics;https://www.weaverobots.com;63;None;Early/Pre-revenue;Operations Executives
+Secondmind;https://www.secondmind.ai/;65;None;Steady;Simulation Teams
+Portainer.io;https://portainer.io;50;None;Accelerating;Operations Executives
+Chemix;https://www.chemix.ai;55;None;Early/Pre-revenue;Simulation Teams
+Optimuse;https://www.optimuse.com;55;None;Accelerating;Design Engineering
+PermitFlow;https://www.permitflow.com/;63;None;Accelerating;Operations Executives
+Struck;https://struck.eu/;55;None;Early/Pre-revenue;Manufacturing / OT
+TopoLogic, Inc;https://www.topologic.jp/en;34;Autodesk, Dassault, PTC, Siemens;Accelerating;R&D Leadership
+BuilDOTS;https://buildots.com;53;Autodesk;Accelerating;Operations Executives
+MaterialsZone;https://materials.zone;63;None;Accelerating;Simulation Teams
+MaestroHub;https://maestrohub.com/;55;None;Early/Pre-revenue;Manufacturing / OT
+LycheeAI;https://lycheeai-hub.com/;55;None;Early/Pre-revenue;Educators
+Specter Automation;https://www.specter-automation.com/en;55;None;Accelerating;Operations Executives
+Kabandy;https://kabandy.com;55;None;Early/Pre-revenue;Design Engineering
+SelectAM;https://selectam.io/;55;Autodesk, Dassault, Siemens;Early/Pre-revenue;Manufacturing / OT
+ContractHero;https://www.contracthero.com;40;None;Accelerating;Supply Chain / Logistics
+NRJx;https://www.nrjx.tech/;55;None;Early/Pre-revenue;Operations Executives
+Arkestro;https://arkestro.com;55;None;Accelerating;Supply Chain / Logistics
+Feather Solutions;https://feather.solutions;42;None;Early/Pre-revenue;Simulation Teams
+CAD as Code;https://www.cadascode.com/;49;Autodesk, Dassault, PTC, Siemens;Early/Pre-revenue;Design Engineering
+1X Technologies;https://www.1x.tech;55;None;Accelerating;Supply Chain / Logistics
+MatAlytics;https://matalytics.com;55;None;Accelerating;Manufacturing / OT
+Tanso3D (ceased operations in 2024);https://tanso3d.com/;55;None;Early/Pre-revenue;Design Engineering
+VisionXt S.r.l.;https://visionxt.it/;55;None;Early/Pre-revenue;Quality / Inspection
+Matta Labs;https://www.matta.ai/;55;None;Early/Pre-revenue;Quality / Inspection
+Neuramill;https://neuramill.co;55;None;Early/Pre-revenue;Manufacturing / OT
+Key Ward;https://www.keyward.io/;65;None;Accelerating;Simulation Teams
+Asper Technologies (acquired by Siemens DISW in 2026);https://aster-technologies.com/en/;39;Autodesk, Dassault, PTC, Siemens;Early/Pre-revenue;Manufacturing / OT
+Mandel AI;https://www.mandel.ai;40;None;Early/Pre-revenue;Manufacturing / OT
+FOLDSTRUCT;https://www.foldstruct.com;53;Autodesk;Early/Pre-revenue;Design Engineering
+HorneSci;https://www.hornesci.com/;57;Dassault, Siemens;Early/Pre-revenue;Simulation Teams
+SketchPro;https://sketchpro.ai;63;None;Early/Pre-revenue;Design Engineering
+Leopoly;https://leopoly.com;63;None;Early/Pre-revenue;Design Engineering
+Cognite;https://cognite.com;55;None;High Growth;Operations Executives
+AI Materia;https://aimateria.com/;55;None;Accelerating;R&D Leadership
+BimDrone;https://bimdrone.pl;55;None;Accelerating;Design Engineering
+Silkline;https://silkline.ai;55;None;Accelerating;Supply Chain / Logistics
+Merlyn for Education;https://www.merlyn.org;40;None;Accelerating;Educators
+cmBuilder.io;https://cmbuilder.io;65;None;Accelerating;Design Engineering
+Allspice.io;https://www.allspice.io/;65;None;Accelerating;Design Engineering
+ProductFlo;https://productflo.io;55;None;Early/Pre-revenue;Manufacturing / OT
+Quarter20;https://www.buildquarter20.com/;55;None;Early/Pre-revenue;Simulation Teams
+Foxglove;https://foxglove.dev/;55;None;Accelerating;Manufacturing / OT
+Allus AI;https://allus.ai;55;None;Early/Pre-revenue;Operations Executives
+ARYA Labs;https://aryalabs.io/;65;None;Early/Pre-revenue;Simulation Teams
+Leucine;https://leucine.io;55;None;Accelerating;Manufacturing / OT
+ReilAI;https://reil.ai;55;None;Early/Pre-revenue;Manufacturing / OT
+Laminar;https://runlaminar.com/;40;None;Accelerating;Manufacturing / OT
+Authentise;https://www.authentise.com/;55;None;Steady;Manufacturing / OT
+Diode Computers;https://www.diode.computer;39;Autodesk, Dassault, PTC, Siemens;Early/Pre-revenue;Design Engineering
+HighQA;https://www.highqa.com/;55;None;Early/Pre-revenue;Quality / Inspection
+BIMtwin;https://www.bimtwin.cz/;53;Autodesk;Early/Pre-revenue;Design Engineering
+Backflip AI;https://backflip.ai;33;Dassault;Accelerating;Design Engineering
+ThredCloud;https://thred.cloud;55;None;Early/Pre-revenue;Manufacturing / OT
+Plasticity;https://plasticity.xyz;57;Siemens;Early/Pre-revenue;Design Engineering
+OTee;https://otee.io/;55;None;Early/Pre-revenue;Operations Executives
+TDEngine;https://tdengine.com/;55;None;Accelerating;Manufacturing / OT
+Alloy Enterprises;https://alloyenterprises.co/;55;None;Accelerating;Manufacturing / OT
+SysGit;https://www,sysgit.com;55;None;Accelerating;R&D Leadership
+Octotronic;https://octotronic.com/;55;None;Early/Pre-revenue;Manufacturing / OT
+Optrix;https://docs.optrix.com.au/;55;None;Early/Pre-revenue;Manufacturing / OT
+Manufacturo;https://manufacturo.com;44;Dassault, Siemens;High Growth;Manufacturing / OT
+Outrider;https://www.outrider.ai/;55;None;Accelerating;Supply Chain / Logistics
+Machina Labs;https://machinalabs.ai;55;None;High Growth;Manufacturing / OT
+Addverb (acquired by Reliance Retail Ventures Ltd in 2022);https://addverb.com;40;None;Early/Pre-revenue;Supply Chain / Logistics
+Overview AI;https://www.overview.ai/;55;None;Accelerating;Quality / Inspection
+nVariate;http://nvariate.com;55;None;Early/Pre-revenue;Simulation Teams
+camfer;https://www.camfer.dev/;55;None;Early/Pre-revenue;Design Engineering
+Rhize Manufacturing Hub;https://rhize.com;55;None;Early/Pre-revenue;Manufacturing / OT
+Formant;https://formant.io/;55;None;Accelerating;Manufacturing / OT
+Perception Manufacturing;https://www.perception-manufacturing.com/;55;None;Early/Pre-revenue;Quality / Inspection
+Vsim;https://v-sim.co.uk/;57;Dassault, Siemens;Early/Pre-revenue;Simulation Teams
+PlaSiV;https://plasiv.com/;55;Dassault, Siemens;Early/Pre-revenue;Simulation Teams
+ALFI Technologies;https://alfi-technologies.com/;60;None;Accelerating;Manufacturing / OT
+Squint;https://squint.ai;50;None;Accelerating;Manufacturing / OT
+Spectar (bankrupt in 2023);https://www.spectar.io;55;None;Early/Pre-revenue;Design Engineering
+AiSupervision;https://www.aisupervision.com;55;None;Early/Pre-revenue;Manufacturing / OT
+Pave Robotics;https://pave-robotics.com;55;None;Early/Pre-revenue;Operations Executives
+trace.space;https://www.trace.space/;55;None;Accelerating;R&D Leadership
+Intact Solutions;https://intact-solutions.com;55;None;Early/Pre-revenue;Simulation Teams
+Juno;https://www.juno.tech/;55;None;Accelerating;Operations Executives
+Convai;https://www.convai.com;63;None;Accelerating;Simulation Teams
+Reynko;https://reynko.com/;60;None;Early/Pre-revenue;Design Engineering
+Donut Labs;https://www.donutlab.com/;40;None;Accelerating;Manufacturing / OT
+MosaicMFG;https://mosaicmfg.com/;63;None;High Growth;Manufacturing / OT
+Voxel;https://www.voxelai.com/platform;40;None;Accelerating;Supply Chain / Logistics
+Cortex AI;https://cortexrobot.ai;55;None;Early/Pre-revenue;Manufacturing / OT
+Gradient Control;https://www.gradientcontrol.com/;65;None;Early/Pre-revenue;Manufacturing / OT
+Guaeca;https://guaeca.com;65;None;Early/Pre-revenue;Manufacturing / OT
+Kaedim;https://kaedim.com;50;None;Accelerating;Design Engineering
+Mech-Mind Robotics;https://www.mech-mind.com;55;None;High Growth;Manufacturing / OT
+SeekMake;https://seekmake.com/home;63;None;Early/Pre-revenue;Manufacturing / OT
+Kyrall;https://kyrall.com;63;None;Early/Pre-revenue;Design Engineering
+planeus;https://planeus-solutions.com/en/;55;None;Early/Pre-revenue;Manufacturing / OT
+EverCurrent;https://evercurrent.ai;55;None;Early/Pre-revenue;IT / PLM Architects
+LimitlessCNC;https://www.limitlesscnc.ai/;20;Siemens;Early/Pre-revenue;Manufacturing / OT
+Daedalus;https://daedalus.com;47;Autodesk, Dassault, Siemens;Early/Pre-revenue;Manufacturing / OT
+CustoMED;https://CustoMED.ai;55;None;Accelerating;R&D Leadership
+Ageiro;https://ageiro.global/;43;Dassault, PTC, Siemens;Early/Pre-revenue;IT / PLM Architects
+Ember Robotics;https://www.emberrobotics.com;55;None;Early/Pre-revenue;Operations Executives
+BaseTwo;https://www.basetwo.ai;55;None;Accelerating;Manufacturing / OT
+LandingAI;https://landing.ai;55;None;Accelerating;Operations Executives
+Extropic;https://extropic.ai/;55;None;Early/Pre-revenue;Simulation Teams
+Kraaft;https://www.kraaft.com/en;53;Autodesk;Accelerating;Operations Executives
+NavierAI;https://www.navier.ai;65;None;Early/Pre-revenue;Simulation Teams
+Generative Engineering;https://generative.vision/;63;None;Early/Pre-revenue;Manufacturing / OT
+Manukai;https://www.manukai.ch/;65;None;Early/Pre-revenue;Manufacturing / OT
+Arbor;https://www.findarbor.com;55;None;Early/Pre-revenue;Operations Executives
+Istari Digital;https://www.istaridigital.com/;55;None;Accelerating;Operations Executives
+Piggy Robotics;https://piggyrobotics.com;63;None;Early/Pre-revenue;R&D Leadership
+HighByte;https://www.highbyte.com;65;None;Accelerating;Manufacturing / OT
+SUFFISCIENS;https://suffisciens.com/;55;None;Early/Pre-revenue;Manufacturing / OT
+Intelecy;https://www.intelecy.com;55;None;Accelerating;Manufacturing / OT
+WorkHero;https://www.workhero.pro/;55;None;Accelerating;Operations Executives
+Sculpt;https://www.sculpt.dev;47;Autodesk, Dassault, Siemens;Early/Pre-revenue;Manufacturing / OT
+Pico MES;https://www.picomes.com/;50;None;Accelerating;Manufacturing / OT
+Built Robotics;https://builtrobotics.com;55;None;Accelerating;Manufacturing / OT
+Spendkey;https://www.spendkey.io;40;None;Steady;Manufacturing / OT
+Acceleer;https://acceleer.com/#/;55;None;Early/Pre-revenue;Manufacturing / OT
+AeroAI;https://aeroai.io;55;None;Accelerating;Design Engineering
+BuildVision;https://www.buildvision.io/;63;None;Accelerating;Supply Chain / Logistics
+Twinview;https://twinview.com;55;None;Accelerating;Design Engineering
+Fabriq;https://www.fabriq.ai;55;None;Early/Pre-revenue;Manufacturing / OT
+Parallel Fluidics;https://www.parallelfluidics.com/;50;None;Steady;R&D Leadership
+Nullspace, Inc;https://nullspaceinc.com;65;None;Accelerating;Simulation Teams
+CoFactr;https://www.cofactr.com;65;None;Accelerating;Supply Chain / Logistics
+Industrial Next;https://industrialnext.ai;55;None;Accelerating;Manufacturing / OT
+Phasio;https://phas.io;63;None;Early/Pre-revenue;Simulation Teams
+SPREAD;https://spread.ai;65;None;Accelerating;Manufacturing / OT
+Mak3r.ai;https://www.mak3r.ai/;50;None;Accelerating;Manufacturing / OT
+Leap71;https://leap71.com;50;None;Early/Pre-revenue;Simulation Teams
+General Astronautics;https://generalastro.com/;55;None;Early/Pre-revenue;R&D Leadership
+ToffeeX;https://toffeex.com;63;None;Accelerating;Simulation Teams
+That Open Company;https://thatopen.com/;53;Autodesk;Early/Pre-revenue;Design Engineering
+Spherene;https://spherene.ch/;55;None;Early/Pre-revenue;Manufacturing / OT
+Duranium;https://www.duranium.co;47;Autodesk, Dassault, Siemens;Early/Pre-revenue;Manufacturing / OT
+Sense;https://sense.com;70;None;Accelerating;Manufacturing / OT
+Fab.ai;https://fabai.com/;55;None;Early/Pre-revenue;Manufacturing / OT
+Coreflux;https://www.coreflux.org;55;None;Early/Pre-revenue;Manufacturing / OT
+Divergent;https://divergent3d.com;55;None;High Growth;Manufacturing / OT
+Compute Maritime;https://www.computemaritime.com/;55;None;Early/Pre-revenue;Design Engineering
+Doxel;https://doxel.ai;53;Autodesk;Accelerating;Operations Executives
+Bright Machines;https://www.brightmachines.com;55;None;Accelerating;Manufacturing / OT
+LinCode Labs, Inc.;https://lincode.ai;55;None;Early/Pre-revenue;Quality / Inspection
+AON3D;https://www.aon3d.com/;55;None;Accelerating;Manufacturing / OT
+Inertia Systems;https://www.inertiasystems.com/;55;None;Accelerating;Design Engineering
+Omnea;https://www.omnea.co;40;None;Accelerating;Supply Chain / Logistics
+Figurement;https://www.figurement.com;35;None;Early/Pre-revenue;R&D Leadership
+Collimator;https://www.collimator.ai/;65;None;Accelerating;Simulation Teams
+up2parts GmbH;https://www.up2parts.com;53;Dassault;Accelerating;Manufacturing / OT
+Arkio;https://arkio.is;50;None;Early/Pre-revenue;Design Engineering
+Jiga;https://jiga.io;50;None;Accelerating;Manufacturing / OT
+aPriori;https://www.apriori.com/;39;Autodesk, Dassault, PTC, Siemens;Accelerating;Design Engineering
+Wailand;https://www.wailand.io/en/;43;Dassault, PTC, Siemens;Early/Pre-revenue;Manufacturing / OT
+Regrello (acquired by Salesorce in 2025);https://www.regrello.com;55;None;Early/Pre-revenue;Supply Chain / Logistics
+Leela AI;https://leela.ai/;40;None;Early/Pre-revenue;Manufacturing / OT
+ConXtech;https://conxtech.com;70;None;Accelerating;Operations Executives
+Surveily;https://surveily.com/;55;None;Accelerating;Manufacturing / OT
+Vela;https://vela-ai.app;55;None;Early/Pre-revenue;Operations Executives
+Oorja;https://oorja.energy;63;None;Accelerating;Simulation Teams
+Mesh AG;https://mesh.ch;70;None;Early/Pre-revenue;Manufacturing / OT
+Plans;https://www.plans.app;55;None;Accelerating;Operations Executives
+Eleven Dynamics AG;https://11dynamics.com/;55;None;Accelerating;Quality / Inspection
+CloudNC;https://cloudnc.com;35;Autodesk, Siemens;Accelerating;Manufacturing / OT
+Bimspot;https://www.bimspot.io;55;None;Early/Pre-revenue;Design Engineering
+Threedy;https://threedy.io;75;None;Accelerating;Manufacturing / OT
+Sablono;https://www.sablono.com;55;None;Accelerating;Supply Chain / Logistics
+Raven;https://www.raven.build;44;Autodesk, Dassault, PTC, Siemens;Early/Pre-revenue;Design Engineering
+NC Vision (acquired by RockQ 2025);https://www.nc-vision.com;55;None;Early/Pre-revenue;Manufacturing / OT
+Ara 3D;https://www.ara3d.com;53;Autodesk;Early/Pre-revenue;Design Engineering
+Elephant AI;https://elephantai.io/;34;Autodesk, Dassault, PTC, Siemens;Early/Pre-revenue;Simulation Teams
+Parsio;https://parsio.ai;55;None;Early/Pre-revenue;Manufacturing / OT
+OpenBOM;https://openbom.com;28;Autodesk, Dassault;Accelerating;Manufacturing / OT
+Proception Inc;https://proception.ai;63;None;Early/Pre-revenue;Manufacturing / OT
+Gravity Sketch;https://www.gravitysketch.com;60;None;Accelerating;Design Engineering
+General Trajectory;https://www.generaltrajectory.com;55;None;Early/Pre-revenue;Supply Chain / Logistics
+OnScale (aquired by ANSYS in 2022);https://onscale.com;55;None;Stalled;Simulation Teams
+AirWorks;https://airworks.io;65;None;Accelerating;Design Engineering
+Redo.pro;https://www.redo.pro/;39;Autodesk, Dassault, PTC, Siemens;Early/Pre-revenue;Design Engineering
+Loombotic;https://loombotic.com/;47;Autodesk, Dassault, Siemens;Early/Pre-revenue;Manufacturing / OT
+Cinqo;https://www.cinqo.fr/;55;None;Early/Pre-revenue;Supply Chain / Logistics
+Litmus;https://litmus.io;65;None;Accelerating;Manufacturing / OT
+Productive Machines;https://productivemachines.co.uk/;45;Siemens;Early/Pre-revenue;Manufacturing / OT
+Nominal;https://nomimal.io;60;None;High Growth;Manufacturing / OT
+Shapr3D;https://shapr3d.com;20;Siemens;Accelerating;Manufacturing / OT
+Cusp AI;https://cuspai.com;55;None;Accelerating;R&D Leadership
+Servo7;https://servo7.com;55;None;Early/Pre-revenue;Manufacturing / OT
+CO2 AI;https://co2ai.com;43;Dassault, PTC, Siemens;Accelerating;Operations Executives
+Simr (formerly UberCloud);https://www.simr.com/;52;Dassault, Siemens;Early/Pre-revenue;Simulation Teams
+Automation Intelligence;https://www.autointel.io/;55;None;Early/Pre-revenue;Manufacturing / OT
+Plevenn;https://www.plevenn.com/;55;None;Early/Pre-revenue;Manufacturing / OT
+RD8;https://www.rd8.tech/;40;Dassault;Early/Pre-revenue;R&D Leadership
+Noah;https://noahcad.com;47;Autodesk, Dassault, PTC, Siemens;Early/Pre-revenue;Design Engineering
+Lumafield;https://lumafield.com;55;None;High Growth;Quality / Inspection
+OneLayer;https://www.onelayer.com;55;None;Accelerating;Manufacturing / OT
+Falcomm;https://www.falcomm.com/;55;None;Early/Pre-revenue;Manufacturing / OT
+Momenta Ventures;;50;None;Stalled;R&D Leadership
+XMPro;https://xmpro.com;40;None;Accelerating;Operations Executives
+Oplit;https://www.oplit.com/en/;55;None;Early/Pre-revenue;Manufacturing / OT
+Raiqon;https://raiqon.com/;65;None;Early/Pre-revenue;Manufacturing / OT
+Holy Technologies;https://www.holy-technologies.com/;55;None;Early/Pre-revenue;Manufacturing / OT
+Cognyx;https://cognyx.io;65;None;Early/Pre-revenue;Manufacturing / OT
+Flywheel AI;https://useflywheel.ai;55;None;Early/Pre-revenue;Manufacturing / OT
+VibeIQ;https://www.vibeiq.com;55;None;Accelerating;Manufacturing / OT
+Dusty Robotics;https://dustyrobotics.com;55;None;Accelerating;Manufacturing / OT
+Foundation EGI;https://www.foundationegi.com;43;Dassault, PTC, Siemens;Early/Pre-revenue;Manufacturing / OT
+Pelico;https://fr.pelico.ai;55;None;Accelerating;Supply Chain / Logistics
+Leo AI;https://getleo.ai;55;None;Accelerating;R&D Leadership
+NEURA Robotics;https://neura-robotics.com;55;None;High Growth;Manufacturing / OT
+Fainite AG;https://www.fainite.com/;55;Dassault, Siemens;Early/Pre-revenue;Simulation Teams
+Dessia;https://www.dessia.io/;40;Dassault;Accelerating;Manufacturing / OT
+Orangewood Labs;https://www.orangewood.co;55;None;Accelerating;Manufacturing / OT
+Insight Partners;;50;None;Stalled;R&D Leadership
+TruTec;https://trutec.ai/;63;None;Early/Pre-revenue;Design Engineering
+TilliT (acquired by Roima Intelligence in 2025);https://gotillit.com;55;None;Early/Pre-revenue;Manufacturing / OT
+Viso Suite;https://viso.ai;60;None;Accelerating;Quality / Inspection
+Azalea Robotics;https://www.azalearobotics.com;63;None;Early/Pre-revenue;Operations Executives
+MOVEdot;https://movedot.ai;55;None;Early/Pre-revenue;Design Engineering
+AMESA (formerly Composabl);https://www.amesa.com;70;None;Early/Pre-revenue;Manufacturing / OT
+Aera Technology;https://www.aeratechnology.com;55;None;High Growth;Supply Chain / Logistics
+Verne Robotics;https://www.vernerobotics.com;63;None;Early/Pre-revenue;Supply Chain / Logistics
+Quilter;https://www.quilter.ai;63;None;Accelerating;R&D Leadership
+Bison Ventures;;50;None;Stalled;Manufacturing / OT
+Vitesse Automation;https://vitesseautomation.com/;55;None;Early/Pre-revenue;Manufacturing / OT
+JitX;https://www.jitx.com;41;Autodesk, Dassault, PTC, Siemens;Accelerating;Design Engineering
+Propel Software;https://www.propelplm.com;55;None;Accelerating;Manufacturing / OT
+Zeon Systems;https://zeonsystems.ai;63;None;Early/Pre-revenue;R&D Leadership
+Lambda Function;https://www.lambdafunction.ai/;40;Siemens;Accelerating;Manufacturing / OT
+Eclipse;;50;None;Stalled;Manufacturing / OT
+Arcol;https://arcol.io;63;None;Accelerating;Design Engineering
+Flexxbotics;https://flexxbotics.com;55;None;Accelerating;Manufacturing / OT
+3D Foundry Labs;https://3dfy.ai;65;None;Accelerating;Design Engineering
+Zea;https://www.zeaengine.com/;65;None;Early/Pre-revenue;Manufacturing / OT
+Instruct3D;https://www.instruct3d.io/;55;Autodesk, Dassault, Siemens;Early/Pre-revenue;Quality / Inspection
+Vestigas;https://vestigas.com;53;Autodesk;Accelerating;Operations Executives
+Merlin AI;https://www.merlinai.co/;63;None;Accelerating;Operations Executives
+PT Blink;https://ptblink.com/;55;None;Accelerating;Design Engineering
+Cenos;https://cenos-platform.com/;49;Dassault, Siemens;Early/Pre-revenue;Simulation Teams
+SolidProfessor (acquired by Hawk Ridge Systems in 2020);https://solidprofessor.com/;63;None;Steady;Educators
+SpecRight;https://specright.com/;55;None;Accelerating;Supply Chain / Logistics
+Teesas;https://www.teesas.com;55;None;Accelerating;Educators
+One Robot;https://www.onerobot.io;55;None;Early/Pre-revenue;Simulation Teams
+Human Archive;https://www.humanarchive.ai/;55;None;Early/Pre-revenue;R&D Leadership
+Visure Solutions;https://visuresolutions.com;60;None;Steady;R&D Leadership
+Unlog AB;https://unlog.aero/;43;Dassault, PTC, Siemens;Early/Pre-revenue;R&D Leadership
+Maneva;https://www.maneva.ai;55;None;Early/Pre-revenue;Quality / Inspection
+Guidewheel;https://www.guidewheel.com;50;None;Accelerating;Manufacturing / OT
+CognaSIM;https://www.cognasim.com/;55;None;Early/Pre-revenue;Simulation Teams
+Forge;https://forge-systems.tech/;43;Dassault, PTC, Siemens;Early/Pre-revenue;Design Engineering
+Polymath Robotics;https://polymathrobotics.com/;55;None;Early/Pre-revenue;Manufacturing / OT
+Eigen Space Design;https://www.eigenstudio.org;57;Dassault, Siemens;Early/Pre-revenue;Simulation Teams
+Pashi;https://pashi.com;55;None;Early/Pre-revenue;Manufacturing / OT
+CADDi;https://us.caddi.com/;47;Autodesk, Dassault, PTC, Siemens;Accelerating;Manufacturing / OT
+PLCcode.ai;https://plmcode.ai;55;None;Early/Pre-revenue;Manufacturing / OT
+heatshape;https://www.heatshape.io/;63;None;Early/Pre-revenue;Simulation Teams
+Cerebital (Nora IPLM);https://cerebital.com;43;Autodesk, Dassault;Early/Pre-revenue;Manufacturing / OT
+Saeki;https://www.saeki.ch/;55;None;Early/Pre-revenue;Manufacturing / OT
+Parter;https://parter.ai/;50;None;Accelerating;Manufacturing / OT
+Track3D;https://track3d.ai;65;None;Accelerating;Operations Executives
+Zoo;https://zoo.dev/;65;None;Early/Pre-revenue;Design Engineering
+Epsilon3;https://epsilon3.io;55;None;Accelerating;Manufacturing / OT
+Cybus;https://www.cybus.io/;55;None;Accelerating;Manufacturing / OT
+SimScale;https://simscale.com;63;None;Accelerating;Simulation Teams
+SomebodyMakeIt;https://somebodymakeit.com;55;None;Early/Pre-revenue;Operations Executives
+Diabatix;https://www.diabatix.com;55;Dassault, Siemens;Early/Pre-revenue;Simulation Teams
+Sloyd;https://sloyd.ai;65;None;Accelerating;R&D Leadership
+Tandem AI;https://tandemai.io;58;Dassault;Accelerating;Design Engineering
+Flexcompute;https://www.flexcompute.com/;65;None;Accelerating;Simulation Teams
+Saildrone;https://www.saildrone.com;55;None;Accelerating;Operations Executives
+Rebuild;https://www.rebuild.work/;63;None;Early/Pre-revenue;Design Engineering
+Kwant.ai;https://kwant.ai;55;None;Accelerating;Manufacturing / OT
+Monumo;https://monumo.com/;39;Autodesk, Dassault, PTC, Siemens;Early/Pre-revenue;Design Engineering
+BIMLOGIQ;https://bimlogiq.com;55;None;Early/Pre-revenue;Design Engineering
+Hadrian;https://www.hadrian.co;40;None;Accelerating;Manufacturing / OT
+Revise Robotics;https://www.reviserobotics.com/;63;None;Early/Pre-revenue;Manufacturing / OT
+Smartex.ai;https://smartex.ai;65;None;Accelerating;Manufacturing / OT
+Generalist AI;https://www.generalist-ai.com;55;None;Early/Pre-revenue;Supply Chain / Logistics
+Acerta;https://acerta.ai;55;None;Accelerating;Quality / Inspection
+Sensmetry;https://sensmetry.com;43;Dassault, PTC, Siemens;Early/Pre-revenue;IT / PLM Architects
+PassiveLogic;https://passivelogic.com/;53;Autodesk;High Growth;Operations Executives
+Sintavia;https://sintavia.com/;63;None;Accelerating;Manufacturing / OT
+STILFOLD;https://www.stilfold.com/;55;None;Accelerating;Manufacturing / OT
+Augury;https://www.augury.com;55;None;High Growth;Manufacturing / OT
+MontBlancAI;https://www.montblanc.ai/en;55;None;Early/Pre-revenue;Manufacturing / OT
+IntuitgenceAI;www.intuigence.ai;43;Dassault, PTC, Siemens;Early/Pre-revenue;Manufacturing / OT
+Sageview Capital;;50;None;Stalled;R&D Leadership
+DigiFabster;https://digifabster.com/;63;None;Accelerating;Manufacturing / OT
+Duro (acquired by Altium 2025);https://www.duro.com;55;None;Accelerating;Manufacturing / OT
+Encube;https://www.getencube.com/;47;Autodesk, Dassault, PTC, Siemens;Accelerating;R&D Leadership
+Taiyaki;https://taiyaki.ai/;55;None;Early/Pre-revenue;Manufacturing / OT
+Struction;https://struction.co/landing;63;None;Early/Pre-revenue;Design Engineering
+Hestus;https://hestus.co;55;None;Early/Pre-revenue;Manufacturing / OT
+ARX Robotics;https://arx-robotics.com;55;None;Accelerating;Manufacturing / OT
+Greenlight Guru (acquired by JMI Equity in 2021);https://www.greenlight.guru/;55;None;Stalled;Quality / Inspection
+KREODx;https://www.kreodx.com;53;Autodesk;Early/Pre-revenue;Design Engineering
+P-1 AI;https://p-1.ai;39;Autodesk, Dassault, PTC, Siemens;Early/Pre-revenue;Design Engineering
+Anduril;https://www.anduril.com;55;None;Accelerating;R&D Leadership
+Seurat Technologies;https://www.seurat.com;47;Autodesk, Dassault, Siemens;Accelerating;Manufacturing / OT
+Applied Intuition;https://www.appliedintuition.com;47;Dassault, Siemens;Accelerating;Simulation Teams
+Makini;https://www.makini.io/;55;None;Early/Pre-revenue;Manufacturing / OT
+Diagon;https://diagon.ai;55;None;Early/Pre-revenue;Manufacturing / OT
+Caidio;https://caidio.io;55;None;Early/Pre-revenue;Design Engineering
+RevisionDojo;https://www.revisiondojo.com;34;Autodesk, Dassault, PTC, Siemens;Accelerating;Educators
+Bonx;https://www.bonx.com/;55;None;Accelerating;Manufacturing / OT
+HiveMQ;https://hivemq.com;55;None;Accelerating;Operations Executives
+Cadify.ai;https://Cadify.ai;55;None;Early/Pre-revenue;Design Engineering
+AICA;https://www.aica.tech/;55;None;Early/Pre-revenue;Manufacturing / OT
+Polymerize;https://polymerize.io;65;None;Accelerating;Simulation Teams
+Emmi AI;https://www.emmi.ai;65;None;Accelerating;Simulation Teams
+trinckle 3D Gmbh;https://www.trinckle.com/;65;None;Steady;Manufacturing / OT
+JuliaHub;https://juliahub.com/;55;Dassault, Siemens;Early/Pre-revenue;Simulation Teams
+Provision;https://provision.com/;63;None;Accelerating;Quality / Inspection
+SprayVision;https://www.sprayvision.com;55;None;Early/Pre-revenue;Manufacturing / OT
+CADchat (acquired by Court Square in 2025);https://cadchat.com;55;None;Early/Pre-revenue;Design Engineering
+Hyperganic;https://www.hyperganic.com/;65;None;Accelerating;Manufacturing / OT
+Axial Composites;https://www.axialcomposite.com;55;None;Early/Pre-revenue;Manufacturing / OT
+Harmoni;https://harmoni.io/;55;None;Accelerating;Manufacturing / OT
+Madaster Germany Gmbh;https://madaster.de;65;None;Steady;Design Engineering
+Digel;https://www.digel.io/en;55;None;Early/Pre-revenue;Operations Executives
+Anvyl (acquired by Sage in 2024);https://www.anvyl.com;40;None;Stalled;Supply Chain / Logistics
+Tractian;https://tractian.com;55;None;Accelerating;Operations Executives
+1000 Kelvin;https://1000kelvin.com;55;None;Accelerating;Manufacturing / OT
+Makistry;https://makistry.com;63;None;Early/Pre-revenue;Design Engineering
+Data Time Space;https://datatime.space/;40;None;Early/Pre-revenue;Manufacturing / OT
+Cerrion;https://www.cerrion.com;55;None;Accelerating;Manufacturing / OT
+Designair;https://www.designair.io/;55;None;Accelerating;Design Engineering
+PRISM by Things, Inc.;https://mono-prism.jp/;55;None;Early/Pre-revenue;Manufacturing / OT
+Rollup;https://rollup.build;50;Autodesk, Dassault, Siemens;Early/Pre-revenue;R&D Leadership
+Digital Twin AI;https://digitaltwinai.co.uk/;55;None;Early/Pre-revenue;Manufacturing / OT
+Skema.AI;https://Skema.AI;55;None;Accelerating;Design Engineering
+Toolkit3D;https://www.toolkit3d.com;63;None;Early/Pre-revenue;Manufacturing / OT
+DraftAid;https://draftaid.io;25;Autodesk, Dassault;Accelerating;Manufacturing / OT
+Handoff;https://www.handoff.ai/;63;None;Accelerating;Operations Executives
+SubHub;https://subhub.io/;63;None;Early/Pre-revenue;Manufacturing / OT
+Inkwell Data, Ltd;https://inkwelldata.com;55;None;Early/Pre-revenue;Manufacturing / OT
+Luminovo;https://luminovo.com/;50;None;Accelerating;Supply Chain / Logistics
+Generative Vision;https://generative.vision/;65;None;Accelerating;Design Engineering
+Pattern Project;https://www.pattern-project.com/;55;None;Early/Pre-revenue;Manufacturing / OT
+LionsBot;https://lionsbot.com;50;None;Accelerating;Operations Executives
+Mobius Materials;https://www.mobiusmaterials.com;50;None;Steady;Supply Chain / Logistics
+Reframe;https://www.reframe.systems;47;Autodesk, Dassault, Siemens;Accelerating;Manufacturing / OT
+Numorpho Cybernetic Systems (NUMO);https://numorpho.org/;55;None;Early/Pre-revenue;Manufacturing / OT
+Scortex;https://www.scortex.io;55;None;Steady;Quality / Inspection
+Sheetbuild;https://www.sheetbuild.com;63;None;Early/Pre-revenue;Manufacturing / OT
+Neural Concept;https://neuralconcept.com;45;Dassault, Siemens;High Growth;Simulation Teams
+Ironloop;https://www.ironloop.com/;55;None;Early/Pre-revenue;Manufacturing / OT
+Bill-X Gmbh;https://bill-x.io/;55;None;Early/Pre-revenue;Supply Chain / Logistics
+Drafter;https://www.drafterinc.com;40;None;Accelerating;Design Engineering
+Autodrop3D;https://www.autodrop3d.com;63;None;Early/Pre-revenue;Manufacturing / OT
+Voxelgrid;https://voxelgrids.com;55;None;Accelerating;Design Engineering
+Revel;https://revel.io/;55;None;Accelerating;Operations Executives
+Viam;https://www.viam.com;55;None;High Growth;Manufacturing / OT
+EltegraAI;https://www.eltegra.ai/;43;Dassault, PTC, Siemens;Early/Pre-revenue;Manufacturing / OT
+rhobot.ai;https://rhobot.ai;40;None;Accelerating;Manufacturing / OT
+Pasteur Labs & ISI;https://pasteurlabs.ai/;57;Dassault, Siemens;Early/Pre-revenue;Simulation Teams
+Makersite Gmbh;https://makersite.io;65;None;Accelerating;Manufacturing / OT
+NODE Robotics;https://www.node-robotics.com/;55;None;Early/Pre-revenue;Manufacturing / OT
+Parallax Worlds;https://www.parallaxworlds.com/;43;Dassault, PTC, Siemens;Early/Pre-revenue;Simulation Teams
+Seeq;https://www.seeq.com/;55;None;Accelerating;Manufacturing / OT
+Endra;https://www.endra.ai/;55;None;Accelerating;Design Engineering
+Unlimited Industries;https://www.unlimitedindustries.com/;63;None;Early/Pre-revenue;Operations Executives
+Monolith (acquired by CoreWeave in 2025);https://monolithai.com;55;None;Accelerating;Simulation Teams
+InfinitForm;https://infinitform.com;55;None;Early/Pre-revenue;Design Engineering
+Flywheel Industries;https://flywheelindustrial.ai;55;None;Early/Pre-revenue;Operations Executives
+BEAM;https://www.ibeam.ai/;63;None;Accelerating;Operations Executives
+Physna;https://www.physna.com;49;Autodesk, Dassault, PTC, Siemens;Accelerating;Design Engineering
+plus10;https://en.plus10.de;55;None;Early/Pre-revenue;Manufacturing / OT
+Thread;https://www.threadai.com;43;Dassault, PTC, Siemens;Accelerating;Operations Executives
+Companyon Venture Capital;;50;None;Stalled;R&D Leadership
+Revizto;https://revizto.com/;55;None;Steady;Design Engineering
+AutoPCB;https://autopcb.app;39;Autodesk, Dassault, PTC, Siemens;Early/Pre-revenue;Design Engineering
+Togal AI;https://togal.ai;55;None;Accelerating;Design Engineering
+Bedrock Robotics;https://bedrockrobotics.com;55;None;Accelerating;Manufacturing / OT
+Apprentice;https://www.apprentice.io;55;None;High Growth;Manufacturing / OT
+Maihem;https://maihem.ai/;43;Dassault, PTC, Siemens;Early/Pre-revenue;Quality / Inspection
+Omniscient;https://www.omniscient.co.uk;53;Dassault, PTC, Siemens;Early/Pre-revenue;Operations Executives
+ShipReality;https://www.shipreality.com;43;Dassault, PTC, Siemens;Early/Pre-revenue;Manufacturing / OT
+nuvo3D;https://nuvo3d.com/;39;Autodesk, Dassault, PTC, Siemens;Early/Pre-revenue;Design Engineering
+Rayon;https://www.rayon.design/;63;None;Accelerating;Design Engineering
+Inversion Semiconductor;https://www.inversionsemi.com;47;Autodesk, Dassault, Siemens;Early/Pre-revenue;Manufacturing / OT
+Plethora (bankruptcy in 2022);https://www.plethora.com/;47;Autodesk, Dassault, Siemens;Early/Pre-revenue;Manufacturing / OT
+Sibe.io;https://sibe.io;25;Dassault;Accelerating;Design Engineering
+Caracol;https://caracol-am.com;40;None;Accelerating;Manufacturing / OT
+Azumuta;https://www.azumuta.com;55;None;Accelerating;Manufacturing / OT
+Sedaro;https://www.sedaro.com/;63;None;Accelerating;Simulation Teams
+Recloud;https://www.recloud.es;55;None;Steady;Quality / Inspection
+H3D;https://h3d.ai/;55;None;Accelerating;Manufacturing / OT
+Reshape Automation;https://www.reshapeautomation.com;60;None;Accelerating;Manufacturing / OT
+Physical Fund;;50;None;Stalled;Manufacturing / OT
+Bild;https://www.getbild.com/;55;None;Accelerating;R&D Leadership
+Autumn Labs;https://autumnlabs.io/;55;None;Early/Pre-revenue;Manufacturing / OT
+Cognitive Design by CDS;https://www.cognitive-design-systems.com;55;None;High Growth;Design Engineering
+SourcePilot;https://sourcepilot.ai;47;Autodesk, Dassault, PTC, Siemens;Early/Pre-revenue;Design Engineering
+Fort Robotics;https://www.fortrobotics.com/;63;None;Accelerating;Operations Executives
+Carbon;https://carbon.ms;65;None;Accelerating;Manufacturing / OT
+Dynisma;https://www.dynisma.com;55;None;Accelerating;Simulation Teams
+Toolpath;https://toolpath.com;55;None;Accelerating;Manufacturing / OT
+Visometry;https://visometry.com;65;None;Accelerating;Quality / Inspection
+Dozuki (acquired by Marlin Equity Partners in 2021);https://dozuki.com;55;None;Early/Pre-revenue;Design Engineering
+MaintainX;https://www.getmaintainx.com;55;None;High Growth;Operations Executives
+Datch;https://www.datch.io;55;None;Accelerating;Manufacturing / OT
+Bench;https://getbench.ai;48;Dassault, Siemens;Early/Pre-revenue;Design Engineering
+Frontline.io;https://frontline.io;55;None;Accelerating;Manufacturing / OT
+Imubit;https://imubit.com;55;None;Steady;Operations Executives
+Hanomi AI;https://hanomi.ai;63;None;Early/Pre-revenue;Design Engineering
+BIM Track (acquired by Newforma in 2021);https://bimtrack.co;47;Autodesk;Early/Pre-revenue;Design Engineering
+Higharc;https://www.higharc.com;35;None;Accelerating;Design Engineering
+PrototypeHubs (acquired by Prototek Manufacturing in 2024);https://prototypehubs.com/;55;None;Early/Pre-revenue;Manufacturing / OT
+Hypar;https://hypar.io;55;None;Accelerating;Design Engineering
+Vention;https://vention.io;55;None;High Growth;Manufacturing / OT
+Zenesis;https://zenesis-planung.de/;55;None;Early/Pre-revenue;Design Engineering
+SnapTrude;https://www.snaptrude.com;53;Autodesk;Accelerating;Design Engineering
+Archilyse (bankruptcy in 2023);https://www.archilyse.com;55;None;Early/Pre-revenue;Design Engineering
+General Catalyst;;50;None;Stalled;R&D Leadership
+etalytics;https://etalytics.com/;55;None;Accelerating;Manufacturing / OT
+Volcano Platform;https://www.volcanoplatforms.com/;63;None;Accelerating;Simulation Teams
+Facilis AI;https://www.facilis.ai;55;None;Early/Pre-revenue;Manufacturing / OT
+CadAICo;https://cadai.co;53;Dassault;Early/Pre-revenue;Design Engineering
+F4 Industries;https://f4.dev;48;None;Early/Pre-revenue;Manufacturing / OT
+Poelis;https://www.poelis.com;39;Autodesk, Dassault, PTC, Siemens;Early/Pre-revenue;Design Engineering
+Sana (acquired by Workday in 2025);https://www.sanalabs.com;40;None;Early/Pre-revenue;Educators
+Raven;https://raven.ai;55;None;Accelerating;Manufacturing / OT
+Circuit Mind;https://www.circuitmind.io/;39;Autodesk, Dassault, PTC, Siemens;Accelerating;Design Engineering
+TimeSeer;https://www.timeseer.ai/;65;None;Early/Pre-revenue;Manufacturing / OT
+Hontrel;https://hontrel.com;53;Autodesk;Early/Pre-revenue;Supply Chain / Logistics
+Omnae;https://omnae.com;55;None;Early/Pre-revenue;Supply Chain / Logistics
+Rapid Liquid Print;https://www.rapidliquidprint.com;55;None;Accelerating;Manufacturing / OT
+Five Flute;https://www.fiveflute.com/;53;Dassault;Steady;Design Engineering
+Vendra;https://vendraai.com;63;None;Early/Pre-revenue;Educators
+DivergenceAI;https://www.divergenceai.xyz;48;None;Early/Pre-revenue;Simulation Teams
+Slip Robotics;https://www.sliprobotics.com;55;None;High Growth;Manufacturing / OT
+AI MakerSpace;https://www.aimakerspace.io;63;None;Accelerating;Educators
+VNTANA;https://www.vntana.com/;35;Dassault;High Growth;Manufacturing / OT
+Spectral Labs;https://spectrallabs.ai;65;None;Early/Pre-revenue;R&D Leadership
+Gecko Robotics;https://www.geckorobotics.com;55;None;Accelerating;Quality / Inspection
+Aquant;https://www.aquant.ai/;55;None;Accelerating;Operations Executives
+Elodin;https://www.elodin.systems/;43;Dassault, PTC, Siemens;Early/Pre-revenue;Simulation Teams
+TETMET;https://tetmet.net;48;None;Early/Pre-revenue;Manufacturing / OT
+Flux;https://www.flux.ai;39;Autodesk, Dassault, PTC, Siemens;Accelerating;Design Engineering
+Agility Robotics;https://www.agilityrobotics.com;55;None;Accelerating;Manufacturing / OT
+Realis Simulation;https://realis-simulation.com;57;None;Accelerating;Simulation Teams
+Almond;https://almond.bot;47;Autodesk, Dassault, Siemens;Early/Pre-revenue;Manufacturing / OT
+Bananaz;https://www.bananaz.ai/;51;Autodesk, Dassault;Accelerating;Design Engineering
+Eigen Innovations;https://eigen.io;55;None;Early/Pre-revenue;Quality / Inspection
+aucobo;https://www.aucobo.de/;55;None;Early/Pre-revenue;Manufacturing / OT
+Atomic Industries;https://www.atomic.industries/;55;None;Accelerating;Manufacturing / OT
+Medra;https://www.medra.ai/;55;None;Accelerating;R&D Leadership
+NarrativeWave;https://www.narrativewave.com/;55;None;Steady;Manufacturing / OT
+Novineer;https://novineer.com/;55;None;Early/Pre-revenue;Design Engineering
+Symbio Robotics (bankruptcy in 2024);https://www.symb.ai;55;None;Early/Pre-revenue;Manufacturing / OT
+Twindustrial GmbH;https://twindustrial.de/en/;55;None;Early/Pre-revenue;Manufacturing / OT
+nTop;https://ntop.com;31;Autodesk, Dassault, PTC, Siemens;Steady;Design Engineering
+Drafted;https://drafted.ai;63;None;Early/Pre-revenue;Design Engineering
+Aris Machina;https://www.arismachina.com/;55;None;Early/Pre-revenue;Manufacturing / OT
+Benneker Partners;;50;None;Stalled;Manufacturing / OT
+LightTable;https://www.lighttable.ai/;63;None;Early/Pre-revenue;Design Engineering
+Infinitive (formerly CAE Tech);https://cae.tech/;55;None;Early/Pre-revenue;Simulation Teams
+Mecado;https://www.mecado.ai;57;Dassault, Siemens;Early/Pre-revenue;Simulation Teams
+Physical Intelligence;https://www.physicalintelligence.company/;55;None;Accelerating;Manufacturing / OT
+Labster;https://www.labster.com;34;Autodesk, Dassault, PTC, Siemens;High Growth;Educators
+APERIO;https://aperio.ai/;55;None;Early/Pre-revenue;Operations Executives
+InterBolt;https://interbolt.co.uk/;55;None;Early/Pre-revenue;Operations Executives
+Voxel Labs;https://www.voxelai.com;55;None;High Growth;Operations Executives
+CADEXSOFT;https://cadexsoft.com/;49;Autodesk, Dassault, PTC, Siemens;Early/Pre-revenue;Design Engineering
+Parspec;https://www.parspec.io/;63;None;Accelerating;Design Engineering
+Trunk Tools;https://trunktools.com/;63;None;Accelerating;Operations Executives
+Silsync;https://www.silsync.com/;55;None;Early/Pre-revenue;Design Engineering
+Matterize;https://www.matterize.ai;55;Autodesk, Dassault, Siemens;Early/Pre-revenue;Manufacturing / OT
+LatticeRobot;https://latticerobot.com/;65;None;Early/Pre-revenue;Simulation Teams
+Sensei;https://senseirobotics.com;55;None;Early/Pre-revenue;Manufacturing / OT
+Reconstruct;https://reconstructinc.com;40;None;Accelerating;Design Engineering
+Uptool;https://www.uptool.com/;65;None;Early/Pre-revenue;Manufacturing / OT
+Enzyme APD;https://enzymeapd.com;55;None;Early/Pre-revenue;Design Engineering
+JasperX;https://www.jasperx.com.au/;55;None;Early/Pre-revenue;Manufacturing / OT
+Axial3D;https://axial3d.com/;63;None;Accelerating;Manufacturing / OT
+Forge Automation;https://forgeautomation.ca/;47;Autodesk, Dassault, Siemens;Early/Pre-revenue;Manufacturing / OT
+Citrine Informatics;https://citrine.io/;55;None;Accelerating;Manufacturing / OT
+Zephyra;https://zephyra.tech;39;Autodesk, Dassault, PTC, Siemens;Early/Pre-revenue;Manufacturing / OT
+Boost Robotics;https://www.boostrobotics.ai;63;None;Early/Pre-revenue;Quality / Inspection
