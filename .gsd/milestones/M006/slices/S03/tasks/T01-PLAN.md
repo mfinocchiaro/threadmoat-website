@@ -1,10 +1,12 @@
-# S03: Target Customer Profile Heatmap
+---
+estimated_steps: 51
+estimated_files: 2
+skills_used: []
+---
 
-**Goal:** Deliver a Target Customer Profile heatmap that profiles each startup's typical target customer across four selectable dimensions (buyer persona, company size, geography, deployment model) on the X axis, cross-referenced by configurable Y-axis groupings (industry, investment thesis, workflow segment, manufacturing type), with four value modes (count, avg score, avg funding, customer count).
-**Demo:** After this: Heatmap profiling the typical target customer for each startup across size, industry, geography, and supply chain role.
+# T01: Build TargetCustomerProfileChart component with dual-axis selectors and geo-region mapping
 
-## Tasks
-- [x] **T01: Built TargetCustomerProfileChart with 4 X-axis customer dimensions, 4 Y-axis groupings, 4 value modes, geo-region collapsing, and shortlist highlighting** — ## Description
+## Description
 
 Create the main chart component by cloning from `industry-penetration-chart.tsx` and extending it with:
 
@@ -65,29 +67,17 @@ function getGeoRegion(country: string): string {
 - Hotspot insight bar
 - Color legend
 - Cell text suppressed for small cells (w > 20 && h > 16 guard)
-  - Estimate: 1h30m
-  - Files: components/charts/target-customer-profile-chart.tsx, components/charts/industry-penetration-chart.tsx
-  - Verify: test -f components/charts/target-customer-profile-chart.tsx && grep -q 'buyerPersona' components/charts/target-customer-profile-chart.tsx && grep -q 'getGeoRegion' components/charts/target-customer-profile-chart.tsx && grep -q 'shortlistedIds' components/charts/target-customer-profile-chart.tsx
-- [ ] **T02: Wire customer-profile page route and sidebar navigation, verify build** — ## Description
 
-Create the Next.js page route for the customer profile heatmap and wire it into the dashboard sidebar navigation. Then verify the entire build passes.
+## Inputs
 
-## Steps
+- ``components/charts/industry-penetration-chart.tsx` — primary template to clone from, contains D3 heatmap pattern with Y-axis selector, value modes, tooltips, shortlist highlighting, and theme-aware rendering`
+- ``lib/company-data.ts` — Company interface with buyerPersona, startupSizeCategory, country, deploymentModel fields`
+- ``lib/customer-logos.ts` — parseKnownCustomers() for customer count value mode`
 
-1. Create `app/dashboard/customer-profile/page.tsx` by cloning `app/dashboard/industry-penetration/page.tsx`
-2. Update the import to `TargetCustomerProfileChart` from `@/components/charts/target-customer-profile-chart`
-3. Update the page title to "Target Customer Profile" and description to explain the multi-dimensional customer profiling purpose
-4. Add sidebar entry to `ADMIN_ITEMS` array in `components/dashboard/sidebar.tsx`: `{ href: '/dashboard/customer-profile', icon: UserCircle, label: 'Customer Profile' }` — place it after the existing Market Momentum entry
-5. Add `'/dashboard/customer-profile'` to the `ADMIN_VIZ_HREFS` Set
-6. Run `npx next build` and verify zero type errors across all pages
+## Expected Output
 
-## Must-Haves
+- ``components/charts/target-customer-profile-chart.tsx` — complete chart component with dual-axis selectors, geo-region mapping, all value modes, tooltips, shortlist highlighting, and theme-aware rendering`
 
-- Page route at `/dashboard/customer-profile` using VizPageShell + useThesisGatedData
-- TargetCustomerProfileChart imported and rendered with filtered data and shortlistedIds
-- Sidebar shows 'Customer Profile' in admin items
-- ADMIN_VIZ_HREFS includes the new route
-- `npx next build` passes with zero type errors
-  - Estimate: 30m
-  - Files: app/dashboard/customer-profile/page.tsx, components/dashboard/sidebar.tsx
-  - Verify: npx next build 2>&1 | tail -5
+## Verification
+
+test -f components/charts/target-customer-profile-chart.tsx && grep -q 'buyerPersona' components/charts/target-customer-profile-chart.tsx && grep -q 'getGeoRegion' components/charts/target-customer-profile-chart.tsx && grep -q 'shortlistedIds' components/charts/target-customer-profile-chart.tsx
