@@ -103,6 +103,10 @@ export interface Company {
   flagBain: boolean
   flagFidelity: boolean
   flagBrowserBased: boolean
+  // IP Dependency Analysis columns
+  ecosystemCompatibility: string
+  graphicsKernel: string
+  modelingParadigms: string[]
   // Heatmap enrichment columns
   techIndependenceScore: number
   ecosystemDependencies: string[]

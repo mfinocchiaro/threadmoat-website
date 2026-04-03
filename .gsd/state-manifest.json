@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exported_at": "2026-04-03T06:47:39.086Z",
+  "exported_at": "2026-04-03T06:59:52.558Z",
   "milestones": [
     {
       "id": "M001",
@@ -910,14 +910,14 @@
       "milestone_id": "M006",
       "id": "S03",
       "title": "Target Customer Profile Heatmap",
-      "status": "pending",
+      "status": "complete",
       "risk": "high",
       "depends": [],
       "demo": "Heatmap profiling the typical target customer for each startup across size, industry, geography, and supply chain role.",
       "created_at": "2026-04-01T21:30:17.307Z",
-      "completed_at": null,
-      "full_summary_md": "",
-      "full_uat_md": "",
+      "completed_at": "2026-04-03T06:50:04.518Z",
+      "full_summary_md": "---\nid: S03\nparent: M006\nmilestone: M006\nprovides:\n  - TargetCustomerProfileChart component with dual-axis selection\n  - /dashboard/customer-profile page route with sidebar navigation\nrequires:\n  []\naffects:\n  []\nkey_files:\n  - components/charts/target-customer-profile-chart.tsx\n  - app/dashboard/customer-profile/page.tsx\n  - components/dashboard/sidebar.tsx\nkey_decisions:\n  - Unique gradient ID (target-customer-legend-grad) to avoid SVG collision with industry penetration chart\n  - industriesServed added as Y-axis option since X-axis now handles customer profile dimensions\npatterns_established:\n  - Dual-axis selectable heatmap pattern — both X and Y axes are user-configurable via dropdown selectors, extending the single-fixed-axis pattern from IndustryPenetrationChart\nobservability_surfaces:\n  - none\ndrill_down_paths:\n  - .gsd/milestones/M006/slices/S03/tasks/T01-SUMMARY.md\n  - .gsd/milestones/M006/slices/S03/tasks/T02-SUMMARY.md\nduration: \"\"\nverification_result: passed\ncompleted_at: 2026-04-03T06:50:04.519Z\nblocker_discovered: false\n---\n\n# S03: Target Customer Profile Heatmap\n\n**Dual-axis selectable heatmap profiling target customers across buyer persona, company size, geography, and deployment model — with configurable Y-axis groupings, four value modes, geo-region collapsing, and shortlist highlighting**\n\n## What Happened\n\nCloned the IndustryPenetrationChart D3 heatmap pattern and restructured it into a fully dual-axis-selectable heatmap. T01 built the core `TargetCustomerProfileChart` component with four X-axis customer profile dimensions (Buyer Persona, Company Size, Geography, Deployment Model), four Y-axis groupings (Industries Served, Investment Thesis, Workflow Segment, Manufacturing Type), and four value modes (count, avg score, avg funding, customer count). The Geography dimension collapses 43 country values into 8 geographic regions via a `getGeoRegion()` helper that strips emoji flags and normalizes country names. Shortlist highlighting uses the optional prop pattern (K005) with amber borders, and cell text rendering is guarded by `w > 20 && h > 16` to suppress labels in small cells. The SVG legend gradient uses a unique ID (`target-customer-legend-grad`) to avoid collision with the industry penetration chart.\n\nT02 wired the page route at `/dashboard/customer-profile` using the established VizPageShell + useThesisGatedData pattern, added the Customer Profile entry (UserCircle icon) to the sidebar ADMIN_ITEMS after Market Momentum, and registered the route in ADMIN_VIZ_HREFS. Full `npx next build` passes with zero errors and the route appears in the build output.\n\n## Verification\n\nAll slice-level verification checks passed:\n1. Chart file exists at components/charts/target-customer-profile-chart.tsx\n2. grep confirmed buyerPersona, getGeoRegion, shortlistedIds all present in chart\n3. Page route exists at app/dashboard/customer-profile/page.tsx\n4. Sidebar has customer-profile entry in both ADMIN_ITEMS and ADMIN_VIZ_HREFS\n5. `npx next build` passes with zero errors — /dashboard/customer-profile appears in route listing\n6. Hotspot insight bar, tooltip, color legend, and cell text guard all present in chart code\n\n## Requirements Advanced\n\nNone.\n\n## Requirements Validated\n\nNone.\n\n## New Requirements Surfaced\n\nNone.\n\n## Requirements Invalidated or Re-scoped\n\nNone.\n\n## Deviations\n\nNone.\n\n## Known Limitations\n\nNone.\n\n## Follow-ups\n\nNone.\n\n## Files Created/Modified\n\n- `components/charts/target-customer-profile-chart.tsx` — New D3 heatmap component with 4 X-axis customer dimensions, 4 Y-axis groupings, 4 value modes, geo-region collapsing, shortlist highlighting, hotspot bar, tooltip, and color legend\n- `app/dashboard/customer-profile/page.tsx` — New page route using VizPageShell + useThesisGatedData pattern with TargetCustomerProfileChart\n- `components/dashboard/sidebar.tsx` — Added Customer Profile entry to ADMIN_ITEMS and /dashboard/customer-profile to ADMIN_VIZ_HREFS\n",
+      "full_uat_md": "# S03: Target Customer Profile Heatmap — UAT\n\n**Milestone:** M006\n**Written:** 2026-04-03T06:50:04.519Z\n\n# S03: Target Customer Profile Heatmap — UAT\n\n**Milestone:** M006\n**Written:** 2026-04-01\n\n## UAT Type\n\n- UAT mode: live-runtime\n- Why this mode is sufficient: The heatmap is a client-side D3 visualization rendered from CSV data — requires a running dev server to verify interactive behavior, axis switching, tooltips, and data correctness.\n\n## Preconditions\n\n- Dev server running (`npm run dev` or `npx next dev`)\n- Logged in as an admin/strategist user with dashboard access\n- At least some startup data loaded (CSV pipeline populated)\n\n## Smoke Test\n\nNavigate to `/dashboard/customer-profile`. The page should render a heatmap with colored cells, three dropdown selectors (X-axis, Y-axis, Value Mode), a color legend, and a hotspot insight bar below the chart.\n\n## Test Cases\n\n### 1. Default View Renders Correctly\n\n1. Navigate to `/dashboard/customer-profile`\n2. Verify default X-axis is \"Buyer Persona\", Y-axis is \"Industries Served\", Value Mode is \"Startup Count\"\n3. Verify heatmap cells are colored on a gradient scale\n4. Verify Y-axis labels appear on the left, X-axis labels appear at the top\n5. **Expected:** A filled heatmap with buyer personas across the top, industries down the side, cells colored by startup count\n\n### 2. X-Axis Dimension Switching\n\n1. From default view, change X-axis dropdown to \"Company Size\"\n2. Verify heatmap re-renders with company size categories across the top (e.g., \"Startup\", \"Growth\", \"Enterprise\", \"Unknown\")\n3. Change X-axis to \"Geography\"\n4. Verify geographic regions appear (North America, DACH, Western Europe, UK & Ireland, Nordics, Israel, Asia-Pacific, Other)\n5. Change X-axis to \"Deployment Model\"\n6. Verify deployment model values appear across the top\n7. **Expected:** Each X-axis switch re-renders the heatmap with appropriate column labels and recalculated cell values\n\n### 3. Y-Axis Grouping Switching\n\n1. Set X-axis to \"Buyer Persona\"\n2. Change Y-axis to \"Investment Thesis\"\n3. Verify row labels change to investment thesis categories\n4. Change Y-axis to \"Workflow Segment\"\n5. Verify row labels change to workflow segments\n6. Change Y-axis to \"Manufacturing Type\"\n7. Verify row labels change to manufacturing type categories\n8. **Expected:** Each Y-axis switch changes the row groupings while preserving the selected X-axis dimension\n\n### 4. Value Mode Switching\n\n1. Note cell colors in \"Startup Count\" mode\n2. Switch Value Mode to \"Avg. Weighted Score\"\n3. Verify cell colors change (different distribution)\n4. Switch to \"Avg. Funding ($M)\"\n5. Verify cell colors change again\n6. Switch to \"Customer Count\"\n7. Verify cell colors change\n8. **Expected:** Each value mode produces a different color distribution reflecting the underlying metric\n\n### 5. Tooltip Interaction\n\n1. Hover over a colored cell\n2. Verify tooltip appears showing: X-group × Y-group label, count, avg score, avg funding, customer count\n3. If any companies in the cell are shortlisted, verify amber ★ indicator with company names\n4. For cells with ≤5 companies, verify individual company names listed\n5. Move mouse away from cell\n6. **Expected:** Tooltip follows cursor, disappears on mouseout, shows accurate breakdown\n\n### 6. Hotspot Insight Bar\n\n1. Look below the heatmap for the \"Hotspots\" section\n2. Verify it lists the top 3 cells with count ≥ 5\n3. Verify \"White Spaces\" section shows cells with count 0 or 1\n4. **Expected:** Hotspot bar surfaces the densest and emptiest cells as quick insights\n\n### 7. Shortlist Highlighting\n\n1. Add 2-3 companies to the shortlist from another chart page\n2. Navigate to `/dashboard/customer-profile`\n3. Verify cells containing shortlisted companies have an amber/yellow border\n4. Hover over a highlighted cell\n5. Verify tooltip shows shortlisted company names with ★ indicator\n6. **Expected:** Shortlisted companies are visually distinguishable via amber cell borders and tooltip callouts\n\n### 8. Sidebar Navigation\n\n1. Open the sidebar\n2. Verify \"Customer Profile\" entry appears with UserCircle icon, after Market Momentum\n3. Click it\n4. **Expected:** Navigates to `/dashboard/customer-profile`\n\n## Edge Cases\n\n### Empty Data State\n\n1. Apply thesis filters that exclude all companies\n2. **Expected:** Heatmap renders with no colored cells or shows an empty state gracefully (no crash)\n\n### All Unknown Values\n\n1. Switch X-axis to \"Deployment Model\" (many companies may lack this field)\n2. Verify \"Unknown\" column appears and aggregates correctly\n3. **Expected:** Missing data maps to \"Unknown\" bucket without errors\n\n### Geography Region Collapsing\n\n1. Switch X-axis to \"Geography\"\n2. Verify ~8 region columns appear (not 43 individual countries)\n3. Verify countries with flag emojis (e.g., \"United States 🇺🇸\") are correctly mapped\n4. **Expected:** All countries collapse into their expected geographic regions\n\n## Failure Signals\n\n- Page crashes or shows white screen on load\n- Dropdown selectors don't change the heatmap\n- Cells show NaN or undefined text\n- Tooltip doesn't appear or shows wrong data\n- Build fails (`npx next build` exits non-zero)\n- Customer Profile not visible in sidebar\n\n## Not Proven By This UAT\n\n- Performance under very large datasets (1000+ companies)\n- Accessibility (keyboard navigation of heatmap cells, screen reader support)\n- Print/PDF rendering of the heatmap\n- Mobile responsiveness of the dual-axis selector layout\n\n## Notes for Tester\n\n- The \"Manufacturing Type\" Y-axis parses Python-style list strings (`['Type1', 'Type2']`), so some values may look unusual if source data has inconsistent formatting.\n- Geographic region mapping is hardcoded to 8 regions — countries not explicitly mapped fall to \"Other\". Check if any important countries are missing from the mapping.\n- The color legend gradient uses a unique SVG ID — if both Industry Penetration and Customer Profile pages are somehow rendered simultaneously (e.g., in a report), verify no gradient collision.\n",
       "goal": "Deliver a Target Customer Profile heatmap that profiles each startup's typical target customer across four selectable dimensions (buyer persona, company size, geography, deployment model) on the X axis, cross-referenced by configurable Y-axis groupings (industry, investment thesis, workflow segment, manufacturing type), with four value modes (count, avg score, avg funding, customer count).",
       "success_criteria": "- `components/charts/target-customer-profile-chart.tsx` exists with dual-axis dropdown selectors (X and Y), geographic region mapping, shortlist highlighting, tooltips, and theme-aware D3 rendering\n- `app/dashboard/customer-profile/page.tsx` exists using VizPageShell + useThesisGatedData pattern\n- `/dashboard/customer-profile` entry appears in ADMIN_ITEMS and ADMIN_VIZ_HREFS in sidebar.tsx\n- `npx next build` passes with zero type errors\n- All four X-axis dimensions render correctly (buyer persona, company size, geography, deployment model)\n- All four Y-axis dimensions render correctly\n- All four value modes produce distinct cell coloring\n- Tooltip shows cell breakdown including shortlisted companies\n- Shortlisted companies show amber border highlight",
       "proof_level": "integration — chart renders with real data from the CSV pipeline, accessible via dashboard route",
@@ -938,11 +938,11 @@
       "completed_at": null,
       "full_summary_md": "",
       "full_uat_md": "",
-      "goal": "Build an IP Dependency analysis view showing who owns the core IP, third-party technology dependencies, and potential competitor exposure through shared vendors.",
-      "success_criteria": "IP view renders with available data or data collection pipeline scoped and documented.",
-      "proof_level": "Visual verification or data collection plan",
-      "integration_closure": "May require new research pipeline for IP data",
-      "observability_impact": "None",
+      "goal": "Add IP Dependency Analysis view showing IP ownership, technology dependencies, and third-party platform risk for each startup — with two view modes (Risk Tier Heatmap and Vendor Dependency Matrix), configurable Y-axis, and rich tooltips showing ecosystem compatibility, graphics kernel, and modeling paradigms.",
+      "success_criteria": "## Must-Haves\n\n- Three new Company fields (`ecosystemCompatibility`, `graphicsKernel`, `modelingParadigms`) loaded from the main CSV\n- Graphics Kernel column cleaned to filter out misplaced construction industry data\n- D3 heatmap chart with Risk Tier mode (X = IP Risk Tier from `techIndependenceScore` buckets, color = avg dependency count)\n- D3 heatmap chart with Vendor Dependency Matrix mode (X = Major Ecosystem Vendor, cell value = startup count)\n- Configurable Y-axis (deployment model, investment thesis, workflow segment)\n- Tooltip showing ecosystem compatibility text, graphics kernel, modeling paradigms, and dependency list\n- Shortlist highlighting via optional `shortlistedIds` prop (amber border, K005)\n- Page at `/dashboard/ip-dependency` using `VizPageShell` + `useThesisGatedData` pattern\n- Sidebar entry in `ADMIN_ITEMS` and `ADMIN_VIZ_HREFS`\n- Widget registry entry in `ADMIN_WIDGETS`\n\n## Verification\n\n- `npm run build` passes with zero type errors\n- `test -f components/charts/ip-dependency-chart.tsx && test -f app/dashboard/ip-dependency/page.tsx` (key files exist)\n- `grep -q \"ecosystemCompatibility\" lib/company-data.ts && grep -q \"graphicsKernel\" lib/company-data.ts && grep -q \"modelingParadigms\" lib/company-data.ts` (new fields in Company interface)\n- `grep -q \"ip-dependency\" components/dashboard/sidebar.tsx` (sidebar entry registered)\n- `grep -q \"ip-dependency\" lib/widget-registry.ts` (widget registered)\n\n## Proof Level\n\n- This slice proves: integration\n- Real runtime required: yes (D3 chart renders with real CSV data)\n- Human/UAT required: yes (visual verification of heatmap rendering, tooltip content, view toggle)\n\n## Integration Closure\n\n- Upstream surfaces consumed: `lib/company-data.ts` (Company interface), `lib/load-companies-server.ts` (CSV loader), `components/dashboard/sidebar.tsx` (nav registration), `lib/widget-registry.ts` (widget registry), `components/dashboard/viz-page-shell.tsx` (page shell), `hooks/use-thesis-gated-data.ts` (data hook)\n- New wiring introduced in this slice: new page route at `/dashboard/ip-dependency`, new sidebar + widget entries, 3 new fields on Company type\n- What remains before the milestone is truly usable end-to-end: nothing — this is the final slice in M006",
+      "proof_level": "integration",
+      "integration_closure": "Upstream: Company interface, CSV loader, sidebar nav, widget registry, VizPageShell, useThesisGatedData hook. New: page route, sidebar + widget entries, 3 new Company fields. This is M006's final slice — nothing remains after.",
+      "observability_impact": "None — pure frontend visualization with no async flows, APIs, or error paths beyond standard D3 chart rendering.",
       "sequence": 0,
       "replan_triggered_at": null
     },
@@ -2500,6 +2500,123 @@
       "expected_output": [
         "`app/dashboard/customer-profile/page.tsx` — page route rendering TargetCustomerProfileChart with VizPageShell",
         "`components/dashboard/sidebar.tsx` — updated with customer-profile entry in ADMIN_ITEMS and ADMIN_VIZ_HREFS"
+      ],
+      "observability_impact": "",
+      "full_plan_md": "",
+      "sequence": 0
+    },
+    {
+      "milestone_id": "M006",
+      "slice_id": "S04",
+      "id": "T01",
+      "title": "Added ecosystemCompatibility, graphicsKernel, and modelingParadigms fields to Company interface and CSV loader with whitelist-based kernel cleaning",
+      "status": "complete",
+      "one_liner": "Added ecosystemCompatibility, graphicsKernel, and modelingParadigms fields to Company interface and CSV loader with whitelist-based kernel cleaning",
+      "narrative": "Added three fields to the Company interface (ecosystemCompatibility: string, graphicsKernel: string, modelingParadigms: string[]) and mapped them in loadCompaniesFromCSV(). Created cleanGraphicsKernel() helper that uses a whitelist of valid kernel identifiers to filter ~25 rows of misplaced construction industry data. Data validation: 560/600 ecosystem compatibility, 41/600 valid kernels, 600/600 modeling paradigms.",
+      "verification_result": "npm run build passes with zero errors. Manual data spot-check confirmed correct parsing across all three fields.",
+      "duration": "",
+      "completed_at": "2026-04-03T06:59:52.544Z",
+      "blocker_discovered": false,
+      "deviations": "None.",
+      "known_issues": "None.",
+      "key_files": [
+        "lib/company-data.ts",
+        "lib/load-companies-server.ts"
+      ],
+      "key_decisions": [
+        "Whitelist-based graphics kernel cleaning — only values containing known kernel names pass through"
+      ],
+      "full_summary_md": "---\nid: T01\nparent: S04\nmilestone: M006\nkey_files:\n  - lib/company-data.ts\n  - lib/load-companies-server.ts\nkey_decisions:\n  - Whitelist-based graphics kernel cleaning — only values containing known kernel names pass through\nduration: \"\"\nverification_result: passed\ncompleted_at: 2026-04-03T06:59:52.544Z\nblocker_discovered: false\n---\n\n# T01: Added ecosystemCompatibility, graphicsKernel, and modelingParadigms fields to Company interface and CSV loader with whitelist-based kernel cleaning\n\n**Added ecosystemCompatibility, graphicsKernel, and modelingParadigms fields to Company interface and CSV loader with whitelist-based kernel cleaning**\n\n## What Happened\n\nAdded three fields to the Company interface (ecosystemCompatibility: string, graphicsKernel: string, modelingParadigms: string[]) and mapped them in loadCompaniesFromCSV(). Created cleanGraphicsKernel() helper that uses a whitelist of valid kernel identifiers to filter ~25 rows of misplaced construction industry data. Data validation: 560/600 ecosystem compatibility, 41/600 valid kernels, 600/600 modeling paradigms.\n\n## Verification\n\nnpm run build passes with zero errors. Manual data spot-check confirmed correct parsing across all three fields.\n\n## Verification Evidence\n\n| # | Command | Exit Code | Verdict | Duration |\n|---|---------|-----------|---------|----------|\n| 1 | `npm run build` | 0 | ✅ pass | 20800ms |\n\n\n## Deviations\n\nNone.\n\n## Known Issues\n\nNone.\n\n## Files Created/Modified\n\n- `lib/company-data.ts`\n- `lib/load-companies-server.ts`\n",
+      "description": "Add three new fields to the Company interface and load them from the main CSV in loadCompaniesFromCSV(). This unblocks the chart component.\n\n## Steps\n\n1. Open `lib/company-data.ts` and add three fields to the `Company` interface after the existing heatmap enrichment fields (after line ~108):\n   - `ecosystemCompatibility: string` — free-text describing platform integrations\n   - `graphicsKernel: string` — cleaned kernel identifier or empty string\n   - `modelingParadigms: string[]` — parsed list of technology standards\n\n2. Open `lib/load-companies-server.ts` and add the three new column mappings in the `return` block of `loadCompaniesFromCSV()`, in the main CSV section (not the enrichment section):\n   - `ecosystemCompatibility: cleanField(row['Ecosystem SW/Platform Compatibility'])` — use existing `cleanField()` to strip N/A values\n   - `graphicsKernel`: Load `row['Graphics Kernel']`, then apply a cleaning function. Create a helper `cleanGraphicsKernel(raw: string): string` that:\n     a. Returns `''` for empty/N/A values\n     b. Returns the cleaned value ONLY if it contains one of: 'Proprietary', 'Parasolid', 'OpenCascade', 'OpenUSD', 'Rhino', 'WebGL', 'ACIS', 'CGAL' (case-insensitive check)\n     c. Returns `''` for all other values (these are misplaced construction industry data — ~25 rows have values like 'Residential Construction, Homebuilding')\n   - `modelingParadigms: parsePythonList(row['Modeling Paradigms & Protocols'])` — use existing `parsePythonList()` helper\n\n3. Verify the CSV column names match exactly: 'Ecosystem SW/Platform Compatibility' (column 16), 'Graphics Kernel' (column 19), 'Modeling Paradigms & Protocols' (column 160).\n\n## Must-Haves\n\n- [ ] `ecosystemCompatibility` field added to Company interface as `string`\n- [ ] `graphicsKernel` field added to Company interface as `string`\n- [ ] `modelingParadigms` field added to Company interface as `string[]`\n- [ ] CSV loader maps all three columns correctly\n- [ ] Graphics Kernel cleaning rejects construction industry values, keeps kernel identifiers\n- [ ] `npm run build` passes with zero errors",
+      "estimate": "20m",
+      "files": [
+        "lib/company-data.ts",
+        "lib/load-companies-server.ts"
+      ],
+      "verify": "npm run build",
+      "inputs": [
+        "`lib/company-data.ts` — existing Company interface to extend",
+        "`lib/load-companies-server.ts` — existing CSV loader with cleanField() and parsePythonList() helpers",
+        "`data/Startups-Grid Full DB View.csv` — source CSV with columns at positions 16, 19, 160"
+      ],
+      "expected_output": [
+        "`lib/company-data.ts` — Company interface with ecosystemCompatibility, graphicsKernel, modelingParadigms fields",
+        "`lib/load-companies-server.ts` — CSV loader mapping three new columns with cleanGraphicsKernel() helper"
+      ],
+      "observability_impact": "",
+      "full_plan_md": "",
+      "sequence": 0
+    },
+    {
+      "milestone_id": "M006",
+      "slice_id": "S04",
+      "id": "T02",
+      "title": "Build dual-mode IP Dependency heatmap chart component with D3",
+      "status": "pending",
+      "one_liner": "",
+      "narrative": "",
+      "verification_result": "",
+      "duration": "",
+      "completed_at": null,
+      "blocker_discovered": false,
+      "deviations": "",
+      "known_issues": "",
+      "key_files": [],
+      "key_decisions": [],
+      "full_summary_md": "",
+      "description": "Create the `IPDependencyChart` component following the established M006 heatmap pattern (copy structure from `tech-independence-chart.tsx`). The chart has two view modes controlled by a toggle, configurable Y-axis, and rich tooltips.\n\n## Steps\n\n1. Create `components/charts/ip-dependency-chart.tsx`. Start by copying the structural pattern from `components/charts/tech-independence-chart.tsx` — same imports, same Card wrapper, same SVG + tooltip refs, same Y-axis selector UI.\n\n2. Define the component props:\n   ```tsx\n   interface IPDependencyChartProps {\n     data: Company[]\n     className?: string\n     shortlistedIds?: Set<string>\n   }\n   ```\n\n3. Add a `ViewMode` type: `'risk-tier' | 'vendor-matrix'` with state and a toggle button in the toolbar.\n\n4. Define Y-axis options (same pattern as other M006 charts):\n   ```tsx\n   type YAxisKey = 'deploymentModel' | 'investmentTheses' | 'workflowSegment'\n   ```\n   With the same `Y_AXES` array and `getYValues()` function from `tech-independence-chart.tsx`.\n\n5. **Risk Tier mode** (primary):\n   - X axis: IP Risk Tier — bucket `techIndependenceScore` inversely into risk tiers:\n     - 'Very High Risk' (score < 35), 'High Risk' (35–44), 'Medium Risk' (45–54), 'Low Risk' (55–64), 'Very Low Risk' (65+)\n   - Cell color intensity: based on average dependency count (ecosystemDependencies.length) in the cell\n   - Cell text: startup count\n   - Use `d3.interpolateOrRd` (orange-red) color scale for risk theming\n\n6. **Vendor Dependency Matrix mode**:\n   - X axis: Major Ecosystem Vendor — 'Dassault', 'Siemens', 'Autodesk', 'PTC', 'Independent'\n   - A company appears in a vendor column if `ecosystemDependencies` includes that vendor. Companies with empty ecosystemDependencies go in 'Independent'.\n   - Cell color intensity: startup count\n   - Use `d3.interpolateBlues` for vendor mode\n\n7. **Tooltip** (both modes): Fixed-position div, toggled on mouseover. Show:\n   - Cell coordinates (tier/vendor × Y group)\n   - Startup count\n   - Mode-specific metric (avg dependency count for risk tier, or count for vendor)\n   - For cells with ≤ 8 companies: list company names with their `ecosystemCompatibility` text (truncated to 80 chars), `graphicsKernel` (if non-empty), and first 3 `modelingParadigms`\n   - Shortlisted companies highlighted with ★ amber\n\n8. **Shortlist highlighting**: Amber border (2.5px #f59e0b) on cells containing shortlisted companies. Use `shortlistedIds?.has(id)` guard (K005). Use `''` not `null` for clearing styles (K004).\n\n9. **Layout**: Same margin/cellSize/legend pattern as tech-independence-chart. Legend gradient matches the active color scale. Bottom toolbar shows dimension counts.\n\n## Must-Haves\n\n- [ ] Risk Tier Heatmap mode renders with correct X-axis buckets (inverse of techIndependenceScore)\n- [ ] Vendor Dependency Matrix mode renders with correct vendor columns\n- [ ] View mode toggle switches between modes\n- [ ] Y-axis selector works across all 3 options\n- [ ] Tooltip shows ecosystem compatibility, graphics kernel, modeling paradigms\n- [ ] Shortlist highlighting with amber border (K005 pattern)\n- [ ] D3 .style() uses '' not null on HTML selections (K004)\n- [ ] Component exports named `IPDependencyChart`",
+      "estimate": "1h",
+      "files": [
+        "components/charts/ip-dependency-chart.tsx",
+        "components/charts/tech-independence-chart.tsx"
+      ],
+      "verify": "npm run build",
+      "inputs": [
+        "`lib/company-data.ts` — Company interface with ecosystemCompatibility, graphicsKernel, modelingParadigms fields",
+        "`components/charts/tech-independence-chart.tsx` — reference D3 heatmap pattern to follow"
+      ],
+      "expected_output": [
+        "`components/charts/ip-dependency-chart.tsx` — dual-mode D3 heatmap chart component"
+      ],
+      "observability_impact": "",
+      "full_plan_md": "",
+      "sequence": 0
+    },
+    {
+      "milestone_id": "M006",
+      "slice_id": "S04",
+      "id": "T03",
+      "title": "Wire up IP Dependency page route, sidebar entry, and widget registry",
+      "status": "pending",
+      "one_liner": "",
+      "narrative": "",
+      "verification_result": "",
+      "duration": "",
+      "completed_at": null,
+      "blocker_discovered": false,
+      "deviations": "",
+      "known_issues": "",
+      "key_files": [],
+      "key_decisions": [],
+      "full_summary_md": "",
+      "description": "Create the page component and register the new view in the admin navigation. This completes the slice by making the chart accessible.\n\n## Steps\n\n1. Create `app/dashboard/ip-dependency/page.tsx` following the exact pattern of `app/dashboard/market-momentum/page.tsx`:\n   - Import `VizPageShell`, `useThesisGatedData`, `IPDependencyChart`, `Skeleton`\n   - Inner component uses `useThesisGatedData()` to get `filtered`, `isLoading`, `shortlistedIds`\n   - Render heading 'IP Dependency Analysis' with description about IP ownership and technology dependencies\n   - Loading state: `<Skeleton className=\"h-[600px] rounded-xl\" />`\n   - Data state: `<IPDependencyChart data={filtered} shortlistedIds={shortlistedIds} className=\"min-h-[500px]\" />`\n   - Wrap in `VizPageShell`\n\n2. Open `components/dashboard/sidebar.tsx`:\n   - Add entry to `ADMIN_ITEMS` array: `{ href: '/dashboard/ip-dependency', icon: Shield, label: 'IP Dependency' }` — Shield icon is already imported (used by tech-independence). If not, import it from lucide-react.\n   - Add `'/dashboard/ip-dependency'` to the `ADMIN_VIZ_HREFS` Set\n\n3. Open `lib/widget-registry.ts`:\n   - Add to `ADMIN_WIDGETS` array: `{ id: 'ip-dependency', label: 'IP Dependency Analysis', scenarios: [], adminOnly: true }`\n\n4. Verify with `npm run build` that the page compiles and all imports resolve.\n\n## Must-Haves\n\n- [ ] Page component at `app/dashboard/ip-dependency/page.tsx` renders IPDependencyChart\n- [ ] Sidebar entry visible in admin items\n- [ ] `ADMIN_VIZ_HREFS` includes the new route\n- [ ] Widget registry includes ip-dependency\n- [ ] `npm run build` passes",
+      "estimate": "15m",
+      "files": [
+        "app/dashboard/ip-dependency/page.tsx",
+        "components/dashboard/sidebar.tsx",
+        "lib/widget-registry.ts"
+      ],
+      "verify": "npm run build && grep -q 'ip-dependency' components/dashboard/sidebar.tsx && grep -q 'ip-dependency' lib/widget-registry.ts",
+      "inputs": [
+        "`components/charts/ip-dependency-chart.tsx` — chart component to import",
+        "`components/dashboard/sidebar.tsx` — sidebar with ADMIN_ITEMS and ADMIN_VIZ_HREFS to extend",
+        "`lib/widget-registry.ts` — widget registry with ADMIN_WIDGETS to extend",
+        "`app/dashboard/market-momentum/page.tsx` — reference page pattern to follow"
+      ],
+      "expected_output": [
+        "`app/dashboard/ip-dependency/page.tsx` — page component wiring chart to route",
+        "`components/dashboard/sidebar.tsx` — updated with ip-dependency entry in ADMIN_ITEMS and ADMIN_VIZ_HREFS",
+        "`lib/widget-registry.ts` — updated with ip-dependency in ADMIN_WIDGETS"
       ],
       "observability_impact": "",
       "full_plan_md": "",
@@ -4202,6 +4319,17 @@
       "verdict": "✅ pass",
       "duration_ms": 21000,
       "created_at": "2026-04-03T06:47:39.075Z"
+    },
+    {
+      "id": 128,
+      "task_id": "T01",
+      "slice_id": "S04",
+      "milestone_id": "M006",
+      "command": "npm run build",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 20800,
+      "created_at": "2026-04-03T06:59:52.544Z"
     }
   ]
 }
