@@ -14,6 +14,7 @@
 - 🔄 **M006:** M006
 - ✅ **M007:** M007: Theme-aware colors + data sync + cell drilldown
 - ⬜ **M008:** Production Polish & Performance
+- ⬜ **M009:** Performance Audit & Bundle Optimization
 
 ## Recent Decisions
 - None recorded
