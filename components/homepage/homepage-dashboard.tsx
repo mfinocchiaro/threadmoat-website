@@ -4,16 +4,22 @@ import { useMemo } from "react"
 import dynamic from "next/dynamic"
 import { Company, formatCurrency } from "@/lib/company-data"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { NetworkGraph } from "@/components/charts/network-graph"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Lock } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { FilterProvider } from "@/contexts/filter-context"
 
+const chartLoading = () => <Skeleton className="w-full h-full min-h-[450px] rounded-lg" />
+
+const NetworkGraph = dynamic(
+  () => import("@/components/charts/network-graph").then(m => m.NetworkGraph),
+  { ssr: false, loading: chartLoading }
+)
+
 const GlobeChart = dynamic(
   () => import("@/components/charts/globe-chart").then(m => m.GlobeChart),
-  { ssr: false, loading: () => <Skeleton className="w-full h-full min-h-[450px] rounded-lg" /> }
+  { ssr: false, loading: chartLoading }
 )
 
 function ChartCard({ title, subtitle, children, className }: {
