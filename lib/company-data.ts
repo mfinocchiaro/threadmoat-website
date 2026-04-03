@@ -62,6 +62,8 @@ export interface Company {
   // Financial health (pre-computed in Airtable)
   scoreFinancial: number
   customerSignalScore: number
+  momentumMultiplier: number
+  momentumCap: number
   startupSizeCategory: string
   // City-level geo
   city: string

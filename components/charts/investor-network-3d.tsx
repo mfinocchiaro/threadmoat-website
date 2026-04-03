@@ -2,6 +2,7 @@
 
 import React, { useMemo, useState, useRef, useEffect } from "react"
 import dynamic from "next/dynamic"
+import { useTheme } from "next-themes"
 import type { ForceGraphProps } from "react-force-graph-3d"
 import { getInvestmentColor } from "@/lib/investment-colors"
 import { getInvestorLogoUrl } from "@/lib/investor-logos"
@@ -143,10 +144,24 @@ export function InvestorNetwork3D({ className, filteredCompanyNames }: { classNa
 
   const q = searchQuery.trim().toLowerCase()
 
+  const { resolvedTheme } = useTheme()
+
+  // Resolve CSS custom properties for three.js/tooltip use
+  const resolvedColors = useMemo(() => {
+    if (typeof document === "undefined") return { card: "#1e293b", cardFg: "#fff", mutedFg: "#94a3b8", border: "rgba(148,163,184,.3)" }
+    const s = getComputedStyle(document.documentElement)
+    return {
+      card: s.getPropertyValue("--card").trim() || "#1e293b",
+      cardFg: s.getPropertyValue("--card-foreground").trim() || "#fff",
+      mutedFg: s.getPropertyValue("--muted-foreground").trim() || "#94a3b8",
+      border: s.getPropertyValue("--border").trim() || "rgba(148,163,184,.3)",
+    }
+  }, [resolvedTheme])
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const nodeColor = (node: any): string => {
     if (node.type === "investor") {
-      return getInvestorLogoUrl(node.name) ? "#1e293b" : investorTypeColor(node.investorType)
+      return getInvestorLogoUrl(node.name) ? resolvedColors.card : investorTypeColor(node.investorType)
     }
     if (q && node.name.toLowerCase().includes(q)) return "#fbbf24"
     return getInvestmentColor(node.investmentList)
@@ -168,9 +183,9 @@ export function InvestorNetwork3D({ className, filteredCompanyNames }: { classNa
       const logoHtml = logoUrl
         ? `<img src="${logoUrl}" style="width:28px;height:28px;object-fit:contain;border-radius:4px;background:#fff;padding:2px;flex-shrink:0" onerror="this.style.display='none'" />`
         : `<div style="width:28px;height:28px;border-radius:50%;background:${investorTypeColor(node.investorType)};display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0;color:#fff">${node.name.slice(0, 2).toUpperCase()}</div>`
-      return `<div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:rgba(15,23,42,.92);border:1px solid rgba(148,163,184,.3);border-radius:8px;color:#fff;font-size:12px;white-space:nowrap">${logoHtml}<div><strong>${node.name}</strong><br/><span style="opacity:.65">${node.count} startup${node.count > 1 ? "s" : ""} · ${node.investorType || "Unknown"}</span></div></div>`
+      return `<div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:${resolvedColors.card};border:1px solid ${resolvedColors.border};border-radius:8px;color:${resolvedColors.cardFg};font-size:12px;white-space:nowrap">${logoHtml}<div><strong>${node.name}</strong><br/><span style="color:${resolvedColors.mutedFg}">${node.count} startup${node.count > 1 ? "s" : ""} · ${node.investorType || "Unknown"}</span></div></div>`
     }
-    return `<div style="padding:5px 10px;background:rgba(15,23,42,.92);border:1px solid rgba(148,163,184,.3);border-radius:8px;color:#fff;font-size:12px;white-space:nowrap"><strong>${node.name}</strong>${node.investmentList ? `<br/><span style="opacity:.65">${node.investmentList}</span>` : ""}</div>`
+    return `<div style="padding:5px 10px;background:${resolvedColors.card};border:1px solid ${resolvedColors.border};border-radius:8px;color:${resolvedColors.cardFg};font-size:12px;white-space:nowrap"><strong>${node.name}</strong>${node.investmentList ? `<br/><span style="color:${resolvedColors.mutedFg}">${node.investmentList}</span>` : ""}</div>`
   }
 
   const searchMatchCount = useMemo(() => {
@@ -238,7 +253,7 @@ export function InvestorNetwork3D({ className, filteredCompanyNames }: { classNa
         nodeVal={nodeVal}
         nodeLabel={nodeLabel}
         nodeOpacity={0.92}
-        linkColor={() => "#94a3b8"}
+        linkColor={() => resolvedColors.mutedFg}
         linkOpacity={0.25}
         linkWidth={1}
       />

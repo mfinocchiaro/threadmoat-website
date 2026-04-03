@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exported_at": "2026-04-02T22:48:45.398Z",
+  "exported_at": "2026-04-03T06:25:39.098Z",
   "milestones": [
     {
       "id": "M001",
@@ -878,11 +878,11 @@
       "completed_at": null,
       "full_summary_md": "",
       "full_uat_md": "",
-      "goal": "Build a Market Momentum heatmap using available growth signals — new customer announcements, funding rounds over time, headcount growth rate, revenue growth indicators.",
-      "success_criteria": "Market Momentum heatmap renders with sortable columns showing growth velocity metrics. Follows Financial Heatmap component pattern.",
-      "proof_level": "Visual verification with real data",
-      "integration_closure": "New heatmap follows Financial Heatmap pattern and uses shared data model",
-      "observability_impact": "None",
+      "goal": "Deliver a Market Momentum Heatmap that visualizes composite momentum intensity (growth metrics, customer signal score, momentum multiplier) across configurable grouping axes, accessible from the dashboard sidebar.",
+      "success_criteria": "## Must-Haves\n\n- `momentumMultiplier` and `momentumCap` fields added to `Company` interface and loaded from CSV\n- New `MarketMomentumHeatmap` D3 SVG chart component computing composite momentum score per cell\n- Composite score formula: `(growthMetrics / 5) * 0.4 + (customerSignalScore / 8) * 0.3 + (momentumMultiplier / 2.73) * 0.3` with zero-division guards\n- Configurable Y-axis selector (industries served, investment thesis, workflow segment)\n- X-axis uses `growthMomentumTier` categories\n- Tooltips showing cell company count, average composite score, and component breakdowns\n- Shortlist highlighting via optional `shortlistedIds` prop (per K005)\n- Theme-aware colors using CSS custom properties (per existing heatmap pattern)\n- Empty cell rendering for sparse matrix areas\n- Dashboard page at `/dashboard/market-momentum` using `VizPageShell` + `useThesisGatedData`\n- Sidebar entry in `ADMIN_ITEMS` and `ADMIN_VIZ_HREFS` with `TrendingUp` icon\n- `npx next build` passes with zero errors\n\n## Verification\n\n- `npx next build` — TypeScript compilation confirms no type errors in new fields, chart component, and page\n- `grep -q \"momentumMultiplier\" lib/company-data.ts` — confirms field exists in Company interface\n- `grep -q \"momentumMultiplier\" lib/load-companies-server.ts` — confirms CSV loading\n- `test -f components/charts/market-momentum-heatmap.tsx` — chart component exists\n- `test -f app/dashboard/market-momentum/page.tsx` — page file exists\n- `grep -q \"market-momentum\" components/dashboard/sidebar.tsx` — sidebar entry wired",
+      "proof_level": "integration",
+      "integration_closure": "- Upstream surfaces consumed: `lib/company-data.ts` (Company interface), `lib/load-companies-server.ts` (CSV loader), `components/dashboard/sidebar.tsx` (nav), `hooks/use-thesis-gated-data.ts` (data hook), `components/dashboard/viz-page-shell.tsx` (page wrapper)\n- New wiring introduced: `/dashboard/market-momentum` route, sidebar nav entry, Company type extension with 2 new fields\n- What remains: S02–S04 add their own heatmap views; this slice is self-contained and usable independently",
+      "observability_impact": "- Runtime signals: D3 chart renders with console.error on zero-data edge cases\n- Inspection surfaces: Browser DevTools → `/dashboard/market-momentum` page renders chart SVG with cells\n- Failure visibility: Empty chart state with \"no data\" indication if filtered dataset is empty",
       "sequence": 0,
       "replan_triggered_at": null
     },
@@ -2296,6 +2296,90 @@
       "sequence": 0
     },
     {
+      "milestone_id": "M006",
+      "slice_id": "S01",
+      "id": "T01",
+      "title": "Added momentumMultiplier/momentumCap to Company data model and built MarketMomentumHeatmap D3 chart with composite scoring, YlOrRd palette, tooltips, and shortlist highlighting",
+      "status": "complete",
+      "one_liner": "Added momentumMultiplier/momentumCap to Company data model and built MarketMomentumHeatmap D3 chart with composite scoring, YlOrRd palette, tooltips, and shortlist highlighting",
+      "narrative": "Extended Company interface with momentumMultiplier and momentumCap fields, wired CSV loading for both columns, then built a complete D3 SVG heatmap chart component. The chart computes composite momentum scores (growth metrics 40%, customer signal 30%, momentum multiplier 30%) normalized 0–1, rendered with YlOrRd palette for visual distinction from the existing YlGn growth chart. Includes Y-axis selector (3 grouping options), tooltip with component breakdown, shortlist highlighting per K005, empty cell rendering, and theme-aware colors via CSS custom properties.",
+      "verification_result": "All 6 verification checks pass: momentumMultiplier and momentumCap present in interface, Momentum Multiplier wired in CSV loader, chart file exists with shortlistedIds prop, and npx next build succeeds with zero type errors.",
+      "duration": "",
+      "completed_at": "2026-04-03T06:25:39.088Z",
+      "blocker_discovered": false,
+      "deviations": "None.",
+      "known_issues": "None.",
+      "key_files": [
+        "lib/company-data.ts",
+        "lib/load-companies-server.ts",
+        "components/charts/market-momentum-heatmap.tsx"
+      ],
+      "key_decisions": [
+        "Composite score formula: (growthMetrics/5)*0.4 + (customerSignalScore/8)*0.3 + (momentumMultiplier/2.73)*0.3",
+        "YlOrRd color scale for visual distinction from existing YlGn growth chart"
+      ],
+      "full_summary_md": "---\nid: T01\nparent: S01\nmilestone: M006\nkey_files:\n  - lib/company-data.ts\n  - lib/load-companies-server.ts\n  - components/charts/market-momentum-heatmap.tsx\nkey_decisions:\n  - Composite score formula: (growthMetrics/5)*0.4 + (customerSignalScore/8)*0.3 + (momentumMultiplier/2.73)*0.3\n  - YlOrRd color scale for visual distinction from existing YlGn growth chart\nduration: \"\"\nverification_result: passed\ncompleted_at: 2026-04-03T06:25:39.089Z\nblocker_discovered: false\n---\n\n# T01: Added momentumMultiplier/momentumCap to Company data model and built MarketMomentumHeatmap D3 chart with composite scoring, YlOrRd palette, tooltips, and shortlist highlighting\n\n**Added momentumMultiplier/momentumCap to Company data model and built MarketMomentumHeatmap D3 chart with composite scoring, YlOrRd palette, tooltips, and shortlist highlighting**\n\n## What Happened\n\nExtended Company interface with momentumMultiplier and momentumCap fields, wired CSV loading for both columns, then built a complete D3 SVG heatmap chart component. The chart computes composite momentum scores (growth metrics 40%, customer signal 30%, momentum multiplier 30%) normalized 0–1, rendered with YlOrRd palette for visual distinction from the existing YlGn growth chart. Includes Y-axis selector (3 grouping options), tooltip with component breakdown, shortlist highlighting per K005, empty cell rendering, and theme-aware colors via CSS custom properties.\n\n## Verification\n\nAll 6 verification checks pass: momentumMultiplier and momentumCap present in interface, Momentum Multiplier wired in CSV loader, chart file exists with shortlistedIds prop, and npx next build succeeds with zero type errors.\n\n## Verification Evidence\n\n| # | Command | Exit Code | Verdict | Duration |\n|---|---------|-----------|---------|----------|\n| 1 | `grep -q 'momentumMultiplier' lib/company-data.ts` | 0 | ✅ pass | 100ms |\n| 2 | `grep -q 'momentumCap' lib/company-data.ts` | 0 | ✅ pass | 100ms |\n| 3 | `grep -q 'Momentum Multiplier' lib/load-companies-server.ts` | 0 | ✅ pass | 100ms |\n| 4 | `test -f components/charts/market-momentum-heatmap.tsx` | 0 | ✅ pass | 100ms |\n| 5 | `grep -q 'shortlistedIds' components/charts/market-momentum-heatmap.tsx` | 0 | ✅ pass | 100ms |\n| 6 | `npx next build 2>&1 | tail -5` | 0 | ✅ pass | 24100ms |\n\n\n## Deviations\n\nNone.\n\n## Known Issues\n\nNone.\n\n## Files Created/Modified\n\n- `lib/company-data.ts`\n- `lib/load-companies-server.ts`\n- `components/charts/market-momentum-heatmap.tsx`\n",
+      "description": "## Description\n\nExtend the Company interface with `momentumMultiplier` and `momentumCap` fields, load them from CSV, then build the full D3 SVG heatmap chart component.\n\n## Steps\n\n1. Add `momentumMultiplier: number` and `momentumCap: number` to the `Company` interface in `lib/company-data.ts` (after the existing `customerSignalScore` field around line 64).\n\n2. In `lib/load-companies-server.ts`, add `momentumMultiplier: parseNum(row['Momentum Multiplier'])` and `momentumCap: parseNum(row['Momentum Cap'])` to the company mapping object (in the main CSV mapping block, around lines 205-210, near the existing `scoreFinancial` and `customerSignalScore` loads). These fields come from the main CSV (`Startups-Grid Full DB View.csv`), NOT the enrichment sidecar.\n\n3. Create `components/charts/market-momentum-heatmap.tsx` following the structural pattern of `components/charts/growth-momentum-chart.tsx` (233 lines). The new chart:\n   - Interface: `MarketMomentumHeatmapProps { data: Company[]; className?: string; shortlistedIds?: Set<string> }`\n   - Y-axis selector: same `YAxisKey` pattern — `industriesServed`, `investmentTheses`, `workflowSegment`\n   - X-axis: `growthMomentumTier` categories using `TIER_ORDER` = `['Accelerating', 'High Growth', 'Steady', 'Early/Pre-revenue', 'Stalled', 'Unknown']`\n   - Cell data computation via `useMemo`: for each (tier × yGroup) cell, compute average composite momentum score across companies in that cell\n   - Composite score formula: `(growthMetrics / 5) * 0.4 + (customerSignalScore / 8) * 0.3 + ((momentumMultiplier || 1) / 2.73) * 0.3` — all normalized 0–1, defaults to avoid zero-division\n   - Color scale: `d3.scaleSequential(d3.interpolateYlOrRd).domain([0, 1])` (warm palette — yellow-orange-red for intensity, distinct from the existing YlGn used by growth-momentum)\n   - D3 rendering in `useEffect`: SVG with `scaleBand` axes, colored rect cells, text labels for score values, shortlist highlight stroke (#f59e0b, 2.5px per D003/K005)\n   - Tooltip div (absolute positioned, visibility toggled) showing: tier × group name, company count, avg composite score, component breakdown (growth metrics avg, customer signal avg, momentum multiplier avg), shortlisted company names if any\n   - Empty cells: muted fill with thin stroke (same pattern as growth-momentum-chart.tsx)\n   - Theme-aware: read CSS custom properties `--muted-foreground`, `--border`, `--foreground` via `getComputedStyle`\n   - Axis labels: X-axis rotated at bottom, Y-axis left with `margin.left = 200` for long industry names\n   - Card wrapper with axis selector dropdown in header\n\n**Key constraints:**\n- Do NOT modify `growth-momentum-chart.tsx` — this is a new chart alongside it\n- Use `d3.interpolateYlOrRd` (not YlGn) to visually distinguish from the existing growth momentum chart\n- Guard against zero `momentumMultiplier` with `|| 1` (range is 1.0–2.73, but some may parse as 0)\n- Per K004: D3 `.style()` on HTML elements does not accept null — use `''` for clear values\n- Per K005: `shortlistedIds` is optional prop, guard all highlight logic with `shortlistedIds?.has(id)`\n\n## Must-Haves\n\n- [ ] `momentumMultiplier` and `momentumCap` in Company interface\n- [ ] CSV loading for both new fields via `parseNum()`\n- [ ] Complete MarketMomentumHeatmap component with D3 SVG rendering\n- [ ] Composite score computation with zero-division guards\n- [ ] Y-axis selector dropdown (3 options)\n- [ ] Tooltip with component breakdown\n- [ ] Shortlist highlighting support\n- [ ] Empty cell rendering\n- [ ] Theme-aware colors via CSS custom properties\n\n## Verification\n\n- `grep -q 'momentumMultiplier' lib/company-data.ts && grep -q 'momentumCap' lib/company-data.ts` — fields in interface\n- `grep -q \"Momentum Multiplier\" lib/load-companies-server.ts` — CSV loading wired\n- `test -f components/charts/market-momentum-heatmap.tsx` — chart file exists\n- `grep -q 'shortlistedIds' components/charts/market-momentum-heatmap.tsx` — shortlist prop present\n- `npx next build 2>&1 | tail -5` — build succeeds (may warn about unused page but no type errors)",
+      "estimate": "2h",
+      "files": [
+        "lib/company-data.ts",
+        "lib/load-companies-server.ts",
+        "components/charts/market-momentum-heatmap.tsx",
+        "components/charts/growth-momentum-chart.tsx"
+      ],
+      "verify": "grep -q 'momentumMultiplier' lib/company-data.ts && grep -q 'Momentum Multiplier' lib/load-companies-server.ts && test -f components/charts/market-momentum-heatmap.tsx && npx next build 2>&1 | tail -5",
+      "inputs": [
+        "`lib/company-data.ts` — existing Company interface to extend",
+        "`lib/load-companies-server.ts` — existing CSV loader to extend",
+        "`components/charts/growth-momentum-chart.tsx` — structural reference for D3 heatmap pattern (read-only)"
+      ],
+      "expected_output": [
+        "`lib/company-data.ts` — Company interface extended with momentumMultiplier and momentumCap",
+        "`lib/load-companies-server.ts` — CSV loading for Momentum Multiplier and Momentum Cap columns",
+        "`components/charts/market-momentum-heatmap.tsx` — complete D3 SVG heatmap chart component"
+      ],
+      "observability_impact": "",
+      "full_plan_md": "",
+      "sequence": 0
+    },
+    {
+      "milestone_id": "M006",
+      "slice_id": "S01",
+      "id": "T02",
+      "title": "Wire dashboard page, sidebar entry, and verify full integration",
+      "status": "pending",
+      "one_liner": "",
+      "narrative": "",
+      "verification_result": "",
+      "duration": "",
+      "completed_at": null,
+      "blocker_discovered": false,
+      "deviations": "",
+      "known_issues": "",
+      "key_files": [],
+      "key_decisions": [],
+      "full_summary_md": "",
+      "description": "## Description\n\nCreate the dashboard page at `/dashboard/market-momentum`, add the sidebar navigation entry, and verify the complete feature works end-to-end via build.\n\n## Steps\n\n1. Create `app/dashboard/market-momentum/page.tsx` following the exact pattern from `app/dashboard/growth-momentum/page.tsx`:\n   - `\"use client\"` directive\n   - Import `VizPageShell` from `@/components/dashboard/viz-page-shell`\n   - Import `useThesisGatedData` from `@/hooks/use-thesis-gated-data`\n   - Import `MarketMomentumHeatmap` from `@/components/charts/market-momentum-heatmap`\n   - Import `Skeleton` from `@/components/ui/skeleton`\n   - Inner component `MarketMomentumInner` that calls `useThesisGatedData()` to get `{ filtered, isLoading, shortlistedIds }`\n   - Title: \"Market Momentum\" with description about composite momentum intensity\n   - Loading skeleton `h-[600px]`\n   - Pass `data={filtered}`, `shortlistedIds={shortlistedIds}`, `className=\"min-h-[500px]\"`\n   - Default export wraps inner in `<VizPageShell>`\n\n2. In `components/dashboard/sidebar.tsx`:\n   - Add entry to `ADMIN_ITEMS` array (after the growth-momentum entry, around line 149): `{ href: \"/dashboard/market-momentum\", icon: TrendingUp, label: \"Market Momentum\" }`\n   - Note: `TrendingUp` is already imported. Using same icon as other trending items is fine.\n   - Add `\"/dashboard/market-momentum\"` to `ADMIN_VIZ_HREFS` set (around line 169)\n\n3. Run `npx next build` and verify zero errors.\n\n## Must-Haves\n\n- [ ] Page file at `app/dashboard/market-momentum/page.tsx` with VizPageShell wrapper\n- [ ] Uses `useThesisGatedData` for filtered data and shortlist IDs\n- [ ] Sidebar entry in ADMIN_ITEMS with TrendingUp icon\n- [ ] Sidebar entry in ADMIN_VIZ_HREFS\n- [ ] `npx next build` passes\n\n## Verification\n\n- `test -f app/dashboard/market-momentum/page.tsx` — page exists\n- `grep -q 'market-momentum' components/dashboard/sidebar.tsx` — sidebar wired\n- `grep -q 'MarketMomentumHeatmap' app/dashboard/market-momentum/page.tsx` — chart imported\n- `npx next build 2>&1 | tail -5` — clean build with zero errors",
+      "estimate": "30m",
+      "files": [
+        "app/dashboard/market-momentum/page.tsx",
+        "components/dashboard/sidebar.tsx"
+      ],
+      "verify": "test -f app/dashboard/market-momentum/page.tsx && grep -q 'market-momentum' components/dashboard/sidebar.tsx && npx next build 2>&1 | tail -5",
+      "inputs": [
+        "`components/charts/market-momentum-heatmap.tsx` — chart component from T01",
+        "`components/dashboard/sidebar.tsx` — existing sidebar to extend",
+        "`app/dashboard/growth-momentum/page.tsx` — structural reference for page pattern"
+      ],
+      "expected_output": [
+        "`app/dashboard/market-momentum/page.tsx` — new dashboard page wiring chart into VizPageShell",
+        "`components/dashboard/sidebar.tsx` — updated with market-momentum nav entry in ADMIN_ITEMS and ADMIN_VIZ_HREFS"
+      ],
+      "observability_impact": "",
+      "full_plan_md": "",
+      "sequence": 0
+    },
+    {
       "milestone_id": "M007",
       "slice_id": "S01",
       "id": "T01",
@@ -2454,19 +2538,28 @@
       "milestone_id": "M007",
       "slice_id": "S02",
       "id": "T02",
-      "title": "Fix theme colors in 4 three.js/WebGL charts",
-      "status": "pending",
-      "one_liner": "",
-      "narrative": "",
-      "verification_result": "",
+      "title": "Converted hardcoded dark-theme colors in 4 three.js/WebGL charts to CSS custom property resolution via getComputedStyle + useTheme for reactive theme switching",
+      "status": "complete",
+      "one_liner": "Converted hardcoded dark-theme colors in 4 three.js/WebGL charts to CSS custom property resolution via getComputedStyle + useTheme for reactive theme switching",
+      "narrative": "Updated customer-network-3d, investor-network-3d, network-graph-3d, and globe-chart to resolve CSS custom properties (--card, --card-foreground, --muted-foreground, --border) via getComputedStyle keyed on useTheme().resolvedTheme. Tooltip HTML strings, link colors, node colors for logo-bearing items, and globe legend/detail panel overlays all now use theme-aware values. Globe panels converted to Tailwind semantic classes. Network graph container changed from bg-black/95 to bg-background. Data-semantic colors (HUB_COLORS, investorTypeColor, investment palettes) preserved unchanged.",
+      "verification_result": "npm run build passed (exit 0, 22.7s, all 101 routes). Grep audit confirmed zero remaining structural hardcoded dark-theme colors across all 4 files.",
       "duration": "",
-      "completed_at": null,
+      "completed_at": "2026-04-03T06:05:28.804Z",
       "blocker_discovered": false,
-      "deviations": "",
-      "known_issues": "",
-      "key_files": [],
-      "key_decisions": [],
-      "full_summary_md": "",
+      "deviations": "Globe chart legend/detail panels used Tailwind semantic classes instead of JS-resolved CSS vars since they are React JSX elements where Tailwind applies directly.",
+      "known_issues": "None.",
+      "key_files": [
+        "components/charts/customer-network-3d.tsx",
+        "components/charts/investor-network-3d.tsx",
+        "components/charts/network-graph-3d.tsx",
+        "components/charts/globe-chart.tsx"
+      ],
+      "key_decisions": [
+        "Used useTheme().resolvedTheme as useMemo dependency to reactively re-resolve CSS vars on theme toggle",
+        "Globe legend/detail panels converted to Tailwind semantic classes rather than JS-resolved vars",
+        "Network graph 3D container changed from bg-black/95 to bg-background"
+      ],
+      "full_summary_md": "---\nid: T02\nparent: S02\nmilestone: M007\nkey_files:\n  - components/charts/customer-network-3d.tsx\n  - components/charts/investor-network-3d.tsx\n  - components/charts/network-graph-3d.tsx\n  - components/charts/globe-chart.tsx\nkey_decisions:\n  - Used useTheme().resolvedTheme as useMemo dependency to reactively re-resolve CSS vars on theme toggle\n  - Globe legend/detail panels converted to Tailwind semantic classes rather than JS-resolved vars\n  - Network graph 3D container changed from bg-black/95 to bg-background\nduration: \"\"\nverification_result: passed\ncompleted_at: 2026-04-03T06:05:28.805Z\nblocker_discovered: false\n---\n\n# T02: Converted hardcoded dark-theme colors in 4 three.js/WebGL charts to CSS custom property resolution via getComputedStyle + useTheme for reactive theme switching\n\n**Converted hardcoded dark-theme colors in 4 three.js/WebGL charts to CSS custom property resolution via getComputedStyle + useTheme for reactive theme switching**\n\n## What Happened\n\nUpdated customer-network-3d, investor-network-3d, network-graph-3d, and globe-chart to resolve CSS custom properties (--card, --card-foreground, --muted-foreground, --border) via getComputedStyle keyed on useTheme().resolvedTheme. Tooltip HTML strings, link colors, node colors for logo-bearing items, and globe legend/detail panel overlays all now use theme-aware values. Globe panels converted to Tailwind semantic classes. Network graph container changed from bg-black/95 to bg-background. Data-semantic colors (HUB_COLORS, investorTypeColor, investment palettes) preserved unchanged.\n\n## Verification\n\nnpm run build passed (exit 0, 22.7s, all 101 routes). Grep audit confirmed zero remaining structural hardcoded dark-theme colors across all 4 files.\n\n## Verification Evidence\n\n| # | Command | Exit Code | Verdict | Duration |\n|---|---------|-----------|---------|----------|\n| 1 | `npm run build` | 0 | ✅ pass | 22700ms |\n| 2 | `grep audit (structural hardcoded dark-theme colors across 4 3D files)` | 0 | ✅ pass | 300ms |\n\n\n## Deviations\n\nGlobe chart legend/detail panels used Tailwind semantic classes instead of JS-resolved CSS vars since they are React JSX elements where Tailwind applies directly.\n\n## Known Issues\n\nNone.\n\n## Files Created/Modified\n\n- `components/charts/customer-network-3d.tsx`\n- `components/charts/investor-network-3d.tsx`\n- `components/charts/network-graph-3d.tsx`\n- `components/charts/globe-chart.tsx`\n",
       "description": "Fix 4 three.js/WebGL chart components. These use react-three-fiber or raw three.js where CSS vars aren't directly accessible from the WebGL context.\n\nApproach: Read CSS vars via getComputedStyle on a DOM ref, then pass the resolved color strings to three.js materials/lights.\n\nFiles: customer-network-3d.tsx (2), globe-chart.tsx (2), investor-network-3d.tsx (3), network-graph-3d.tsx (6)\n\nIf the hardcoded colors are used in three.js Color() constructors, resolve the CSS var first via JS and pass the hex result.",
       "estimate": "20min",
       "files": [
@@ -3685,6 +3778,94 @@
       "verdict": "✅ pass",
       "duration_ms": 500,
       "created_at": "2026-04-02T22:48:45.388Z"
+    },
+    {
+      "id": 102,
+      "task_id": "T02",
+      "slice_id": "S02",
+      "milestone_id": "M007",
+      "command": "npm run build",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 22700,
+      "created_at": "2026-04-03T06:05:28.804Z"
+    },
+    {
+      "id": 103,
+      "task_id": "T02",
+      "slice_id": "S02",
+      "milestone_id": "M007",
+      "command": "grep audit (structural hardcoded dark-theme colors across 4 3D files)",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 300,
+      "created_at": "2026-04-03T06:05:28.804Z"
+    },
+    {
+      "id": 104,
+      "task_id": "T01",
+      "slice_id": "S01",
+      "milestone_id": "M006",
+      "command": "grep -q 'momentumMultiplier' lib/company-data.ts",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 100,
+      "created_at": "2026-04-03T06:25:39.088Z"
+    },
+    {
+      "id": 105,
+      "task_id": "T01",
+      "slice_id": "S01",
+      "milestone_id": "M006",
+      "command": "grep -q 'momentumCap' lib/company-data.ts",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 100,
+      "created_at": "2026-04-03T06:25:39.088Z"
+    },
+    {
+      "id": 106,
+      "task_id": "T01",
+      "slice_id": "S01",
+      "milestone_id": "M006",
+      "command": "grep -q 'Momentum Multiplier' lib/load-companies-server.ts",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 100,
+      "created_at": "2026-04-03T06:25:39.088Z"
+    },
+    {
+      "id": 107,
+      "task_id": "T01",
+      "slice_id": "S01",
+      "milestone_id": "M006",
+      "command": "test -f components/charts/market-momentum-heatmap.tsx",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 100,
+      "created_at": "2026-04-03T06:25:39.088Z"
+    },
+    {
+      "id": 108,
+      "task_id": "T01",
+      "slice_id": "S01",
+      "milestone_id": "M006",
+      "command": "grep -q 'shortlistedIds' components/charts/market-momentum-heatmap.tsx",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 100,
+      "created_at": "2026-04-03T06:25:39.088Z"
+    },
+    {
+      "id": 109,
+      "task_id": "T01",
+      "slice_id": "S01",
+      "milestone_id": "M006",
+      "command": "npx next build 2>&1 | tail -5",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 24100,
+      "created_at": "2026-04-03T06:25:39.088Z"
     }
   ]
 }

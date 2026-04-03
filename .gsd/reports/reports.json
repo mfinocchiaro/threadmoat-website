@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "projectName": "threadmoat-website",
+  "projectPath": "/Users/mfinocchiaro/Dropbox/Private/Obsidian/Projects/threadmoat-website",
+  "gsdVersion": "2.58.0",
+  "entries": [
+    {
+      "filename": "M007-2026-04-03T02-00-04.html",
+      "generatedAt": "2026-04-03T02:00:04.349Z",
+      "milestoneId": "M007",
+      "milestoneTitle": "M007",
+      "label": "M007: M007",
+      "kind": "milestone",
+      "totalCost": 42.820181000000005,
+      "totalTokens": 61637009,
+      "totalDuration": 5280817,
+      "doneSlices": 23,
+      "totalSlices": 29,
+      "doneMilestones": 5,
+      "totalMilestones": 7,
+      "phase": "planning"
+    }
+  ]
+}

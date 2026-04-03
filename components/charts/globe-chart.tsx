@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState, useMemo } from "react";
 import dynamic from "next/dynamic";
+import { useTheme } from "next-themes";
 import * as d3 from "d3";
 import { Company } from "@/lib/company-data";
 import { formatCurrency } from "@/lib/company-data";
@@ -242,6 +243,20 @@ export function GlobeChart({ data }: GlobeChartProps) {
     return Array.from(cats).sort();
   }, [data]);
 
+  const { resolvedTheme } = useTheme();
+
+  // Resolve CSS custom properties for tooltip use
+  const resolvedColors = useMemo(() => {
+    if (typeof document === "undefined") return { card: "#1e293b", cardFg: "#fff", mutedFg: "#94a3b8", border: "rgba(148,163,184,.3)" };
+    const s = getComputedStyle(document.documentElement);
+    return {
+      card: s.getPropertyValue("--card").trim() || "#1e293b",
+      cardFg: s.getPropertyValue("--card-foreground").trim() || "#fff",
+      mutedFg: s.getPropertyValue("--muted-foreground").trim() || "#94a3b8",
+      border: s.getPropertyValue("--border").trim() || "rgba(148,163,184,.3)",
+    };
+  }, [resolvedTheme]);
+
   function buildLabel(d: object): string {
     const h = d as HubPoint;
     const rows = Object.entries(h.categories)
@@ -252,12 +267,12 @@ export function GlobeChart({ data }: GlobeChartProps) {
       })
       .join("<br/>");
     const topNames = h.topCompanies.length > 0
-      ? `<div style="margin-top:6px;border-top:1px solid rgba(255,255,255,.1);padding-top:6px"><span style="color:#94a3b8;font-size:10px;text-transform:uppercase;letter-spacing:.5px">Top startups</span><br/>${h.topCompanies.map(n => { const w = n.split(/\s+/).filter(Boolean); const ini = w.length >= 2 ? (w[0][0] + w[1][0]).toUpperCase() : n.substring(0, 2).toUpperCase(); return `<span style="color:#e2e8f0">› ${ini}</span>`; }).join("<br/>")}</div>`
+      ? `<div style="margin-top:6px;border-top:1px solid ${resolvedColors.border};padding-top:6px"><span style="color:${resolvedColors.mutedFg};font-size:10px;text-transform:uppercase;letter-spacing:.5px">Top startups</span><br/>${h.topCompanies.map(n => { const w = n.split(/\s+/).filter(Boolean); const ini = w.length >= 2 ? (w[0][0] + w[1][0]).toUpperCase() : n.substring(0, 2).toUpperCase(); return `<span style="color:${resolvedColors.cardFg}">› ${ini}</span>`; }).join("<br/>")}</div>`
       : "";
     return `
-      <div style="background:rgba(10,14,23,.92);border:1px solid rgba(255,255,255,.15);color:#fff;padding:10px 14px;border-radius:8px;font-size:12px;min-width:200px;line-height:1.6">
+      <div style="background:${resolvedColors.card};border:1px solid ${resolvedColors.border};color:${resolvedColors.cardFg};padding:10px 14px;border-radius:8px;font-size:12px;min-width:200px;line-height:1.6">
         <strong style="font-size:14px">${h.hub}</strong><br/>
-        <span style="color:#94a3b8">${h.count} companies · ${formatCurrency(h.totalFunding)}</span><br/>
+        <span style="color:${resolvedColors.mutedFg}">${h.count} companies · ${formatCurrency(h.totalFunding)}</span><br/>
         <div style="margin-top:6px">${rows}</div>
         ${topNames}
       </div>`;
@@ -284,8 +299,8 @@ export function GlobeChart({ data }: GlobeChartProps) {
           />
 
           {/* Category legend */}
-          <div className="absolute bottom-4 left-4 rounded-lg border border-white/10 bg-black/70 px-3 py-2 backdrop-blur-sm">
-            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-white/50">
+          <div className="absolute bottom-4 left-4 rounded-lg border border-border bg-card/90 px-3 py-2 backdrop-blur-sm">
+            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
               Category (dominant)
             </p>
             <div className="space-y-1">
@@ -295,7 +310,7 @@ export function GlobeChart({ data }: GlobeChartProps) {
                     className="h-2.5 w-2.5 shrink-0 rounded-sm"
                     style={{ background: getCategoryColor(cat) }}
                   />
-                  <span className="text-[11px] text-white/80">
+                  <span className="text-[11px] text-card-foreground/80">
                     {cat.replace(/^\d+-/, "").replace(" Intelligence", "")}
                   </span>
                 </div>
@@ -305,17 +320,17 @@ export function GlobeChart({ data }: GlobeChartProps) {
 
           {/* Hub summary or selected hub detail */}
           {selectedHub ? (
-            <div className="absolute top-4 right-4 rounded-lg border border-white/10 bg-black/80 px-4 py-3 backdrop-blur-sm text-white text-xs w-64">
+            <div className="absolute top-4 right-4 rounded-lg border border-border bg-card/90 px-4 py-3 backdrop-blur-sm text-card-foreground text-xs w-64">
               <div className="flex items-center justify-between mb-2">
                 <p className="font-bold text-sm">{selectedHub.hub}</p>
                 <button
                   onClick={() => setSelectedHub(null)}
-                  className="text-white/40 hover:text-white text-sm leading-none"
+                  className="text-muted-foreground hover:text-foreground text-sm leading-none"
                 >
                   ✕
                 </button>
               </div>
-              <p className="text-white/60 mb-3">
+              <p className="text-muted-foreground mb-3">
                 {selectedHub.count} companies · {formatCurrency(selectedHub.totalFunding)}
               </p>
               <div className="space-y-1 mb-3">
@@ -327,24 +342,24 @@ export function GlobeChart({ data }: GlobeChartProps) {
                         className="h-2 w-2 shrink-0 rounded-sm"
                         style={{ background: getCategoryColor(cat) }}
                       />
-                      <span className="text-white/80 flex-1 truncate">
+                      <span className="text-card-foreground/80 flex-1 truncate">
                         {cat.replace(/^\d+-/, "").replace(" Intelligence", "")}
                       </span>
-                      <span className="text-white/50">{cnt}</span>
+                      <span className="text-muted-foreground">{cnt}</span>
                     </div>
                   ))}
               </div>
               {selectedHub.topCompanies.length > 0 && (
-                <div className="border-t border-white/10 pt-2">
-                  <p className="text-[10px] uppercase tracking-wider text-white/40 mb-1">Top Startups</p>
+                <div className="border-t border-border pt-2">
+                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Top Startups</p>
                   {selectedHub.topCompanies.map((name, i) => {
                     const words = name.split(/\s+/).filter(Boolean);
                     const initials = words.length >= 2
                       ? (words[0][0] + words[1][0]).toUpperCase()
                       : name.substring(0, 2).toUpperCase();
                     return (
-                      <p key={i} className="text-white/80">
-                        <span className="text-white/50 mr-1">{i + 1}.</span> {initials}
+                      <p key={i} className="text-card-foreground/80">
+                        <span className="text-muted-foreground mr-1">{i + 1}.</span> {initials}
                       </p>
                     );
                   })}
@@ -352,12 +367,12 @@ export function GlobeChart({ data }: GlobeChartProps) {
               )}
             </div>
           ) : (
-            <div className="absolute top-4 right-4 rounded-lg border border-white/10 bg-black/70 px-3 py-2 backdrop-blur-sm text-white/80 text-xs">
-              <p className="font-semibold text-white mb-1">
+            <div className="absolute top-4 right-4 rounded-lg border border-border bg-card/90 px-3 py-2 backdrop-blur-sm text-card-foreground/80 text-xs">
+              <p className="font-semibold text-card-foreground mb-1">
                 {hubPoints.reduce((s, h) => s + h.count, 0)} companies · {hubPoints.length} hubs
               </p>
-              <p className="text-white/50">Bar height = company count</p>
-              <p className="text-white/50">Click a bar for details</p>
+              <p className="text-muted-foreground">Bar height = company count</p>
+              <p className="text-muted-foreground">Click a bar for details</p>
             </div>
           )}
         </>

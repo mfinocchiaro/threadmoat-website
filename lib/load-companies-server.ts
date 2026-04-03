@@ -206,6 +206,8 @@ export async function loadCompaniesFromCSV(): Promise<Company[]> {
     // Financial health
     scoreFinancial: parseNum(row['Score Financial']),
     customerSignalScore: parseNum(row['Customer Signal Score']),
+    momentumMultiplier: parseNum(row['Momentum Multiplier']),
+    momentumCap: parseNum(row['Momentum Cap']),
     startupSizeCategory: row['Startup Size Category'] || '',
     // City
     city: normalizeCity(row['City'] || ''),

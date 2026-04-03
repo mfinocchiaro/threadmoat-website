@@ -12,7 +12,7 @@ Same getPropertyValue pattern. For files with only 1-2 hardcoded colors, the fix
   - Estimate: 25min
   - Files: components/charts/chord-chart.tsx, components/charts/customer-network.tsx, components/charts/investor-network.tsx, components/charts/investor-stats-chart.tsx, components/charts/network-graph.tsx, components/charts/periodic-table.tsx, components/charts/timeline-chart.tsx, components/charts/treemap-chart.tsx, components/charts/wordcloud-chart.tsx
   - Verify: npm run build passes. grep audit clean for all 9 files.
-- [ ] **T02: Fix theme colors in 4 three.js/WebGL charts** — Fix 4 three.js/WebGL chart components. These use react-three-fiber or raw three.js where CSS vars aren't directly accessible from the WebGL context.
+- [x] **T02: Converted hardcoded dark-theme colors in 4 three.js/WebGL charts to CSS custom property resolution via getComputedStyle + useTheme for reactive theme switching** — Fix 4 three.js/WebGL chart components. These use react-three-fiber or raw three.js where CSS vars aren't directly accessible from the WebGL context.
 
 Approach: Read CSS vars via getComputedStyle on a DOM ref, then pass the resolved color strings to three.js materials/lights.
 

@@ -2,6 +2,7 @@
 
 import React, { useRef, useState, useMemo, useCallback, useEffect } from "react"
 import dynamic from "next/dynamic"
+import { useTheme } from "next-themes"
 import { Company } from "@/lib/company-data"
 import { getInvestmentColor, INVESTMENT_LIST_COLORS } from "@/lib/investment-colors"
 import { Button } from "@/components/ui/button"
@@ -185,25 +186,39 @@ export function NetworkGraph3D({ data, className, preview = false }: NetworkGrap
     return { nodes, links, hubTypes }
   }, [data, primaryType, secondaryType, metric])
 
+  const { resolvedTheme } = useTheme()
+
+  // Resolve CSS custom properties for three.js tooltip use
+  const resolvedColors = useMemo(() => {
+    if (typeof document === "undefined") return { card: "#1e293b", cardFg: "#fff", mutedFg: "#94a3b8", border: "rgba(148,163,184,.3)" }
+    const s = getComputedStyle(document.documentElement)
+    return {
+      card: s.getPropertyValue("--card").trim() || "#1e293b",
+      cardFg: s.getPropertyValue("--card-foreground").trim() || "#fff",
+      mutedFg: s.getPropertyValue("--muted-foreground").trim() || "#94a3b8",
+      border: s.getPropertyValue("--border").trim() || "rgba(148,163,184,.3)",
+    }
+  }, [resolvedTheme])
+
   const nodeLabel = useCallback((node: any) => {
     if (node.type === "company" && node.data) {
       const c = node.data as Company
       const moatLabel = c.competitiveMoat ? `Moat: ${c.competitiveMoat}/5` : ""
-      return `<div style="padding:6px 10px;background:rgba(0,0,0,0.85);border-radius:6px;color:#fff;font-size:12px;max-width:280px;line-height:1.4">
+      return `<div style="padding:6px 10px;background:${resolvedColors.card};border:1px solid ${resolvedColors.border};border-radius:6px;color:${resolvedColors.cardFg};font-size:12px;max-width:280px;line-height:1.4">
         <div style="font-weight:600;margin-bottom:2px">${node.id}</div>
-        <div style="color:#94a3b8">${c.investmentList || ""}</div>
-        ${c.hqLocation ? `<div style="color:#94a3b8">${c.hqLocation}</div>` : ""}
-        ${moatLabel ? `<div style="color:#94a3b8">${moatLabel}</div>` : ""}
+        <div style="color:${resolvedColors.mutedFg}">${c.investmentList || ""}</div>
+        ${c.hqLocation ? `<div style="color:${resolvedColors.mutedFg}">${c.hqLocation}</div>` : ""}
+        ${moatLabel ? `<div style="color:${resolvedColors.mutedFg}">${moatLabel}</div>` : ""}
       </div>`
     }
-    return `<div style="padding:4px 8px;background:rgba(0,0,0,0.85);border-radius:4px;color:#fff;font-size:11px">
-      <span style="color:${HUB_COLORS[node.type] ?? "#94a3b8"}">${HUB_LABELS[node.type] ?? node.type}:</span> ${node.id}
+    return `<div style="padding:4px 8px;background:${resolvedColors.card};border:1px solid ${resolvedColors.border};border-radius:4px;color:${resolvedColors.cardFg};font-size:11px">
+      <span style="color:${HUB_COLORS[node.type] ?? resolvedColors.mutedFg}">${HUB_LABELS[node.type] ?? node.type}:</span> ${node.id}
     </div>`
-  }, [])
+  }, [resolvedColors])
 
   const linkColor = useCallback((link: any) => {
-    return link.kind === "primary" ? "rgba(148,163,184,0.4)" : "rgba(100,116,139,0.2)"
-  }, [])
+    return link.kind === "primary" ? resolvedColors.mutedFg : resolvedColors.border
+  }, [resolvedColors])
 
   const linkWidth = useCallback((link: any) => {
     return link.kind === "primary" ? 1.5 : 0.5
@@ -284,7 +299,7 @@ export function NetworkGraph3D({ data, className, preview = false }: NetworkGrap
         </div>
       )}
 
-      <div ref={containerRef} className="flex-1 w-full min-h-0 relative overflow-hidden bg-black/95">
+      <div ref={containerRef} className="flex-1 w-full min-h-0 relative overflow-hidden bg-background">
         {graphData.nodes.length > 0 && (
           <ForceGraph3D
             ref={fgRef}
