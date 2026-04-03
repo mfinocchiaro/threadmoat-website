@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exported_at": "2026-04-03T21:35:42.412Z",
+  "exported_at": "2026-04-03T23:08:28.592Z",
   "milestones": [
     {
       "id": "M001",
@@ -468,10 +468,10 @@
     {
       "id": "M009",
       "title": "Performance Audit & Bundle Optimization",
-      "status": "queued",
+      "status": "complete",
       "depends_on": [],
       "created_at": "2026-04-03T21:19:03.189Z",
-      "completed_at": null,
+      "completed_at": "2026-04-03T23:07:52.014Z",
       "vision": "Reduce client-side bundle size and improve initial load time by lazy-loading heavy chart components, dynamically importing jsPDF, configuring bundle analysis tooling, and running a Lighthouse baseline. Target: measurably faster dashboard page loads for all tiers.",
       "success_criteria": [
         "Bundle analyzer configured and baseline captured",
@@ -524,6 +524,60 @@
       ],
       "requirement_coverage": "No formal requirements — this is a performance optimization milestone. Addresses the implicit need for fast page loads in a B2B dashboard with 52 pages.",
       "boundary_map_markdown": "```\\n[S01 Bundle Analysis] → independent, provides baseline data\\n[S02 jsPDF Dynamic Import] → independent\\n[S03 Lazy-load Tab Charts] → independent\\n[S04 Lighthouse Baseline] → depends on S02, S03 (measures the optimized state)\\n```"
+    },
+    {
+      "id": "M010",
+      "title": "Homepage Speed Index & Deferred Chart Loading",
+      "status": "queued",
+      "depends_on": [],
+      "created_at": "2026-04-03T23:07:57.796Z",
+      "completed_at": null,
+      "vision": "Improve the homepage Speed Index from ~20s to under 5s by deferring below-the-fold chart rendering via Intersection Observer and streaming the hero section before data-heavy charts. Move from 'load everything then render' to 'render hero fast, load charts when scrolled into view'.",
+      "success_criteria": [
+        "Homepage Speed Index under 8s on production Lighthouse (3-run median)",
+        "Hero section (above the fold) renders in under 2s FCP",
+        "Charts below the fold only mount when scrolled into viewport (Intersection Observer)",
+        "LCP remains under 4s",
+        "npm run build passes with zero warnings"
+      ],
+      "key_risks": [
+        {
+          "risk": "Intersection Observer may cause layout shift when charts mount",
+          "whyItMatters": "Charts have fixed heights but content inside may cause reflow if dimensions aren't reserved"
+        },
+        {
+          "risk": "Streaming/Suspense boundaries may conflict with next-intl server translations",
+          "whyItMatters": "The homepage uses getTranslations which may not work inside Suspense boundaries"
+        },
+        {
+          "risk": "loadCompaniesFromCSV blocks the entire page response",
+          "whyItMatters": "600+ company CSV parse happens before any HTML is sent — delays TTFB for the entire page"
+        }
+      ],
+      "proof_strategy": [
+        {
+          "riskOrUnknown": "Layout shift from deferred charts",
+          "retireIn": "S01",
+          "whatWillBeProven": "Charts mount into pre-sized containers with zero CLS"
+        },
+        {
+          "riskOrUnknown": "CSV parse blocking TTFB",
+          "retireIn": "S02",
+          "whatWillBeProven": "Hero renders before company data is available via Suspense or client-side fetch"
+        }
+      ],
+      "verification_contract": "Build passes, Lighthouse Speed Index measured before and after on production",
+      "verification_integration": "Homepage renders hero immediately, charts load on scroll, no layout shift",
+      "verification_operational": "Production Lighthouse 3-run median captured",
+      "verification_uat": "Visual inspection confirms no flash or jarring loading behavior",
+      "definition_of_done": [
+        "All slices completed with verification evidence",
+        "Production Lighthouse Speed Index median under 8s",
+        "CLS remains 0",
+        "npm run build passes with zero warnings"
+      ],
+      "requirement_coverage": "No formal requirements. Addresses the Speed Index performance gap identified in M009 S04.",
+      "boundary_map_markdown": "```\\n[S01 Intersection Observer for homepage charts] → independent\\n[S02 Defer CSV loading for hero-first rendering] → depends on S01 pattern\\n[S03 Production Lighthouse validation] → depends on S01, S02\\n```"
     }
   ],
   "slices": [
@@ -1312,6 +1366,71 @@
       "proof_level": "documentation",
       "integration_closure": "Performance baseline available for future regressions",
       "observability_impact": "Performance monitoring baseline",
+      "sequence": 0,
+      "replan_triggered_at": null
+    },
+    {
+      "milestone_id": "M010",
+      "id": "S01",
+      "title": "Intersection Observer lazy-mount for homepage charts",
+      "status": "pending",
+      "risk": "low",
+      "depends": [],
+      "demo": "Homepage charts (NetworkGraph, GlobeChart) only mount when scrolled into the viewport. Skeleton placeholders visible until then.",
+      "created_at": "2026-04-03T23:08:28.412Z",
+      "completed_at": null,
+      "full_summary_md": "",
+      "full_uat_md": "",
+      "goal": "Wrap the two homepage chart sections in an IntersectionObserver hook that delays component mounting until the container is visible in the viewport",
+      "success_criteria": "Charts mount only on scroll. Pre-sized containers prevent CLS. Build passes.",
+      "proof_level": "build + browser visual inspection",
+      "integration_closure": "Homepage loads hero instantly, charts render on scroll",
+      "observability_impact": "none",
+      "sequence": 0,
+      "replan_triggered_at": null
+    },
+    {
+      "milestone_id": "M010",
+      "id": "S02",
+      "title": "Defer CSV data loading — hero-first rendering",
+      "status": "pending",
+      "risk": "medium",
+      "depends": [
+        "S01"
+      ],
+      "demo": "Homepage hero section renders before loadCompaniesFromCSV completes. Company data streams in for the dashboard section.",
+      "created_at": "2026-04-03T23:08:28.412Z",
+      "completed_at": null,
+      "full_summary_md": "",
+      "full_uat_md": "",
+      "goal": "Split the homepage into a static hero section that renders immediately and a data-dependent dashboard section that loads company data via client-side fetch or Suspense boundary",
+      "success_criteria": "Hero renders with zero data dependency. Dashboard section shows loading state then populates. Build passes.",
+      "proof_level": "build + TTFB measurement",
+      "integration_closure": "Homepage TTFB reflects hero complexity, not CSV parse time",
+      "observability_impact": "none",
+      "sequence": 0,
+      "replan_triggered_at": null
+    },
+    {
+      "milestone_id": "M010",
+      "id": "S03",
+      "title": "Production Lighthouse validation — 3-run median",
+      "status": "pending",
+      "risk": "low",
+      "depends": [
+        "S01",
+        "S02"
+      ],
+      "demo": "Production Lighthouse Speed Index median documented, before/after comparison",
+      "created_at": "2026-04-03T23:08:28.412Z",
+      "completed_at": null,
+      "full_summary_md": "",
+      "full_uat_md": "",
+      "goal": "Run Lighthouse 3x against production after S01+S02 deploy, capture median Speed Index",
+      "success_criteria": "Speed Index median under 8s. CLS 0. Before/after documented.",
+      "proof_level": "Lighthouse output",
+      "integration_closure": "Performance baseline updated",
+      "observability_impact": "Updated Lighthouse baseline",
       "sequence": 0,
       "replan_triggered_at": null
     }
