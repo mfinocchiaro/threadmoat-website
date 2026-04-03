@@ -4,7 +4,7 @@
 **Demo:** After this: Production site has fresh Airtable data. M006 annotated as superseded.
 
 ## Tasks
-- [ ] **T01: Commit fresh CSV data and annotate M006 as superseded** — 1. git add data/Startups-Grid view.csv (fresh Airtable export from today)
+- [x] **T01: Committed fresh Airtable CSV (1400+ rows) and annotated M006 as superseded** — 1. git add data/Startups-Grid view.csv (fresh Airtable export from today)
 2. Verify the file has 600+ companies and correct headers
 3. Add a note to M006-ROADMAP.md: '## Status\nSuperseded — all 4 heatmaps delivered ad-hoc during M005 close-out and post-M005 session. See M007 for cleanup.'
 4. Commit both files
