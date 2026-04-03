@@ -57,7 +57,7 @@ Extend the Company interface with `momentumMultiplier` and `momentumCap` fields,
   - Estimate: 2h
   - Files: lib/company-data.ts, lib/load-companies-server.ts, components/charts/market-momentum-heatmap.tsx, components/charts/growth-momentum-chart.tsx
   - Verify: grep -q 'momentumMultiplier' lib/company-data.ts && grep -q 'Momentum Multiplier' lib/load-companies-server.ts && test -f components/charts/market-momentum-heatmap.tsx && npx next build 2>&1 | tail -5
-- [ ] **T02: Wire dashboard page, sidebar entry, and verify full integration** — ## Description
+- [x] **T02: Created /dashboard/market-momentum page with VizPageShell wrapper and added sidebar navigation entry — build passes clean** — ## Description
 
 Create the dashboard page at `/dashboard/market-momentum`, add the sidebar navigation entry, and verify the complete feature works end-to-end via build.
 
