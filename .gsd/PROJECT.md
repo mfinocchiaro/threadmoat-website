@@ -27,6 +27,7 @@ Converting visitors into paying dashboard subscribers through compelling market 
 - ✓ Custom report builder (company selection + section toggles + AI narrative + chart capture → PDF/markdown) — v1.1
 - ✓ Market Momentum Heatmap (composite scoring, YlOrRd palette, Y-axis grouping, tooltips) — v1.2
 - ✓ Industry Penetration Heatmap customer count mode (known customers per cell via parseKnownCustomers) — v1.2
+- ✓ Target Customer Profile Heatmap (dual-axis selectable: 4 X-axis customer dimensions × 4 Y-axis groupings × 4 value modes, geo-region collapsing, shortlist highlighting) — v1.2
 
 ### Active
 
@@ -51,7 +52,7 @@ Converting visitors into paying dashboard subscribers through compelling market 
 - **Database:** Neon (Postgres)
 - **Data:** 500+ startups, investors from CSV files, market reports
 - **Scale:** 281 TypeScript files, 38.5K+ lines, 260+ commits
-- **Current state:** v1.2 in progress — M006 heatmap analytics expansion (Market Momentum shipped, Industry Penetration/Target Customer Profile/IP Dependency in progress)
+- **Current state:** v1.2 in progress — M006 heatmap analytics expansion (Market Momentum shipped, Industry Penetration shipped, Target Customer Profile shipped, IP Dependency in progress)
 - **Hosting:** Vercel
 - **Tiers:** Recon (free) → Analyst ($4,999 one-time) → Strategist (€18,999/yr) → Advisory (custom)
 - **M005 complete:** Filter onboarding, AI narrative engine (Claude Sonnet 4.5 via Vercel AI SDK), company shortlist with amber highlights, custom report builder with PDF export
@@ -93,4 +94,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-01 after M006/S01 slice completion (Market Momentum Heatmap)*
+*Last updated: 2026-04-01 after M006/S03 slice completion (Target Customer Profile Heatmap)*

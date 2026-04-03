@@ -30,6 +30,19 @@ function cleanField(value: string | undefined): string {
   return JUNK_VALUES.has(v.toLowerCase()) ? '' : v
 }
 
+const VALID_KERNELS = ['proprietary', 'parasolid', 'opencascade', 'openusd', 'rhino', 'webgl', 'acis', 'cgal']
+/**
+ * Clean Graphics Kernel values — keep only recognized kernel identifiers.
+ * Many rows contain misplaced construction industry data (e.g. "Residential Construction, Homebuilding")
+ * which must be rejected.
+ */
+function cleanGraphicsKernel(raw: string | undefined): string {
+  const v = cleanField(raw)
+  if (!v) return ''
+  const lower = v.toLowerCase()
+  return VALID_KERNELS.some(k => lower.includes(k)) ? v : ''
+}
+
 /**
  * Airtable AI fields are stored as Python dict strings:
  *   {'state': 'generated', 'value': 'actual text here', 'isStale': False}
@@ -247,6 +260,10 @@ export async function loadCompaniesFromCSV(): Promise<Company[]> {
     flagBain: parseBool(row['Bain']),
     flagFidelity: parseBool(row['Fidelity']),
     flagBrowserBased: parseBool(row[' Browser-based'] || row['Browser-based']),
+    // IP Dependency Analysis columns
+    ecosystemCompatibility: cleanField(row['Ecosystem SW/Platform Compatibility']),
+    graphicsKernel: cleanGraphicsKernel(row['Graphics Kernel']),
+    modelingParadigms: parsePythonList(row['Modeling Paradigms & Protocols']),
     // Heatmap enrichment (from sidecar CSV)
     techIndependenceScore: parseInt(enrich['Technology Independence Score']) || 0,
     ecosystemDependencies: (enrich['Ecosystem Dependencies'] || '').split(',').map(s => s.trim()).filter(s => s && s !== 'None'),
