@@ -4,14 +4,39 @@ import { VizPageShell } from "@/components/dashboard/viz-page-shell"
 import { useThesisGatedData } from "@/hooks/use-thesis-gated-data"
 import { ChartCard } from "@/components/dashboard/chart-card"
 import { Skeleton } from "@/components/ui/skeleton"
-import { RadarChart } from "@/components/charts/radar-chart"
-import { HeatmapChart } from "@/components/charts/heatmap-chart"
-import { ParallelCoordsChart } from "@/components/charts/parallel-coords-chart"
-import { BoxPlotChart } from "@/components/charts/box-plot-chart"
-import { DistributionChart } from "@/components/charts/distribution-chart"
-import { WordcloudChart } from "@/components/charts/wordcloud-chart"
-import { IndustryPenetrationChart } from "@/components/charts/industry-penetration-chart"
 import { Radar, Flame, SlidersHorizontal, BoxSelect, Activity, Type, Globe2 } from "lucide-react"
+import dynamic from "next/dynamic"
+
+const chartLoading = () => <Skeleton className="w-full h-full rounded-lg" />
+
+const RadarChart = dynamic(
+  () => import("@/components/charts/radar-chart").then(m => m.RadarChart),
+  { ssr: false, loading: chartLoading }
+)
+const HeatmapChart = dynamic(
+  () => import("@/components/charts/heatmap-chart").then(m => m.HeatmapChart),
+  { ssr: false, loading: chartLoading }
+)
+const ParallelCoordsChart = dynamic(
+  () => import("@/components/charts/parallel-coords-chart").then(m => m.ParallelCoordsChart),
+  { ssr: false, loading: chartLoading }
+)
+const BoxPlotChart = dynamic(
+  () => import("@/components/charts/box-plot-chart").then(m => m.BoxPlotChart),
+  { ssr: false, loading: chartLoading }
+)
+const DistributionChart = dynamic(
+  () => import("@/components/charts/distribution-chart").then(m => m.DistributionChart),
+  { ssr: false, loading: chartLoading }
+)
+const WordcloudChart = dynamic(
+  () => import("@/components/charts/wordcloud-chart").then(m => m.WordcloudChart),
+  { ssr: false, loading: chartLoading }
+)
+const IndustryPenetrationChart = dynamic(
+  () => import("@/components/charts/industry-penetration-chart").then(m => m.IndustryPenetrationChart),
+  { ssr: false, loading: chartLoading }
+)
 
 function AdvancedInner() {
   const { filtered, isLoading, shortlistedIds } = useThesisGatedData()

@@ -4,15 +4,26 @@ import { VizPageShell } from "@/components/dashboard/viz-page-shell"
 import { useThesisGatedData } from "@/hooks/use-thesis-gated-data"
 import { ChartCard } from "@/components/dashboard/chart-card"
 import { Skeleton } from "@/components/ui/skeleton"
-import { QuadrantChart } from "@/components/charts/quadrant-chart"
-import { BubbleChart } from "@/components/charts/bubble-chart"
-import { PeriodicTable } from "@/components/charts/periodic-table"
 import { Compass, GitBranch, Circle, Table2, LayoutGrid, GitCompare } from "lucide-react"
 import dynamic from "next/dynamic"
 
+const chartLoading = () => <Skeleton className="w-full h-full rounded-lg" />
+
+const QuadrantChart = dynamic(
+  () => import("@/components/charts/quadrant-chart").then(m => m.QuadrantChart),
+  { ssr: false, loading: chartLoading }
+)
+const BubbleChart = dynamic(
+  () => import("@/components/charts/bubble-chart").then(m => m.BubbleChart),
+  { ssr: false, loading: chartLoading }
+)
+const PeriodicTable = dynamic(
+  () => import("@/components/charts/periodic-table").then(m => m.PeriodicTable),
+  { ssr: false, loading: chartLoading }
+)
 const LandscapeChart = dynamic(
   () => import("@/components/charts/landscape-chart").then(m => m.LandscapeChart),
-  { ssr: false, loading: () => <Skeleton className="w-full h-full rounded-lg" /> }
+  { ssr: false, loading: chartLoading }
 )
 
 function MarketInner() {

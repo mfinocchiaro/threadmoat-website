@@ -4,21 +4,34 @@ import { VizPageShell } from "@/components/dashboard/viz-page-shell"
 import { useThesisGatedData } from "@/hooks/use-thesis-gated-data"
 import { ChartCard } from "@/components/dashboard/chart-card"
 import { Skeleton } from "@/components/ui/skeleton"
-import { BarChart } from "@/components/charts/bar-chart"
-import { TreemapChart } from "@/components/charts/treemap-chart"
-import { MarimekkoChart } from "@/components/charts/marimekko-chart"
-import { TimelineChart } from "@/components/charts/timeline-chart"
 import { BarChart2, TreePine, BarChart3, Clock, TrendingUp, GridIcon } from "lucide-react"
 import dynamic from "next/dynamic"
 
+const chartLoading = () => <Skeleton className="w-full h-full rounded-lg" />
+
+const BarChart = dynamic(
+  () => import("@/components/charts/bar-chart").then(m => m.BarChart),
+  { ssr: false, loading: chartLoading }
+)
+const TreemapChart = dynamic(
+  () => import("@/components/charts/treemap-chart").then(m => m.TreemapChart),
+  { ssr: false, loading: chartLoading }
+)
+const MarimekkoChart = dynamic(
+  () => import("@/components/charts/marimekko-chart").then(m => m.MarimekkoChart),
+  { ssr: false, loading: chartLoading }
+)
+const TimelineChart = dynamic(
+  () => import("@/components/charts/timeline-chart").then(m => m.TimelineChart),
+  { ssr: false, loading: chartLoading }
+)
 const SpiralTimelineChart = dynamic(
   () => import("@/components/charts/spiral-timeline-chart").then(m => m.SpiralTimelineChart),
-  { ssr: false, loading: () => <Skeleton className="w-full h-full rounded-lg" /> }
+  { ssr: false, loading: chartLoading }
 )
-
 const PatternsChart = dynamic(
   () => import("@/components/charts/patterns-chart").then(m => m.PatternsChart),
-  { ssr: false, loading: () => <Skeleton className="w-full h-full rounded-lg" /> }
+  { ssr: false, loading: chartLoading }
 )
 
 function FinancialInner() {
