@@ -28,14 +28,17 @@ Converting visitors into paying dashboard subscribers through compelling market 
 - ✓ Market Momentum Heatmap (composite scoring, YlOrRd palette, Y-axis grouping, tooltips) — v1.2
 - ✓ Industry Penetration Heatmap customer count mode (known customers per cell via parseKnownCustomers) — v1.2
 - ✓ Target Customer Profile Heatmap (dual-axis selectable: 4 X-axis customer dimensions × 4 Y-axis groupings × 4 value modes, geo-region collapsing, shortlist highlighting) — v1.2
+- ✓ CSV re-parse caching for /api/ai/narrative (module-level mtime cache) — v1.3
+- ✓ PDF markdown renderer: tables, nested lists, code blocks (jspdf-autotable) — v1.3
+- ✓ LLM API cost measurement (structured token usage logging per request) — v1.3
+- ✓ All 26 charts theme-aware light/dark via CSS custom properties — v1.3
+- ✓ Zero build warnings (turbopack root configured) — v1.3
 
 ### Active
 
-- [ ] CSV re-parse caching for /api/ai/narrative at higher load
-- [ ] PDF markdown renderer: tables, nested lists, code blocks
 - [ ] Human quality review of AI narrative output against SME expectations
-- [ ] LLM API cost measurement and budget benchmarking
-- [ ] UAT manual execution of test scripts for M005 features
+- [ ] Portuguese translation review (FR pending Michael's review)
+- [ ] UAT manual execution of test scripts for M005 features (browser tests deferred)
 
 ### Out of Scope
 
@@ -48,14 +51,17 @@ Converting visitors into paying dashboard subscribers through compelling market 
 
 ## Context
 
-- **Tech stack:** Next.js 16, NextAuth, Stripe (live), Resend, React Email, D3, Recharts, Tailwind CSS, shadcn/ui, next-intl, Vercel AI SDK (ai + @ai-sdk/anthropic)
+- **Tech stack:** Next.js 16, NextAuth, Stripe (live), Resend, React Email, D3, Recharts, three.js/react-three-fiber, Tailwind CSS, shadcn/ui, next-intl, Vercel AI SDK v6 (ai + @ai-sdk/anthropic), jsPDF + jspdf-autotable + html-to-image
 - **Database:** Neon (Postgres)
-- **Data:** 500+ startups, investors from CSV files, market reports
-- **Scale:** 281 TypeScript files, 38.5K+ lines, 260+ commits
-- **Current state:** v1.2 in progress — M006 heatmap analytics expansion (Market Momentum shipped, Industry Penetration shipped, Target Customer Profile shipped, IP Dependency in progress)
+- **Data:** 1400+ startups, investors from CSV files, heatmap enrichment sidecar
+- **Scale:** 296 TypeScript files, 44K+ lines, 341 commits, 104 routes (87 app routes + 17 static)
+- **Current state:** v1.3 — M008 Production Polish & Performance complete
 - **Hosting:** Vercel
 - **Tiers:** Recon (free) → Analyst ($4,999 one-time) → Strategist (€18,999/yr) → Advisory (custom)
-- **M005 complete:** Filter onboarding, AI narrative engine (Claude Sonnet 4.5 via Vercel AI SDK), company shortlist with amber highlights, custom report builder with PDF export
+- **M005:** Filter onboarding, AI narrative engine (Claude Sonnet 4.5), company shortlist with amber highlights, custom report builder with PDF export
+- **M006:** 4 heatmaps (Market Momentum, Industry Penetration, Customer Profile, IP Dependency) — delivered ad-hoc, superseded
+- **M007:** All 26 charts theme-aware (light/dark via CSS custom properties), 7 heatmap drilldowns, fresh data sync
+- **M008:** PDF renderer (tables/nested lists/code blocks), CSV parse cache, LLM token logging, zero build warnings
 
 ## Constraints
 
@@ -94,4 +100,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-01 after M006/S03 slice completion (Target Customer Profile Heatmap)*
+*Last updated: 2026-04-03 after M008 completion (Production Polish & Performance)*
