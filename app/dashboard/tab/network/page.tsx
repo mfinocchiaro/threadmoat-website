@@ -4,20 +4,30 @@ import { VizPageShell } from "@/components/dashboard/viz-page-shell"
 import { useThesisGatedData } from "@/hooks/use-thesis-gated-data"
 import { ChartCard } from "@/components/dashboard/chart-card"
 import { Skeleton } from "@/components/ui/skeleton"
-import { NetworkGraphToggle } from "@/components/charts/network-graph-toggle"
-import { SankeyChart } from "@/components/charts/sankey-chart"
-import { ChordChart } from "@/components/charts/chord-chart"
 import { Network, Users, GitBranch, Wind, Link2 } from "lucide-react"
 import dynamic from "next/dynamic"
 
+const chartLoading = () => <Skeleton className="w-full h-full rounded-lg" />
+
+const NetworkGraphToggle = dynamic(
+  () => import("@/components/charts/network-graph-toggle").then(m => m.NetworkGraphToggle),
+  { ssr: false, loading: chartLoading }
+)
+const SankeyChart = dynamic(
+  () => import("@/components/charts/sankey-chart").then(m => m.SankeyChart),
+  { ssr: false, loading: chartLoading }
+)
+const ChordChart = dynamic(
+  () => import("@/components/charts/chord-chart").then(m => m.ChordChart),
+  { ssr: false, loading: chartLoading }
+)
 const CustomerNetwork = dynamic(
   () => import("@/components/charts/customer-network").then(m => m.CustomerNetwork),
-  { ssr: false, loading: () => <Skeleton className="w-full h-full rounded-lg" /> }
+  { ssr: false, loading: chartLoading }
 )
-
 const InvestorNetwork = dynamic(
   () => import("@/components/charts/investor-network").then(m => m.InvestorNetwork),
-  { ssr: false, loading: () => <Skeleton className="w-full h-full rounded-lg" /> }
+  { ssr: false, loading: chartLoading }
 )
 
 function NetworkInner() {

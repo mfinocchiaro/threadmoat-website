@@ -4,13 +4,18 @@ import { VizPageShell } from "@/components/dashboard/viz-page-shell"
 import { useThesisGatedData } from "@/hooks/use-thesis-gated-data"
 import { ChartCard } from "@/components/dashboard/chart-card"
 import { Skeleton } from "@/components/ui/skeleton"
-import { SunburstChart } from "@/components/charts/sunburst-chart"
 import { Map as MapIcon, Sun } from "lucide-react"
 import dynamic from "next/dynamic"
 
+const chartLoading = () => <Skeleton className="w-full h-full rounded-lg" />
+
+const SunburstChart = dynamic(
+  () => import("@/components/charts/sunburst-chart").then(m => m.SunburstChart),
+  { ssr: false, loading: chartLoading }
+)
 const MapChart = dynamic(
   () => import("@/components/charts/map-chart").then(m => m.MapChart),
-  { ssr: false, loading: () => <Skeleton className="w-full h-full rounded-lg" /> }
+  { ssr: false, loading: chartLoading }
 )
 
 function GeographicInner() {

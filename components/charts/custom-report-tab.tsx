@@ -24,9 +24,10 @@ import {
   AlertCircle,
   Download,
 } from "lucide-react"
-import { jsPDF } from "jspdf"
-import { autoTable } from "jspdf-autotable"
-import { toPng } from "html-to-image"
+// jsPDF, jspdf-autotable, and html-to-image are dynamically imported in handleExportPDF
+// to keep them out of the initial bundle (~29MB combined node_modules)
+import type { jsPDF } from "jspdf"
+import type { autoTable } from "jspdf-autotable"
 import { BubbleChart } from "@/components/charts/bubble-chart"
 import { QuadrantChart } from "@/components/charts/quadrant-chart"
 import { PeriodicTable } from "@/components/charts/periodic-table"
@@ -306,6 +307,7 @@ function renderMarkdownToPDF(
   startY: number,
   maxWidth: number,
   leftX: number,
+  autoTableFn: typeof autoTable,
 ): number {
   let y = startY
   const lines = text.split("\n")
@@ -412,7 +414,7 @@ function renderMarkdownToPDF(
 
       // Render with autoTable
       ensureSpace(20) // minimum space for table header
-      autoTable(doc, {
+      autoTableFn(doc, {
         head: [headerCells],
         body: bodyRows,
         startY: y,
@@ -556,11 +558,12 @@ function renderMarkdownToPDF(
 async function captureChartImage(
   container: HTMLElement,
   chartId: string,
+  toPngFn: (node: HTMLElement, options?: Record<string, unknown>) => Promise<string>,
   timeoutMs: number = 10000,
 ): Promise<string | null> {
   try {
     const result = await Promise.race([
-      toPng(container, { pixelRatio: 2, cacheBust: true }),
+      toPngFn(container, { pixelRatio: 2, cacheBust: true }),
       new Promise<never>((_, reject) =>
         setTimeout(() => reject(new Error("Chart capture timeout")), timeoutMs),
       ),
@@ -830,7 +833,9 @@ export function CustomReportTab({ data }: CustomReportTabProps) {
 
   const hasAnyChart = sections.bubbleChart || sections.quadrantChart || sections.periodicTable || sections.treemap
 
-  const captureCharts = useCallback(async (): Promise<Map<string, string>> => {
+  const captureCharts = useCallback(async (
+    toPngFn: (node: HTMLElement, options?: Record<string, unknown>) => Promise<string>,
+  ): Promise<Map<string, string>> => {
     const captures = new Map<string, string>()
     if (!hasAnyChart) return captures
 
@@ -846,7 +851,7 @@ export function CustomReportTab({ data }: CustomReportTabProps) {
 
     for (const [chartId, ref] of chartRefs) {
       if (!sections[chartId] || !ref.current) continue
-      const dataUrl = await captureChartImage(ref.current, chartId)
+      const dataUrl = await captureChartImage(ref.current, chartId, toPngFn)
       if (dataUrl) {
         captures.set(chartId, dataUrl)
       }
@@ -863,11 +868,22 @@ export function CustomReportTab({ data }: CustomReportTabProps) {
     const startTime = performance.now()
 
     try {
+      // Dynamically import heavy PDF/capture libraries (~29MB combined)
+      // Only loaded when user actually clicks Export PDF
+      const [jspdfModule, autoTableModule, htmlToImageModule] = await Promise.all([
+        import("jspdf"),
+        import("jspdf-autotable"),
+        import("html-to-image"),
+      ])
+      const { jsPDF: JsPDF } = jspdfModule
+      const { autoTable: autoTableFn } = autoTableModule
+      const { toPng: toPngFn } = htmlToImageModule
+
       // 1. Capture chart snapshots if any charts are selected
-      const chartImages = await captureCharts()
+      const chartImages = await captureCharts(toPngFn)
 
       // 2. Build the PDF
-      const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" })
+      const doc = new JsPDF({ orientation: "portrait", unit: "mm", format: "a4" })
       let y = PDF_MARGIN
 
       // ─── Cover page ───────────────────────────────────────────────
@@ -928,7 +944,7 @@ export function CustomReportTab({ data }: CustomReportTabProps) {
         }
 
         const companyMarkdown = companySections.join("\n\n")
-        y = renderMarkdownToPDF(doc, companyMarkdown, y, PDF_CONTENT_WIDTH, PDF_MARGIN)
+        y = renderMarkdownToPDF(doc, companyMarkdown, y, PDF_CONTENT_WIDTH, PDF_MARGIN, autoTableFn)
       }
 
       // ─── Chart pages ──────────────────────────────────────────────
