@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exported_at": "2026-04-03T06:35:16.538Z",
+  "exported_at": "2026-04-03T06:45:46.313Z",
   "milestones": [
     {
       "id": "M001",
@@ -890,14 +890,14 @@
       "milestone_id": "M006",
       "id": "S02",
       "title": "Industry Penetration Heatmap",
-      "status": "pending",
+      "status": "complete",
       "risk": "medium",
       "depends": [],
       "demo": "Heatmap showing which industries each startup has penetrated, measured by known customer count per industry.",
       "created_at": "2026-04-01T21:30:17.307Z",
-      "completed_at": null,
-      "full_summary_md": "",
-      "full_uat_md": "",
+      "completed_at": "2026-04-03T06:36:56.872Z",
+      "full_summary_md": "---\nid: S02\nparent: M006\nmilestone: M006\nprovides:\n  - Industry Penetration heatmap with customerCount value mode\nrequires:\n  []\naffects:\n  []\nkey_files:\n  - components/charts/industry-penetration-chart.tsx\nkey_decisions:\n  - Parse knownCustomers once per company per cell to avoid redundant computation\npatterns_established:\n  - (none)\nobservability_surfaces:\n  - none\ndrill_down_paths:\n  - .gsd/milestones/M006/slices/S02/tasks/T01-SUMMARY.md\nduration: \"\"\nverification_result: passed\ncompleted_at: 2026-04-03T06:36:56.873Z\nblocker_discovered: false\n---\n\n# S02: Industry Penetration Heatmap\n\n**Added \"Customer Count\" value mode to the Industry Penetration heatmap, showing known customer count per cell via parseKnownCustomers**\n\n## What Happened\n\nSingle-task slice extending the existing Industry Penetration heatmap chart with a fourth value mode. The executor imported `parseKnownCustomers` from `lib/customer-logos.ts`, added `\"customerCount\"` to the `ValueMode` type union and `VALUE_MODES` array, extended `CellData` with a `customerCount` field, and wired accumulation in the cell-building `useMemo`. The `valueAccessor`, cell text display, tooltip, and legend label were all updated to handle the new mode. The color scale required no changes — it already feeds off `valueAccessor` automatically. Build passed clean on first attempt with all 102 pages compiling.\n\n## Verification\n\nAll three plan-defined verification checks passed: (1) `npx next build` exit code 0 with full TypeScript compilation and 102 pages, (2) `grep -q 'customerCount'` confirmed the new mode in the chart file, (3) `grep -q 'parseKnownCustomers'` confirmed the import is wired. Additionally, manual line-by-line review confirmed all 8 must-haves from the plan are implemented at the correct locations in the file.\n\n## Requirements Advanced\n\nNone.\n\n## Requirements Validated\n\nNone.\n\n## New Requirements Surfaced\n\nNone.\n\n## Requirements Invalidated or Re-scoped\n\nNone.\n\n## Deviations\n\nNone.\n\n## Known Limitations\n\nNone.\n\n## Follow-ups\n\nNone.\n\n## Files Created/Modified\n\n- `components/charts/industry-penetration-chart.tsx` — Added customerCount value mode with parseKnownCustomers integration, updated ValueMode type, VALUE_MODES array, CellData interface, cell-building useMemo, valueAccessor, cell text display, tooltip, and legend label\n",
+      "full_uat_md": "# S02: Industry Penetration Heatmap — UAT\n\n**Milestone:** M006\n**Written:** 2026-04-03T06:36:56.873Z\n\n# S02: Industry Penetration Heatmap — UAT\n\n**Milestone:** M006\n**Written:** 2026-04-01\n\n## UAT Type\n\n- UAT mode: artifact-driven\n- Why this mode is sufficient: Single chart enhancement with no backend, no API, no runtime state — build pass + code inspection confirms correctness. Visual verification in browser confirms rendering.\n\n## Preconditions\n\n- `npm run dev` running at localhost:3000\n- Logged in as a dashboard subscriber (analyst or strategist tier)\n- Navigate to the Industry Penetration heatmap page\n\n## Smoke Test\n\nOpen the Industry Penetration heatmap. The value mode dropdown should show four options: \"Startup Count\", \"Avg Score\", \"Avg Funding\", and \"Customer Count\". Selecting \"Customer Count\" should re-render the heatmap with integer customer counts in each cell.\n\n## Test Cases\n\n### 1. Customer Count mode selection\n\n1. Navigate to the Industry Penetration heatmap page\n2. Locate the value mode dropdown (top of chart)\n3. Click the dropdown and verify four options appear: Startup Count, Avg Score, Avg Funding, Customer Count\n4. Select \"Customer Count\"\n5. **Expected:** Heatmap cells show integer values representing known customer counts. Cells with no customers show 0. Color intensity scales with customer count (higher = darker/warmer).\n\n### 2. Tooltip shows customer count for all modes\n\n1. With any value mode selected (e.g., \"Startup Count\")\n2. Hover over a populated cell\n3. **Expected:** Tooltip includes a \"Known Customers: N\" line showing the customer count for that cell, regardless of which value mode is active.\n\n### 3. Legend label updates correctly\n\n1. Select \"Customer Count\" from the value mode dropdown\n2. Look at the color scale legend below/beside the heatmap\n3. **Expected:** Legend label reads \"Known Customers\" (not \"Startups\" or \"Avg Score\").\n\n### 4. Color scale correctness\n\n1. Select \"Customer Count\" mode\n2. Identify a cell with a high customer count and a cell with a low customer count\n3. **Expected:** High-count cells are visually darker/warmer than low-count cells. The gradient matches the legend range.\n\n### 5. Mode switching preserves layout\n\n1. Switch between all four value modes: Startup Count → Avg Score → Avg Funding → Customer Count → Startup Count\n2. **Expected:** Each switch re-renders cell values and legend. No layout glitches, no blank cells, no console errors. Grid structure (rows/columns) remains identical across modes.\n\n## Edge Cases\n\n### Cells with zero known customers\n\n1. Select \"Customer Count\" mode\n2. Find a cell where a startup has no knownCustomers data (empty string or missing)\n3. **Expected:** Cell displays \"0\". No NaN, no blank, no error.\n\n### Single-company cell\n\n1. Select \"Customer Count\" mode\n2. Find a cell containing exactly one company\n3. Hover to see tooltip\n4. **Expected:** Customer count matches that company's known customer list. Tooltip is consistent with cell value.\n\n## Failure Signals\n\n- Dropdown does not show \"Customer Count\" option\n- Cells show NaN, undefined, or blank when Customer Count mode is selected\n- Tooltip missing \"Known Customers\" line\n- Legend label does not change when switching to Customer Count mode\n- Console errors when switching modes\n- Build fails (`npx next build` exits non-zero)\n\n## Not Proven By This UAT\n\n- Accuracy of the underlying knownCustomers data in CSV source files\n- Performance with very large datasets (>1000 companies)\n- Accessibility of the heatmap (keyboard navigation, screen reader)\n\n## Notes for Tester\n\nThe customer count is parsed from the `knownCustomers` string field in the CSV data via `parseKnownCustomers()`. If a cell shows unexpectedly low numbers, verify the source CSV has populated knownCustomers for companies in that industry/category intersection.\n",
       "goal": "Add a \"Customer Count\" value mode to the existing Industry Penetration heatmap chart, showing known customer count per cell instead of startup count.",
       "success_criteria": "- `npx next build` passes with zero type errors\n- The \"Customer Count\" option appears in the Value dropdown on `/dashboard/industry-penetration`\n- Selecting \"Customer Count\" renders cells with customer counts, color intensity reflects customer density, tooltip shows customer count\n- Companies with known customers (e.g. nTop, aPriori) contribute non-zero customer counts to their industry cells",
       "proof_level": "Operational — the feature works in the running app with real data.",
@@ -918,11 +918,11 @@
       "completed_at": null,
       "full_summary_md": "",
       "full_uat_md": "",
-      "goal": "Build a Target Customer Profile heatmap showing the ideal customer dimensions for each startup.",
-      "success_criteria": "Customer profile heatmap renders with available dimensions. Missing dimensions documented for data collection.",
-      "proof_level": "Visual verification",
-      "integration_closure": "May require new Airtable fields for supply chain role",
-      "observability_impact": "None",
+      "goal": "Deliver a Target Customer Profile heatmap that profiles each startup's typical target customer across four selectable dimensions (buyer persona, company size, geography, deployment model) on the X axis, cross-referenced by configurable Y-axis groupings (industry, investment thesis, workflow segment, manufacturing type), with four value modes (count, avg score, avg funding, customer count).",
+      "success_criteria": "- `components/charts/target-customer-profile-chart.tsx` exists with dual-axis dropdown selectors (X and Y), geographic region mapping, shortlist highlighting, tooltips, and theme-aware D3 rendering\n- `app/dashboard/customer-profile/page.tsx` exists using VizPageShell + useThesisGatedData pattern\n- `/dashboard/customer-profile` entry appears in ADMIN_ITEMS and ADMIN_VIZ_HREFS in sidebar.tsx\n- `npx next build` passes with zero type errors\n- All four X-axis dimensions render correctly (buyer persona, company size, geography, deployment model)\n- All four Y-axis dimensions render correctly\n- All four value modes produce distinct cell coloring\n- Tooltip shows cell breakdown including shortlisted companies\n- Shortlisted companies show amber border highlight",
+      "proof_level": "integration — chart renders with real data from the CSV pipeline, accessible via dashboard route",
+      "integration_closure": "- Upstream surfaces consumed: `lib/company-data.ts` (Company interface), `lib/customer-logos.ts` (parseKnownCustomers), `hooks/use-thesis-gated-data.ts` (filtered data + shortlist), `components/dashboard/viz-page-shell.tsx` (page shell), `components/dashboard/sidebar.tsx` (navigation)\n- New wiring: `/dashboard/customer-profile` route + sidebar entry\n- What remains: S04 (IP Dependency Analysis) is the last slice in M006",
+      "observability_impact": "None — pure frontend chart component following established patterns. No backend, no async, no state persistence.",
       "sequence": 0,
       "replan_triggered_at": null
     },
@@ -2419,6 +2419,84 @@
       ],
       "expected_output": [
         "`components/charts/industry-penetration-chart.tsx` — extended with `customerCount` value mode, `parseKnownCustomers` import, updated CellData/valueAccessor/tooltip/legend"
+      ],
+      "observability_impact": "",
+      "full_plan_md": "",
+      "sequence": 0
+    },
+    {
+      "milestone_id": "M006",
+      "slice_id": "S03",
+      "id": "T01",
+      "title": "Built TargetCustomerProfileChart with 4 X-axis customer dimensions, 4 Y-axis groupings, 4 value modes, geo-region collapsing, and shortlist highlighting",
+      "status": "complete",
+      "one_liner": "Built TargetCustomerProfileChart with 4 X-axis customer dimensions, 4 Y-axis groupings, 4 value modes, geo-region collapsing, and shortlist highlighting",
+      "narrative": "Cloned the IndustryPenetrationChart D3 heatmap pattern and restructured it into a dual-axis-selectable heatmap. X-axis selects among Buyer Persona, Company Size, Geography (collapsed to 8 regions via getGeoRegion), and Deployment Model. Y-axis supports Industries Served, Investment Thesis, Workflow Segment, and Manufacturing Type. All four value modes (count, avg score, avg funding, customer count) work across both axes. Shortlist highlighting uses optional prop pattern (K005), cell text uses w>20 && h>16 guard, and the legend gradient has a unique SVG ID to avoid collision with the industry penetration chart.",
+      "verification_result": "File existence verified, grep confirmed buyerPersona/getGeoRegion/shortlistedIds present, TypeScript compilation passed with zero errors.",
+      "duration": "",
+      "completed_at": "2026-04-03T06:45:46.298Z",
+      "blocker_discovered": false,
+      "deviations": "None.",
+      "known_issues": "None.",
+      "key_files": [
+        "components/charts/target-customer-profile-chart.tsx"
+      ],
+      "key_decisions": [
+        "Unique gradient ID (target-customer-legend-grad) to avoid SVG collision",
+        "industriesServed added as first Y-axis option since X-axis now handles customer profile dimensions"
+      ],
+      "full_summary_md": "---\nid: T01\nparent: S03\nmilestone: M006\nkey_files:\n  - components/charts/target-customer-profile-chart.tsx\nkey_decisions:\n  - Unique gradient ID (target-customer-legend-grad) to avoid SVG collision\n  - industriesServed added as first Y-axis option since X-axis now handles customer profile dimensions\nduration: \"\"\nverification_result: passed\ncompleted_at: 2026-04-03T06:45:46.298Z\nblocker_discovered: false\n---\n\n# T01: Built TargetCustomerProfileChart with 4 X-axis customer dimensions, 4 Y-axis groupings, 4 value modes, geo-region collapsing, and shortlist highlighting\n\n**Built TargetCustomerProfileChart with 4 X-axis customer dimensions, 4 Y-axis groupings, 4 value modes, geo-region collapsing, and shortlist highlighting**\n\n## What Happened\n\nCloned the IndustryPenetrationChart D3 heatmap pattern and restructured it into a dual-axis-selectable heatmap. X-axis selects among Buyer Persona, Company Size, Geography (collapsed to 8 regions via getGeoRegion), and Deployment Model. Y-axis supports Industries Served, Investment Thesis, Workflow Segment, and Manufacturing Type. All four value modes (count, avg score, avg funding, customer count) work across both axes. Shortlist highlighting uses optional prop pattern (K005), cell text uses w>20 && h>16 guard, and the legend gradient has a unique SVG ID to avoid collision with the industry penetration chart.\n\n## Verification\n\nFile existence verified, grep confirmed buyerPersona/getGeoRegion/shortlistedIds present, TypeScript compilation passed with zero errors.\n\n## Verification Evidence\n\n| # | Command | Exit Code | Verdict | Duration |\n|---|---------|-----------|---------|----------|\n| 1 | `test -f components/charts/target-customer-profile-chart.tsx` | 0 | ✅ pass | 100ms |\n| 2 | `grep -q 'buyerPersona' components/charts/target-customer-profile-chart.tsx` | 0 | ✅ pass | 100ms |\n| 3 | `grep -q 'getGeoRegion' components/charts/target-customer-profile-chart.tsx` | 0 | ✅ pass | 100ms |\n| 4 | `grep -q 'shortlistedIds' components/charts/target-customer-profile-chart.tsx` | 0 | ✅ pass | 100ms |\n| 5 | `npx tsc --noEmit` | 0 | ✅ pass | 13700ms |\n\n\n## Deviations\n\nNone.\n\n## Known Issues\n\nNone.\n\n## Files Created/Modified\n\n- `components/charts/target-customer-profile-chart.tsx`\n",
+      "description": "## Description\n\nCreate the main chart component by cloning from `industry-penetration-chart.tsx` and extending it with:\n\n1. An X-axis selector dropdown for customer profile dimensions: Buyer Persona, Company Size, Geography (collapsed to ~8 regions), Deployment Model\n2. Keep the existing Y-axis selector (Industry, Investment Thesis, Workflow Segment, Manufacturing Type)\n3. Keep the existing value mode selector (count, avg score, avg funding, customer count)\n4. Add a `getGeoRegion()` helper to collapse 43 country values into ~8 geographic regions\n5. Add `getXValues()` function that extracts values for the selected X-axis dimension from a Company\n\n## Key Constraints from Knowledge Base\n\n- **K004**: D3 `.style()` does not accept `null` on HTML selections — use `''` instead\n- **K005**: Use optional `shortlistedIds?: Set<string>` prop pattern for shortlist highlighting\n- Country field contains flag emojis (e.g., \"United States 🇺🇸\") — strip non-word chars before matching. Handle both \"USA\" and \"United States\"\n- `deploymentModel` is already `string[]` — use directly\n- `buyerPersona` is a string — use `[company.buyerPersona || 'Unknown']`\n- `startupSizeCategory` is a string — use `[company.startupSizeCategory || 'Unknown']`\n- `manufacturingType` is a string needing Python list parsing: `val.replace(/[\\[\\]']/g, '').split(',').map(s => s.trim())`\n\n## Geographic Region Mapping\n\n```typescript\nfunction getGeoRegion(country: string): string {\n  const c = country.replace(/[^\\w\\s]/g, '').trim().toLowerCase()\n  if (c.includes('united states') || c.includes('usa') || c.includes('canada')) return 'North America'\n  if (c.includes('germany') || c.includes('austria') || c.includes('switzerland')) return 'DACH'\n  if (c.includes('united kingdom') || c.includes('ireland')) return 'UK & Ireland'\n  if (c.includes('france') || c.includes('belgium') || c.includes('netherlands') || c.includes('luxembourg')) return 'Western Europe'\n  if (c.includes('norway') || c.includes('sweden') || c.includes('finland') || c.includes('denmark') || c.includes('iceland')) return 'Nordics'\n  if (c.includes('israel')) return 'Israel'\n  if (c.includes('india') || c.includes('china') || c.includes('japan') || c.includes('korea') || c.includes('singapore') || c.includes('australia')) return 'Asia-Pacific'\n  return 'Other'\n}\n```\n\n## Steps\n\n1. Create `components/charts/target-customer-profile-chart.tsx` by cloning `industry-penetration-chart.tsx`\n2. Define `XAxisKey` type union: `'buyerPersona' | 'startupSizeCategory' | 'geoRegion' | 'deploymentModel'` with matching `X_AXES` label array\n3. Keep existing `YAxisKey` type/options for row grouping (add `industriesServed` as a Y-axis option since the industry-penetration chart had industry as its fixed X axis — here it becomes a Y option)\n4. Implement `getGeoRegion()` helper function\n5. Implement `getXValues(company, xAxis)` function that returns string[] for the selected X dimension\n6. Update `CellData` interface: rename `industry` field to `xGroup` (or keep generic naming)\n7. Update the `useMemo` cell-building logic to iterate X values via `getXValues()` instead of hardcoded `industriesServed`\n8. Add X-axis `<select>` dropdown in the controls bar alongside existing Y-axis and value mode dropdowns\n9. Verify shortlist highlighting uses optional prop pattern (K005) and conditional styles use `''` not `null` (K004)\n10. Verify tooltip shows X×Y label, all value stats, shortlisted names, and company list for small cells\n\n## Must-Haves\n\n- X-axis selector with 4 options (Buyer Persona, Company Size, Geography, Deployment Model)\n- Y-axis selector with 4 options (Industries Served, Investment Thesis, Workflow Segment, Manufacturing Type)\n- Value mode selector with 4 options (count, avg score, avg funding, customer count)\n- Geographic region mapping collapsing 43 countries to ~8 regions\n- Shortlist highlighting with amber border (K005 optional prop pattern)\n- Theme-aware colors via CSS custom properties\n- Tooltip with cell breakdown\n- Hotspot insight bar\n- Color legend\n- Cell text suppressed for small cells (w > 20 && h > 16 guard)",
+      "estimate": "1h30m",
+      "files": [
+        "components/charts/target-customer-profile-chart.tsx",
+        "components/charts/industry-penetration-chart.tsx"
+      ],
+      "verify": "test -f components/charts/target-customer-profile-chart.tsx && grep -q 'buyerPersona' components/charts/target-customer-profile-chart.tsx && grep -q 'getGeoRegion' components/charts/target-customer-profile-chart.tsx && grep -q 'shortlistedIds' components/charts/target-customer-profile-chart.tsx",
+      "inputs": [
+        "`components/charts/industry-penetration-chart.tsx` — primary template to clone from, contains D3 heatmap pattern with Y-axis selector, value modes, tooltips, shortlist highlighting, and theme-aware rendering",
+        "`lib/company-data.ts` — Company interface with buyerPersona, startupSizeCategory, country, deploymentModel fields",
+        "`lib/customer-logos.ts` — parseKnownCustomers() for customer count value mode"
+      ],
+      "expected_output": [
+        "`components/charts/target-customer-profile-chart.tsx` — complete chart component with dual-axis selectors, geo-region mapping, all value modes, tooltips, shortlist highlighting, and theme-aware rendering"
+      ],
+      "observability_impact": "",
+      "full_plan_md": "",
+      "sequence": 0
+    },
+    {
+      "milestone_id": "M006",
+      "slice_id": "S03",
+      "id": "T02",
+      "title": "Wire customer-profile page route and sidebar navigation, verify build",
+      "status": "pending",
+      "one_liner": "",
+      "narrative": "",
+      "verification_result": "",
+      "duration": "",
+      "completed_at": null,
+      "blocker_discovered": false,
+      "deviations": "",
+      "known_issues": "",
+      "key_files": [],
+      "key_decisions": [],
+      "full_summary_md": "",
+      "description": "## Description\n\nCreate the Next.js page route for the customer profile heatmap and wire it into the dashboard sidebar navigation. Then verify the entire build passes.\n\n## Steps\n\n1. Create `app/dashboard/customer-profile/page.tsx` by cloning `app/dashboard/industry-penetration/page.tsx`\n2. Update the import to `TargetCustomerProfileChart` from `@/components/charts/target-customer-profile-chart`\n3. Update the page title to \"Target Customer Profile\" and description to explain the multi-dimensional customer profiling purpose\n4. Add sidebar entry to `ADMIN_ITEMS` array in `components/dashboard/sidebar.tsx`: `{ href: '/dashboard/customer-profile', icon: UserCircle, label: 'Customer Profile' }` — place it after the existing Market Momentum entry\n5. Add `'/dashboard/customer-profile'` to the `ADMIN_VIZ_HREFS` Set\n6. Run `npx next build` and verify zero type errors across all pages\n\n## Must-Haves\n\n- Page route at `/dashboard/customer-profile` using VizPageShell + useThesisGatedData\n- TargetCustomerProfileChart imported and rendered with filtered data and shortlistedIds\n- Sidebar shows 'Customer Profile' in admin items\n- ADMIN_VIZ_HREFS includes the new route\n- `npx next build` passes with zero type errors",
+      "estimate": "30m",
+      "files": [
+        "app/dashboard/customer-profile/page.tsx",
+        "components/dashboard/sidebar.tsx"
+      ],
+      "verify": "npx next build 2>&1 | tail -5",
+      "inputs": [
+        "`components/charts/target-customer-profile-chart.tsx` — chart component created in T01",
+        "`app/dashboard/industry-penetration/page.tsx` — page shell template to clone",
+        "`components/dashboard/sidebar.tsx` — sidebar with ADMIN_ITEMS and ADMIN_VIZ_HREFS to extend"
+      ],
+      "expected_output": [
+        "`app/dashboard/customer-profile/page.tsx` — page route rendering TargetCustomerProfileChart with VizPageShell",
+        "`components/dashboard/sidebar.tsx` — updated with customer-profile entry in ADMIN_ITEMS and ADMIN_VIZ_HREFS"
       ],
       "observability_impact": "",
       "full_plan_md": "",
@@ -4044,6 +4122,61 @@
       "verdict": "✅ pass",
       "duration_ms": 100,
       "created_at": "2026-04-03T06:35:16.527Z"
+    },
+    {
+      "id": 121,
+      "task_id": "T01",
+      "slice_id": "S03",
+      "milestone_id": "M006",
+      "command": "test -f components/charts/target-customer-profile-chart.tsx",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 100,
+      "created_at": "2026-04-03T06:45:46.298Z"
+    },
+    {
+      "id": 122,
+      "task_id": "T01",
+      "slice_id": "S03",
+      "milestone_id": "M006",
+      "command": "grep -q 'buyerPersona' components/charts/target-customer-profile-chart.tsx",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 100,
+      "created_at": "2026-04-03T06:45:46.298Z"
+    },
+    {
+      "id": 123,
+      "task_id": "T01",
+      "slice_id": "S03",
+      "milestone_id": "M006",
+      "command": "grep -q 'getGeoRegion' components/charts/target-customer-profile-chart.tsx",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 100,
+      "created_at": "2026-04-03T06:45:46.298Z"
+    },
+    {
+      "id": 124,
+      "task_id": "T01",
+      "slice_id": "S03",
+      "milestone_id": "M006",
+      "command": "grep -q 'shortlistedIds' components/charts/target-customer-profile-chart.tsx",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 100,
+      "created_at": "2026-04-03T06:45:46.298Z"
+    },
+    {
+      "id": 125,
+      "task_id": "T01",
+      "slice_id": "S03",
+      "milestone_id": "M006",
+      "command": "npx tsc --noEmit",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 13700,
+      "created_at": "2026-04-03T06:45:46.298Z"
     }
   ]
 }

@@ -26,6 +26,7 @@ Converting visitors into paying dashboard subscribers through compelling market 
 - ✓ Company shortlist / workspace (click companies across charts, amber highlight, toolbar panel) — v1.1
 - ✓ Custom report builder (company selection + section toggles + AI narrative + chart capture → PDF/markdown) — v1.1
 - ✓ Market Momentum Heatmap (composite scoring, YlOrRd palette, Y-axis grouping, tooltips) — v1.2
+- ✓ Industry Penetration Heatmap customer count mode (known customers per cell via parseKnownCustomers) — v1.2
 
 ### Active
 
