@@ -2,6 +2,7 @@
 
 import React, { useMemo, useState, useRef, useEffect } from "react"
 import dynamic from "next/dynamic"
+import { useTheme } from "next-themes"
 import { Company } from "@/lib/company-data"
 import { getInvestmentColor } from "@/lib/investment-colors"
 import { getCustomerLogoUrl, parseKnownCustomers } from "@/lib/customer-logos"
@@ -121,10 +122,24 @@ export function CustomerNetwork3D({ data, className }: { data: Company[]; classN
 
   const q = searchQuery.trim().toLowerCase()
 
+  const { resolvedTheme } = useTheme()
+
+  // Resolve CSS custom properties for three.js/tooltip use
+  const resolvedColors = useMemo(() => {
+    if (typeof document === "undefined") return { card: "#1e293b", cardFg: "#fff", mutedFg: "#94a3b8", border: "rgba(148,163,184,.3)" }
+    const s = getComputedStyle(document.documentElement)
+    return {
+      card: s.getPropertyValue("--card").trim() || "#1e293b",
+      cardFg: s.getPropertyValue("--card-foreground").trim() || "#fff",
+      mutedFg: s.getPropertyValue("--muted-foreground").trim() || "#94a3b8",
+      border: s.getPropertyValue("--border").trim() || "rgba(148,163,184,.3)",
+    }
+  }, [resolvedTheme])
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const nodeColor = (node: any): string => {
     if (node.type === "customer") {
-      return getCustomerLogoUrl(node.name) ? "#1e293b" : nameToColor(node.name)
+      return getCustomerLogoUrl(node.name) ? resolvedColors.card : nameToColor(node.name)
     }
     if (q && node.name.toLowerCase().includes(q)) return "#fbbf24"
     return getInvestmentColor(node.investmentList)
@@ -145,10 +160,10 @@ export function CustomerNetwork3D({ data, className }: { data: Company[]; classN
       const logoUrl = getCustomerLogoUrl(node.name, 48)
       const logoHtml = logoUrl
         ? `<img src="${logoUrl}" style="width:28px;height:28px;object-fit:contain;border-radius:4px;background:#fff;padding:2px;flex-shrink:0" onerror="this.style.display='none'" />`
-        : `<div style="width:28px;height:28px;border-radius:4px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0;color:#fff">${node.name.slice(0, 2).toUpperCase()}</div>`
-      return `<div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:rgba(15,23,42,.92);border:1px solid rgba(148,163,184,.3);border-radius:8px;color:#fff;font-size:12px;white-space:nowrap">${logoHtml}<div><strong>${node.name}</strong><br/><span style="opacity:.65">${node.count} startup${node.count > 1 ? "s" : ""}</span></div></div>`
+        : `<div style="width:28px;height:28px;border-radius:4px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0;color:${resolvedColors.cardFg}">${node.name.slice(0, 2).toUpperCase()}</div>`
+      return `<div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:${resolvedColors.card};border:1px solid ${resolvedColors.border};border-radius:8px;color:${resolvedColors.cardFg};font-size:12px;white-space:nowrap">${logoHtml}<div><strong>${node.name}</strong><br/><span style="color:${resolvedColors.mutedFg}">${node.count} startup${node.count > 1 ? "s" : ""}</span></div></div>`
     }
-    return `<div style="padding:5px 10px;background:rgba(15,23,42,.92);border:1px solid rgba(148,163,184,.3);border-radius:8px;color:#fff;font-size:12px;white-space:nowrap"><strong>${node.name}</strong>${node.investmentList ? `<br/><span style="opacity:.65">${node.investmentList}</span>` : ""}</div>`
+    return `<div style="padding:5px 10px;background:${resolvedColors.card};border:1px solid ${resolvedColors.border};border-radius:8px;color:${resolvedColors.cardFg};font-size:12px;white-space:nowrap"><strong>${node.name}</strong>${node.investmentList ? `<br/><span style="color:${resolvedColors.mutedFg}">${node.investmentList}</span>` : ""}</div>`
   }
 
   const searchMatchCount = useMemo(() => {
@@ -251,7 +266,7 @@ export function CustomerNetwork3D({ data, className }: { data: Company[]; classN
         nodeVal={nodeVal}
         nodeLabel={nodeLabel}
         nodeOpacity={0.92}
-        linkColor={() => "#94a3b8"}
+        linkColor={() => resolvedColors.mutedFg}
         linkOpacity={0.25}
         linkWidth={1}
       />

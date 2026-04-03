@@ -1,10 +1,12 @@
-# S01: Market Momentum Heatmap
+---
+estimated_steps: 40
+estimated_files: 4
+skills_used: []
+---
 
-**Goal:** Deliver a Market Momentum Heatmap that visualizes composite momentum intensity (growth metrics, customer signal score, momentum multiplier) across configurable grouping axes, accessible from the dashboard sidebar.
-**Demo:** After this: Heatmap showing company momentum based on customer acquisition velocity and growth signals.
+# T01: Extend Company data model and build MarketMomentumHeatmap chart component
 
-## Tasks
-- [x] **T01: Added momentumMultiplier/momentumCap to Company data model and built MarketMomentumHeatmap D3 chart with composite scoring, YlOrRd palette, tooltips, and shortlist highlighting** — ## Description
+## Description
 
 Extend the Company interface with `momentumMultiplier` and `momentumCap` fields, load them from CSV, then build the full D3 SVG heatmap chart component.
 
@@ -54,48 +56,19 @@ Extend the Company interface with `momentumMultiplier` and `momentumCap` fields,
 - `test -f components/charts/market-momentum-heatmap.tsx` — chart file exists
 - `grep -q 'shortlistedIds' components/charts/market-momentum-heatmap.tsx` — shortlist prop present
 - `npx next build 2>&1 | tail -5` — build succeeds (may warn about unused page but no type errors)
-  - Estimate: 2h
-  - Files: lib/company-data.ts, lib/load-companies-server.ts, components/charts/market-momentum-heatmap.tsx, components/charts/growth-momentum-chart.tsx
-  - Verify: grep -q 'momentumMultiplier' lib/company-data.ts && grep -q 'Momentum Multiplier' lib/load-companies-server.ts && test -f components/charts/market-momentum-heatmap.tsx && npx next build 2>&1 | tail -5
-- [ ] **T02: Wire dashboard page, sidebar entry, and verify full integration** — ## Description
 
-Create the dashboard page at `/dashboard/market-momentum`, add the sidebar navigation entry, and verify the complete feature works end-to-end via build.
+## Inputs
 
-## Steps
+- ``lib/company-data.ts` — existing Company interface to extend`
+- ``lib/load-companies-server.ts` — existing CSV loader to extend`
+- ``components/charts/growth-momentum-chart.tsx` — structural reference for D3 heatmap pattern (read-only)`
 
-1. Create `app/dashboard/market-momentum/page.tsx` following the exact pattern from `app/dashboard/growth-momentum/page.tsx`:
-   - `"use client"` directive
-   - Import `VizPageShell` from `@/components/dashboard/viz-page-shell`
-   - Import `useThesisGatedData` from `@/hooks/use-thesis-gated-data`
-   - Import `MarketMomentumHeatmap` from `@/components/charts/market-momentum-heatmap`
-   - Import `Skeleton` from `@/components/ui/skeleton`
-   - Inner component `MarketMomentumInner` that calls `useThesisGatedData()` to get `{ filtered, isLoading, shortlistedIds }`
-   - Title: "Market Momentum" with description about composite momentum intensity
-   - Loading skeleton `h-[600px]`
-   - Pass `data={filtered}`, `shortlistedIds={shortlistedIds}`, `className="min-h-[500px]"`
-   - Default export wraps inner in `<VizPageShell>`
+## Expected Output
 
-2. In `components/dashboard/sidebar.tsx`:
-   - Add entry to `ADMIN_ITEMS` array (after the growth-momentum entry, around line 149): `{ href: "/dashboard/market-momentum", icon: TrendingUp, label: "Market Momentum" }`
-   - Note: `TrendingUp` is already imported. Using same icon as other trending items is fine.
-   - Add `"/dashboard/market-momentum"` to `ADMIN_VIZ_HREFS` set (around line 169)
-
-3. Run `npx next build` and verify zero errors.
-
-## Must-Haves
-
-- [ ] Page file at `app/dashboard/market-momentum/page.tsx` with VizPageShell wrapper
-- [ ] Uses `useThesisGatedData` for filtered data and shortlist IDs
-- [ ] Sidebar entry in ADMIN_ITEMS with TrendingUp icon
-- [ ] Sidebar entry in ADMIN_VIZ_HREFS
-- [ ] `npx next build` passes
+- ``lib/company-data.ts` — Company interface extended with momentumMultiplier and momentumCap`
+- ``lib/load-companies-server.ts` — CSV loading for Momentum Multiplier and Momentum Cap columns`
+- ``components/charts/market-momentum-heatmap.tsx` — complete D3 SVG heatmap chart component`
 
 ## Verification
 
-- `test -f app/dashboard/market-momentum/page.tsx` — page exists
-- `grep -q 'market-momentum' components/dashboard/sidebar.tsx` — sidebar wired
-- `grep -q 'MarketMomentumHeatmap' app/dashboard/market-momentum/page.tsx` — chart imported
-- `npx next build 2>&1 | tail -5` — clean build with zero errors
-  - Estimate: 30m
-  - Files: app/dashboard/market-momentum/page.tsx, components/dashboard/sidebar.tsx
-  - Verify: test -f app/dashboard/market-momentum/page.tsx && grep -q 'market-momentum' components/dashboard/sidebar.tsx && npx next build 2>&1 | tail -5
+grep -q 'momentumMultiplier' lib/company-data.ts && grep -q 'Momentum Multiplier' lib/load-companies-server.ts && test -f components/charts/market-momentum-heatmap.tsx && npx next build 2>&1 | tail -5
