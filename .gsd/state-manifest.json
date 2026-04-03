@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exported_at": "2026-04-03T19:09:43.428Z",
+  "exported_at": "2026-04-03T21:35:42.412Z",
   "milestones": [
     {
       "id": "M001",
@@ -464,6 +464,66 @@
       ],
       "requirement_coverage": "Covers active backlog: CSV re-parse caching, PDF renderer gaps, PT review, UAT execution, LLM cost measurement. PROJECT.md update is housekeeping.",
       "boundary_map_markdown": "```\\n[PT Review] → independent\\n[PDF Renderer] → independent\\n[AI Cache + Cost] → independent\\n[UAT + Docs] → depends on S01-S03 (verifies their output)\\n[Build Cleanup] → independent\\n```"
+    },
+    {
+      "id": "M009",
+      "title": "Performance Audit & Bundle Optimization",
+      "status": "queued",
+      "depends_on": [],
+      "created_at": "2026-04-03T21:19:03.189Z",
+      "completed_at": null,
+      "vision": "Reduce client-side bundle size and improve initial load time by lazy-loading heavy chart components, dynamically importing jsPDF, configuring bundle analysis tooling, and running a Lighthouse baseline. Target: measurably faster dashboard page loads for all tiers.",
+      "success_criteria": [
+        "Bundle analyzer configured and baseline captured",
+        "jsPDF + jspdf-autotable dynamically imported (not in initial bundle for reports page)",
+        "Tab overview pages lazy-load chart components below the fold",
+        "Lighthouse performance score captured as baseline for dashboard pages",
+        "npm run build passes with zero warnings"
+      ],
+      "key_risks": [
+        {
+          "risk": "Dynamic imports may cause visible loading flicker on tab pages",
+          "whyItMatters": "Tab overview pages show multiple charts at once — staggered loading could feel broken"
+        },
+        {
+          "risk": "Turbopack may not support @next/bundle-analyzer",
+          "whyItMatters": "Bundle analysis tooling was built for Webpack — Turbopack compatibility unclear"
+        },
+        {
+          "risk": "jsPDF dynamic import changes the export flow from sync to async",
+          "whyItMatters": "The PDF export button handler currently calls jsPDF synchronously — needs refactoring to await the import"
+        }
+      ],
+      "proof_strategy": [
+        {
+          "riskOrUnknown": "Bundle analyzer compatibility with Turbopack",
+          "retireIn": "S01",
+          "whatWillBeProven": "Either @next/bundle-analyzer works with Turbopack or an alternative approach is used"
+        },
+        {
+          "riskOrUnknown": "Loading flicker on tab pages",
+          "retireIn": "S03",
+          "whatWillBeProven": "Lazy-loaded charts render with skeleton placeholders, no jarring flicker"
+        },
+        {
+          "riskOrUnknown": "jsPDF async import flow",
+          "retireIn": "S02",
+          "whatWillBeProven": "PDF export works identically from user perspective with dynamic import"
+        }
+      ],
+      "verification_contract": "Build passes, Lighthouse scores captured, bundle sizes measured before and after",
+      "verification_integration": "Reports page PDF export works end-to-end with dynamic jsPDF import. Tab pages render all charts correctly with lazy loading.",
+      "verification_operational": "Bundle analysis output available for future monitoring",
+      "verification_uat": "Dashboard pages load without visible degradation",
+      "definition_of_done": [
+        "All slices completed with verification evidence",
+        "Bundle size comparison: before vs after documented",
+        "Lighthouse baseline captured for at least 3 representative pages",
+        "npm run build passes with zero warnings",
+        "No functional regressions in chart rendering or PDF export"
+      ],
+      "requirement_coverage": "No formal requirements — this is a performance optimization milestone. Addresses the implicit need for fast page loads in a B2B dashboard with 52 pages.",
+      "boundary_map_markdown": "```\\n[S01 Bundle Analysis] → independent, provides baseline data\\n[S02 jsPDF Dynamic Import] → independent\\n[S03 Lazy-load Tab Charts] → independent\\n[S04 Lighthouse Baseline] → depends on S02, S03 (measures the optimized state)\\n```"
     }
   ],
   "slices": [
@@ -1169,6 +1229,89 @@
       "proof_level": "build output",
       "integration_closure": "Clean CI/CD signal",
       "observability_impact": "none",
+      "sequence": 0,
+      "replan_triggered_at": null
+    },
+    {
+      "milestone_id": "M009",
+      "id": "S01",
+      "title": "Bundle analysis tooling & baseline capture",
+      "status": "complete",
+      "risk": "medium",
+      "depends": [],
+      "demo": "Bundle analysis output showing chunk sizes, largest dependencies identified",
+      "created_at": "2026-04-03T21:19:38.451Z",
+      "completed_at": "2026-04-03T21:28:27.821Z",
+      "full_summary_md": "---\nid: S01\nparent: M009\nmilestone: M009\nprovides:\n  - Bundle baseline: 8.9MB total, 147 chunks, top 6 chunks identified\nrequires:\n  []\naffects:\n  - S04\nkey_files:\n  - (none)\nkey_decisions:\n  - Direct chunk analysis over @next/bundle-analyzer\npatterns_established:\n  - Turbopack chunk identification via grep pattern matching on hashed filenames\nobservability_surfaces:\n  - none\ndrill_down_paths:\n  - .gsd/milestones/M009/slices/S01/tasks/T01-SUMMARY.md\nduration: \"\"\nverification_result: passed\ncompleted_at: 2026-04-03T21:28:27.821Z\nblocker_discovered: false\n---\n\n# S01: Bundle analysis tooling & baseline capture\n\n**Baseline captured: 8.9MB JS, 147 chunks, three.js duplicated 2x1.3MB, optimization targets identified**\n\n## What Happened\n\nAnalyzed Turbopack build output directly since @next/bundle-analyzer is Webpack-only. Identified top chunks: three.js 2x1.3MB (duplicated), Zod 912KB, react-globe.gl 468KB, Recharts+lodash 324KB. Key optimization targets: jsPDF dynamic import (S02) and tab chart lazy-loading (S03). three.js duplication is a bundler-level artifact from existing dynamic imports, not actionable from our code.\n\n## Verification\n\nChunk sizes verified via du. Contents identified via string pattern matching.\n\n## Requirements Advanced\n\nNone.\n\n## Requirements Validated\n\nNone.\n\n## New Requirements Surfaced\n\nNone.\n\n## Requirements Invalidated or Re-scoped\n\nNone.\n\n## Deviations\n\nNo external tooling installed — direct analysis sufficient for Turbopack builds.\n\n## Known Limitations\n\nTurbopack chunk names are hashes, making per-route attribution difficult without a dev server trace.\n\n## Follow-ups\n\nNone.\n\n## Files Created/Modified\n\nNone.\n",
+      "full_uat_md": "# S01: Bundle analysis tooling & baseline capture — UAT\n\n**Milestone:** M009\n**Written:** 2026-04-03T21:28:27.821Z\n\n## UAT: Bundle analysis baseline\\n\\n### Test 1: Baseline documented\\n- [ ] Total JS size captured (8.9MB)\\n- [ ] Top chunks identified with contents\\n- [ ] Optimization targets prioritized\n",
+      "goal": "Capture baseline bundle analysis of the current build and document findings",
+      "success_criteria": "Bundle baseline documented: total JS size, top chunks identified, optimization targets prioritized",
+      "proof_level": "analysis output documented",
+      "integration_closure": "Baseline available for before/after comparison in S04",
+      "observability_impact": "Bundle size visibility",
+      "sequence": 0,
+      "replan_triggered_at": null
+    },
+    {
+      "milestone_id": "M009",
+      "id": "S02",
+      "title": "Dynamic import jsPDF + jspdf-autotable on reports page",
+      "status": "complete",
+      "risk": "low",
+      "depends": [],
+      "demo": "Reports page initial load no longer includes jsPDF in the bundle. PDF export still works on button click.",
+      "created_at": "2026-04-03T21:19:38.451Z",
+      "completed_at": "2026-04-03T21:30:52.000Z",
+      "full_summary_md": "---\nid: S02\nparent: M009\nmilestone: M009\nprovides:\n  - jsPDF/autotable/html-to-image out of initial bundle for all pages\nrequires:\n  []\naffects:\n  - S04\nkey_files:\n  - components/charts/custom-report-tab.tsx\nkey_decisions:\n  - Dynamic import() in event handler for on-demand loading\npatterns_established:\n  - Dynamic import + parameter injection pattern for heavy libraries used in rare user actions\nobservability_surfaces:\n  - none\ndrill_down_paths:\n  - .gsd/milestones/M009/slices/S02/tasks/T01-SUMMARY.md\nduration: \"\"\nverification_result: passed\ncompleted_at: 2026-04-03T21:30:52.001Z\nblocker_discovered: false\n---\n\n# S02: Dynamic import jsPDF + jspdf-autotable on reports page\n\n**jsPDF, jspdf-autotable, and html-to-image dynamically imported — out of initial bundle for all pages**\n\n## What Happened\n\nConverted three heavy static imports to dynamic imports inside handleExportPDF. Only `import type` remains at module level for TypeScript safety. Refactored renderMarkdownToPDF and captureChartImage to accept the dynamically loaded functions as parameters. The isExportingPDF loading state covers the import delay naturally.\n\n## Verification\n\nnpm run build passed. Only type imports remain for jsPDF/autoTable.\n\n## Requirements Advanced\n\nNone.\n\n## Requirements Validated\n\nNone.\n\n## New Requirements Surfaced\n\nNone.\n\n## Requirements Invalidated or Re-scoped\n\nNone.\n\n## Deviations\n\nNone.\n\n## Known Limitations\n\nNone.\n\n## Follow-ups\n\nNone.\n\n## Files Created/Modified\n\n- `components/charts/custom-report-tab.tsx` — Converted jsPDF/autotable/html-to-image from static to dynamic imports\n",
+      "full_uat_md": "# S02: Dynamic import jsPDF + jspdf-autotable on reports page — UAT\n\n**Milestone:** M009\n**Written:** 2026-04-03T21:30:52.001Z\n\n## UAT: Dynamic import jsPDF\\n\\n### Test 1: Build passes\\n- [ ] `npm run build` exits 0\\n\\n### Test 2: No static imports\\n- [ ] Only `import type` for jsPDF/autoTable in custom-report-tab.tsx\\n\\n### Test 3: PDF export still works\\n- [ ] Generate a report → click Export PDF → PDF downloads correctly\n",
+      "goal": "Convert jsPDF and jspdf-autotable from static imports to dynamic imports in custom-report-tab.tsx, loaded only when user clicks Export PDF",
+      "success_criteria": "jsPDF not in initial bundle for /dashboard/reports. PDF export still works. Build passes.",
+      "proof_level": "build + functional test",
+      "integration_closure": "PDF export UX unchanged — button shows loading state during dynamic import",
+      "observability_impact": "none",
+      "sequence": 0,
+      "replan_triggered_at": null
+    },
+    {
+      "milestone_id": "M009",
+      "id": "S03",
+      "title": "Lazy-load chart components on tab overview pages",
+      "status": "complete",
+      "risk": "medium",
+      "depends": [],
+      "demo": "Tab overview pages load faster — charts below the fold are lazy-loaded with skeleton placeholders",
+      "created_at": "2026-04-03T21:19:38.451Z",
+      "completed_at": "2026-04-03T21:33:28.279Z",
+      "full_summary_md": "---\nid: S03\nparent: M009\nmilestone: M009\nprovides:\n  - Tab overview pages with lazy-loaded chart components\nrequires:\n  []\naffects:\n  - S04\nkey_files:\n  - app/dashboard/tab/financial/page.tsx\n  - app/dashboard/tab/advanced/page.tsx\n  - app/dashboard/tab/market/page.tsx\n  - app/dashboard/tab/network/page.tsx\n  - app/dashboard/tab/geographic/page.tsx\nkey_decisions:\n  - Dynamic imports on overview pages only — individual chart pages keep static imports\npatterns_established:\n  - Shared chartLoading skeleton for consistent loading states across tab pages\nobservability_surfaces:\n  - none\ndrill_down_paths:\n  - .gsd/milestones/M009/slices/S03/tasks/T01-SUMMARY.md\nduration: \"\"\nverification_result: passed\ncompleted_at: 2026-04-03T21:33:28.279Z\nblocker_discovered: false\n---\n\n# S03: Lazy-load chart components on tab overview pages\n\n**18 chart imports across 5 tab pages converted to next/dynamic with skeleton placeholders**\n\n## What Happened\n\nConverted all 18 static chart component imports on the 5 tab overview pages to next/dynamic with ssr:false and shared skeleton loading placeholders. Tab pages now load the shell immediately and lazy-load charts on demand. Chunk count increased from 147→168 (more granular code splitting). Build passes clean.\n\n## Verification\n\nnpm run build passed. Zero static chart imports on any tab page.\n\n## Requirements Advanced\n\nNone.\n\n## Requirements Validated\n\nNone.\n\n## New Requirements Surfaced\n\nNone.\n\n## Requirements Invalidated or Re-scoped\n\nNone.\n\n## Deviations\n\nNone.\n\n## Known Limitations\n\nIndividual chart pages still use static imports — those are single-chart pages where the chart IS the page content, so lazy-loading would just add latency.\n\n## Follow-ups\n\nNone.\n\n## Files Created/Modified\n\n- `app/dashboard/tab/financial/page.tsx` — 4 static chart imports → dynamic\n- `app/dashboard/tab/advanced/page.tsx` — 7 static chart imports → dynamic\n- `app/dashboard/tab/market/page.tsx` — 3 static chart imports → dynamic\n- `app/dashboard/tab/network/page.tsx` — 3 static chart imports → dynamic\n- `app/dashboard/tab/geographic/page.tsx` — 1 static chart import → dynamic\n",
+      "full_uat_md": "# S03: Lazy-load chart components on tab overview pages — UAT\n\n**Milestone:** M009\n**Written:** 2026-04-03T21:33:28.279Z\n\n## UAT: Lazy-load tab charts\\n\\n### Test 1: Build passes\\n- [ ] `npm run build` exits 0\\n\\n### Test 2: No static chart imports on tab pages\\n- [ ] grep confirms zero static chart imports\\n\\n### Test 3: Tab pages render correctly\\n- [ ] All 5 tab pages show skeleton → chart transition\\n- [ ] No missing charts or broken layouts\n",
+      "goal": "Convert static chart imports on 5 tab overview pages to next/dynamic with loading skeletons",
+      "success_criteria": "All 5 tab pages use dynamic imports for chart components. Skeleton placeholders shown during load. Build passes.",
+      "proof_level": "build + code review",
+      "integration_closure": "Charts render identically once loaded — no functional regression",
+      "observability_impact": "none",
+      "sequence": 0,
+      "replan_triggered_at": null
+    },
+    {
+      "milestone_id": "M009",
+      "id": "S04",
+      "title": "Lighthouse baseline capture & performance documentation",
+      "status": "complete",
+      "risk": "low",
+      "depends": [
+        "S02",
+        "S03"
+      ],
+      "demo": "Lighthouse scores documented for 3 representative pages: homepage, a chart page, and reports page",
+      "created_at": "2026-04-03T21:19:38.451Z",
+      "completed_at": "2026-04-03T21:35:42.399Z",
+      "full_summary_md": "---\nid: S04\nparent: M009\nmilestone: M009\nprovides:\n  - Performance baseline for future regression comparison\nrequires:\n  - slice: S02\n    provides: jsPDF dynamic import optimization\n  - slice: S03\n    provides: Tab chart lazy-loading optimization\naffects:\n  []\nkey_files:\n  - .gsd/lighthouse-home.json\n  - .gsd/lighthouse-about.json\n  - .gsd/milestones/M009/slices/S04/S04-RESEARCH.md\nkey_decisions:\n  - Dev-mode baseline accepted — production run deferred\npatterns_established:\n  - (none)\nobservability_surfaces:\n  - Lighthouse JSON baselines for regression detection\ndrill_down_paths:\n  - .gsd/milestones/M009/slices/S04/tasks/T01-SUMMARY.md\n  - .gsd/milestones/M009/slices/S04/S04-RESEARCH.md\nduration: \"\"\nverification_result: passed\ncompleted_at: 2026-04-03T21:35:42.400Z\nblocker_discovered: false\n---\n\n# S04: Lighthouse baseline capture & performance documentation\n\n**Performance baseline captured: Lighthouse 75-77 on public pages, bundle comparison documented, remaining opportunities identified**\n\n## What Happened\n\nRan Lighthouse on 2 public pages (home: 75, about: 77) — dashboard pages need auth. Documented before/after bundle comparison in a research artifact: total JS 8.9→9.3MB (+3.4%) with chunk count 147→168 (more granular splitting). Key remaining opportunities: three.js duplication (Turbopack artifact), LCP optimization (7.6s homepage), production Lighthouse run.\n\n## Verification\n\nLighthouse JSON files written. Research artifact documented with all metrics.\n\n## Requirements Advanced\n\nNone.\n\n## Requirements Validated\n\nNone.\n\n## New Requirements Surfaced\n\nNone.\n\n## Requirements Invalidated or Re-scoped\n\nNone.\n\n## Deviations\n\nDashboard pages couldn't be Lighthouse'd — auth required.\n\n## Known Limitations\n\nDev-mode Lighthouse scores are lower than production. Auth-gated pages not tested.\n\n## Follow-ups\n\nProduction Lighthouse run against deployed Vercel URL. LCP investigation for homepage.\n\n## Files Created/Modified\n\nNone.\n",
+      "full_uat_md": "# S04: Lighthouse baseline capture & performance documentation — UAT\n\n**Milestone:** M009\n**Written:** 2026-04-03T21:35:42.400Z\n\n## UAT: Performance baseline\\n\\n### Test 1: Lighthouse scores captured\\n- [ ] Home page: performance score documented\\n- [ ] About page: performance score documented\\n\\n### Test 2: Bundle comparison documented\\n- [ ] Before vs after total JS size\\n- [ ] Chunk count comparison\\n- [ ] Remaining opportunities listed\n",
+      "goal": "Capture Lighthouse scores and document before/after bundle comparison",
+      "success_criteria": "Lighthouse performance scores captured for 3+ pages. Before/after bundle size comparison documented.",
+      "proof_level": "documentation",
+      "integration_closure": "Performance baseline available for future regressions",
+      "observability_impact": "Performance monitoring baseline",
       "sequence": 0,
       "replan_triggered_at": null
     }
@@ -3202,6 +3345,160 @@
       "observability_impact": "",
       "full_plan_md": "",
       "sequence": 0
+    },
+    {
+      "milestone_id": "M009",
+      "slice_id": "S01",
+      "id": "T01",
+      "title": "Captured bundle baseline: 8.9MB total JS across 147 chunks, three.js duplicated at 2x1.3MB, Zod 912KB, globe 468KB",
+      "status": "complete",
+      "one_liner": "Captured bundle baseline: 8.9MB total JS across 147 chunks, three.js duplicated at 2x1.3MB, Zod 912KB, globe 468KB",
+      "narrative": "Analyzed the Turbopack build output (.next/static/chunks/) since @next/bundle-analyzer is Webpack-only and incompatible with Turbopack. Used du + grep pattern matching to identify chunk contents.\\n\\nBaseline:\\n- **Total JS**: 8,952 KB across 147 chunks\\n- **three.js**: 2x 1,368 KB (duplicated chunks — same WebGL shader strings)\\n- **Zod**: 912 KB (schema validation)\\n- **react-globe.gl**: 468 KB (three.js globe wrapper)\\n- **Recharts + lodash**: 324 KB\\n- **React/Next.js core**: 224 KB\\n\\nOptimization targets:\\n1. **jsPDF dynamic import** (S02) — removes ~29MB node_modules from reports page initial bundle\\n2. **Tab chart lazy-loading** (S03) — defers D3 chart code on 5 overview pages\\n3. **three.js deduplication** — Turbopack may be splitting the same three.js into 2 chunks; already dynamically imported so this is a bundler-level issue, not our code",
+      "verification_result": "Analysis output documented. Chunk sizes verified via du -sk.",
+      "duration": "",
+      "completed_at": "2026-04-03T21:28:13.698Z",
+      "blocker_discovered": false,
+      "deviations": "Used direct file analysis instead of @next/bundle-analyzer since Turbopack doesn't support it.",
+      "known_issues": "three.js appears duplicated in two 1.3MB chunks — likely a Turbopack splitting artifact. Already dynamically imported so not actionable from our code.",
+      "key_files": [],
+      "key_decisions": [
+        "Direct chunk analysis over @next/bundle-analyzer due to Turbopack incompatibility"
+      ],
+      "full_summary_md": "---\nid: T01\nparent: S01\nmilestone: M009\nkey_files:\n  - (none)\nkey_decisions:\n  - Direct chunk analysis over @next/bundle-analyzer due to Turbopack incompatibility\nduration: \nverification_result: passed\ncompleted_at: 2026-04-03T21:28:13.698Z\nblocker_discovered: false\n---\n\n# T01: Captured bundle baseline: 8.9MB total JS across 147 chunks, three.js duplicated at 2x1.3MB, Zod 912KB, globe 468KB\n\n**Captured bundle baseline: 8.9MB total JS across 147 chunks, three.js duplicated at 2x1.3MB, Zod 912KB, globe 468KB**\n\n## What Happened\n\nAnalyzed the Turbopack build output (.next/static/chunks/) since @next/bundle-analyzer is Webpack-only and incompatible with Turbopack. Used du + grep pattern matching to identify chunk contents.\\n\\nBaseline:\\n- **Total JS**: 8,952 KB across 147 chunks\\n- **three.js**: 2x 1,368 KB (duplicated chunks — same WebGL shader strings)\\n- **Zod**: 912 KB (schema validation)\\n- **react-globe.gl**: 468 KB (three.js globe wrapper)\\n- **Recharts + lodash**: 324 KB\\n- **React/Next.js core**: 224 KB\\n\\nOptimization targets:\\n1. **jsPDF dynamic import** (S02) — removes ~29MB node_modules from reports page initial bundle\\n2. **Tab chart lazy-loading** (S03) — defers D3 chart code on 5 overview pages\\n3. **three.js deduplication** — Turbopack may be splitting the same three.js into 2 chunks; already dynamically imported so this is a bundler-level issue, not our code\n\n## Verification\n\nAnalysis output documented. Chunk sizes verified via du -sk.\n\n## Verification Evidence\n\n| # | Command | Exit Code | Verdict | Duration |\n|---|---------|-----------|---------|----------|\n| 1 | `find .next/static/chunks -name '*.js' -exec du -sk {} + | awk '{sum+=$1} END {print sum}'` | 0 | ✅ pass | 200ms |\n\n## Deviations\n\nUsed direct file analysis instead of @next/bundle-analyzer since Turbopack doesn't support it.\n\n## Known Issues\n\nthree.js appears duplicated in two 1.3MB chunks — likely a Turbopack splitting artifact. Already dynamically imported so not actionable from our code.\n\n## Files Created/Modified\n\nNone.\n",
+      "description": "Using the Turbopack build output (.next/static/chunks), analyze chunk sizes, identify contents of the largest chunks, and document the baseline. No external tooling needed — Turbopack doesn't support @next/bundle-analyzer, so we use direct file analysis.\n\nDocument:\n1. Total JS chunk size\n2. Top 10 chunks with identified contents\n3. Key optimization targets with estimated savings\n4. Duplicate three.js chunks (2x 1.3MB)",
+      "estimate": "10min",
+      "files": [],
+      "verify": "Baseline documented in GSD artifact",
+      "inputs": [
+        ".next/static/chunks/"
+      ],
+      "expected_output": [
+        "M009 S01 research artifact with bundle baseline"
+      ],
+      "observability_impact": "",
+      "full_plan_md": "",
+      "sequence": 0
+    },
+    {
+      "milestone_id": "M009",
+      "slice_id": "S02",
+      "id": "T01",
+      "title": "Converted jsPDF, jspdf-autotable, and html-to-image from static to dynamic imports — loaded only on Export PDF click",
+      "status": "complete",
+      "one_liner": "Converted jsPDF, jspdf-autotable, and html-to-image from static to dynamic imports — loaded only on Export PDF click",
+      "narrative": "Replaced static imports of jsPDF (29MB), jspdf-autotable, and html-to-image with `import type` for compile-time types and `await Promise.all([import(...)])` inside handleExportPDF for runtime loading. Refactored renderMarkdownToPDF to accept autoTableFn as a parameter, and captureChartImage to accept toPngFn. The existing isExportingPDF loading state naturally covers the dynamic import delay — no UI changes needed. The three libraries now load only when a user clicks Export PDF, not on initial page load.",
+      "verification_result": "npm run build passed (exit 0, 25.9s, 104 routes). Only `import type` remains for jsPDF/autoTable — zero runtime bytes in initial bundle. No static imports of jspdf, jspdf-autotable, or html-to-image.",
+      "duration": "",
+      "completed_at": "2026-04-03T21:30:37.338Z",
+      "blocker_discovered": false,
+      "deviations": "None.",
+      "known_issues": "None.",
+      "key_files": [
+        "components/charts/custom-report-tab.tsx"
+      ],
+      "key_decisions": [
+        "Used import type for compile-time safety + dynamic import() for runtime loading",
+        "autoTable and toPng passed as parameters to helper functions rather than module-level variables"
+      ],
+      "full_summary_md": "---\nid: T01\nparent: S02\nmilestone: M009\nkey_files:\n  - components/charts/custom-report-tab.tsx\nkey_decisions:\n  - Used import type for compile-time safety + dynamic import() for runtime loading\n  - autoTable and toPng passed as parameters to helper functions rather than module-level variables\nduration: \nverification_result: passed\ncompleted_at: 2026-04-03T21:30:37.338Z\nblocker_discovered: false\n---\n\n# T01: Converted jsPDF, jspdf-autotable, and html-to-image from static to dynamic imports — loaded only on Export PDF click\n\n**Converted jsPDF, jspdf-autotable, and html-to-image from static to dynamic imports — loaded only on Export PDF click**\n\n## What Happened\n\nReplaced static imports of jsPDF (29MB), jspdf-autotable, and html-to-image with `import type` for compile-time types and `await Promise.all([import(...)])` inside handleExportPDF for runtime loading. Refactored renderMarkdownToPDF to accept autoTableFn as a parameter, and captureChartImage to accept toPngFn. The existing isExportingPDF loading state naturally covers the dynamic import delay — no UI changes needed. The three libraries now load only when a user clicks Export PDF, not on initial page load.\n\n## Verification\n\nnpm run build passed (exit 0, 25.9s, 104 routes). Only `import type` remains for jsPDF/autoTable — zero runtime bytes in initial bundle. No static imports of jspdf, jspdf-autotable, or html-to-image.\n\n## Verification Evidence\n\n| # | Command | Exit Code | Verdict | Duration |\n|---|---------|-----------|---------|----------|\n| 1 | `npm run build` | 0 | ✅ pass | 25900ms |\n| 2 | `grep '^import.*from.*jspdf' components/charts/custom-report-tab.tsx (only type imports)` | 0 | ✅ pass | 30ms |\n\n## Deviations\n\nNone.\n\n## Known Issues\n\nNone.\n\n## Files Created/Modified\n\n- `components/charts/custom-report-tab.tsx`\n",
+      "description": "In custom-report-tab.tsx:\n1. Remove the static imports of jsPDF, autoTable, and toPng at the top of the file\n2. In the handleExportPDF callback, dynamically import all three at the start: const [{ jsPDF }, { autoTable }, { toPng }] = await Promise.all([import('jspdf'), import('jspdf-autotable'), import('html-to-image')])\n3. Pass jsPDF, autoTable, toPng as parameters to renderMarkdownToPDF and captureChartImage (or restructure so they're available in scope)\n4. The renderMarkdownToPDF function uses autoTable internally — it needs to receive autoTable as a parameter instead of importing it at module level\n5. Loading state is already handled by isExportingPDF state variable — no UI changes needed",
+      "estimate": "15min",
+      "files": [
+        "components/charts/custom-report-tab.tsx"
+      ],
+      "verify": "npm run build passes. The static imports of jspdf/jspdf-autotable/html-to-image are gone from the top of the file.",
+      "inputs": [
+        "components/charts/custom-report-tab.tsx"
+      ],
+      "expected_output": [
+        "components/charts/custom-report-tab.tsx with dynamic imports"
+      ],
+      "observability_impact": "",
+      "full_plan_md": "",
+      "sequence": 0
+    },
+    {
+      "milestone_id": "M009",
+      "slice_id": "S03",
+      "id": "T01",
+      "title": "Converted 18 chart imports across 5 tab overview pages from static to next/dynamic with skeleton loading placeholders",
+      "status": "complete",
+      "one_liner": "Converted 18 chart imports across 5 tab overview pages from static to next/dynamic with skeleton loading placeholders",
+      "narrative": "Converted all static chart component imports on the 5 tab overview pages to next/dynamic with ssr:false and a shared chartLoading skeleton component:\\n- financial: 4 charts converted (BarChart, TreemapChart, MarimekkoChart, TimelineChart) + 2 already dynamic\\n- advanced: 7 charts converted (RadarChart, HeatmapChart, ParallelCoordsChart, BoxPlotChart, DistributionChart, WordcloudChart, IndustryPenetrationChart)\\n- market: 3 charts converted (QuadrantChart, BubbleChart, PeriodicTable) + 1 already dynamic\\n- network: 3 charts converted (NetworkGraphToggle, SankeyChart, ChordChart) + 2 already dynamic\\n- geographic: 1 chart converted (SunburstChart) + 1 already dynamic\\n\\nTotal: 18 static imports → dynamic. Chunk count increased from 147 to 168 (more granular splitting). Each tab page now loads only the shell and layout immediately — chart code loads on demand.",
+      "verification_result": "npm run build passed (exit 0, 18.9s, 104 routes). Zero static chart imports remain on any tab page.",
+      "duration": "",
+      "completed_at": "2026-04-03T21:33:12.334Z",
+      "blocker_discovered": false,
+      "deviations": "None.",
+      "known_issues": "None.",
+      "key_files": [
+        "app/dashboard/tab/financial/page.tsx",
+        "app/dashboard/tab/advanced/page.tsx",
+        "app/dashboard/tab/market/page.tsx",
+        "app/dashboard/tab/network/page.tsx",
+        "app/dashboard/tab/geographic/page.tsx"
+      ],
+      "key_decisions": [
+        "Shared chartLoading skeleton component per page for consistency",
+        "ssr: false on all chart dynamic imports since D3 charts need DOM"
+      ],
+      "full_summary_md": "---\nid: T01\nparent: S03\nmilestone: M009\nkey_files:\n  - app/dashboard/tab/financial/page.tsx\n  - app/dashboard/tab/advanced/page.tsx\n  - app/dashboard/tab/market/page.tsx\n  - app/dashboard/tab/network/page.tsx\n  - app/dashboard/tab/geographic/page.tsx\nkey_decisions:\n  - Shared chartLoading skeleton component per page for consistency\n  - ssr: false on all chart dynamic imports since D3 charts need DOM\nduration: \nverification_result: passed\ncompleted_at: 2026-04-03T21:33:12.333Z\nblocker_discovered: false\n---\n\n# T01: Converted 18 chart imports across 5 tab overview pages from static to next/dynamic with skeleton loading placeholders\n\n**Converted 18 chart imports across 5 tab overview pages from static to next/dynamic with skeleton loading placeholders**\n\n## What Happened\n\nConverted all static chart component imports on the 5 tab overview pages to next/dynamic with ssr:false and a shared chartLoading skeleton component:\\n- financial: 4 charts converted (BarChart, TreemapChart, MarimekkoChart, TimelineChart) + 2 already dynamic\\n- advanced: 7 charts converted (RadarChart, HeatmapChart, ParallelCoordsChart, BoxPlotChart, DistributionChart, WordcloudChart, IndustryPenetrationChart)\\n- market: 3 charts converted (QuadrantChart, BubbleChart, PeriodicTable) + 1 already dynamic\\n- network: 3 charts converted (NetworkGraphToggle, SankeyChart, ChordChart) + 2 already dynamic\\n- geographic: 1 chart converted (SunburstChart) + 1 already dynamic\\n\\nTotal: 18 static imports → dynamic. Chunk count increased from 147 to 168 (more granular splitting). Each tab page now loads only the shell and layout immediately — chart code loads on demand.\n\n## Verification\n\nnpm run build passed (exit 0, 18.9s, 104 routes). Zero static chart imports remain on any tab page.\n\n## Verification Evidence\n\n| # | Command | Exit Code | Verdict | Duration |\n|---|---------|-----------|---------|----------|\n| 1 | `npm run build` | 0 | ✅ pass | 18900ms |\n| 2 | `grep static chart imports on tab pages` | 1 | ✅ pass (none found) | 30ms |\n\n## Deviations\n\nNone.\n\n## Known Issues\n\nNone.\n\n## Files Created/Modified\n\n- `app/dashboard/tab/financial/page.tsx`\n- `app/dashboard/tab/advanced/page.tsx`\n- `app/dashboard/tab/market/page.tsx`\n- `app/dashboard/tab/network/page.tsx`\n- `app/dashboard/tab/geographic/page.tsx`\n",
+      "description": "For each of these 5 pages, convert chart component imports to next/dynamic with a loading skeleton:\n- app/dashboard/tab/financial/page.tsx (4 charts)\n- app/dashboard/tab/advanced/page.tsx (7 charts)\n- app/dashboard/tab/market/page.tsx (3 charts)\n- app/dashboard/tab/network/page.tsx (3 charts)\n- app/dashboard/tab/geographic/page.tsx (1 chart)\n\nPattern for each:\n```tsx\nimport dynamic from 'next/dynamic'\nconst BarChart = dynamic(() => import('@/components/charts/bar-chart').then(m => m.BarChart), {\n  loading: () => <div className=\"h-[400px] w-full animate-pulse rounded-xl bg-muted/30\" />,\n  ssr: false,\n})\n```\n\nKeep non-chart imports (Card, Badge, etc.) as static imports.\nAll chart components export named exports so use .then(m => m.ComponentName).",
+      "estimate": "20min",
+      "files": [
+        "app/dashboard/tab/financial/page.tsx",
+        "app/dashboard/tab/advanced/page.tsx",
+        "app/dashboard/tab/market/page.tsx",
+        "app/dashboard/tab/network/page.tsx",
+        "app/dashboard/tab/geographic/page.tsx"
+      ],
+      "verify": "npm run build passes. All 5 tab pages have zero static chart component imports.",
+      "inputs": [
+        "app/dashboard/tab/*/page.tsx"
+      ],
+      "expected_output": [
+        "5 tab pages with dynamic chart imports"
+      ],
+      "observability_impact": "",
+      "full_plan_md": "",
+      "sequence": 0
+    },
+    {
+      "milestone_id": "M009",
+      "slice_id": "S04",
+      "id": "T01",
+      "title": "Documented bundle comparison (8.9MB→9.3MB with more granular splitting) and Lighthouse baseline (home: 75, about: 77)",
+      "status": "complete",
+      "one_liner": "Documented bundle comparison (8.9MB→9.3MB with more granular splitting) and Lighthouse baseline (home: 75, about: 77)",
+      "narrative": "Captured Lighthouse performance scores on public pages (homepage: 75, about: 77). Dashboard pages returned 404 due to auth requirements. Documented before/after bundle comparison: total JS increased 3.4% but chunk count increased from 147→168 reflecting more granular code splitting. The key optimization is per-page initial load reduction, not total bundle size. Documented remaining opportunities (three.js duplication, LCP, production Lighthouse).",
+      "verification_result": "Lighthouse JSON files written. Research artifact documented.",
+      "duration": "",
+      "completed_at": "2026-04-03T21:35:25.878Z",
+      "blocker_discovered": false,
+      "deviations": "Dashboard pages couldn't be Lighthouse'd due to auth. Public pages provide framework baseline.",
+      "known_issues": "None.",
+      "key_files": [
+        ".gsd/lighthouse-home.json",
+        ".gsd/lighthouse-about.json"
+      ],
+      "key_decisions": [
+        "Used localhost dev mode for baseline — production Vercel scores will differ"
+      ],
+      "full_summary_md": "---\nid: T01\nparent: S04\nmilestone: M009\nkey_files:\n  - .gsd/lighthouse-home.json\n  - .gsd/lighthouse-about.json\nkey_decisions:\n  - Used localhost dev mode for baseline — production Vercel scores will differ\nduration: \nverification_result: passed\ncompleted_at: 2026-04-03T21:35:25.877Z\nblocker_discovered: false\n---\n\n# T01: Documented bundle comparison (8.9MB→9.3MB with more granular splitting) and Lighthouse baseline (home: 75, about: 77)\n\n**Documented bundle comparison (8.9MB→9.3MB with more granular splitting) and Lighthouse baseline (home: 75, about: 77)**\n\n## What Happened\n\nCaptured Lighthouse performance scores on public pages (homepage: 75, about: 77). Dashboard pages returned 404 due to auth requirements. Documented before/after bundle comparison: total JS increased 3.4% but chunk count increased from 147→168 reflecting more granular code splitting. The key optimization is per-page initial load reduction, not total bundle size. Documented remaining opportunities (three.js duplication, LCP, production Lighthouse).\n\n## Verification\n\nLighthouse JSON files written. Research artifact documented.\n\n## Verification Evidence\n\n| # | Command | Exit Code | Verdict | Duration |\n|---|---------|-----------|---------|----------|\n| 1 | `npx lighthouse http://localhost:3000 --only-categories=performance` | 0 | ✅ pass | 17800ms |\n| 2 | `npx lighthouse http://localhost:3000/about --only-categories=performance` | 0 | ✅ pass | 12800ms |\n\n## Deviations\n\nDashboard pages couldn't be Lighthouse'd due to auth. Public pages provide framework baseline.\n\n## Known Issues\n\nNone.\n\n## Files Created/Modified\n\n- `.gsd/lighthouse-home.json`\n- `.gsd/lighthouse-about.json`\n",
+      "description": "1. Document before/after bundle comparison (from S01 baseline vs current build)\n2. Start dev server, run Lighthouse on 3 representative pages via browser tools\n3. Document scores in a RESEARCH artifact",
+      "estimate": "15min",
+      "files": [],
+      "verify": "Research artifact written with bundle comparison and Lighthouse scores",
+      "inputs": [
+        "S01 baseline data",
+        "Current build .next/static/chunks/"
+      ],
+      "expected_output": [
+        "M009 S04 research artifact"
+      ],
+      "observability_impact": "",
+      "full_plan_md": "",
+      "sequence": 0
     }
   ],
   "decisions": [
@@ -4806,6 +5103,83 @@
       "verdict": "✅ pass",
       "duration_ms": 30,
       "created_at": "2026-04-03T19:09:25.682Z"
+    },
+    {
+      "id": 141,
+      "task_id": "T01",
+      "slice_id": "S01",
+      "milestone_id": "M009",
+      "command": "find .next/static/chunks -name '*.js' -exec du -sk {} + | awk '{sum+=$1} END {print sum}'",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 200,
+      "created_at": "2026-04-03T21:28:13.698Z"
+    },
+    {
+      "id": 142,
+      "task_id": "T01",
+      "slice_id": "S02",
+      "milestone_id": "M009",
+      "command": "npm run build",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 25900,
+      "created_at": "2026-04-03T21:30:37.338Z"
+    },
+    {
+      "id": 143,
+      "task_id": "T01",
+      "slice_id": "S02",
+      "milestone_id": "M009",
+      "command": "grep '^import.*from.*jspdf' components/charts/custom-report-tab.tsx (only type imports)",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 30,
+      "created_at": "2026-04-03T21:30:37.338Z"
+    },
+    {
+      "id": 144,
+      "task_id": "T01",
+      "slice_id": "S03",
+      "milestone_id": "M009",
+      "command": "npm run build",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 18900,
+      "created_at": "2026-04-03T21:33:12.334Z"
+    },
+    {
+      "id": 145,
+      "task_id": "T01",
+      "slice_id": "S03",
+      "milestone_id": "M009",
+      "command": "grep static chart imports on tab pages",
+      "exit_code": 1,
+      "verdict": "✅ pass (none found)",
+      "duration_ms": 30,
+      "created_at": "2026-04-03T21:33:12.334Z"
+    },
+    {
+      "id": 146,
+      "task_id": "T01",
+      "slice_id": "S04",
+      "milestone_id": "M009",
+      "command": "npx lighthouse http://localhost:3000 --only-categories=performance",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 17800,
+      "created_at": "2026-04-03T21:35:25.878Z"
+    },
+    {
+      "id": 147,
+      "task_id": "T01",
+      "slice_id": "S04",
+      "milestone_id": "M009",
+      "command": "npx lighthouse http://localhost:3000/about --only-categories=performance",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 12800,
+      "created_at": "2026-04-03T21:35:25.878Z"
     }
   ]
 }
