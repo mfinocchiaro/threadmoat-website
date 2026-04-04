@@ -1,12 +1,12 @@
-import React from "react"
+import React, { Suspense } from "react"
 import { Link } from "@/i18n/navigation"
 import NextLink from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { ArrowRight, Database, Users, TrendingUp, Mail, CheckCircle2, MapPin, CalendarDays, Link2, Shield, Layers } from "lucide-react"
-import { loadCompaniesFromCSV, stripSensitiveFields } from "@/lib/load-companies-server"
-import { HomepageDashboard } from "@/components/homepage/homepage-dashboard"
+import { HomepageDashboardSection } from "@/components/homepage/homepage-dashboard-section"
+import { Skeleton } from "@/components/ui/skeleton"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { LanguageSwitcher } from "@/components/language-switcher"
 import { getTranslations, setRequestLocale } from 'next-intl/server'
@@ -36,13 +36,6 @@ export default async function HomePage({ params }: Props) {
   const t = await getTranslations('Home')
   const tCommon = await getTranslations('Common')
 
-  let companies: Awaited<ReturnType<typeof loadCompaniesFromCSV>> = []
-  try {
-    const raw = await loadCompaniesFromCSV()
-    companies = stripSensitiveFields(raw)
-  } catch {
-    // Data load failed — page renders without dashboard
-  }
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -199,7 +192,26 @@ export default async function HomePage({ params }: Props) {
       </section>
 
       {/* Live Dashboard Preview */}
-      {companies.length > 0 && <HomepageDashboard data={companies} />}
+      {/* Dashboard streams in via Suspense — hero renders immediately */}
+      <Suspense fallback={
+        <section className="border-t border-border/40 bg-muted/10">
+          <div className="container mx-auto px-4 py-16">
+            <div className="text-center mb-10">
+              <Skeleton className="h-8 w-64 mx-auto" />
+              <Skeleton className="h-5 w-96 mx-auto mt-3" />
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <Skeleton key={i} className="h-24 rounded-xl" />
+              ))}
+            </div>
+            <Skeleton className="h-[450px] rounded-xl mb-6" />
+            <Skeleton className="h-[500px] rounded-xl" />
+          </div>
+        </section>
+      }>
+        <HomepageDashboardSection />
+      </Suspense>
 
       {/* Organization Selector */}
       <section className="border-t border-border/40 bg-muted/30" id="services">

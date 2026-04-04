@@ -1,6 +1,5 @@
 "use client"
 
-import { useMemo } from "react"
 import dynamic from "next/dynamic"
 import { Company, formatCurrency } from "@/lib/company-data"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
@@ -9,6 +8,7 @@ import { Lock } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { FilterProvider } from "@/contexts/filter-context"
+import { useLazyMount } from "@/hooks/use-lazy-mount"
 
 const chartLoading = () => <Skeleton className="w-full h-full min-h-[450px] rounded-lg" />
 
@@ -43,6 +43,10 @@ export function HomepageDashboard({ data }: { data: Company[] }) {
   const totalFunding = data.reduce((sum, c) => sum + (c.totalFunding || 0), 0)
   const countries = new Set(data.map(c => c.country).filter(Boolean)).size
   const investmentLists = new Set(data.map(c => c.investmentList).filter(Boolean)).size
+
+  // Defer chart mounting until scrolled into viewport (200px early trigger)
+  const networkSection = useLazyMount("200px")
+  const globeSection = useLazyMount("200px")
 
   return (
     <FilterProvider>
@@ -84,19 +88,27 @@ export function HomepageDashboard({ data }: { data: Company[] }) {
           </Card>
         </div>
 
-        {/* Network Graph — preview mode: no controls, no drill-down */}
-        <div className="mb-6">
+        {/* Network Graph — lazy-mounted on scroll */}
+        <div className="mb-6" ref={networkSection.ref}>
           <ChartCard title="Ecosystem Network" subtitle={`${data.length} companies across ${investmentLists} investment domains`}>
-            <NetworkGraph data={data} className="h-[450px]" preview />
+            {networkSection.hasBeenVisible ? (
+              <NetworkGraph data={data} className="h-[450px]" preview />
+            ) : (
+              <Skeleton className="w-full h-[450px] rounded-lg" />
+            )}
           </ChartCard>
         </div>
 
-        {/* 3D Globe */}
-        <div className="mb-6">
+        {/* 3D Globe — lazy-mounted on scroll */}
+        <div className="mb-6" ref={globeSection.ref}>
           <ChartCard title="Global Startup Footprint" subtitle={`${data.length} companies across ${countries} countries`}>
-            <div className="h-[500px] rounded-lg overflow-hidden bg-black">
-              <GlobeChart data={data} />
-            </div>
+            {globeSection.hasBeenVisible ? (
+              <div className="h-[500px] rounded-lg overflow-hidden bg-black">
+                <GlobeChart data={data} />
+              </div>
+            ) : (
+              <Skeleton className="w-full h-[500px] rounded-lg" />
+            )}
           </ChartCard>
         </div>
 
