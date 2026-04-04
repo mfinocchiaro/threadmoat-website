@@ -2,33 +2,6 @@
 id: T03
 parent: S04
 milestone: M006
-provides: []
-requires: []
-affects: []
-key_files: ["app/dashboard/ip-dependency/page.tsx", "components/dashboard/sidebar.tsx", "lib/widget-registry.ts", ".gsd/milestones/M006/slices/S04/tasks/T03-SUMMARY.md"]
-key_decisions: ["Registered IP Dependency as an admin-only widget and sidebar item to align with other advanced analytics views and keep the visualization scoped to admin users."]
-patterns_established: []
-drill_down_paths: []
-observability_surfaces: []
-duration: ""
-verification_result: "Ran the combined verification command specified in the task plan:
-
-- `npm run build && grep -q 'ip-dependency' components/dashboard/sidebar.tsx && grep -q 'ip-dependency' lib/widget-registry.ts`
-
-`npm run build` succeeded and listed `/dashboard/ip-dependency` in the route table. The `grep` checks verified that `components/dashboard/sidebar.tsx` and `lib/widget-registry.ts` both contain the `ip-dependency` identifiers, confirming the sidebar entry and widget registration are in place."
-completed_at: 2026-04-03T08:44:42.974Z
-blocker_discovered: false
----
-
-# T03: Exposed the IP Dependency Analysis chart at /dashboard/ip-dependency and wired it into the admin sidebar and widget registry.
-
-> Exposed the IP Dependency Analysis chart at /dashboard/ip-dependency and wired it into the admin sidebar and widget registry.
-
-## What Happened
----
-id: T03
-parent: S04
-milestone: M006
 key_files:
   - app/dashboard/ip-dependency/page.tsx
   - components/dashboard/sidebar.tsx
@@ -36,7 +9,7 @@ key_files:
   - .gsd/milestones/M006/slices/S04/tasks/T03-SUMMARY.md
 key_decisions:
   - Registered IP Dependency as an admin-only widget and sidebar item to align with other advanced analytics views and keep the visualization scoped to admin users.
-duration: ""
+duration: 
 verification_result: passed
 completed_at: 2026-04-03T08:44:42.974Z
 blocker_discovered: false
@@ -83,7 +56,6 @@ Ran the combined verification command specified in the task plan:
 |---|---------|-----------|---------|----------|
 | 1 | `npm run build && grep -q 'ip-dependency' components/dashboard/sidebar.tsx && grep -q 'ip-dependency' lib/widget-registry.ts` | 0 | ✅ pass | 20000ms |
 
-
 ## Deviations
 
 None.
@@ -98,10 +70,3 @@ No automated tests were added for sidebar or widget wiring in this task; verific
 - `components/dashboard/sidebar.tsx`
 - `lib/widget-registry.ts`
 - `.gsd/milestones/M006/slices/S04/tasks/T03-SUMMARY.md`
-
-
-## Deviations
-None.
-
-## Known Issues
-No automated tests were added for sidebar or widget wiring in this task; verification relies on `npm run build` and targeted greps. Future work could add Jest/Vitest coverage for `ADMIN_WIDGETS`, `ADMIN_ITEMS`, and `ADMIN_VIZ_HREFS` to catch regressions when adding new admin views.

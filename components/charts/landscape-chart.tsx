@@ -7,6 +7,7 @@ import { cn, normalizeLogoName } from "@/lib/utils";
 import { getInvestmentColor } from "@/lib/investment-colors";
 import { X, ExternalLink, ArrowLeft } from "lucide-react";
 import { CompanyHoverCard } from "@/components/ui/company-hover-card";
+import { useLazyMount } from "@/hooks/use-lazy-mount";
 import {
     Select,
     SelectContent,
@@ -191,6 +192,83 @@ function SubsegmentDrill({ title, color, subcategories, onBack, drillDetail, onT
     );
 }
 
+// ---------- Lazy-rendered group for progressive DOM building ----------
+function LazyGroup({ macro, macroIdx, onDrill, showHover, hideHover }: {
+    macro: { title: string; color: string; subcategories: Array<{ title: string; companies: Company[] }> };
+    macroIdx: number;
+    onDrill: (target: string) => void;
+    showHover: (company: Company, e: React.MouseEvent) => void;
+    hideHover: () => void;
+}) {
+    // First 3 groups render immediately; rest lazy-mount on scroll
+    const { ref, hasBeenVisible } = useLazyMount("300px");
+    const shouldRender = macroIdx < 3 || hasBeenVisible;
+    const companyCount = macro.subcategories.reduce((n, s) => n + s.companies.length, 0);
+
+    return (
+        <div
+            ref={ref}
+            className="break-inside-avoid border border-border bg-card flex flex-col mb-1"
+            style={{ borderColor: macro.color }}
+        >
+            <button
+                className="px-1 py-0.5 text-[10px] uppercase font-black tracking-tight text-center border-b border-border truncate text-white hover:brightness-110 active:brightness-90 transition-all text-left w-full flex items-center justify-center gap-1 group"
+                style={{ backgroundColor: macro.color }}
+                onClick={() => onDrill(macro.title)}
+                title={`Drill into ${macro.title.replace(/^\d+-/, "")}`}
+            >
+                {macro.title.replace(/^\d+-/, "")}
+                <span className="opacity-0 group-hover:opacity-70 text-[8px] ml-1 transition-opacity">↗</span>
+            </button>
+
+            {shouldRender ? (
+                <div className="flex flex-wrap gap-[1px] bg-border p-[1px]">
+                    {macro.subcategories.map((sub) => (
+                        <div key={sub.title} className="flex-1 min-w-[60px] flex flex-col bg-background">
+                            <div className="bg-muted/30 px-1 py-px text-[8px] font-bold text-muted-foreground text-center uppercase border-b border-muted truncate">
+                                {sub.title}
+                            </div>
+                            <div className="flex flex-wrap gap-px p-px justify-center content-start">
+                                {sub.companies.map((company) => {
+                                    const normalizedName = normalizeLogoName(company.name);
+                                    const logoPath = `/logos/${normalizedName}/logo_sm.png`;
+                                    const initials = company.name.split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0]).join("").toUpperCase();
+                                    return (
+                                        <div
+                                            key={company.id}
+                                            className="relative w-8 h-8 bg-muted border border-border overflow-hidden cursor-pointer hover:z-50 hover:scale-110 hover:shadow-md hover:border-primary transition-all duration-150 rounded-sm"
+                                            onMouseEnter={e => showHover(company, e)}
+                                            onMouseLeave={hideHover}
+                                            onDoubleClick={() => { if (company.url) window.open(company.url, "_blank", "noopener,noreferrer"); }}
+                                        >
+                                            <img
+                                                src={logoPath}
+                                                alt={company.name}
+                                                className="w-full h-full object-contain p-0.5"
+                                                onError={e => {
+                                                    e.currentTarget.style.display = "none";
+                                                    (e.currentTarget.nextSibling as HTMLElement).style.display = "flex";
+                                                }}
+                                            />
+                                            <span className="hidden w-full h-full items-center justify-center text-[7px] font-bold text-foreground leading-none select-none">
+                                                {initials}
+                                            </span>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            ) : (
+                <div className="flex items-center justify-center py-4 text-[10px] text-muted-foreground" style={{ minHeight: Math.max(40, companyCount * 1.2) }}>
+                    {companyCount} companies
+                </div>
+            )}
+        </div>
+    );
+}
+
 // ---------- Main component ----------
 export function LandscapeChart({ data, className }: LandscapeChartProps) {
     const { filterCompany } = useFilter();
@@ -329,62 +407,15 @@ export function LandscapeChart({ data, className }: LandscapeChartProps) {
             </div>
 
             <div className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-1 space-y-1">
-                {groupedData.map((macro) => (
-                    <div
+                {groupedData.map((macro, macroIdx) => (
+                    <LazyGroup
                         key={macro.title}
-                        className="break-inside-avoid border border-border bg-card flex flex-col mb-1"
-                        style={{ borderColor: macro.color }}
-                    >
-                        {/* Clickable category header */}
-                        <button
-                            className="px-1 py-0.5 text-[10px] uppercase font-black tracking-tight text-center border-b border-border truncate text-white hover:brightness-110 active:brightness-90 transition-all text-left w-full flex items-center justify-center gap-1 group"
-                            style={{ backgroundColor: macro.color }}
-                            onClick={() => setDrillTarget(macro.title)}
-                            title={`Drill into ${macro.title.replace(/^\d+-/, "")}`}
-                        >
-                            {macro.title.replace(/^\d+-/, "")}
-                            <span className="opacity-0 group-hover:opacity-70 text-[8px] ml-1 transition-opacity">↗</span>
-                        </button>
-
-                        <div className="flex flex-wrap gap-[1px] bg-border p-[1px]">
-                            {macro.subcategories.map((sub) => (
-                                <div key={sub.title} className="flex-1 min-w-[60px] flex flex-col bg-background">
-                                    <div className="bg-muted/30 px-1 py-px text-[8px] font-bold text-muted-foreground text-center uppercase border-b border-muted truncate">
-                                        {sub.title}
-                                    </div>
-                                    <div className="flex flex-wrap gap-px p-px justify-center content-start">
-                                        {sub.companies.map((company) => {
-                                            const normalizedName = normalizeLogoName(company.name);
-                                            const logoPath = `/logos/${normalizedName}/logo_sm.png`;
-                                            const initials = company.name.split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0]).join("").toUpperCase();
-                                            return (
-                                                <div
-                                                    key={company.id}
-                                                    className="relative w-8 h-8 bg-muted border border-border overflow-hidden cursor-pointer hover:z-50 hover:scale-110 hover:shadow-md hover:border-primary transition-all duration-150 rounded-sm"
-                                                    onMouseEnter={e => showHover(company, e)}
-                                                    onMouseLeave={hideHover}
-                                                    onDoubleClick={() => { if (company.url) window.open(company.url, "_blank", "noopener,noreferrer"); }}
-                                                >
-                                                    <img
-                                                        src={logoPath}
-                                                        alt={company.name}
-                                                        className="w-full h-full object-contain p-0.5"
-                                                        onError={e => {
-                                                            e.currentTarget.style.display = "none";
-                                                            (e.currentTarget.nextSibling as HTMLElement).style.display = "flex";
-                                                        }}
-                                                    />
-                                                    <span className="hidden w-full h-full items-center justify-center text-[7px] font-bold text-foreground leading-none select-none">
-                                                        {initials}
-                                                    </span>
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
+                        macro={macro}
+                        macroIdx={macroIdx}
+                        onDrill={setDrillTarget}
+                        showHover={showHover}
+                        hideHover={hideHover}
+                    />
                 ))}
             </div>
 

@@ -1,11 +1,19 @@
 "use client"
 
+import dynamic from "next/dynamic"
 import { useThesisGatedData } from "@/hooks/use-thesis-gated-data"
 import { VizPageShell } from "@/components/dashboard/viz-page-shell"
-import { InvestorStatsChart } from "@/components/charts/investor-stats-chart"
-import { InvestorExplorerChart } from "@/components/charts/investor-explorer-chart"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+
+const InvestorStatsChart = dynamic(
+  () => import("@/components/charts/investor-stats-chart").then(m => m.InvestorStatsChart),
+  { ssr: false, loading: () => <Skeleton className="h-[600px] rounded-xl" /> }
+)
+const InvestorExplorerChart = dynamic(
+  () => import("@/components/charts/investor-explorer-chart").then(m => m.InvestorExplorerChart),
+  { ssr: false, loading: () => <Skeleton className="h-[600px] rounded-xl" /> }
+)
 
 function InvestorStatsInner() {
   const { filtered, isLoading } = useThesisGatedData()

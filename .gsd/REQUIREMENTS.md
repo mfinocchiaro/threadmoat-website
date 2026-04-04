@@ -36,6 +36,36 @@ This file is the explicit capability and coverage contract for the project.
 - Primary owning slice: S02
 - Validation: S02 delivered getUpgradeDiscounts() in stripe.ts with idempotent $4,999 coupon for Analyst-to-Strategist upgrades.
 
+### R019 — Dashboard page view and interaction analytics — lightweight, privacy-respecting event tracking for dashboard usage patterns
+- Class: functional
+- Status: validated
+- Description: Dashboard page view and interaction analytics — lightweight, privacy-respecting event tracking for dashboard usage patterns
+- Why it matters: Need to understand which dashboard pages and charts users visit most, where they drop off, and which features drive engagement to inform product decisions
+- Source: M012
+- Primary owning slice: M012/S01
+- Supporting slices: M012/S02
+- Validation: analytics_events table live in Neon with 3 indexes; POST /api/analytics/event returns 401 without auth; usePageViewTracker covers 52 dashboard routes; 5 interaction event types instrumented; build passes zero errors
+
+### R020 — Investor analysis pages — co-investment heatmap and side-by-side investor portfolio comparison
+- Class: functional
+- Status: validated
+- Description: Investor analysis pages — co-investment heatmap and side-by-side investor portfolio comparison
+- Why it matters: M&A strategists need to understand co-investment patterns and compare investor portfolios to identify deal flow overlaps and competitive dynamics
+- Source: M013
+- Primary owning slice: M013/S01
+- Supporting slices: M013/S02
+- Validation: Co-investment heatmap at /dashboard/co-investment and investor comparison at /dashboard/investor-compare both built, sidebar wired, build passes (107 routes, zero errors)
+
+### R021 — Repeatable Lighthouse performance testing pipeline for authenticated dashboard pages
+- Class: operational
+- Status: validated
+- Description: Repeatable Lighthouse performance testing pipeline for authenticated dashboard pages
+- Why it matters: Dashboard pages are auth-gated — standard Lighthouse gets 404s. Need a scripted approach to capture performance baselines and detect regressions.
+- Source: M014
+- Primary owning slice: M014/S01
+- Supporting slices: M014/S02
+- Validation: scripts/lighthouse-dashboard.mjs captures scores for 10 auth-gated pages; JSON reports saved to .gsd/lighthouse/; DASHBOARD-BASELINE.md documents all results
+
 ### UX-01 — Compact sticky filter toolbar visible at top of dashboard content area
 - Class: core-capability
 - Status: validated
@@ -84,6 +114,9 @@ This file is the explicit capability and coverage contract for the project.
 | DATA-02 | core-capability | validated | S05 | none | S05 added 4 pipeline metadata fields (valuationConfidence, financialConfidence, reportedValuation, reportedValuationYear) to Company type and CSV loader. |
 | I18N-06 | core-capability | validated | S03 | none | S03 fixed 4 franglais calques across 3 French translation files. Professional B2B language verified. |
 | MON-01 | core-capability | validated | S02 | none | S02 delivered getUpgradeDiscounts() in stripe.ts with idempotent $4,999 coupon for Analyst-to-Strategist upgrades. |
+| R019 | functional | validated | M012/S01 | M012/S02 | analytics_events table live in Neon with 3 indexes; POST /api/analytics/event returns 401 without auth; usePageViewTracker covers 52 dashboard routes; 5 interaction event types instrumented; build passes zero errors |
+| R020 | functional | validated | M013/S01 | M013/S02 | Co-investment heatmap at /dashboard/co-investment and investor comparison at /dashboard/investor-compare both built, sidebar wired, build passes (107 routes, zero errors) |
+| R021 | operational | validated | M014/S01 | M014/S02 | scripts/lighthouse-dashboard.mjs captures scores for 10 auth-gated pages; JSON reports saved to .gsd/lighthouse/; DASHBOARD-BASELINE.md documents all results |
 | UX-01 | core-capability | validated | S01 | none | S01 delivered FilterToolbar in sidebar-shell.tsx as compact sticky element. Build passes. |
 | UX-02 | core-capability | validated | S01 | none | S01 delivered Badge chips with X remove buttons in filter-toolbar.tsx. removeFilter and clearAllFilters in filter-context.tsx. |
 | UX-03 | core-capability | validated | S01 | none | S01 lifted FilterProvider to layout-level DashboardLayoutClient. Filter state persists across all dashboard navigation. |
@@ -94,5 +127,5 @@ This file is the explicit capability and coverage contract for the project.
 
 - Active requirements: 0
 - Mapped to slices: 0
-- Validated: 9 (DATA-01, DATA-02, I18N-06, MON-01, UX-01, UX-02, UX-03, UX-04, UX-05)
+- Validated: 12 (DATA-01, DATA-02, I18N-06, MON-01, R019, R020, R021, UX-01, UX-02, UX-03, UX-04, UX-05)
 - Unmapped active requirements: 0

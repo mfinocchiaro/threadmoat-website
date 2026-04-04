@@ -1,16 +1,18 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { Company } from "@/lib/company-data";
 import { useFilter } from "@/contexts/filter-context";
 import { useThesis } from "@/contexts/thesis-context";
 import { useLayout } from "@/contexts/layout-context";
 import { KPICard } from "@/components/widgets/kpi-card";
 import { WidgetCard } from "@/components/widgets/widget-card";
-import { NetworkGraphToggle } from "@/components/charts/network-graph-toggle";
-import { PeriodicTable } from "@/components/charts/periodic-table";
-import { QuadrantChart } from "@/components/charts/quadrant-chart";
-import { SunburstChart } from "@/components/charts/sunburst-chart";
 import { AdminAnalyticsSection } from "./admin-analytics";
+
+const NetworkGraphToggle = dynamic(() => import("@/components/charts/network-graph-toggle").then(m => m.NetworkGraphToggle), { ssr: false, loading: () => <div className="w-full min-h-[400px] rounded-lg bg-muted animate-pulse" /> });
+const PeriodicTable = dynamic(() => import("@/components/charts/periodic-table").then(m => m.PeriodicTable), { ssr: false, loading: () => <div className="w-full min-h-[500px] rounded-lg bg-muted animate-pulse" /> });
+const QuadrantChart = dynamic(() => import("@/components/charts/quadrant-chart").then(m => m.QuadrantChart), { ssr: false, loading: () => <div className="w-full min-h-[500px] rounded-lg bg-muted animate-pulse" /> });
+const SunburstChart = dynamic(() => import("@/components/charts/sunburst-chart").then(m => m.SunburstChart), { ssr: false, loading: () => <div className="w-full min-h-[500px] rounded-lg bg-muted animate-pulse" /> });
 import { Network, FileWarning, Swords, Link2, X, Settings2, AlertTriangle } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";

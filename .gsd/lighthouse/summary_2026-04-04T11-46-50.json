@@ -1,0 +1,106 @@
+{
+  "timestamp": "2026-04-04T11-46-50",
+  "baseUrl": "http://localhost:3000",
+  "results": [
+    {
+      "page": "/dashboard",
+      "scores": {
+        "performance": 96,
+        "accessibility": 84,
+        "bestPractices": 96,
+        "seo": 100
+      },
+      "error": null
+    },
+    {
+      "page": "/dashboard/bubbles",
+      "scores": {
+        "performance": 93,
+        "accessibility": 90,
+        "bestPractices": 96,
+        "seo": 66
+      },
+      "error": null
+    },
+    {
+      "page": "/dashboard/heatmap",
+      "scores": {
+        "performance": 94,
+        "accessibility": 86,
+        "bestPractices": 96,
+        "seo": 66
+      },
+      "error": null
+    },
+    {
+      "page": "/dashboard/periodic-table",
+      "scores": {
+        "performance": 93,
+        "accessibility": 85,
+        "bestPractices": 96,
+        "seo": 66
+      },
+      "error": null
+    },
+    {
+      "page": "/dashboard/investor-stats",
+      "scores": {
+        "performance": 96,
+        "accessibility": 92,
+        "bestPractices": 96,
+        "seo": 66
+      },
+      "error": null
+    },
+    {
+      "page": "/dashboard/landscape",
+      "scores": {
+        "performance": 93,
+        "accessibility": 90,
+        "bestPractices": 96,
+        "seo": 66
+      },
+      "error": null
+    },
+    {
+      "page": "/dashboard/market-momentum",
+      "scores": {
+        "performance": 96,
+        "accessibility": 86,
+        "bestPractices": 96,
+        "seo": 66
+      },
+      "error": null
+    },
+    {
+      "page": "/dashboard/co-investment",
+      "scores": {
+        "performance": 96,
+        "accessibility": 90,
+        "bestPractices": 96,
+        "seo": 66
+      },
+      "error": null
+    },
+    {
+      "page": "/dashboard/reports",
+      "scores": {
+        "performance": 96,
+        "accessibility": 91,
+        "bestPractices": 96,
+        "seo": 66
+      },
+      "error": null
+    },
+    {
+      "page": "/dashboard/tab/financial",
+      "scores": {
+        "performance": 95,
+        "accessibility": 83,
+        "bestPractices": 96,
+        "seo": 66
+      },
+      "error": null
+    }
+  ]
+}

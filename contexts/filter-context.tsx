@@ -1,7 +1,8 @@
 "use client"
 
-import React, { createContext, useContext, useState, useMemo, useCallback, ReactNode } from "react"
+import React, { createContext, useContext, useState, useMemo, useCallback, useEffect, useRef, ReactNode } from "react"
 import { Company } from "@/lib/company-data"
+import { trackInteraction } from "@/lib/track-interaction"
 
 interface FilterState {
   search: string
@@ -209,6 +210,21 @@ export function FilterProvider({ children }: { children: ReactNode }) {
     filters.ecosystemFlags.length +
     (filters.oceanStrategy !== "all" ? 1 : 0),
   [filters])
+
+  // Track filter changes — debounced to avoid spamming on rapid multi-select
+  const prevFilterCountRef = useRef(0)
+  useEffect(() => {
+    // Skip initial mount (0 → 0) and no-change transitions
+    if (activeFilterCount === prevFilterCountRef.current) return
+    const prev = prevFilterCountRef.current
+    prevFilterCountRef.current = activeFilterCount
+    // Skip the initial 0 state
+    if (prev === 0 && activeFilterCount === 0) return
+    const timer = setTimeout(() => {
+      trackInteraction("filter_change", { activeFilterCount, previousCount: prev })
+    }, 500)
+    return () => clearTimeout(timer)
+  }, [activeFilterCount])
 
   const clearAllFilters = useCallback(() => {
     setFilters(prev => ({

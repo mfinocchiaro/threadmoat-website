@@ -7,10 +7,6 @@ import { useThesis, ScoredCompany } from "@/contexts/thesis-context";
 import { useLayout } from "@/contexts/layout-context";
 import { KPICard } from "@/components/widgets/kpi-card";
 import { WidgetCard } from "@/components/widgets/widget-card";
-import { BubbleChart } from "@/components/charts/bubble-chart";
-import { QuadrantChart } from "@/components/charts/quadrant-chart";
-import { PeriodicTable } from "@/components/charts/periodic-table";
-import { NetworkGraphToggle } from "@/components/charts/network-graph-toggle";
 import { AdminAnalyticsSection } from "./admin-analytics";
 import { AlertTriangle, BarChart3, Target, CheckCircle2, DollarSign, TrendingUp, X, Settings2 } from "lucide-react";
 import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card";
@@ -18,10 +14,11 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMemo, useState } from "react";
 
-const MapChart = dynamic(() => import("@/components/charts/map-chart").then(m => m.MapChart), {
-    ssr: false,
-    loading: () => <Skeleton className="w-full min-h-[500px] rounded-lg" />,
-});
+const BubbleChart = dynamic(() => import("@/components/charts/bubble-chart").then(m => m.BubbleChart), { ssr: false, loading: () => <div className="w-full min-h-[500px] rounded-lg bg-muted animate-pulse" /> });
+const QuadrantChart = dynamic(() => import("@/components/charts/quadrant-chart").then(m => m.QuadrantChart), { ssr: false, loading: () => <div className="w-full min-h-[500px] rounded-lg bg-muted animate-pulse" /> });
+const PeriodicTable = dynamic(() => import("@/components/charts/periodic-table").then(m => m.PeriodicTable), { ssr: false, loading: () => <div className="w-full min-h-[500px] rounded-lg bg-muted animate-pulse" /> });
+const NetworkGraphToggle = dynamic(() => import("@/components/charts/network-graph-toggle").then(m => m.NetworkGraphToggle), { ssr: false, loading: () => <div className="w-full min-h-[400px] rounded-lg bg-muted animate-pulse" /> });
+const MapChart = dynamic(() => import("@/components/charts/map-chart").then(m => m.MapChart), { ssr: false, loading: () => <Skeleton className="w-full min-h-[500px] rounded-lg" /> });
 
 function CompanyDetail({ company: c, score }: { company: Company; score?: number }) {
     return (

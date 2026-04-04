@@ -157,6 +157,8 @@ const ADMIN_ITEMS = [
   { href: "/dashboard/market-momentum", icon: TrendingUp,   label: "Market Momentum" },
   { href: "/dashboard/customer-profile", icon: UserCircle, label: "Customer Profile" },
   { href: "/dashboard/ip-dependency",   icon: Shield,     label: "IP Dependency" },
+  { href: "/dashboard/co-investment",  icon: GitCompare, label: "Co-Investment" },
+  { href: "/dashboard/investor-compare", icon: Users, label: "Investor Compare" },
 ];
 
 const BOTTOM_ITEMS = [
@@ -180,6 +182,8 @@ const ADMIN_VIZ_HREFS = new Set([
   "/dashboard/market-momentum",
   "/dashboard/customer-profile",
   "/dashboard/ip-dependency",
+  "/dashboard/co-investment",
+  "/dashboard/investor-compare",
 ])
 
 interface SidebarProps {

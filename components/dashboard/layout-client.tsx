@@ -11,6 +11,7 @@ import { SidebarShell } from "./sidebar-shell"
 import { FreeUserGuard } from "./free-user-guard"
 import { CheckoutToast } from "@/components/checkout/checkout-toast"
 import { useIdleTimeout } from "@/hooks/use-idle-timeout"
+import { usePageViewTracker } from "@/hooks/use-page-view-tracker"
 import type { AccessTier } from "@/lib/tiers"
 import { OnboardingWizard } from "./onboarding-wizard"
 
@@ -35,6 +36,7 @@ function LayoutInner({ user, profile, children, isAdmin, isFreeUser, isExpiredTr
   const { scenario, setScenario } = useScenario()
   const [onboardingDismissed, setOnboardingDismissed] = useState(false)
   useIdleTimeout()
+  usePageViewTracker()
   return (
     <SidebarShell
       user={user}
