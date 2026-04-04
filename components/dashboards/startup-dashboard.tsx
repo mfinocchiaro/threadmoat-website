@@ -1,17 +1,19 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { Company, formatCurrency } from "@/lib/company-data";
 import { useFilter } from "@/contexts/filter-context";
 import { useThesis, ScoredCompany } from "@/contexts/thesis-context";
 import { useLayout } from "@/contexts/layout-context";
 import { KPICard } from "@/components/widgets/kpi-card";
 import { WidgetCard } from "@/components/widgets/widget-card";
-import { LandscapeChart } from "@/components/charts/landscape-chart";
-import { BarChart } from "@/components/charts/bar-chart";
-import { PeriodicTable } from "@/components/charts/periodic-table";
-import { QuadrantChart } from "@/components/charts/quadrant-chart";
-import { NetworkGraphToggle } from "@/components/charts/network-graph-toggle";
 import { AdminAnalyticsSection } from "./admin-analytics";
+
+const LandscapeChart = dynamic(() => import("@/components/charts/landscape-chart").then(m => m.LandscapeChart), { ssr: false, loading: () => <div className="w-full min-h-[500px] rounded-lg bg-muted animate-pulse" /> });
+const BarChart = dynamic(() => import("@/components/charts/bar-chart").then(m => m.BarChart), { ssr: false, loading: () => <div className="w-full min-h-[300px] rounded-lg bg-muted animate-pulse" /> });
+const PeriodicTable = dynamic(() => import("@/components/charts/periodic-table").then(m => m.PeriodicTable), { ssr: false, loading: () => <div className="w-full min-h-[500px] rounded-lg bg-muted animate-pulse" /> });
+const QuadrantChart = dynamic(() => import("@/components/charts/quadrant-chart").then(m => m.QuadrantChart), { ssr: false, loading: () => <div className="w-full min-h-[500px] rounded-lg bg-muted animate-pulse" /> });
+const NetworkGraphToggle = dynamic(() => import("@/components/charts/network-graph-toggle").then(m => m.NetworkGraphToggle), { ssr: false, loading: () => <div className="w-full min-h-[400px] rounded-lg bg-muted animate-pulse" /> });
 import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card";
 import { Badge } from "@/components/ui/badge";
 import { DollarSign, Globe, TrendingUp, Users, X, Settings2 } from "lucide-react";

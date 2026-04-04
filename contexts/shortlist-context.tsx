@@ -11,6 +11,7 @@ import React, {
 } from "react"
 import { useCompanyData } from "@/contexts/company-data-context"
 import type { Company } from "@/lib/company-data"
+import { trackInteraction } from "@/lib/track-interaction"
 
 const STORAGE_KEY = "threadmoat-shortlist"
 
@@ -84,9 +85,11 @@ export function ShortlistProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const toggle = useCallback((id: string) => {
-    setIds(prev =>
-      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
-    )
+    setIds(prev => {
+      const removing = prev.includes(id)
+      trackInteraction("shortlist_toggle", { companyId: id, action: removing ? "remove" : "add" })
+      return removing ? prev.filter(i => i !== id) : [...prev, id]
+    })
   }, [])
 
   const has = useCallback((id: string) => idSet.has(id), [idSet])

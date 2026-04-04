@@ -1,46 +1,46 @@
 {
   "meta": {
     "title": "Sobre - ThreadMoat e Michael Finocchiaro",
-    "description": "Saiba mais sobre a ThreadMoat, a plataforma de inteligencia de mercado para IA Industrial e software de engenharia, e o fundador Michael Finocchiaro."
+    "description": "Saiba mais sobre a ThreadMoat, a plataforma de inteligência de mercado para IA Industrial e software de engenharia, e o fundador Michael Finocchiaro."
   },
   "about": {
     "title": "Sobre",
     "titleHighlight": "ThreadMoat",
-    "description1": "ThreadMoat e a plataforma de inteligencia de mercado para IA Industrial e software de engenharia, construida e mantida por Michael Finocchiaro -- um analista independente com mais de 30 anos na Dassault Systemes, PTC, IBM e HP, agora assessorando as empresas que os estao disruptando.",
-    "description2": "Cada perfil e curado manualmente -- nao raspado ou alucinado por IA -- e atualizado semanalmente com eventos de financiamento, lancamentos de produtos e pontuacao competitiva.",
+    "description1": "ThreadMoat é a plataforma de inteligência de mercado para IA Industrial e software de engenharia, construída e mantida por Michael Finocchiaro — um analista independente com mais de 30 anos na Dassault Systèmes, PTC, IBM e HP, agora assessorando as empresas que os estão disruptando.",
+    "description2": "Cada perfil é curado manualmente — não raspado ou alucinado por IA — e atualizado semanalmente com eventos de financiamento, lançamentos de produtos e pontuação competitiva.",
     "startupsTracked": "Startups Rastreadas",
     "vcFunding": "Financiamento VC Mapeado",
-    "countries": "Paises",
+    "countries": "Países",
     "marketSubsegments": "Subsegmentos de Mercado"
   },
   "founder": {
     "title": "Sobre",
     "titleHighlight": "Michael Finocchiaro",
-    "role": "Analista da Industria - Consultor - Assessor",
-    "location": "Paris, Franca",
-    "bio1": "Michael e um analista senior independente da industria de PLM e manufatura e apresentador dos podcasts AI Across the Product Lifecycle e The Future of PLM, focado na adocao de digital thread e IA industrial em engenharia e manufatura.",
-    "bio2": "Com mais de 30 anos na Dassault Systemes (Diretor Senior, 3DEXPERIENCE), PTC, IBM e HP, Michael agora assessora startups e empresas industriais em posicionamento, estrategia de go-to-market e implantacao empresarial. Ele tambem e autor de Kernel Wars -- uma historia de CAD, PLM e as batalhas de kernels geometricos que moldaram a industria.",
+    "role": "Analista da Indústria - Consultor - Assessor",
+    "location": "Paris, França",
+    "bio1": "Michael é um analista sênior independente da indústria de PLM e manufatura e apresentador dos podcasts AI Across the Product Lifecycle e The Future of PLM, focado na adoção de digital thread e IA industrial em engenharia e manufatura.",
+    "bio2": "Com mais de 30 anos na Dassault Systèmes (Diretor Sênior, 3DEXPERIENCE), PTC, IBM e HP, Michael agora assessora startups e empresas industriais em posicionamento, estratégia de go-to-market e implantação empresarial. Ele também é autor de Kernel Wars — uma história de CAD, PLM e as batalhas de kernels geométricos que moldaram a indústria.",
     "linkedin": "Mais de 26K Seguidores no LinkedIn",
     "workedAt": "Trabalhou Em",
     "workedWith": "Trabalhou Com"
   },
   "conference": {
     "title": "Threaded!",
-    "titleHighlight": "Serie de Conferencias",
-    "description1": "Threaded! reune startups e lideres da industria para sessoes de trabalho dinamicas sobre como a IA esta transformando engenharia e manufatura. Os apresentadores devem mostrar explicitamente como seus produtos se conectam ao digital thread -- quais sistemas integram, quais decisoes melhoram e quais resultados mensuraveis proporcionam.",
-    "description2": "Co-patrocinado pela Aras Corporation e o podcast AI Across the Product Lifecycle, Threaded! conecta fornecedores de solucoes de proxima geracao com lideres empresariais em PLM e digital thread. Compartilhamento guiado de solucoes e feedback estruturado ajudam fundadores a refinar a direcao do produto, afiar ICPs e construir pontos de prova crediveis que ressoam com compradores empresariais.",
+    "titleHighlight": "Série de Conferências",
+    "description1": "Threaded! reúne startups e líderes da indústria para sessões de trabalho dinâmicas sobre como a IA está transformando engenharia e manufatura. Os apresentadores devem mostrar explicitamente como seus produtos se conectam ao digital thread — quais sistemas integram, quais decisões melhoram e quais resultados mensuráveis proporcionam.",
+    "description2": "Copatrocinado pela Aras Corporation e o podcast AI Across the Product Lifecycle, Threaded! conecta fornecedores de soluções de próxima geração com líderes empresariais em PLM e digital thread. Compartilhamento guiado de soluções e feedback estruturado ajudam fundadores a refinar a direção do produto, afiar ICPs e construir pontos de prova credíveis que ressoam com compradores empresariais.",
     "visitSite": "Visite threaded.live"
   },
   "podcasts": {
-    "title": "Podcasts e Conteudo",
+    "title": "Podcasts e Conteúdo",
     "aiPodcastTitle": "AI Across the Product Lifecycle",
-    "aiPodcastDesc": "Conversas francas com fundadores, CTOs e lideres empresariais construindo e implantando IA em engenharia e manufatura. Startups de deep-tech, historias reais de adocao.",
+    "aiPodcastDesc": "Conversas francas com fundadores, CTOs e líderes empresariais construindo e implantando IA em engenharia e manufatura. Startups de deep-tech, histórias reais de adoção.",
     "plmPodcastTitle": "The Future of PLM",
-    "plmPodcastDesc": "Podcast em video com lideres de pensamento da industria discutindo a evolucao da gestao do ciclo de vida do produto, estrategia de digital thread e dinamicas de mercado."
+    "plmPodcastDesc": "Podcast em vídeo com líderes de pensamento da indústria discutindo a evolução da gestão do ciclo de vida do produto, estratégia de digital thread e dinâmicas de mercado."
   },
   "contact": {
     "title": "Onde se conectar comigo",
-    "location": "Baseado em Paris - Bilingue Frances/Ingles - Trabalhando em fusos horarios dos EUA e UE",
-    "viewPricing": "Ver Precos e Planos de Acesso"
+    "location": "Baseado em Paris - Bilíngue Francês/Inglês - Trabalhando em fusos horários dos EUA e UE",
+    "viewPricing": "Ver Preços e Planos de Acesso"
   }
 }

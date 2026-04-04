@@ -28,6 +28,7 @@ import {
 // to keep them out of the initial bundle (~29MB combined node_modules)
 import type { jsPDF } from "jspdf"
 import type { autoTable } from "jspdf-autotable"
+import { trackInteraction } from "@/lib/track-interaction"
 import { BubbleChart } from "@/components/charts/bubble-chart"
 import { QuadrantChart } from "@/components/charts/quadrant-chart"
 import { PeriodicTable } from "@/components/charts/periodic-table"
@@ -677,6 +678,7 @@ export function CustomReportTab({ data }: CustomReportTabProps) {
 
   const handleGenerate = useCallback(() => {
     if (selectedCompanies.length === 0) return
+    trackInteraction("report_generate", { companyCount: selectedCompanies.length, sections: Object.entries(sections).filter(([, v]) => v).map(([k]) => k) })
 
     // Check if rate limit confirmation needed
     const aiCount = sections.aiAnalysis ? selectedCompanies.length : 0
@@ -863,6 +865,7 @@ export function CustomReportTab({ data }: CustomReportTabProps) {
   }, [hasAnyChart, sections])
 
   const handleExportPDF = useCallback(async () => {
+    trackInteraction("report_export_pdf", { companyCount: selectedCompanies.length })
     setIsExportingPDF(true)
     setPdfError(null)
     const startTime = performance.now()

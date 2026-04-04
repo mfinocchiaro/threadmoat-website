@@ -2,30 +2,6 @@
 id: T02
 parent: S04
 milestone: M006
-provides: []
-requires: []
-affects: []
-key_files: ["components/charts/ip-dependency-chart.tsx", "app/dashboard/ip-dependency/page.tsx", ".gsd/milestones/M006/slices/S04/tasks/T02-SUMMARY.md"]
-key_decisions: ["Reused the tech independence heatmap shell (layout, gating, and legend pattern) for the IP dependency view to keep dashboard visualizations consistent.", "Chose string-based vendor detection from `ecosystemDependencies` entries (case-insensitive contains checks for Dassault, Siemens, Autodesk, PTC) with a fallback `Independent` bucket instead of introducing a new normalized vendor field."]
-patterns_established: []
-drill_down_paths: []
-observability_surfaces: []
-duration: ""
-verification_result: "- `npm test -- --watch=false` — failed because the project has no `test` script defined.
-- `npm run build` — succeeded, verifying TypeScript types and Next.js build across all routes, including the new `/dashboard/ip-dependency` page."
-completed_at: 2026-04-03T08:39:14.295Z
-blocker_discovered: false
----
-
-# T02: Added dual-mode IP Dependency heatmap and dashboard page using thesis-gated data and shortlist-aware tooltips.
-
-> Added dual-mode IP Dependency heatmap and dashboard page using thesis-gated data and shortlist-aware tooltips.
-
-## What Happened
----
-id: T02
-parent: S04
-milestone: M006
 key_files:
   - components/charts/ip-dependency-chart.tsx
   - app/dashboard/ip-dependency/page.tsx
@@ -33,9 +9,9 @@ key_files:
 key_decisions:
   - Reused the tech independence heatmap shell (layout, gating, and legend pattern) for the IP dependency view to keep dashboard visualizations consistent.
   - Chose string-based vendor detection from `ecosystemDependencies` entries (case-insensitive contains checks for Dassault, Siemens, Autodesk, PTC) with a fallback `Independent` bucket instead of introducing a new normalized vendor field.
-duration: ""
+duration: 
 verification_result: mixed
-completed_at: 2026-04-03T08:39:14.296Z
+completed_at: 2026-04-03T08:39:14.295Z
 blocker_discovered: false
 ---
 
@@ -67,7 +43,6 @@ Finally, I added `app/dashboard/ip-dependency/page.tsx` that uses `VizPageShell`
 | 1 | `npm test -- --watch=false` | 1 | ❌ fail (no test script defined) | 2000ms |
 | 2 | `npm run build` | 0 | ✅ pass | 22000ms |
 
-
 ## Deviations
 
 Attempted to run `npm test` even though the plan only required `npm run build`; there is no test script defined, so no unit tests were added or executed for this component.
@@ -81,10 +56,3 @@ No automated tests exist for `IPDependencyChart` or the `/dashboard/ip-dependenc
 - `components/charts/ip-dependency-chart.tsx`
 - `app/dashboard/ip-dependency/page.tsx`
 - `.gsd/milestones/M006/slices/S04/tasks/T02-SUMMARY.md`
-
-
-## Deviations
-Attempted to run `npm test` even though the plan only required `npm run build`; there is no test script defined, so no unit tests were added or executed for this component.
-
-## Known Issues
-No automated tests exist for `IPDependencyChart` or the `/dashboard/ip-dependency` page; verification today is via build and manual inspection. Vendor mapping is string-matched and may require adjustment if ecosystem naming conventions change.

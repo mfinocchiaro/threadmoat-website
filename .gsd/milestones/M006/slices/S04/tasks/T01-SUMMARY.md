@@ -2,35 +2,12 @@
 id: T01
 parent: S04
 milestone: M006
-provides: []
-requires: []
-affects: []
-key_files: ["lib/company-data.ts", "lib/load-companies-server.ts"]
-key_decisions: ["Whitelist-based graphics kernel cleaning — only values containing known kernel names pass through"]
-patterns_established: []
-drill_down_paths: []
-observability_surfaces: []
-duration: ""
-verification_result: "npm run build passes with zero errors. Manual data spot-check confirmed correct parsing across all three fields."
-completed_at: 2026-04-03T06:59:52.544Z
-blocker_discovered: false
----
-
-# T01: Added ecosystemCompatibility, graphicsKernel, and modelingParadigms fields to Company interface and CSV loader with whitelist-based kernel cleaning
-
-> Added ecosystemCompatibility, graphicsKernel, and modelingParadigms fields to Company interface and CSV loader with whitelist-based kernel cleaning
-
-## What Happened
----
-id: T01
-parent: S04
-milestone: M006
 key_files:
   - lib/company-data.ts
   - lib/load-companies-server.ts
 key_decisions:
   - Whitelist-based graphics kernel cleaning — only values containing known kernel names pass through
-duration: ""
+duration: 
 verification_result: passed
 completed_at: 2026-04-03T06:59:52.544Z
 blocker_discovered: false
@@ -54,7 +31,6 @@ npm run build passes with zero errors. Manual data spot-check confirmed correct 
 |---|---------|-----------|---------|----------|
 | 1 | `npm run build` | 0 | ✅ pass | 20800ms |
 
-
 ## Deviations
 
 None.
@@ -67,10 +43,3 @@ None.
 
 - `lib/company-data.ts`
 - `lib/load-companies-server.ts`
-
-
-## Deviations
-None.
-
-## Known Issues
-None.

@@ -2,35 +2,12 @@
 id: T01
 parent: S03
 milestone: M006
-provides: []
-requires: []
-affects: []
-key_files: ["components/charts/target-customer-profile-chart.tsx"]
-key_decisions: ["Unique gradient ID (target-customer-legend-grad) to avoid SVG collision", "industriesServed added as first Y-axis option since X-axis now handles customer profile dimensions"]
-patterns_established: []
-drill_down_paths: []
-observability_surfaces: []
-duration: ""
-verification_result: "File existence verified, grep confirmed buyerPersona/getGeoRegion/shortlistedIds present, TypeScript compilation passed with zero errors."
-completed_at: 2026-04-03T06:45:46.298Z
-blocker_discovered: false
----
-
-# T01: Built TargetCustomerProfileChart with 4 X-axis customer dimensions, 4 Y-axis groupings, 4 value modes, geo-region collapsing, and shortlist highlighting
-
-> Built TargetCustomerProfileChart with 4 X-axis customer dimensions, 4 Y-axis groupings, 4 value modes, geo-region collapsing, and shortlist highlighting
-
-## What Happened
----
-id: T01
-parent: S03
-milestone: M006
 key_files:
   - components/charts/target-customer-profile-chart.tsx
 key_decisions:
   - Unique gradient ID (target-customer-legend-grad) to avoid SVG collision
   - industriesServed added as first Y-axis option since X-axis now handles customer profile dimensions
-duration: ""
+duration: 
 verification_result: passed
 completed_at: 2026-04-03T06:45:46.298Z
 blocker_discovered: false
@@ -58,7 +35,6 @@ File existence verified, grep confirmed buyerPersona/getGeoRegion/shortlistedIds
 | 4 | `grep -q 'shortlistedIds' components/charts/target-customer-profile-chart.tsx` | 0 | ✅ pass | 100ms |
 | 5 | `npx tsc --noEmit` | 0 | ✅ pass | 13700ms |
 
-
 ## Deviations
 
 None.
@@ -70,10 +46,3 @@ None.
 ## Files Created/Modified
 
 - `components/charts/target-customer-profile-chart.tsx`
-
-
-## Deviations
-None.
-
-## Known Issues
-None.

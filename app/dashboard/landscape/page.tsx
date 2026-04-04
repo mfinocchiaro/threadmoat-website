@@ -1,9 +1,14 @@
 "use client"
 
+import dynamic from "next/dynamic"
 import { VizPageShell } from "@/components/dashboard/viz-page-shell"
 import { useThesisGatedData } from "@/hooks/use-thesis-gated-data"
-import { LandscapeChart } from "@/components/charts/landscape-chart"
 import { Skeleton } from "@/components/ui/skeleton"
+
+const LandscapeChart = dynamic(
+  () => import("@/components/charts/landscape-chart").then(m => m.LandscapeChart),
+  { ssr: false, loading: () => <Skeleton className="h-[600px] rounded-xl" /> }
+)
 
 function LandscapeInner() {
   const { filtered, isLoading } = useThesisGatedData()

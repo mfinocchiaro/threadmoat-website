@@ -18,6 +18,7 @@ import { Sparkles, ChevronRight, X, Plus, Copy, Square, AlertCircle, Loader2, Fi
 import { useCompletion } from "@ai-sdk/react"
 import { getCustomerLogoUrl, parseKnownCustomers } from "@/lib/customer-logos"
 import { CustomReportTab } from "@/components/charts/custom-report-tab"
+import { trackInteraction } from "@/lib/track-interaction"
 
 interface ReportGeneratorProps {
   data: Company[]
@@ -480,6 +481,7 @@ function IntelligenceReportTab({ data }: { data: Company[] }) {
     // useCompletion sends { prompt, ...body } to the endpoint
     // Our server ignores prompt and reads companyId from body
     complete("", { body: { companyId: selectedCompany.id } })
+    trackInteraction("narrative_generate", { companyId: selectedCompany.id })
   }
 
   const copyAI = () => {
