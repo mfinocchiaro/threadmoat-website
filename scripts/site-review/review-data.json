@@ -1,0 +1,414 @@
+{
+  "/": {
+    "comments": [],
+    "approved": true
+  },
+  "/pricing": {
+    "comments": [
+      {
+        "severity": "issue",
+        "text": "the Analyst level only includes ONE quarterly report, not 4!!",
+        "timestamp": "2026-04-05T15:25:27.478007"
+      }
+    ],
+    "approved": false
+  },
+  "/about": {
+    "comments": [],
+    "approved": true
+  },
+  "/report": {
+    "comments": [
+      {
+        "severity": "issue",
+        "text": "maybe we write that the CURRENT reqport is q!2026 and that we will publish 2Q2026 in early July",
+        "timestamp": "2026-04-05T15:26:42.391531"
+      }
+    ],
+    "approved": false
+  },
+  "/landscape": {
+    "comments": [],
+    "approved": true
+  },
+  "/privacy": {
+    "comments": [],
+    "approved": true
+  },
+  "/terms": {
+    "comments": [],
+    "approved": true
+  },
+  "/fr": {
+    "comments": [
+      {
+        "severity": "issue",
+        "text": "Le Digital Thread est le nouveau foss\u00e9 concurrentiel -> Le Digital Thread est le nouveau avantage concurrentiel",
+        "timestamp": "2026-04-05T15:28:29.556180"
+      }
+    ],
+    "approved": false
+  },
+  "/es": {
+    "comments": [],
+    "approved": true
+  },
+  "/it": {
+    "comments": [],
+    "approved": true
+  },
+  "/de": {
+    "comments": [],
+    "approved": true
+  },
+  "/pt": {
+    "comments": [],
+    "approved": true
+  },
+  "/fr/pricing": {
+    "comments": [
+      {
+        "severity": "issue",
+        "text": "same comment as english pricing - only ONE report for Analyst level!",
+        "timestamp": "2026-04-05T15:29:29.676805"
+      }
+    ],
+    "approved": false
+  },
+  "/es/pricing": {
+    "comments": [
+      {
+        "severity": "issue",
+        "text": "same comment as english pricing - only ONE report for Analyst level!",
+        "timestamp": "2026-04-05T15:29:38.711703"
+      }
+    ],
+    "approved": false
+  },
+  "/it/pricing": {
+    "comments": [
+      {
+        "severity": "issue",
+        "text": "same comment as english pricing - only ONE report for Analyst level!",
+        "timestamp": "2026-04-05T15:29:49.896925"
+      }
+    ],
+    "approved": false
+  },
+  "/de/pricing": {
+    "comments": [
+      {
+        "severity": "issue",
+        "text": "same comment as english pricing - only ONE report for Analyst level!",
+        "timestamp": "2026-04-05T15:29:52.865955"
+      }
+    ],
+    "approved": false
+  },
+  "/pt/pricing": {
+    "comments": [
+      {
+        "severity": "issue",
+        "text": "same comment as english pricing - only ONE report for Analyst level!",
+        "timestamp": "2026-04-05T15:29:56.347080"
+      }
+    ],
+    "approved": false
+  },
+  "/pt/about": {
+    "comments": [
+      {
+        "severity": "issue",
+        "text": "wait, diid we not translate the about and report pages into French, German, Italian, and Spanish?",
+        "timestamp": "2026-04-05T15:30:45.565965"
+      }
+    ],
+    "approved": false
+  },
+  "/pt/report": {
+    "comments": [],
+    "approved": true
+  },
+  "/auth/login": {
+    "comments": [],
+    "approved": true
+  },
+  "/auth/sign-up": {
+    "comments": [],
+    "approved": true
+  },
+  "/auth/forgot-password": {
+    "comments": [],
+    "approved": true
+  },
+  "/dashboard": {
+    "comments": [],
+    "approved": true
+  },
+  "/dashboard/landscape-intro": {
+    "comments": [
+      {
+        "severity": "issue",
+        "text": "I see there is a \"starred\" filter, but i don't see the \"star\" on any of the cards in the UX",
+        "timestamp": "2026-04-05T15:34:08.625803"
+      }
+    ],
+    "approved": false
+  },
+  "/dashboard/settings": {
+    "comments": [
+      {
+        "severity": "issue",
+        "text": "for settings and other admin or profile pages, the filters should not be shown across the top",
+        "timestamp": "2026-04-05T15:35:02.534021"
+      }
+    ],
+    "approved": false
+  },
+  "/dashboard/quadrant": {
+    "comments": [],
+    "approved": true
+  },
+  "/dashboard/bubbles": {
+    "comments": [],
+    "approved": true
+  },
+  "/dashboard/landscape": {
+    "comments": [],
+    "approved": true
+  },
+  "/dashboard/periodic-table": {
+    "comments": [],
+    "approved": true
+  },
+  "/dashboard/compare": {
+    "comments": [],
+    "approved": true
+  },
+  "/dashboard/sunburst": {
+    "comments": [],
+    "approved": true
+  },
+  "/dashboard/tab/financial": {
+    "comments": [
+      {
+        "severity": "issue",
+        "text": "Only the bar chart and the patterns seem to be to be finance related here. The tree map, Marimekko, timeine, spiral timeline, and Sankey flow seeem to belong to different categories like market maps or something",
+        "timestamp": "2026-04-05T15:37:46.955766"
+      }
+    ],
+    "approved": false
+  },
+  "/dashboard/explore": {
+    "comments": [],
+    "approved": true
+  },
+  "/dashboard/reports": {
+    "comments": [],
+    "approved": true
+  },
+  "/dashboard/investor-views": {
+    "comments": [],
+    "approved": true
+  },
+  "/dashboard/investor-compare": {
+    "comments": [],
+    "approved": true
+  },
+  "/dashboard/co-investment": {
+    "comments": [],
+    "approved": true
+  },
+  "/dashboard/ip-dependency": {
+    "comments": [],
+    "approved": true
+  },
+  "/dashboard/customer-profile": {
+    "comments": [],
+    "approved": true
+  },
+  "/dashboard/market-momentum": {
+    "comments": [],
+    "approved": true
+  },
+  "/dashboard/swot": {
+    "comments": [],
+    "approved": true
+  },
+  "/dashboard/maturity-matrix": {
+    "comments": [],
+    "approved": true
+  },
+  "/dashboard/correlation": {
+    "comments": [],
+    "approved": true
+  },
+  "/dashboard/buyer-persona": {
+    "comments": [],
+    "approved": true
+  },
+  "/dashboard/growth-momentum": {
+    "comments": [],
+    "approved": true
+  },
+  "/dashboard/tech-independence": {
+    "comments": [],
+    "approved": true
+  },
+  "/dashboard/industry-penetration": {
+    "comments": [],
+    "approved": true
+  },
+  "/dashboard/financial-heatmap": {
+    "comments": [],
+    "approved": true
+  },
+  "/dashboard/investor-stats": {
+    "comments": [],
+    "approved": true
+  },
+  "/dashboard/tab/advanced": {
+    "comments": [],
+    "approved": true
+  },
+  "/dashboard/tab/network": {
+    "comments": [],
+    "approved": true
+  },
+  "/dashboard/wordcloud": {
+    "comments": [
+      {
+        "severity": "issue",
+        "text": "isn't really advanced. should be moved out into a less private category of generic data available at Analyst level",
+        "timestamp": "2026-04-05T15:43:27.451490"
+      }
+    ],
+    "approved": false
+  },
+  "/dashboard/chord": {
+    "comments": [
+      {
+        "severity": "issue",
+        "text": "isn't really advanced. should be moved out into a less private category of generic data available at Analyst level",
+        "timestamp": "2026-04-05T15:43:46.230554"
+      }
+    ],
+    "approved": false
+  },
+  "/dashboard/slope": {
+    "comments": [
+      {
+        "severity": "issue",
+        "text": "isn't really advanced. should be moved out into a less private category of generic data",
+        "timestamp": "2026-04-05T15:44:11.387046"
+      }
+    ],
+    "approved": false
+  },
+  "/dashboard/splom": {
+    "comments": [
+      {
+        "severity": "issue",
+        "text": "hard to interpret. maybe explain this one below the chart?",
+        "timestamp": "2026-04-05T15:44:34.113446"
+      }
+    ],
+    "approved": false
+  },
+  "/dashboard/investor-network": {
+    "comments": [],
+    "approved": true
+  },
+  "/dashboard/customers": {
+    "comments": [],
+    "approved": true
+  },
+  "/dashboard/network": {
+    "comments": [],
+    "approved": true
+  },
+  "/dashboard/bar-chart": {
+    "comments": [],
+    "approved": true
+  },
+  "/dashboard/treemap": {
+    "comments": [],
+    "approved": true
+  },
+  "/dashboard/candlestick": {
+    "comments": [
+      {
+        "severity": "issue",
+        "text": "this one should probably be under advanced",
+        "timestamp": "2026-04-05T15:45:22.955819"
+      }
+    ],
+    "approved": false
+  },
+  "/dashboard/spiral": {
+    "comments": [],
+    "approved": true
+  },
+  "/dashboard/tab/geographic": {
+    "comments": [],
+    "approved": true
+  },
+  "/dashboard/map": {
+    "comments": [],
+    "approved": true
+  },
+  "/dashboard/metros": {
+    "comments": [],
+    "approved": true
+  },
+  "/dashboard/radar": {
+    "comments": [
+      {
+        "severity": "issue",
+        "text": "this one is really good, maybe advanced or admin quality",
+        "timestamp": "2026-04-05T15:46:39.950492"
+      }
+    ],
+    "approved": false
+  },
+  "/dashboard/heatmap": {
+    "comments": [
+      {
+        "severity": "issue",
+        "text": "maybe needs some interpretive explanation below the chart",
+        "timestamp": "2026-04-05T15:47:08.509212"
+      }
+    ],
+    "approved": false
+  },
+  "/dashboard/parallel": {
+    "comments": [
+      {
+        "severity": "issue",
+        "text": "maybe needs some interpretive explanation below the chart",
+        "timestamp": "2026-04-05T15:47:12.832717"
+      }
+    ],
+    "approved": false
+  },
+  "/dashboard/box-plot": {
+    "comments": [
+      {
+        "severity": "issue",
+        "text": "maybe needs some interpretive explanation below the chart",
+        "timestamp": "2026-04-05T15:47:20.705584"
+      }
+    ],
+    "approved": false
+  },
+  "/dashboard/distribution": {
+    "comments": [
+      {
+        "severity": "issue",
+        "text": "maybe needs some interpretive explanation below the chart",
+        "timestamp": "2026-04-05T15:47:26.946839"
+      }
+    ],
+    "approved": false
+  }
+}

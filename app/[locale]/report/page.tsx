@@ -157,6 +157,9 @@ export default async function ReportPage({ params }: Props) {
             <p className="mt-3 text-sm text-muted-foreground">
               <strong>{t('hero.author')}</strong>
             </p>
+            <p className="mt-2 text-sm text-primary font-medium">
+              {t('hero.currentEdition')}
+            </p>
             <div className="flex flex-wrap gap-3 mt-6">
               <Link href="/pricing">
                 <Button size="lg" className="gap-2">
