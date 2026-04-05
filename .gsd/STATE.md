@@ -1,8 +1,8 @@
 # GSD State
 
-**Active Milestone:** M008: Production Polish & Performance
-**Active Slice:** S01: Portuguese translation review & fixes
-**Phase:** planning
+**Last Completed Milestone:** M016: Site Review Fixes — Pricing, Translations, Sidebar & UX Polish
+**Active Slice:** None
+**Phase:** complete
 **Requirements Status:** 0 active · 12 validated · 0 deferred · 0 out of scope
 
 ## Milestone Registry
@@ -13,7 +13,7 @@
 - ✅ **M005:** M005: Intelligence Workbench — AI Narratives, Company Shortlist & Custom Report Builder
 - ✅ **M006:** M006: Heatmap Analytics Suite — Market Momentum, Industry Penetration, Customer Profile & IP Dependency
 - ✅ **M007:** M007: Theme-aware colors + data sync + cell drilldown
-- 🔄 **M008:** Production Polish & Performance
+- ✅ **M008:** Production Polish & Performance
 - ✅ **M009:** Performance Audit & Bundle Optimization
 - ✅ **M010:** Homepage Speed Index & Deferred Chart Loading
 - ✅ **M011:** Mobile Responsive Dashboard
@@ -30,4 +30,4 @@
 - None
 
 ## Next Action
-Slice S01 has a plan file but no tasks. Add tasks to the plan.
+All milestones complete.
