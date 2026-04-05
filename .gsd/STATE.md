@@ -1,6 +1,6 @@
 # GSD State
 
-**Last Completed Milestone:** M016: Site Review Fixes — Pricing, Translations, Sidebar & UX Polish
+**Last Completed Milestone:** M017: Subcategory Filter — Secondary Drill-Down Under Investment List
 **Active Slice:** None
 **Phase:** complete
 **Requirements Status:** 0 active · 12 validated · 0 deferred · 0 out of scope
@@ -22,6 +22,7 @@
 - ✅ **M014:** Authenticated Dashboard Lighthouse & Performance Testing
 - ✅ **M015:** Dashboard Performance Optimization — Red-Tier Pages
 - ✅ **M016:** Site Review Fixes — Pricing, Translations, Sidebar & UX Polish
+- ✅ **M017:** Subcategory Filter — Secondary Drill-Down Under Investment List
 
 ## Recent Decisions
 - None recorded

@@ -568,6 +568,7 @@ export function ThesisProvider({ children, profileType }: { children: ReactNode;
       industries: [],
       countries: [],
       subsegments: [],
+      subcategories: [],
       lifecycle: [],
       fundingRound: [],
       deploymentModel: [],
