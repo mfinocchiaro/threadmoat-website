@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exported_at": "2026-04-05T16:52:34.756Z",
+  "exported_at": "2026-04-05T17:07:21.546Z",
   "milestones": [
     {
       "id": "M001",
@@ -857,6 +857,44 @@
       ],
       "requirement_coverage": "No new requirements — fixes to existing content and UX.",
       "boundary_map_markdown": "```\\nS01: Content fixes (pricing, report, French translation)\\nS02: Sidebar reorganization + tier access verification\\nS03: Chart interpretive text + UX polish (filters, stars)\\n```"
+    },
+    {
+      "id": "M017",
+      "title": "Subcategory Filter — Secondary Drill-Down Under Investment List",
+      "status": "complete",
+      "depends_on": [],
+      "created_at": "2026-04-05T17:00:43.494Z",
+      "completed_at": "2026-04-05T17:07:19.530Z",
+      "vision": "Replace the free-text Subsegment filter with the curated Subcategories field as a contextual secondary filter. When an Investment List is selected, the Subcategory dropdown shows only the subcategories within that list.",
+      "success_criteria": [
+        "Subcategory filter replaces Subsegment in the filter toolbar",
+        "Subcategory options are contextually filtered by selected Investment List",
+        "Filter applies to all charts via filter context",
+        "Build passes"
+      ],
+      "key_risks": [
+        {
+          "risk": "Some charts may reference subsegment directly",
+          "whyItMatters": "Need to audit all subsegment references to avoid breaking existing functionality"
+        }
+      ],
+      "proof_strategy": [
+        {
+          "riskOrUnknown": "Subsegment references in charts",
+          "retireIn": "S01",
+          "whatWillBeProven": "All references audited and updated"
+        }
+      ],
+      "verification_contract": "Build passes. Filter toolbar shows Subcategory.",
+      "verification_integration": "Selecting Investment List narrows Subcategory options. Filter applies across all charts.",
+      "verification_operational": "No server changes.",
+      "verification_uat": "Manual verification of filter behavior.",
+      "definition_of_done": [
+        "Subcategory filter works as secondary to Investment List",
+        "Build passes"
+      ],
+      "requirement_coverage": "Enhances existing filter UX.",
+      "boundary_map_markdown": "```\\nFilter context: add subcategories[] filter, make it contextual to investmentLists[]\\nToolbar: replace Subsegment dropdown with Subcategory\\nCompany data: subcategories field already loaded\\n```"
     }
   ],
   "slices": [
@@ -1984,6 +2022,26 @@
       "success_criteria": "- Heatmap, parallel coords, box plot, distribution, scatter matrix pages have explanatory text\\n- Filters hidden on /dashboard/settings\\n- Build passes",
       "proof_level": "build",
       "integration_closure": "Page component and shell changes only",
+      "observability_impact": "None",
+      "sequence": 0,
+      "replan_triggered_at": null
+    },
+    {
+      "milestone_id": "M017",
+      "id": "S01",
+      "title": "Add Subcategory filter as contextual secondary to Investment List",
+      "status": "complete",
+      "risk": "low",
+      "depends": [],
+      "demo": "Select an Investment List → Subcategory dropdown shows only matching subcategories",
+      "created_at": "2026-04-05T17:01:05.536Z",
+      "completed_at": "2026-04-05T17:06:54.875Z",
+      "full_summary_md": "---\nid: S01\nparent: M017\nmilestone: M017\nprovides:\n  - Subcategory filter available in toolbar for all charts\nrequires:\n  []\naffects:\n  []\nkey_files:\n  - contexts/filter-context.tsx\n  - components/dashboard/filter-toolbar.tsx\n  - contexts/thesis-context.tsx\nkey_decisions:\n  - Contextual subcategory options\n  - Positioned after Investment List\npatterns_established:\n  - Contextual filter options pattern — options in one dropdown change based on selections in another\nobservability_surfaces:\n  - none\ndrill_down_paths:\n  - .gsd/milestones/M017/slices/S01/tasks/T01-SUMMARY.md\nduration: \"\"\nverification_result: passed\ncompleted_at: 2026-04-05T17:06:54.876Z\nblocker_discovered: false\n---\n\n# S01: Add Subcategory filter as contextual secondary to Investment List\n\n**Added contextual Subcategory filter that narrows options based on selected Investment Lists — replaces old Subsegment in toolbar.**\n\n## What Happened\n\nAdded subcategories[] to FilterState with matching filter logic. Created useSubcategoryOptions() hook with contextual filtering — when Investment Lists are active, only subcategories from companies in those lists appear. Positioned Subcategory dropdown right after Investment List for natural drill-down. Removed old Subsegment from toolbar UI.\n\n## Verification\n\nBuild passes.\n\n## Requirements Advanced\n\nNone.\n\n## Requirements Validated\n\nNone.\n\n## New Requirements Surfaced\n\nNone.\n\n## Requirements Invalidated or Re-scoped\n\nNone.\n\n## Deviations\n\nAlso fixed thesis-context.tsx filter reset.\n\n## Known Limitations\n\nNone.\n\n## Follow-ups\n\nNone.\n\n## Files Created/Modified\n\n- `contexts/filter-context.tsx` — Added subcategories[] to FilterState, filter logic, activeFilterCount, clearAll\n- `components/dashboard/filter-toolbar.tsx` — Added contextual useSubcategoryOptions hook, replaced Subsegment with Subcategory dropdown\n- `contexts/thesis-context.tsx` — Added subcategories to filter reset\n",
+      "full_uat_md": "# S01: Add Subcategory filter as contextual secondary to Investment List — UAT\n\n**Milestone:** M017\n**Written:** 2026-04-05T17:06:54.877Z\n\n## UAT: S01 — Subcategory Filter\\n\\n### Test 1: Subcategory dropdown shows all 56 options\\n1. Open any dashboard chart page\\n2. Click Subcategory dropdown\\n3. Expected: ~56 options sorted by frequency\\n\\n### Test 2: Contextual filtering\\n1. Select 'Design Intelligence (CAD)' from Investment List\\n2. Click Subcategory dropdown\\n3. Expected: Only CAD-related subcategories (Text-to-CAD, Solid Geometry, etc.)\\n\\n### Test 3: Filter applies\\n1. Select a subcategory\\n2. Expected: Charts filter to only companies in that subcategory\"\n",
+      "goal": "Replace Subsegment filter with Subcategory, make it contextually filtered by Investment List selection.",
+      "success_criteria": "- Subcategory filter in toolbar\\n- Options filtered when Investment List is selected\\n- Filter applies across all charts\\n- Build passes",
+      "proof_level": "build",
+      "integration_closure": "filter-context.tsx + filter-toolbar.tsx",
       "observability_impact": "None",
       "sequence": 0,
       "replan_triggered_at": null
@@ -5142,6 +5200,49 @@
       "observability_impact": "",
       "full_plan_md": "",
       "sequence": 0
+    },
+    {
+      "milestone_id": "M017",
+      "slice_id": "S01",
+      "id": "T01",
+      "title": "Added contextual Subcategory filter — shows only subcategories within selected Investment Lists, replaces Subsegment in toolbar.",
+      "status": "complete",
+      "one_liner": "Added contextual Subcategory filter — shows only subcategories within selected Investment Lists, replaces Subsegment in toolbar.",
+      "narrative": "Added `subcategories` string[] to FilterState with filter logic checking `company.subcategories`. Created `useSubcategoryOptions()` hook that contextually filters options — when Investment Lists are selected, only subcategories from companies in those lists appear. Replaced the Subsegment dropdown with Subcategory in the toolbar, positioned right after Investment List for natural drill-down flow. Fixed thesis-context.tsx filter reset to include the new field. Build passes.",
+      "verification_result": "Build passes (zero errors).",
+      "duration": "",
+      "completed_at": "2026-04-05T17:06:33.997Z",
+      "blocker_discovered": false,
+      "deviations": "Also had to fix thesis-context.tsx where it hard-codes a filter reset without the new field.",
+      "known_issues": "None.",
+      "key_files": [
+        "contexts/filter-context.tsx",
+        "components/dashboard/filter-toolbar.tsx",
+        "contexts/thesis-context.tsx"
+      ],
+      "key_decisions": [
+        "Contextual filtering: subcategory options narrow when Investment List is selected",
+        "Subcategory placed immediately after Investment List in toolbar for visual hierarchy",
+        "Old Subsegment filter removed from UI but kept in state for backward compatibility"
+      ],
+      "full_summary_md": "---\nid: T01\nparent: S01\nmilestone: M017\nkey_files:\n  - contexts/filter-context.tsx\n  - components/dashboard/filter-toolbar.tsx\n  - contexts/thesis-context.tsx\nkey_decisions:\n  - Contextual filtering: subcategory options narrow when Investment List is selected\n  - Subcategory placed immediately after Investment List in toolbar for visual hierarchy\n  - Old Subsegment filter removed from UI but kept in state for backward compatibility\nduration: \nverification_result: passed\ncompleted_at: 2026-04-05T17:06:33.996Z\nblocker_discovered: false\n---\n\n# T01: Added contextual Subcategory filter — shows only subcategories within selected Investment Lists, replaces Subsegment in toolbar.\n\n**Added contextual Subcategory filter — shows only subcategories within selected Investment Lists, replaces Subsegment in toolbar.**\n\n## What Happened\n\nAdded `subcategories` string[] to FilterState with filter logic checking `company.subcategories`. Created `useSubcategoryOptions()` hook that contextually filters options — when Investment Lists are selected, only subcategories from companies in those lists appear. Replaced the Subsegment dropdown with Subcategory in the toolbar, positioned right after Investment List for natural drill-down flow. Fixed thesis-context.tsx filter reset to include the new field. Build passes.\n\n## Verification\n\nBuild passes (zero errors).\n\n## Verification Evidence\n\n| # | Command | Exit Code | Verdict | Duration |\n|---|---------|-----------|---------|----------|\n| 1 | `npx next build` | 0 | ✅ pass | 30500ms |\n\n## Deviations\n\nAlso had to fix thesis-context.tsx where it hard-codes a filter reset without the new field.\n\n## Known Issues\n\nNone.\n\n## Files Created/Modified\n\n- `contexts/filter-context.tsx`\n- `components/dashboard/filter-toolbar.tsx`\n- `contexts/thesis-context.tsx`\n",
+      "description": "1. In filter-context.tsx:\n   - Add subcategories: string[] to FilterState\n   - Add filter logic: if filters.subcategories.length > 0, check company.subcategories\n   - Add to activeFilterCount\n   - Add to clearAllFilters\n2. In filter-toolbar.tsx:\n   - Replace Subsegment dropdown with Subcategory\n   - Compute subcategory options: if investmentLists filter is active, only show subcategories from companies in those lists\n   - Update FILTER_LABELS\n3. Build and verify",
+      "estimate": "20min",
+      "files": [
+        "contexts/filter-context.tsx",
+        "components/dashboard/filter-toolbar.tsx"
+      ],
+      "verify": "Build passes.",
+      "inputs": [
+        "Current filter-context.tsx",
+        "Current filter-toolbar.tsx"
+      ],
+      "expected_output": [
+        "2 files modified"
+      ],
+      "observability_impact": "",
+      "full_plan_md": "",
+      "sequence": 0
     }
   ],
   "decisions": [
@@ -7142,6 +7243,17 @@
       "verdict": "✅ pass",
       "duration_ms": 0,
       "created_at": "2026-04-05T16:51:39.414Z"
+    },
+    {
+      "id": 177,
+      "task_id": "T01",
+      "slice_id": "S01",
+      "milestone_id": "M017",
+      "command": "npx next build",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 30500,
+      "created_at": "2026-04-05T17:06:33.997Z"
     }
   ]
 }

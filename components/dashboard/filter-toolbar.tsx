@@ -23,6 +23,7 @@ const FILTER_LABELS: Record<string, string> = {
   deploymentModel: "Deploy",
   categoryTags: "Category",
   subsegments: "Segment",
+  subcategories: "Subcategory",
   industries: "Industry",
   countries: "Country",
   lifecycle: "Lifecycle",
@@ -62,6 +63,7 @@ function useFilterOptions() {
     const subsegments = Array.from(
       new Set(companies.map(c => c.subsegment).filter(Boolean))
     ).sort()
+    // Subcategories — not computed here, will be contextual (see useSubcategoryOptions)
     const industries = Array.from(
       new Set(companies.flatMap(c => c.industriesServed || []).filter(Boolean))
     ).sort()
@@ -140,6 +142,28 @@ function useFilterOptions() {
   return { options, isLoading }
 }
 
+/** Subcategory options — contextually filtered by selected Investment Lists */
+function useSubcategoryOptions() {
+  const { companies } = useCompanyData()
+  const { filters } = useFilter()
+
+  return React.useMemo(() => {
+    // If investment lists are selected, only show subcategories from those lists
+    const pool = filters.investmentLists.length > 0
+      ? companies.filter(c => filters.investmentLists.includes(c.investmentList))
+      : companies
+
+    const catCount = new Map<string, number>()
+    pool.forEach(c => {
+      const cat = c.subcategories
+      if (cat) catCount.set(cat, (catCount.get(cat) || 0) + 1)
+    })
+    return Array.from(catCount.entries())
+      .sort((a, b) => b[1] - a[1])
+      .map(([t]) => t)
+  }, [companies, filters.investmentLists])
+}
+
 /* ---- Active filter chips ---- */
 
 function ActiveFilterChips() {
@@ -156,6 +180,7 @@ function ActiveFilterChips() {
     "deploymentModel",
     "categoryTags",
     "subsegments",
+    "subcategories",
     "industries",
     "countries",
     "lifecycle",
@@ -257,6 +282,7 @@ function ActiveFilterChips() {
 export function FilterToolbar() {
   const { filters, setFilters, activeFilterCount } = useFilter()
   const { options, isLoading } = useFilterOptions()
+  const subcategoryOptions = useSubcategoryOptions()
 
   if (isLoading) {
     return (
@@ -293,6 +319,11 @@ export function FilterToolbar() {
           showColorDot
         />
         <FilterDropdown
+          label="Subcategory"
+          filterKey="subcategories"
+          options={subcategoryOptions}
+        />
+        <FilterDropdown
           label="Thesis"
           filterKey="investmentTheses"
           options={options.investmentTheses}
@@ -307,11 +338,6 @@ export function FilterToolbar() {
           label="Category"
           filterKey="categoryTags"
           options={options.categoryTags}
-        />
-        <FilterDropdown
-          label="Subsegment"
-          filterKey="subsegments"
-          options={options.subsegments}
         />
         <FilterDropdown
           label="Industry"

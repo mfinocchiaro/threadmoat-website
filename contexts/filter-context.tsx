@@ -10,6 +10,7 @@ interface FilterState {
   industries: string[]
   countries: string[]
   subsegments: string[]
+  subcategories: string[]
   lifecycle: string[]
   fundingRound: string[]
   deploymentModel: string[]
@@ -42,6 +43,7 @@ export const DEFAULT_FILTERS: FilterState = {
   industries: [],
   countries: [],
   subsegments: [],
+  subcategories: [],
   lifecycle: [],
   fundingRound: [],
   deploymentModel: [],
@@ -134,6 +136,10 @@ export function FilterProvider({ children }: { children: ReactNode }) {
       if (!company.subsegment || !filters.subsegments.includes(company.subsegment)) return false
     }
 
+    if (filters.subcategories.length > 0) {
+      if (!company.subcategories || !filters.subcategories.includes(company.subcategories)) return false
+    }
+
     if (filters.lifecycle.length > 0) {
       const phase = company.lifecyclePhase || company.startupLifecyclePhase
       if (!phase || !filters.lifecycle.includes(phase)) return false
@@ -196,6 +202,7 @@ export function FilterProvider({ children }: { children: ReactNode }) {
   const activeFilterCount = useMemo(() =>
     filters.investmentLists.length +
     filters.subsegments.length +
+    filters.subcategories.length +
     filters.industries.length +
     filters.countries.length +
     filters.lifecycle.length +
@@ -231,6 +238,7 @@ export function FilterProvider({ children }: { children: ReactNode }) {
       ...prev,
       investmentLists: [],
       subsegments: [],
+      subcategories: [],
       industries: [],
       countries: [],
       lifecycle: [],
