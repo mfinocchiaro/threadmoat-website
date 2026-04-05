@@ -103,7 +103,7 @@ export function SidebarShell({
           ⚠ Research estimates only — figures are educated approximations from public sources and may contain errors. Not investment advice. Always conduct your own due diligence.
         </div>
         <div className="flex-1 overflow-y-auto overflow-x-hidden">
-          <FilterToolbar />
+          {!pathname.startsWith("/dashboard/settings") && <FilterToolbar />}
           <div className="mx-auto px-3 sm:px-6 py-4 sm:py-6 max-w-full">{children}</div>
         </div>
       </div>

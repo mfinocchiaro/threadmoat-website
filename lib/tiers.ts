@@ -41,6 +41,11 @@ export const ANALYST_PATHS = new Set([
   '/dashboard/metros',            // Metro Area Analysis
   '/dashboard/radar',             // Radar Chart comparison
   '/dashboard/periodic-table',    // Periodic Table (company tiles)
+  '/dashboard/slope',             // Slope Chart (moved from Strategist)
+  '/dashboard/chord',             // Chord Diagram (moved from Strategist)
+  '/dashboard/wordcloud',         // Word Cloud (moved from Strategist)
+  '/dashboard/marimekko',         // Marimekko (moved from Strategist)
+  '/dashboard/sankey',            // Sankey Flow (moved from Strategist)
 ])
 
 /** Tier 3: Strategist — full platform access (unlocked on top of Analyst) */
@@ -48,18 +53,14 @@ export const STRATEGIST_ONLY_PATHS = new Set([
   '/dashboard/compare',           // Side-by-side company comparison
   '/dashboard/customers',         // Customer Network (2D/3D)
   '/dashboard/investor-network',  // Investor Network (2D/3D)
-  '/dashboard/marimekko',         // Market concentration
   '/dashboard/spiral',            // Spiral Timeline
   '/dashboard/patterns',          // Investment × funding stage heatmap
-  '/dashboard/sankey',            // Flow Diagram
-  '/dashboard/chord',             // Chord Diagram
   '/dashboard/heatmap',           // Pattern Heatmap
   '/dashboard/parallel',          // Parallel Coordinates
   '/dashboard/box-plot',          // Box Plot distributions
   '/dashboard/distribution',      // Funding Distribution
-  '/dashboard/wordcloud',         // Word Cloud
-  '/dashboard/slope',             // Slope Chart
   '/dashboard/splom',             // Scatter Plot Matrix
+  '/dashboard/candlestick',       // Valuation Candlestick (moved from Admin)
 ])
 
 /** Admin-only analytics — never shown to non-admin users */
@@ -71,7 +72,6 @@ export const ADMIN_PATHS = new Set([
   '/dashboard/investor-views',
   '/dashboard/maturity-matrix',
   '/dashboard/swot',
-  '/dashboard/candlestick',
 ])
 
 /** Check whether a path is accessible at the given tier */

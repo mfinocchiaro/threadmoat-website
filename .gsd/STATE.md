@@ -21,6 +21,7 @@
 - ✅ **M013:** Investor-Side Views & Analysis Pages
 - ✅ **M014:** Authenticated Dashboard Lighthouse & Performance Testing
 - ✅ **M015:** Dashboard Performance Optimization — Red-Tier Pages
+- ✅ **M016:** Site Review Fixes — Pricing, Translations, Sidebar & UX Polish
 
 ## Recent Decisions
 - None recorded

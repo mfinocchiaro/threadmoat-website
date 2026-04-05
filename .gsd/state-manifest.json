@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exported_at": "2026-04-04T08:53:05.428Z",
+  "exported_at": "2026-04-05T14:01:16.159Z",
   "milestones": [
     {
       "id": "M001",
@@ -815,6 +815,48 @@
       ],
       "requirement_coverage": "Extends R021 (performance baseline) — improving the scores captured in M014.",
       "boundary_map_markdown": "```\\nTarget pages:\\n  /dashboard (64) — main dashboard with multiple charts\\n  /dashboard/landscape (58) — 500+ company card grid via LandscapeChart\\n  /dashboard/investor-stats (67) — 2000+ investor table via InvestorExplorerChart\\nApproach: dynamic imports, skeleton placeholders, deferred rendering\\n```"
+    },
+    {
+      "id": "M016",
+      "title": "Site Review Fixes — Pricing, Translations, Sidebar & UX Polish",
+      "status": "complete",
+      "depends_on": [],
+      "created_at": "2026-04-05T13:49:54.505Z",
+      "completed_at": "2026-04-05T14:01:14.007Z",
+      "vision": "Address all 22 issues from the systematic site review: fix pricing copy (Analyst = 1 report), update report page timing, fix French translation, reorganize sidebar chart categories, add interpretive text to 5 charts, hide filters on non-chart pages, and add star icon to landscape-intro cards.",
+      "success_criteria": [
+        "Analyst pricing says ONE quarterly report in all 6 languages",
+        "Report page mentions Q1 2026 current, Q2 coming July",
+        "French 'fossé' → 'avantage' fix applied",
+        "Sidebar reorganized: slope/chord/wordcloud moved to analyst-accessible category, candlestick to advanced",
+        "5 advanced charts have interpretive explanation text",
+        "Filters hidden on settings page",
+        "Build passes with zero errors"
+      ],
+      "key_risks": [
+        {
+          "risk": "Sidebar reorganization may break tier access paths",
+          "whyItMatters": "Charts must remain accessible at their correct tier after moving between sidebar groups"
+        }
+      ],
+      "proof_strategy": [
+        {
+          "riskOrUnknown": "Tier access after sidebar move",
+          "retireIn": "S02",
+          "whatWillBeProven": "Moved charts remain in correct ANALYST_PATHS or STRATEGIST_ONLY_PATHS sets"
+        }
+      ],
+      "verification_contract": "Build passes. All pricing pages show correct report count.",
+      "verification_integration": "Sidebar shows reorganized chart groups. Tier access unchanged.",
+      "verification_operational": "No server changes.",
+      "verification_uat": "Manual spot-check of changed pages.",
+      "definition_of_done": [
+        "All 22 review issues addressed",
+        "Build passes",
+        "No tier access regression"
+      ],
+      "requirement_coverage": "No new requirements — fixes to existing content and UX.",
+      "boundary_map_markdown": "```\\nS01: Content fixes (pricing, report, French translation)\\nS02: Sidebar reorganization + tier access verification\\nS03: Chart interpretive text + UX polish (filters, stars)\\n```"
     }
   ],
   "slices": [
@@ -1878,6 +1920,70 @@
       "success_criteria": "- /dashboard, /dashboard/landscape, /dashboard/investor-stats all score 70+ perf\\n- Build passes with zero errors\\n- No visible layout shift (skeletons match chart dimensions)",
       "proof_level": "Lighthouse scores via scripts/lighthouse-dashboard.mjs",
       "integration_closure": "Dynamic imports replace static imports on 3 page files and 4 dashboard files",
+      "observability_impact": "None",
+      "sequence": 0,
+      "replan_triggered_at": null
+    },
+    {
+      "milestone_id": "M016",
+      "id": "S01",
+      "title": "Pricing, report page, and French translation fixes",
+      "status": "complete",
+      "risk": "low",
+      "depends": [],
+      "demo": "Analyst pricing says 1 report in all languages, report page mentions Q1/Q2 timing, French thesis corrected",
+      "created_at": "2026-04-05T13:50:23.231Z",
+      "completed_at": "2026-04-05T13:53:48.901Z",
+      "full_summary_md": "---\nid: S01\nparent: M016\nmilestone: M016\nprovides:\n  - (none)\nrequires:\n  []\naffects:\n  []\nkey_files:\n  - messages/*/pricing.json\n  - messages/*/report.json\n  - messages/fr/home.json\n  - app/[locale]/report/page.tsx\nkey_decisions:\n  - One quarterly report wording for clarity\npatterns_established:\n  - (none)\nobservability_surfaces:\n  - none\ndrill_down_paths:\n  - .gsd/milestones/M016/slices/S01/tasks/T01-SUMMARY.md\nduration: \"\"\nverification_result: passed\ncompleted_at: 2026-04-05T13:53:48.902Z\nblocker_discovered: false\n---\n\n# S01: Pricing, report page, and French translation fixes\n\n**Fixed Analyst pricing to say one report in all 6 languages, added Q1/Q2 report timing, fixed French thesis translation.**\n\n## What Happened\n\nFixed the Analyst tier copy across all 6 language pricing files — subtitle now says 'One quarterly report' and F12 says 'One quarterly report included (current quarter)'. Added a currentEdition key to all 6 report.json files rendered on the report page. Fixed French home.json thesis title from fossé to avantage concurrentiel.\n\n## Verification\n\nBuild passes. All pricing files verified via grep.\n\n## Requirements Advanced\n\nNone.\n\n## Requirements Validated\n\nNone.\n\n## New Requirements Surfaced\n\nNone.\n\n## Requirements Invalidated or Re-scoped\n\nNone.\n\n## Deviations\n\nNone.\n\n## Known Limitations\n\nNone.\n\n## Follow-ups\n\nNone.\n\n## Files Created/Modified\n\n- `messages/*/pricing.json` — Analyst subtitle and F12 updated in 6 languages\n- `messages/*/report.json` — currentEdition key added in 6 languages\n- `messages/fr/home.json` — fossé → avantage concurrentiel\n- `app/[locale]/report/page.tsx` — Render currentEdition line\n",
+      "full_uat_md": "# S01: Pricing, report page, and French translation fixes — UAT\n\n**Milestone:** M016\n**Written:** 2026-04-05T13:53:48.902Z\n\n## UAT: S01 — Pricing and Translation Fixes\\n\\n### Test 1: Analyst pricing in EN\\n1. Visit /pricing\\n2. Expected: Analyst subtitle says 'One quarterly report + 10 interactive charts'\\n\\n### Test 2: Report page timing\\n1. Visit /report\\n2. Expected: Line about Q1 2026 current, Q2 July\\n\\n### Test 3: French thesis\\n1. Visit /fr\\n2. Expected: 'Le Digital Thread est le nouvel avantage concurrentiel'\n",
+      "goal": "Fix Analyst pricing copy (1 report not 4), update report page timing, fix French thesis translation.",
+      "success_criteria": "- All 6 pricing files: Analyst subtitle says 1 quarterly report\\n- analystF12 says 1 report included\\n- Report page mentions Q1 2026 current, Q2 July\\n- French: avantage concurrentiel",
+      "proof_level": "build + content grep",
+      "integration_closure": "Translation file changes only",
+      "observability_impact": "None",
+      "sequence": 0,
+      "replan_triggered_at": null
+    },
+    {
+      "milestone_id": "M016",
+      "id": "S02",
+      "title": "Sidebar chart reorganization",
+      "status": "complete",
+      "risk": "medium",
+      "depends": [
+        "S01"
+      ],
+      "demo": "Slope/chord/wordcloud in analyst-level category, candlestick in advanced, financial tab trimmed",
+      "created_at": "2026-04-05T13:50:23.231Z",
+      "completed_at": "2026-04-05T13:56:38.029Z",
+      "full_summary_md": "---\nid: S02\nparent: M016\nmilestone: M016\nprovides:\n  - (none)\nrequires:\n  []\naffects:\n  - S03\nkey_files:\n  - components/dashboard/sidebar.tsx\n  - lib/tiers.ts\nkey_decisions:\n  - New Data Views group at analyst level\n  - 5 charts promoted from strategist to analyst\n  - Candlestick demoted from admin to strategist\npatterns_established:\n  - (none)\nobservability_surfaces:\n  - none\ndrill_down_paths:\n  - .gsd/milestones/M016/slices/S02/tasks/T01-SUMMARY.md\nduration: \"\"\nverification_result: passed\ncompleted_at: 2026-04-05T13:56:38.030Z\nblocker_discovered: false\n---\n\n# S02: Sidebar chart reorganization\n\n**Reorganized sidebar into logical groups: new Data Views category (analyst-level), trimmed Financial, moved candlestick to advanced, updated all tier access paths.**\n\n## What Happened\n\nCreated a new Data Views sidebar group for general-purpose charts (slope, chord, wordcloud, marimekko, sankey) accessible at analyst tier. Trimmed Financial to bar-chart, treemap, patterns. Moved timeline and spiral to Market Maps. Moved candlestick from admin-only to strategist-level advanced. Updated all tier path sets in tiers.ts accordingly.\n\n## Verification\n\nBuild passes. Tier paths verified.\n\n## Requirements Advanced\n\nNone.\n\n## Requirements Validated\n\nNone.\n\n## New Requirements Surfaced\n\nNone.\n\n## Requirements Invalidated or Re-scoped\n\nNone.\n\n## Deviations\n\nNone.\n\n## Known Limitations\n\nNone.\n\n## Follow-ups\n\nNone.\n\n## Files Created/Modified\n\n- `components/dashboard/sidebar.tsx` — Reorganized tab groups, new Data Views, trimmed Financial\n- `lib/tiers.ts` — Moved chart paths between tier sets\n",
+      "full_uat_md": "# S02: Sidebar chart reorganization — UAT\n\n**Milestone:** M016\n**Written:** 2026-04-05T13:56:38.030Z\n\n## UAT: S02\\n\\n### Test 1: Data Views group visible\\n1. Log in as analyst\\n2. Expected: Data Views section with slope, chord, wordcloud, marimekko, sankey\\n\\n### Test 2: Financial trimmed\\n1. Check Financial section\\n2. Expected: Only bar-chart, treemap, patterns\\n\\n### Test 3: Candlestick in Advanced\\n1. Check Advanced section\\n2. Expected: Includes Valuation Candlestick\"\n",
+      "goal": "Reorganize sidebar chart groups based on review feedback: create a new analyst-level 'Data Views' category for general-purpose charts, move candlestick to advanced, trim financial tab.",
+      "success_criteria": "- Slope, chord, wordcloud moved to a new analyst-accessible 'Data Views' group\\n- Candlestick moved from admin to advanced (strategist-level)\\n- Financial trimmed to bar-chart and patterns\\n- Marimekko, timeline, spiral, sankey moved to appropriate groups\\n- Tier access paths in tiers.ts updated correctly\\n- Build passes",
+      "proof_level": "build + tier path audit",
+      "integration_closure": "sidebar.tsx + tiers.ts changes",
+      "observability_impact": "None",
+      "sequence": 0,
+      "replan_triggered_at": null
+    },
+    {
+      "milestone_id": "M016",
+      "id": "S03",
+      "title": "Chart interpretive text and UX polish",
+      "status": "complete",
+      "risk": "low",
+      "depends": [
+        "S02"
+      ],
+      "demo": "5 charts have explanation text, filters hidden on settings, landscape-intro cards show star",
+      "created_at": "2026-04-05T13:50:23.231Z",
+      "completed_at": "2026-04-05T14:00:36.705Z",
+      "full_summary_md": "---\nid: S03\nparent: M016\nmilestone: M016\nprovides:\n  - (none)\nrequires:\n  []\naffects:\n  []\nkey_files:\n  - app/dashboard/heatmap/page.tsx\n  - app/dashboard/parallel/page.tsx\n  - app/dashboard/box-plot/page.tsx\n  - app/dashboard/distribution/page.tsx\n  - app/dashboard/splom/page.tsx\n  - components/dashboard/sidebar-shell.tsx\nkey_decisions:\n  - Collapsible details for clean UI\n  - Pathname-based filter hiding\npatterns_established:\n  - Collapsible 'How to read' pattern for complex charts\nobservability_surfaces:\n  - none\ndrill_down_paths:\n  - .gsd/milestones/M016/slices/S03/tasks/T01-SUMMARY.md\nduration: \"\"\nverification_result: passed\ncompleted_at: 2026-04-05T14:00:36.705Z\nblocker_discovered: false\n---\n\n# S03: Chart interpretive text and UX polish\n\n**Added collapsible interpretation guides to 5 chart pages and hid filters on settings.**\n\n## What Happened\n\nAdded 'How to read this chart' collapsible details sections to heatmap, parallel coords, box plot, distribution, and scatter matrix pages. Each explains what visual patterns mean and how to interact. Hidden FilterToolbar on /dashboard/settings via pathname check in sidebar-shell.tsx. Landscape-intro star skipped — shortlist is company-level, not domain-level.\n\n## Verification\n\nBuild passes.\n\n## Requirements Advanced\n\nNone.\n\n## Requirements Validated\n\nNone.\n\n## New Requirements Surfaced\n\nNone.\n\n## Requirements Invalidated or Re-scoped\n\nNone.\n\n## Deviations\n\nLandscape-intro star skipped — inappropriate for domain-level cards.\n\n## Known Limitations\n\nNone.\n\n## Follow-ups\n\nNone.\n\n## Files Created/Modified\n\n- `app/dashboard/*/page.tsx` — Added interpretation guides to 5 chart pages\n- `components/dashboard/sidebar-shell.tsx` — Hidden FilterToolbar on settings page\n",
+      "full_uat_md": "# S03: Chart interpretive text and UX polish — UAT\n\n**Milestone:** M016\n**Written:** 2026-04-05T14:00:36.706Z\n\n## UAT: S03\\n\\n### Test 1: Chart explanations\\n1. Visit /dashboard/heatmap\\n2. Expected: Collapsible 'How to read this chart' section below description\\n\\n### Test 2: Filters hidden on settings\\n1. Visit /dashboard/settings\\n2. Expected: No filter toolbar visible\"\n",
+      "goal": "Add interpretive text to 5 advanced charts, hide filters on settings page, add shortlist star to landscape-intro domain cards.",
+      "success_criteria": "- Heatmap, parallel coords, box plot, distribution, scatter matrix pages have explanatory text\\n- Filters hidden on /dashboard/settings\\n- Build passes",
+      "proof_level": "build",
+      "integration_closure": "Page component and shell changes only",
       "observability_impact": "None",
       "sequence": 0,
       "replan_triggered_at": null
@@ -4837,6 +4943,160 @@
       "observability_impact": "",
       "full_plan_md": "",
       "sequence": 0
+    },
+    {
+      "milestone_id": "M016",
+      "slice_id": "S01",
+      "id": "T01",
+      "title": "Fixed Analyst pricing (1 report) in 6 languages, added Q1/Q2 report timing in 6 languages, fixed French 'fossé' → 'avantage'.",
+      "status": "complete",
+      "one_liner": "Fixed Analyst pricing (1 report) in 6 languages, added Q1/Q2 report timing in 6 languages, fixed French 'fossé' → 'avantage'.",
+      "narrative": "Fixed analystSubtitle and analystF12 across all 6 pricing files to say 'one quarterly report' instead of implying all four. Added currentEdition translation key to all 6 report.json files with Q1 2026 current / Q2 July messaging, and rendered it on the report page. Fixed French home.json thesis title from 'fossé concurrentiel' to 'avantage concurrentiel'.",
+      "verification_result": "Build passes. All 6 pricing files confirmed via grep.",
+      "duration": "",
+      "completed_at": "2026-04-05T13:53:28.462Z",
+      "blocker_discovered": false,
+      "deviations": "None.",
+      "known_issues": "None.",
+      "key_files": [
+        "messages/en/pricing.json",
+        "messages/fr/pricing.json",
+        "messages/es/pricing.json",
+        "messages/it/pricing.json",
+        "messages/de/pricing.json",
+        "messages/pt/pricing.json",
+        "messages/en/report.json",
+        "messages/fr/report.json",
+        "messages/es/report.json",
+        "messages/it/report.json",
+        "messages/de/report.json",
+        "messages/pt/report.json",
+        "messages/fr/home.json",
+        "app/[locale]/report/page.tsx"
+      ],
+      "key_decisions": [
+        "'One quarterly report' phrasing clearly indicates single report included",
+        "currentEdition as a new translation key for report timing"
+      ],
+      "full_summary_md": "---\nid: T01\nparent: S01\nmilestone: M016\nkey_files:\n  - messages/en/pricing.json\n  - messages/fr/pricing.json\n  - messages/es/pricing.json\n  - messages/it/pricing.json\n  - messages/de/pricing.json\n  - messages/pt/pricing.json\n  - messages/en/report.json\n  - messages/fr/report.json\n  - messages/es/report.json\n  - messages/it/report.json\n  - messages/de/report.json\n  - messages/pt/report.json\n  - messages/fr/home.json\n  - app/[locale]/report/page.tsx\nkey_decisions:\n  - 'One quarterly report' phrasing clearly indicates single report included\n  - currentEdition as a new translation key for report timing\nduration: \nverification_result: passed\ncompleted_at: 2026-04-05T13:53:28.461Z\nblocker_discovered: false\n---\n\n# T01: Fixed Analyst pricing (1 report) in 6 languages, added Q1/Q2 report timing in 6 languages, fixed French 'fossé' → 'avantage'.\n\n**Fixed Analyst pricing (1 report) in 6 languages, added Q1/Q2 report timing in 6 languages, fixed French 'fossé' → 'avantage'.**\n\n## What Happened\n\nFixed analystSubtitle and analystF12 across all 6 pricing files to say 'one quarterly report' instead of implying all four. Added currentEdition translation key to all 6 report.json files with Q1 2026 current / Q2 July messaging, and rendered it on the report page. Fixed French home.json thesis title from 'fossé concurrentiel' to 'avantage concurrentiel'.\n\n## Verification\n\nBuild passes. All 6 pricing files confirmed via grep.\n\n## Verification Evidence\n\n| # | Command | Exit Code | Verdict | Duration |\n|---|---------|-----------|---------|----------|\n| 1 | `npx next build` | 0 | ✅ pass | 31600ms |\n\n## Deviations\n\nNone.\n\n## Known Issues\n\nNone.\n\n## Files Created/Modified\n\n- `messages/en/pricing.json`\n- `messages/fr/pricing.json`\n- `messages/es/pricing.json`\n- `messages/it/pricing.json`\n- `messages/de/pricing.json`\n- `messages/pt/pricing.json`\n- `messages/en/report.json`\n- `messages/fr/report.json`\n- `messages/es/report.json`\n- `messages/it/report.json`\n- `messages/de/report.json`\n- `messages/pt/report.json`\n- `messages/fr/home.json`\n- `app/[locale]/report/page.tsx`\n",
+      "description": "1. Fix Analyst subtitle in all 6 languages: 'Quarterly report' → 'One quarterly report' or equivalent\n2. Fix analystF12: 'All four quarterly reports included' → 'One quarterly report included' or equivalent\n3. Update report page hero to mention Q1 2026 current, Q2 coming July\n4. Fix French home.json thesis title: 'fossé concurrentiel' → 'avantage concurrentiel'\n5. Build and verify",
+      "estimate": "15min",
+      "files": [
+        "messages/en/pricing.json",
+        "messages/fr/pricing.json",
+        "messages/es/pricing.json",
+        "messages/it/pricing.json",
+        "messages/de/pricing.json",
+        "messages/pt/pricing.json",
+        "messages/en/report.json",
+        "messages/fr/report.json",
+        "messages/es/report.json",
+        "messages/it/report.json",
+        "messages/de/report.json",
+        "messages/pt/report.json",
+        "messages/fr/home.json"
+      ],
+      "verify": "grep for 'quarterly report' in all pricing files. Build passes.",
+      "inputs": [
+        "Site review feedback"
+      ],
+      "expected_output": [
+        "13 translation files modified"
+      ],
+      "observability_impact": "",
+      "full_plan_md": "",
+      "sequence": 0
+    },
+    {
+      "milestone_id": "M016",
+      "slice_id": "S02",
+      "id": "T01",
+      "title": "Reorganized sidebar: new Data Views group (analyst-level), trimmed Financial, moved candlestick to advanced, updated tier paths.",
+      "status": "complete",
+      "one_liner": "Reorganized sidebar: new Data Views group (analyst-level), trimmed Financial, moved candlestick to advanced, updated tier paths.",
+      "narrative": "Reorganized sidebar chart groups:\\n- Financial trimmed to bar-chart, treemap, patterns\\n- Timeline and spiral moved to Market Maps\\n- New 'Data Views' group created with slope, chord, wordcloud, marimekko, sankey\\n- Candlestick moved from Admin to Advanced group\\n- Updated tiers.ts: slope/chord/wordcloud/marimekko/sankey moved from STRATEGIST_ONLY to ANALYST_PATHS, candlestick moved from ADMIN_PATHS to STRATEGIST_ONLY_PATHS\\n- Removed candlestick from ADMIN_ITEMS and ADMIN_VIZ_HREFS",
+      "verification_result": "Build passes. Tier paths verified via grep.",
+      "duration": "",
+      "completed_at": "2026-04-05T13:56:18.142Z",
+      "blocker_discovered": false,
+      "deviations": "None.",
+      "known_issues": "None.",
+      "key_files": [
+        "components/dashboard/sidebar.tsx",
+        "lib/tiers.ts"
+      ],
+      "key_decisions": [
+        "New 'Data Views' group for general-purpose analyst charts",
+        "slope/chord/wordcloud/marimekko/sankey promoted from strategist to analyst tier",
+        "candlestick demoted from admin-only to strategist-level advanced"
+      ],
+      "full_summary_md": "---\nid: T01\nparent: S02\nmilestone: M016\nkey_files:\n  - components/dashboard/sidebar.tsx\n  - lib/tiers.ts\nkey_decisions:\n  - New 'Data Views' group for general-purpose analyst charts\n  - slope/chord/wordcloud/marimekko/sankey promoted from strategist to analyst tier\n  - candlestick demoted from admin-only to strategist-level advanced\nduration: \nverification_result: passed\ncompleted_at: 2026-04-05T13:56:18.142Z\nblocker_discovered: false\n---\n\n# T01: Reorganized sidebar: new Data Views group (analyst-level), trimmed Financial, moved candlestick to advanced, updated tier paths.\n\n**Reorganized sidebar: new Data Views group (analyst-level), trimmed Financial, moved candlestick to advanced, updated tier paths.**\n\n## What Happened\n\nReorganized sidebar chart groups:\\n- Financial trimmed to bar-chart, treemap, patterns\\n- Timeline and spiral moved to Market Maps\\n- New 'Data Views' group created with slope, chord, wordcloud, marimekko, sankey\\n- Candlestick moved from Admin to Advanced group\\n- Updated tiers.ts: slope/chord/wordcloud/marimekko/sankey moved from STRATEGIST_ONLY to ANALYST_PATHS, candlestick moved from ADMIN_PATHS to STRATEGIST_ONLY_PATHS\\n- Removed candlestick from ADMIN_ITEMS and ADMIN_VIZ_HREFS\n\n## Verification\n\nBuild passes. Tier paths verified via grep.\n\n## Verification Evidence\n\n| # | Command | Exit Code | Verdict | Duration |\n|---|---------|-----------|---------|----------|\n| 1 | `npx next build` | 0 | ✅ pass | 23200ms |\n\n## Deviations\n\nNone.\n\n## Known Issues\n\nNone.\n\n## Files Created/Modified\n\n- `components/dashboard/sidebar.tsx`\n- `lib/tiers.ts`\n",
+      "description": "1. In sidebar.tsx:\n   - Trim Financial to: bar-chart, patterns\n   - Move timeline, spiral to Market Maps\n   - Move marimekko, sankey to a new 'Data Views' group (analyst level)\n   - Move slope, chord, wordcloud to 'Data Views'\n   - Move candlestick from ADMIN_ITEMS to Advanced group\n   - Remove candlestick from ADMIN_VIZ_HREFS\n2. In tiers.ts:\n   - Add slope, chord, wordcloud to ANALYST_PATHS (they were STRATEGIST_ONLY)\n   - Move candlestick from ADMIN_PATHS to STRATEGIST_ONLY_PATHS\n   - Add marimekko, sankey to ANALYST_PATHS if appropriate\n3. Build and verify",
+      "estimate": "20min",
+      "files": [
+        "components/dashboard/sidebar.tsx",
+        "lib/tiers.ts"
+      ],
+      "verify": "Build passes. Grep tier paths for moved charts.",
+      "inputs": [
+        "Site review feedback",
+        "Current sidebar structure"
+      ],
+      "expected_output": [
+        "sidebar.tsx modified",
+        "tiers.ts modified"
+      ],
+      "observability_impact": "",
+      "full_plan_md": "",
+      "sequence": 0
+    },
+    {
+      "milestone_id": "M016",
+      "slice_id": "S03",
+      "id": "T01",
+      "title": "Added collapsible 'How to read this chart' explanations to 5 advanced charts and hid filters on settings page.",
+      "status": "complete",
+      "one_liner": "Added collapsible 'How to read this chart' explanations to 5 advanced charts and hid filters on settings page.",
+      "narrative": "Added `<details>` collapsible 'How to read this chart' sections to heatmap, parallel coords, box plot, distribution, and scatter matrix pages. Each provides a 2-3 sentence interpretation guide explaining what the visual patterns mean and how to interact. Hidden FilterToolbar on /dashboard/settings by checking pathname in sidebar-shell.tsx. Skipped landscape-intro star feature — the shortlist star already exists in the hover card, and adding it to domain-level summary cards doesn't make sense since domains aren't individual companies.",
+      "verification_result": "Build passes.",
+      "duration": "",
+      "completed_at": "2026-04-05T14:00:17.422Z",
+      "blocker_discovered": false,
+      "deviations": "Skipped landscape-intro star — shortlist is a company-level feature, not a domain-level one. The star already appears in the hover card when hovering individual company tiles.",
+      "known_issues": "None.",
+      "key_files": [
+        "app/dashboard/heatmap/page.tsx",
+        "app/dashboard/parallel/page.tsx",
+        "app/dashboard/box-plot/page.tsx",
+        "app/dashboard/distribution/page.tsx",
+        "app/dashboard/splom/page.tsx",
+        "components/dashboard/sidebar-shell.tsx"
+      ],
+      "key_decisions": [
+        "Used <details> for collapsible explanations — doesn't clutter the UI by default",
+        "Hidden filters via pathname check in sidebar-shell rather than per-page prop"
+      ],
+      "full_summary_md": "---\nid: T01\nparent: S03\nmilestone: M016\nkey_files:\n  - app/dashboard/heatmap/page.tsx\n  - app/dashboard/parallel/page.tsx\n  - app/dashboard/box-plot/page.tsx\n  - app/dashboard/distribution/page.tsx\n  - app/dashboard/splom/page.tsx\n  - components/dashboard/sidebar-shell.tsx\nkey_decisions:\n  - Used <details> for collapsible explanations — doesn't clutter the UI by default\n  - Hidden filters via pathname check in sidebar-shell rather than per-page prop\nduration: \nverification_result: passed\ncompleted_at: 2026-04-05T14:00:17.421Z\nblocker_discovered: false\n---\n\n# T01: Added collapsible 'How to read this chart' explanations to 5 advanced charts and hid filters on settings page.\n\n**Added collapsible 'How to read this chart' explanations to 5 advanced charts and hid filters on settings page.**\n\n## What Happened\n\nAdded `<details>` collapsible 'How to read this chart' sections to heatmap, parallel coords, box plot, distribution, and scatter matrix pages. Each provides a 2-3 sentence interpretation guide explaining what the visual patterns mean and how to interact. Hidden FilterToolbar on /dashboard/settings by checking pathname in sidebar-shell.tsx. Skipped landscape-intro star feature — the shortlist star already exists in the hover card, and adding it to domain-level summary cards doesn't make sense since domains aren't individual companies.\n\n## Verification\n\nBuild passes.\n\n## Verification Evidence\n\n| # | Command | Exit Code | Verdict | Duration |\n|---|---------|-----------|---------|----------|\n| 1 | `npx next build` | 0 | ✅ pass | 26700ms |\n\n## Deviations\n\nSkipped landscape-intro star — shortlist is a company-level feature, not a domain-level one. The star already appears in the hover card when hovering individual company tiles.\n\n## Known Issues\n\nNone.\n\n## Files Created/Modified\n\n- `app/dashboard/heatmap/page.tsx`\n- `app/dashboard/parallel/page.tsx`\n- `app/dashboard/box-plot/page.tsx`\n- `app/dashboard/distribution/page.tsx`\n- `app/dashboard/splom/page.tsx`\n- `components/dashboard/sidebar-shell.tsx`\n",
+      "description": "1. Add a brief explanatory paragraph to the page description on:\n   - /dashboard/heatmap\n   - /dashboard/parallel\n   - /dashboard/box-plot\n   - /dashboard/distribution\n   - /dashboard/splom\n2. Hide FilterToolbar on /dashboard/settings by checking pathname in sidebar-shell.tsx\n3. Build and verify",
+      "estimate": "20min",
+      "files": [
+        "app/dashboard/heatmap/page.tsx",
+        "app/dashboard/parallel/page.tsx",
+        "app/dashboard/box-plot/page.tsx",
+        "app/dashboard/distribution/page.tsx",
+        "app/dashboard/splom/page.tsx",
+        "components/dashboard/sidebar-shell.tsx"
+      ],
+      "verify": "Build passes.",
+      "inputs": [
+        "Site review feedback"
+      ],
+      "expected_output": [
+        "6 files modified"
+      ],
+      "observability_impact": "",
+      "full_plan_md": "",
+      "sequence": 0
     }
   ],
   "decisions": [
@@ -6793,6 +7053,39 @@
       "verdict": "✅ pass (all 3 targets ≥70: 96, 96, 77)",
       "duration_ms": 200000,
       "created_at": "2026-04-04T08:52:09.242Z"
+    },
+    {
+      "id": 173,
+      "task_id": "T01",
+      "slice_id": "S01",
+      "milestone_id": "M016",
+      "command": "npx next build",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 31600,
+      "created_at": "2026-04-05T13:53:28.462Z"
+    },
+    {
+      "id": 174,
+      "task_id": "T01",
+      "slice_id": "S02",
+      "milestone_id": "M016",
+      "command": "npx next build",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 23200,
+      "created_at": "2026-04-05T13:56:18.143Z"
+    },
+    {
+      "id": 175,
+      "task_id": "T01",
+      "slice_id": "S03",
+      "milestone_id": "M016",
+      "command": "npx next build",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 26700,
+      "created_at": "2026-04-05T14:00:17.422Z"
     }
   ]
 }
