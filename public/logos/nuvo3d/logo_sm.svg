@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <rect width="128" height="128" rx="16" fill="#1c2128"/>
+  <rect x="2" y="2" width="124" height="124" rx="14" fill="none" stroke="#196c2e" stroke-width="2" opacity="0.3"/>
+  <text x="64" y="72" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="42" font-weight="700" fill="#196c2e">N</text>
+</svg>
