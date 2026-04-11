@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exported_at": "2026-04-05T17:07:21.546Z",
+  "exported_at": "2026-04-10T22:41:29.753Z",
   "milestones": [
     {
       "id": "M001",
@@ -895,6 +895,81 @@
       ],
       "requirement_coverage": "Enhances existing filter UX.",
       "boundary_map_markdown": "```\\nFilter context: add subcategories[] filter, make it contextual to investmentLists[]\\nToolbar: replace Subsegment dropdown with Subcategory\\nCompany data: subcategories field already loaded\\n```"
+    },
+    {
+      "id": "M018",
+      "title": "",
+      "status": "queued",
+      "depends_on": [],
+      "created_at": "2026-04-10T22:27:39.057Z",
+      "completed_at": null,
+      "vision": "Make ThreadMoat a reference tool (not just exploration), gate data for a permanent free tier that fuels the go-to-market flywheel, smooth the upgrade/downgrade paths between plans, and add a scenario-aware narrative thread so users know what to look at and why.",
+      "success_criteria": [
+        "Authenticated users can search companies by name/category/investor with fuzzy type-ahead and open a curated profile with expandable sections",
+        "Free (Recon) users see top 50 companies by weighted score across search, profiles, and free charts — with upgrade CTAs on gated content",
+        "Recon tier no longer expires after 30 days — permanent free access",
+        "Strategist subscription expiry gracefully falls back to Analyst (if prior purchase) or Recon",
+        "Pricing page reflects permanent free tier and clear value progression",
+        "Each of the 4 focus scenarios has an intro narrative, per-chart annotations, and suggested next-chart flow",
+        "Build passes with zero errors"
+      ],
+      "key_risks": [
+        {
+          "risk": "Search performance with 1,840 companies on client-side fuzzy matching",
+          "whyItMatters": "Type-ahead needs to feel instant (<100ms). If the full dataset is already client-side this is fine, but if we need server-side search it adds complexity."
+        },
+        {
+          "risk": "Data gating for free tier touches every chart component",
+          "whyItMatters": "All 44+ charts currently receive the full dataset. Filtering to 50 companies needs to happen at a single chokepoint, not per-chart."
+        },
+        {
+          "risk": "Subscription state transitions have edge cases",
+          "whyItMatters": "User has Analyst one-time + Strategist annual → Strategist expires → must correctly detect and fall back to Analyst, not Recon."
+        },
+        {
+          "risk": "Narrative content quality across 4 scenarios × ~15 charts each",
+          "whyItMatters": "Each annotation must genuinely help the user understand what to look for in that specific chart for their scenario. Generic text would be worse than no text."
+        }
+      ],
+      "proof_strategy": [
+        {
+          "riskOrUnknown": "Search performance",
+          "retireIn": "S01",
+          "whatWillBeProven": "Type-ahead renders results in <100ms with full dataset via client-side fuzzy search (fuse.js or similar)"
+        },
+        {
+          "riskOrUnknown": "Data gating chokepoint",
+          "retireIn": "S02",
+          "whatWillBeProven": "Single filtering layer in the API or data loader gates companies by tier — charts receive pre-filtered data"
+        },
+        {
+          "riskOrUnknown": "Subscription fallback logic",
+          "retireIn": "S03",
+          "whatWillBeProven": "getUserSubscription correctly returns Analyst tier when Strategist expires but Analyst purchase exists"
+        },
+        {
+          "riskOrUnknown": "Narrative content quality",
+          "retireIn": "S04",
+          "whatWillBeProven": "Each scenario has a distinct intro, and per-chart annotations reference specific data dimensions relevant to that scenario's analytical question"
+        }
+      ],
+      "verification_contract": "Build passes zero errors. Search bar renders type-ahead results. Company profile page loads with expandable sections. Free tier sees exactly 50 companies. Paid tiers see all companies. Upgrade CTAs visible to free users. Scenario narratives render on dashboard pages.",
+      "verification_integration": "Search integrates with existing filter context. Data gating works across search, profiles, and all chart pages. Tier detection correctly handles all product_id combinations. Narrative annotations consume scenario context and render per-chart.",
+      "verification_operational": "No performance regression on dashboard page loads. Search type-ahead responsive. Stripe webhook handles subscription.deleted correctly for fallback.",
+      "verification_uat": "Manual: search for a known company, verify profile content. Log in as free user, confirm 50-company limit. Let a Strategist subscription expire, verify fallback to correct tier. Select each scenario, verify intro narrative and per-chart annotations are relevant.",
+      "definition_of_done": [
+        "Company search bar with fuzzy type-ahead works from any dashboard page",
+        "Company profile shows curated sections with correct data for all field groups",
+        "Free Recon users see exactly top 50 companies (no expiry)",
+        "Upgrade CTAs shown on gated content with 'Showing X of 500+' indicators",
+        "Strategist→Analyst fallback works when subscription expires",
+        "Pricing page updated with permanent free tier messaging",
+        "Each of the 4 scenarios has intro narrative + per-chart annotations + next-chart guidance",
+        "Build passes with zero errors",
+        "All 4 requirements (R022, R023, R024, R025) advanced or validated"
+      ],
+      "requirement_coverage": "R022 (Company search & profile) → S01. R023 (Free preview tier) → S02. R024 (Plan transitions) → S03. R025 (Scenario-aware narrative thread) → S04.",
+      "boundary_map_markdown": "```\\nS01: Company Search & Profile\\n  ├─ search bar component (near filter toolbar)\\n  ├─ fuzzy search logic (fuse.js)\\n  ├─ company profile page/panel\\n  └─ expandable section components\\n\\nS02: Free Preview Tier\\n  ├─ preview company selection (top 50 by weightedScore)\\n  ├─ data gating layer (API or loader)\\n  ├─ remove 30-day Recon expiry\\n  ├─ upgrade CTAs + count indicators\\n  └─ search/profile tier gating\\n\\nS03: Plan Transition Polish\\n  ├─ subscription fallback logic\\n  ├─ expiry banners\\n  ├─ pricing page updates\\n  └─ Stripe webhook edge cases\\n\\nS04: Scenario-Aware Narrative Thread\\n  ├─ scenario intro narratives (4 scenarios)\\n  ├─ per-chart annotations (scenario-specific)\\n  ├─ suggested chart order / next-step links\\n  └─ narrative data structure + rendering\\n```"
     }
   ],
   "slices": [
@@ -2044,6 +2119,92 @@
       "integration_closure": "filter-context.tsx + filter-toolbar.tsx",
       "observability_impact": "None",
       "sequence": 0,
+      "replan_triggered_at": null
+    },
+    {
+      "milestone_id": "M018",
+      "id": "S01",
+      "title": "Company Search & Profile",
+      "status": "pending",
+      "risk": "medium",
+      "depends": [],
+      "demo": "User types a company name in the search bar, sees fuzzy results, clicks one, and views a curated profile with expandable sections showing all ThreadMoat data for that company.",
+      "created_at": "2026-04-10T22:28:55.290Z",
+      "completed_at": null,
+      "full_summary_md": "",
+      "full_uat_md": "",
+      "goal": "Add a compact search bar near the filter toolbar with fuzzy type-ahead, and a company profile page with curated expandable sections (hero, financials, scores, investors, customers, tags, AI narrative).",
+      "success_criteria": "Search bar renders on all dashboard pages. Fuzzy matching works across name, category, subcategory, investors. Company profile loads with all field groups in expandable sections. Build passes.",
+      "proof_level": "build-passes + manual-verification",
+      "integration_closure": "Search bar integrated into dashboard layout (near filter toolbar). Profile accessible via search results. Data sourced from existing loadCompanyData pipeline.",
+      "observability_impact": "None — uses existing data pipeline.",
+      "sequence": 1,
+      "replan_triggered_at": null
+    },
+    {
+      "milestone_id": "M018",
+      "id": "S02",
+      "title": "Free Preview Tier",
+      "status": "pending",
+      "risk": "high",
+      "depends": [
+        "S01"
+      ],
+      "demo": "A free Recon user logs in, sees 50 companies in search and charts, sees 'Showing 50 of 500+ companies' indicators, and sees upgrade CTAs on gated content. No 30-day expiry.",
+      "created_at": "2026-04-10T22:28:55.290Z",
+      "completed_at": null,
+      "full_summary_md": "",
+      "full_uat_md": "",
+      "goal": "Gate data by tier: free users see top 50 companies by weighted score across all surfaces (search, profiles, charts). Remove Recon trial expiry. Add upgrade CTAs.",
+      "success_criteria": "Free user sees exactly 50 companies in search and charts. Paid users see all. Recon has no expiry. Upgrade CTAs visible. 'Showing X of 500+' indicators present. Build passes.",
+      "proof_level": "build-passes + manual-verification",
+      "integration_closure": "Data gating happens at a single chokepoint (API or data loader). All chart components receive pre-filtered data. Search respects tier gating.",
+      "observability_impact": "Log tier-based data filtering for analytics.",
+      "sequence": 2,
+      "replan_triggered_at": null
+    },
+    {
+      "milestone_id": "M018",
+      "id": "S03",
+      "title": "Plan Transition Polish",
+      "status": "pending",
+      "risk": "medium",
+      "depends": [
+        "S02"
+      ],
+      "demo": "A Strategist subscription expires. If the user previously purchased Analyst, they fall back to Analyst access. If not, they fall back to Recon. Expiry banner shows 14 days before renewal. Pricing page reflects permanent free tier.",
+      "created_at": "2026-04-10T22:28:55.291Z",
+      "completed_at": null,
+      "full_summary_md": "",
+      "full_uat_md": "",
+      "goal": "Handle subscription expiry gracefully with correct tier fallback, add expiry warning banners, and update pricing page messaging for the permanent free tier.",
+      "success_criteria": "Strategist→Analyst fallback works when prior Analyst purchase exists. Strategist→Recon fallback works otherwise. Expiry banners show at 14-day and 7-day marks. Pricing page updated. Build passes.",
+      "proof_level": "build-passes + manual-verification",
+      "integration_closure": "Fallback logic in getUserSubscription. Expiry banners in dashboard layout. Pricing page content updates.",
+      "observability_impact": "Log subscription state transitions for debugging.",
+      "sequence": 3,
+      "replan_triggered_at": null
+    },
+    {
+      "milestone_id": "M018",
+      "id": "S04",
+      "title": "Scenario-Aware Narrative Thread",
+      "status": "pending",
+      "risk": "medium",
+      "depends": [
+        "S01"
+      ],
+      "demo": "User selects 'White Space Filler' scenario. Dashboard landing shows an intro narrative explaining the analytical journey. Each chart page has a scenario-specific annotation explaining what to look for. A 'Next: See funding patterns →' link guides to the logical next chart.",
+      "created_at": "2026-04-10T22:41:29.730Z",
+      "completed_at": null,
+      "full_summary_md": "",
+      "full_uat_md": "",
+      "goal": "Add narrative guidance layer to the 4 focus scenarios: intro narratives on dashboard landing, per-chart annotations explaining what to look for and why, and a suggested chart reading order with next-step links.",
+      "success_criteria": "Each of 4 scenarios has a distinct intro narrative on the dashboard landing. Charts within each scenario dashboard show scenario-specific annotations. Next-chart links guide the user through a logical analytical flow. Build passes.",
+      "proof_level": "build-passes + manual-verification",
+      "integration_closure": "Narratives consume scenario from ScenarioContext. Annotations render in the 4 dashboard components (StartupDashboard, VCDashboard, OEMDashboard, ISVDashboard) and on individual chart pages. Next-step links use existing sidebar chart routing.",
+      "observability_impact": "None — static content layer.",
+      "sequence": 4,
       "replan_triggered_at": null
     }
   ],
@@ -5304,6 +5465,42 @@
       "rationale": "Weights growth metrics highest (40%) as the most direct momentum signal, with customer signal and momentum multiplier equally weighted at 30% each. Each component normalized to 0–1 by dividing by its known max (growthMetrics max 5, customerSignalScore max 8, momentumMultiplier max 2.73). Zero-division guarded with fallback defaults.",
       "revisable": "Yes — weights and normalization ranges can be tuned based on SME feedback",
       "made_by": "agent",
+      "superseded_by": null
+    },
+    {
+      "seq": 6,
+      "id": "D006",
+      "when_context": "",
+      "scope": "product",
+      "decision": "Free preview tier data visibility",
+      "choice": "Top 50 companies by weighted score, auto-selected. Permanent free access (no 30-day expiry). Free users see 3 charts + search/profiles for preview companies.",
+      "rationale": "50 companies is enough to prove product depth without giving away alpha. Auto-select by score is low-maintenance. Permanent access builds habit and email list without time-pressure resentment.",
+      "revisable": "Yes",
+      "made_by": "collaborative",
+      "superseded_by": null
+    },
+    {
+      "seq": 7,
+      "id": "D007",
+      "when_context": "",
+      "scope": "product",
+      "decision": "Launch pricing strategy",
+      "choice": "Keep current pricing: Analyst $4,999 one-time, Strategist €18,999/yr. No founding discount. Analyst stays one-time purchase.",
+      "rationale": "Signal premium positioning from day one. Lower pricing can always be offered via targeted coupons for strategic early customers without anchoring the public price low.",
+      "revisable": "Yes",
+      "made_by": "collaborative",
+      "superseded_by": null
+    },
+    {
+      "seq": 8,
+      "id": "D008",
+      "when_context": "",
+      "scope": "ux",
+      "decision": "Company search UX pattern",
+      "choice": "Compact search bar integrated near the filter toolbar (not a separate page). Collapses/minimizes when not in use. Results open a company profile panel/page with curated expandable sections.",
+      "rationale": "Keeps users in context — they can search without leaving their current chart. Avoids adding another sidebar nav item. Search bar near filters is a natural location since both are data-narrowing tools.",
+      "revisable": "Yes",
+      "made_by": "collaborative",
       "superseded_by": null
     }
   ],

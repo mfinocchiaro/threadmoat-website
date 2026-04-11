@@ -1,9 +1,9 @@
 # GSD State
 
-**Last Completed Milestone:** M017: Subcategory Filter — Secondary Drill-Down Under Investment List
-**Active Slice:** None
-**Phase:** complete
-**Requirements Status:** 0 active · 12 validated · 0 deferred · 0 out of scope
+**Active Milestone:** M018: M018
+**Active Slice:** S01: Company Search & Profile
+**Phase:** planning
+**Requirements Status:** 4 active · 12 validated · 0 deferred · 0 out of scope
 
 ## Milestone Registry
 - ✅ **M001:** v1.1 UX & Data Polish
@@ -23,6 +23,7 @@
 - ✅ **M015:** Dashboard Performance Optimization — Red-Tier Pages
 - ✅ **M016:** Site Review Fixes — Pricing, Translations, Sidebar & UX Polish
 - ✅ **M017:** Subcategory Filter — Secondary Drill-Down Under Investment List
+- 🔄 **M018:** M018
 
 ## Recent Decisions
 - None recorded
@@ -31,4 +32,4 @@
 - None
 
 ## Next Action
-All milestones complete.
+Slice S01 has a plan file but no tasks. Add tasks to the plan.

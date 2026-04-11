@@ -2,6 +2,40 @@
 
 This file is the explicit capability and coverage contract for the project.
 
+## Active
+
+### R022 — Company search bar with fuzzy type-ahead — search by name, category, subcategory, investors. Results open a curated company profile with expandable sections (hero card, financials, scores, investors, customers, tags, AI narrative).
+- Class: functional
+- Status: active
+- Description: Company search bar with fuzzy type-ahead — search by name, category, subcategory, investors. Results open a curated company profile with expandable sections (hero card, financials, scores, investors, customers, tags, AI narrative).
+- Why it matters: Users who already know which companies they want to explore need a direct path without navigating through charts. Makes the platform a reference tool, not just an exploration tool.
+- Source: user-feedback
+- Primary owning slice: M018/S01
+
+### R023 — Free preview tier — permanent Recon access (no 30-day expiry) with top 50 companies by weighted score visible across search, profiles, and the 3 existing free charts. Upgrade CTAs and 'Showing X of 500+' indicators on gated content.
+- Class: functional
+- Status: active
+- Description: Free preview tier — permanent Recon access (no 30-day expiry) with top 50 companies by weighted score visible across search, profiles, and the 3 existing free charts. Upgrade CTAs and 'Showing X of 500+' indicators on gated content.
+- Why it matters: Enables the content marketing flywheel — LinkedIn posts drive signups, free tier builds habit and email list, upgrade CTAs convert to paid. Removes trial expiry friction that kills retention.
+- Source: go-to-market strategy
+- Primary owning slice: M018/S02
+
+### R024 — Smooth plan transitions — Strategist expiry falls back to Analyst (if prior purchase) or Recon. Subscription expiry banners. Pricing page messaging reflects permanent free tier and tier value propositions.
+- Class: functional
+- Status: active
+- Description: Smooth plan transitions — Strategist expiry falls back to Analyst (if prior purchase) or Recon. Subscription expiry banners. Pricing page messaging reflects permanent free tier and tier value propositions.
+- Why it matters: Users who downgrade or let subscriptions expire need a graceful experience that maintains trust and keeps the door open for re-subscription. Bad downgrade UX creates resentment.
+- Source: go-to-market strategy
+- Primary owning slice: M018/S03
+
+### R025 — Scenario-aware narrative thread — each of the 4 focus scenarios (Competitive Moat, Investment Thesis, White Space, Acquisition Radar) gets contextual guidance: an intro narrative explaining the analytical journey, per-chart annotations explaining what to look for and why this chart matters for that scenario, and a suggested chart order / "next step" flow.
+- Class: functional
+- Status: active
+- Description: Scenario-aware narrative thread — each of the 4 focus scenarios (Competitive Moat, Investment Thesis, White Space, Acquisition Radar) gets contextual guidance: an intro narrative explaining the analytical journey, per-chart annotations explaining what to look for and why this chart matters for that scenario, and a suggested chart order / "next step" flow.
+- Why it matters: Without narrative thread, the dashboard is a random collection of charts. Users (especially first-time) don't know what to look at, in what order, or what insights to extract. Scenario-aware guidance turns the product from a toolbox into a guided analysis experience — critical for justifying premium pricing and reducing churn.
+- Source: user-feedback (James)
+- Primary owning slice: M018/S04
+
 ## Validated
 
 ### DATA-01 — CSV data refresh from corrected dataset (swap file when available)
@@ -117,6 +151,10 @@ This file is the explicit capability and coverage contract for the project.
 | R019 | functional | validated | M012/S01 | M012/S02 | analytics_events table live in Neon with 3 indexes; POST /api/analytics/event returns 401 without auth; usePageViewTracker covers 52 dashboard routes; 5 interaction event types instrumented; build passes zero errors |
 | R020 | functional | validated | M013/S01 | M013/S02 | Co-investment heatmap at /dashboard/co-investment and investor comparison at /dashboard/investor-compare both built, sidebar wired, build passes (107 routes, zero errors) |
 | R021 | operational | validated | M014/S01 | M014/S02 | scripts/lighthouse-dashboard.mjs captures scores for 10 auth-gated pages; JSON reports saved to .gsd/lighthouse/; DASHBOARD-BASELINE.md documents all results |
+| R022 | functional | active | M018/S01 | none | unmapped |
+| R023 | functional | active | M018/S02 | none | unmapped |
+| R024 | functional | active | M018/S03 | none | unmapped |
+| R025 | functional | active | M018/S04 | none | unmapped |
 | UX-01 | core-capability | validated | S01 | none | S01 delivered FilterToolbar in sidebar-shell.tsx as compact sticky element. Build passes. |
 | UX-02 | core-capability | validated | S01 | none | S01 delivered Badge chips with X remove buttons in filter-toolbar.tsx. removeFilter and clearAllFilters in filter-context.tsx. |
 | UX-03 | core-capability | validated | S01 | none | S01 lifted FilterProvider to layout-level DashboardLayoutClient. Filter state persists across all dashboard navigation. |
@@ -125,7 +163,7 @@ This file is the explicit capability and coverage contract for the project.
 
 ## Coverage Summary
 
-- Active requirements: 0
-- Mapped to slices: 0
+- Active requirements: 4
+- Mapped to slices: 4
 - Validated: 12 (DATA-01, DATA-02, I18N-06, MON-01, R019, R020, R021, UX-01, UX-02, UX-03, UX-04, UX-05)
 - Unmapped active requirements: 0

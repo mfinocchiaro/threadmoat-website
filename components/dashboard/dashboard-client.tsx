@@ -14,6 +14,7 @@ import { Rocket, TrendingUp, Building2, Layers } from "lucide-react"
 import { FOCUS_SCENARIOS } from "@/components/dashboard/sidebar"
 import { LayoutProvider } from "@/contexts/layout-context"
 import { ConfigPanel } from "@/components/dashboard/config-panel"
+import { ScenarioNarrative } from "@/components/dashboard/scenario-narrative"
 import { usePlan } from "@/contexts/plan-context"
 import { maskCompanies } from "@/lib/name-masking"
 
@@ -83,10 +84,11 @@ function DashboardInner({ companies, isLoading, profileType, onSelectProfile, is
 
   return (
     <>
-      <div className="mb-4">
+      <div className="mb-4 space-y-4">
         <h2 className="text-lg font-semibold">
           {scenarioData?.label ?? "Dashboard"}
         </h2>
+        <ScenarioNarrative scenario={profileType} />
       </div>
 
       <ThesisResults companies={maskedCompanies} />
