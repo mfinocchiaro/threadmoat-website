@@ -1,21 +1,13 @@
 import { redirect } from "next/navigation"
 import { auth } from "@/auth"
 import { sql } from "@/lib/db"
+import { isAdmin } from "@/lib/admin"
 import { UsersTable } from "./users-table"
 import { CouponsSection } from "./coupons-section"
 import { CrmExportButton } from "./crm-export-button"
 import { FunnelChart } from "./funnel-chart"
-import { Users, Ticket, Download, TrendingUp } from "lucide-react"
-
-async function isAdmin(userId: string, email: string): Promise<boolean> {
-  const rows = await sql`SELECT is_admin FROM profiles WHERE id = ${userId}`
-  if (rows[0]?.is_admin === true) return true
-  const adminEmails = (process.env.ADMIN_EMAILS || '')
-    .split(',')
-    .map(e => e.trim())
-    .filter(Boolean)
-  return adminEmails.includes(email)
-}
+import { CohortAnalytics } from "./cohort-analytics"
+import { Users, Ticket, Download, TrendingUp, BarChart3 } from "lucide-react"
 
 export default async function AdminPage() {
   const session = await auth()
@@ -116,6 +108,17 @@ export default async function AdminPage() {
           </h3>
         </div>
         <FunnelChart />
+      </div>
+
+      {/* Cohort Analytics */}
+      <div className="rounded-lg border border-border p-4 bg-card space-y-4">
+        <div className="flex items-center gap-2">
+          <BarChart3 className="h-4 w-4 text-muted-foreground" />
+          <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+            Cohort Analytics
+          </h3>
+        </div>
+        <CohortAnalytics />
       </div>
 
       {/* Users Table */}
