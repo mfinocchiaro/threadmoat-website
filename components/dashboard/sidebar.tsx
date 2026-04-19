@@ -10,7 +10,7 @@ import {
   SlidersHorizontal, BoxSelect, Activity, MoveRight, Type,
   Link2, ScatterChart, BarChart3, RefreshCw, Users, GridIcon, FileText, Eye,
   Compass, Focus, Rocket, Building2, Layers, ChevronDown, Globe2,
-  Shield, Zap, UserCircle,
+  Shield, Zap, UserCircle, ShieldCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -167,6 +167,10 @@ const ADMIN_ITEMS = [
   { href: "/dashboard/ip-dependency",   icon: Shield,     label: "IP Dependency" },
   { href: "/dashboard/co-investment",  icon: GitCompare, label: "Co-Investment" },
   { href: "/dashboard/investor-compare", icon: Users, label: "Investor Compare" },
+];
+
+const ADMIN_TOOLS = [
+  { href: "/dashboard/admin", icon: ShieldCheck, label: "Admin Panel" },
 ];
 
 const BOTTOM_ITEMS = [
@@ -481,7 +485,10 @@ export function Sidebar({ collapsed, onToggle, onSelectScenario, activeScenario,
         </ScrollArea>
 
         {/* Bottom items */}
-        <div className="border-t border-border py-2 px-2">
+        <div className="border-t border-border py-2 px-2 space-y-0.5">
+          {isAdmin && ADMIN_TOOLS.map(item => (
+            <NavLink key={item.href} {...item} collapsed={collapsed} />
+          ))}
           {BOTTOM_ITEMS.map(item => (
             <NavLink key={item.href} {...item} collapsed={collapsed} />
           ))}
