@@ -1,16 +1,7 @@
 import { NextResponse } from 'next/server'
 import { auth } from '@/auth'
 import { sql } from '@/lib/db'
-
-async function isAdmin(userId: string, email: string): Promise<boolean> {
-  const rows = await sql`SELECT is_admin FROM profiles WHERE id = ${userId}`
-  if (rows[0]?.is_admin === true) return true
-  const adminEmails = (process.env.ADMIN_EMAILS || '')
-    .split(',')
-    .map(e => e.trim())
-    .filter(Boolean)
-  return adminEmails.includes(email)
-}
+import { isAdmin } from '@/lib/admin'
 
 // GET /api/admin/funnel — conversion funnel data
 export async function GET() {

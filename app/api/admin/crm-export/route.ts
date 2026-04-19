@@ -1,17 +1,7 @@
 import { NextResponse } from 'next/server'
 import { auth } from '@/auth'
 import { sql } from '@/lib/db'
-
-async function isAdmin(userId: string, email: string): Promise<boolean> {
-  const rows = await sql`SELECT is_admin FROM profiles WHERE id = ${userId}`
-  if (rows[0]?.is_admin === true) return true
-
-  const adminEmails = (process.env.ADMIN_EMAILS || '')
-    .split(',')
-    .map(e => e.trim())
-    .filter(Boolean)
-  return adminEmails.includes(email)
-}
+import { isAdmin, logAdminAction } from '@/lib/admin'
 
 function toCsv(rows: Record<string, unknown>[]): string {
   if (rows.length === 0) return ''
@@ -39,6 +29,9 @@ export async function GET() {
   if (!(await isAdmin(session.user.id, session.user.email))) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
+
+  // Audit log: PII export triggered
+  await logAdminAction(session.user.id, 'crm_export', { email: session.user.email })
 
   const rows = await sql`
     SELECT
