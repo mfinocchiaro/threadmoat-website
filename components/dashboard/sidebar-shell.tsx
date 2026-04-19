@@ -25,6 +25,7 @@ export function SidebarShell({
   isAdmin = false,
   isFreeUser = false,
   accessTier = 'explorer',
+  daysRemaining = null,
 }: {
   user: Session["user"];
   profile?: Profile;
@@ -34,6 +35,7 @@ export function SidebarShell({
   isAdmin?: boolean;
   isFreeUser?: boolean;
   accessTier?: AccessTier;
+  daysRemaining?: number | null;
 }) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -65,6 +67,7 @@ export function SidebarShell({
     isAdmin,
     isFreeUser,
     accessTier,
+    daysRemaining,
   };
 
   return (
@@ -79,6 +82,7 @@ export function SidebarShell({
           isAdmin={isAdmin}
           isFreeUser={isFreeUser}
           accessTier={accessTier}
+          daysRemaining={daysRemaining}
         />
       </div>
 
