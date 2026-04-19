@@ -111,6 +111,14 @@ export function getAccessTier(productId: string | null | undefined, isAdmin: boo
   }
 }
 
+/** Maximum companies returned by /api/companies per tier (null = unlimited) */
+export const TIER_COMPANY_LIMITS: Record<AccessTier, number | null> = {
+  explorer: 50,
+  analyst: 100,
+  strategist: null,
+  admin: null,
+}
+
 /** Human-readable tier label for UI */
 export function getTierLabel(tier: AccessTier): string {
   switch (tier) {

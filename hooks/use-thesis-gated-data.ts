@@ -17,7 +17,7 @@ export function useThesisGatedData() {
   const { ids: shortlistIds } = useShortlist()
 
   useEffect(() => {
-    loadCompanyData().then(data => { setAllCompanies(data); setIsLoading(false) })
+    loadCompanyData().then(({ companies }) => { setAllCompanies(companies); setIsLoading(false) })
   }, [])
 
   const hasThesis = !!activeThesis

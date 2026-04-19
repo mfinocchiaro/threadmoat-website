@@ -114,7 +114,7 @@ export function DashboardClient({ isAdmin = false }: { profileType?: string; isA
   const { scenario, setScenario } = useScenario()
 
   useEffect(() => {
-    loadCompanyData().then(data => { setCompanies(data); setIsLoading(false) })
+    loadCompanyData().then(({ companies: data }) => { setCompanies(data); setIsLoading(false) })
   }, [])
 
   return (
