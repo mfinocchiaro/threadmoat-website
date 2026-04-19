@@ -9,6 +9,7 @@ import { LanguageSwitcher } from '@/components/language-switcher'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { buildAlternates, buildOpenGraph } from '@/lib/metadata'
 import { getAllPosts } from '@/lib/blog'
+import { NewsletterSignup } from '@/components/homepage/newsletter-signup'
 
 type Props = { params: Promise<{ locale: string }> }
 
@@ -117,6 +118,19 @@ export default async function InsightsPage({ params }: Props) {
             ))}
           </div>
         )}
+      </section>
+
+      {/* Newsletter */}
+      <section className="border-t border-border/40 bg-muted/30">
+        <div className="container mx-auto px-4 py-10 text-center">
+          <h3 className="text-lg font-semibold mb-2">Stay Informed</h3>
+          <p className="text-sm text-muted-foreground mb-4">
+            Get market insights delivered to your inbox.
+          </p>
+          <div className="flex justify-center">
+            <NewsletterSignup />
+          </div>
+        </div>
       </section>
 
       {/* Footer */}
