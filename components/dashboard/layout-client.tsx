@@ -9,6 +9,7 @@ import { FilterProvider } from "@/contexts/filter-context"
 import { ShortlistProvider } from "@/contexts/shortlist-context"
 import { SidebarShell } from "./sidebar-shell"
 import { FreeUserGuard } from "./free-user-guard"
+import { CompanyLimitBanner } from "./company-limit-banner"
 import { CheckoutToast } from "@/components/checkout/checkout-toast"
 import { useIdleTimeout } from "@/hooks/use-idle-timeout"
 import { usePageViewTracker } from "@/hooks/use-page-view-tracker"
@@ -48,6 +49,7 @@ function LayoutInner({ user, profile, children, isAdmin, isFreeUser, isExpiredTr
       accessTier={accessTier}
     >
       <Suspense><CheckoutToast /></Suspense>
+      <CompanyLimitBanner />
       {accessTier !== 'admin' ? (
         <FreeUserGuard accessTier={accessTier} isExpiredTrial={isExpiredTrial} daysRemaining={daysRemaining}>
           {children}

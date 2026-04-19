@@ -140,16 +140,26 @@ export async function loadInvestorData(): Promise<Investor[]> {
   }
 }
 
-export async function loadCompanyData(): Promise<Company[]> {
+export interface CompanyDataResult {
+  companies: Company[]
+  totalAvailable: number
+}
+
+export async function loadCompanyData(): Promise<CompanyDataResult> {
   try {
     const response = await fetch('/api/companies')
     const result = await response.json()
-    if (result.success) return result.data
+    if (result.success) {
+      return {
+        companies: result.data,
+        totalAvailable: result.totalAvailable ?? result.data.length,
+      }
+    }
     console.error('Failed to load companies:', result.error)
-    return []
+    return { companies: [], totalAvailable: 0 }
   } catch (error) {
     console.error('Error loading company data:', error)
-    return []
+    return { companies: [], totalAvailable: 0 }
   }
 }
 

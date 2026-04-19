@@ -5,6 +5,7 @@ import { Company, loadCompanyData } from "@/lib/company-data"
 
 interface CompanyDataContextType {
   companies: Company[]
+  totalAvailable: number
   isLoading: boolean
 }
 
@@ -12,17 +13,19 @@ const CompanyDataContext = createContext<CompanyDataContextType | undefined>(und
 
 export function CompanyDataProvider({ children }: { children: ReactNode }) {
   const [companies, setCompanies] = useState<Company[]>([])
+  const [totalAvailable, setTotalAvailable] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    loadCompanyData().then(data => {
-      setCompanies(data)
+    loadCompanyData().then(({ companies, totalAvailable }) => {
+      setCompanies(companies)
+      setTotalAvailable(totalAvailable)
       setIsLoading(false)
     })
   }, [])
 
   return (
-    <CompanyDataContext.Provider value={{ companies, isLoading }}>
+    <CompanyDataContext.Provider value={{ companies, totalAvailable, isLoading }}>
       {children}
     </CompanyDataContext.Provider>
   )

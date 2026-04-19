@@ -68,7 +68,7 @@ export default function ExplorePage() {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    loadCompanyData().then(data => {
+    loadCompanyData().then(({ companies: data }) => {
       setCompanies(data)
       setIsLoading(false)
     })
