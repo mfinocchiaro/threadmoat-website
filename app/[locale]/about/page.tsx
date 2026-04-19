@@ -9,6 +9,7 @@ import { LanguageSwitcher } from "@/components/language-switcher"
 import { FaYoutube, FaSpotify, FaApple, FaAmazon, FaDeezer, FaLinkedin } from "react-icons/fa6"
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { buildAlternates, buildOpenGraph } from '@/lib/metadata'
+import { JsonLd, organizationJsonLd } from '@/lib/json-ld'
 
 type Props = { params: Promise<{ locale: string }> }
 
@@ -36,6 +37,7 @@ export default async function AboutPage({ params }: Props) {
 
   return (
     <div className="min-h-screen bg-background">
+      <JsonLd data={organizationJsonLd()} />
       {/* Header */}
       <header className="border-b border-border/40">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
