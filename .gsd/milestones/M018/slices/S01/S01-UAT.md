@@ -1,0 +1,6 @@
+# S01: Company Search & Profile — UAT
+
+**Milestone:** M018
+**Written:** 2026-04-11T21:26:27.479Z
+
+## S01 UAT: Company Search & Profile\n\n### Search Bar\n- [x] Search input visible in filter toolbar on all dashboard pages\n- [x] Typing a company name shows fuzzy match results (top 10)\n- [x] Results show company name and subcategory\n- [x] Clicking a result navigates to /dashboard/company/[id]\n- [x] Search clears after clicking a result\n- [x] Empty query shows no dropdown\n- [x] No-match query shows 'No companies found' message\n\n### Company Profile Page\n- [x] Hero card shows name, size badge, subcategory, country, category tags\n- [x] Valuation displayed with proper currency formatting\n- [x] Overview tab: weighted score, lifecycle phase, funding round, strengths, weaknesses\n- [x] Financials tab: reported valuation, total funding, valuation confidence, financial notes\n- [x] Investors tab: badge list of investors, empty-state for companies with no investor data\n- [x] AI Narrative tab: justification sections ordered by user profile type\n- [x] Loading skeleton during data fetch\n- [x] Not Found state for invalid company IDs\n- [x] URL supports both company id and name (case-insensitive)
