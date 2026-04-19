@@ -24,6 +24,23 @@ export const PRODUCTS: Product[] = [
     ],
   },
   {
+    id: "investor_annual",
+    name: "ThreadMoat Investor",
+    description:
+      "Annual subscription — investor-focused analytics including co-investment networks, funding trends, and deal flow pipeline.",
+    priceInCents: 899900, // $8,999
+    mode: "subscription",
+    interval: "year",
+    features: [
+      "Everything in Analyst",
+      "Investor network & co-investment analysis",
+      "Funding trend time-series",
+      "Investor comparison tools",
+      "200 company profiles (vs 100 Analyst)",
+      "Deal flow pipeline tracking",
+    ],
+  },
+  {
     id: "strategist_annual",
     name: "ThreadMoat Strategist",
     description:

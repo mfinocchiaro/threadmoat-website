@@ -2,18 +2,20 @@
  * ThreadMoat Access Tier System
  *
  * Tier 1 (Recon):       Free 30-day trial — 3 graphs (network, landscape-intro, map)
- * Tier 2 (Analyst):     $18,999/yr — 13 visual analytics graphs
- * Tier 3 (Strategist):  Custom contract — all graphs except admin (~28 total)
+ * Tier 2 (Analyst):     $4,999 one-time — 15 visual analytics graphs
+ * Tier 3 (Investor):    $8,999/yr — Analyst + investor network, co-investment, funding trends
+ * Tier 4 (Strategist):  €18,999/yr — all graphs except admin (~28 total)
  * Advisory:             Custom pricing, dedicated analyst (contact-driven, no self-service)
  * Admin:                Unrestricted (via ADMIN_EMAILS env var)
  *
  * Product IDs in Neon:
  *   explorer_trial / coupon_trial  → Recon
- *   analyst_annual / friends_access / investor_annual  → Analyst
+ *   analyst_annual / friends_access → Analyst
+ *   investor_annual                → Investor
  *   strategist / strategist_annual / forge_annual  → Strategist
  */
 
-export type AccessTier = 'explorer' | 'analyst' | 'strategist' | 'admin'
+export type AccessTier = 'explorer' | 'analyst' | 'investor' | 'strategist' | 'admin'
 
 /** Utility pages — always accessible to any authenticated user */
 export const UTILITY_PATHS = new Set([
@@ -63,13 +65,20 @@ export const STRATEGIST_ONLY_PATHS = new Set([
   '/dashboard/candlestick',       // Valuation Candlestick (moved from Admin)
 ])
 
+/** Investor tier — investor-focused analytics and comparisons */
+export const INVESTOR_PATHS = new Set([
+  '/dashboard/investor-stats',
+  '/dashboard/investor-views',
+  '/dashboard/investor-compare',
+  '/dashboard/co-investment',
+  '/dashboard/funding-trends',
+])
+
 /** Admin-only analytics — never shown to non-admin users */
 export const ADMIN_PATHS = new Set([
-  '/dashboard/investor-stats',
   '/dashboard/financial-heatmap',
   '/dashboard/correlation',
   '/dashboard/reports',
-  '/dashboard/investor-views',
   '/dashboard/maturity-matrix',
   '/dashboard/swot',
 ])
@@ -81,7 +90,11 @@ export function isPathAllowed(pathname: string, tier: AccessTier): boolean {
   if (tier === 'admin') return true
 
   if (tier === 'strategist') {
-    return ANALYST_PATHS.has(pathname) || STRATEGIST_ONLY_PATHS.has(pathname)
+    return ANALYST_PATHS.has(pathname) || STRATEGIST_ONLY_PATHS.has(pathname) || INVESTOR_PATHS.has(pathname)
+  }
+
+  if (tier === 'investor') {
+    return ANALYST_PATHS.has(pathname) || INVESTOR_PATHS.has(pathname)
   }
 
   if (tier === 'analyst') {
@@ -101,8 +114,9 @@ export function getAccessTier(productId: string | null | undefined, isAdmin: boo
     case 'strategist_annual':
     case 'forge_annual':
       return 'strategist'
-    case 'analyst_annual':
     case 'investor_annual':
+      return 'investor'
+    case 'analyst_annual':
     case 'friends_access':
     case 'coupon_trial':
       return 'analyst'
@@ -115,6 +129,7 @@ export function getAccessTier(productId: string | null | undefined, isAdmin: boo
 export const TIER_COMPANY_LIMITS: Record<AccessTier, number | null> = {
   explorer: 50,
   analyst: 100,
+  investor: 200,
   strategist: null,
   admin: null,
 }
@@ -124,6 +139,7 @@ export function getTierLabel(tier: AccessTier): string {
   switch (tier) {
     case 'admin': return 'Admin'
     case 'strategist': return 'Strategist'
+    case 'investor': return 'Investor'
     case 'analyst': return 'Analyst'
     case 'explorer': return 'Recon'
   }
@@ -133,6 +149,7 @@ export function getTierLabel(tier: AccessTier): string {
 export function getRequiredTier(pathname: string): AccessTier | null {
   if (UTILITY_PATHS.has(pathname) || EXPLORER_PATHS.has(pathname)) return 'explorer'
   if (ANALYST_PATHS.has(pathname)) return 'analyst'
+  if (INVESTOR_PATHS.has(pathname)) return 'investor'
   if (STRATEGIST_ONLY_PATHS.has(pathname)) return 'strategist'
   if (ADMIN_PATHS.has(pathname)) return 'admin'
   return null
