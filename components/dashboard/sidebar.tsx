@@ -10,7 +10,7 @@ import {
   SlidersHorizontal, BoxSelect, Activity, MoveRight, Type,
   Link2, ScatterChart, BarChart3, RefreshCw, Users, GridIcon, FileText, Eye,
   Compass, Focus, Rocket, Building2, Layers, ChevronDown, Globe2,
-  Shield, Zap, UserCircle, ShieldCheck,
+  Shield, Zap, UserCircle, ShieldCheck, Target, PieChart, Kanban,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -167,6 +167,10 @@ const ADMIN_ITEMS = [
   { href: "/dashboard/ip-dependency",   icon: Shield,     label: "IP Dependency" },
   { href: "/dashboard/co-investment",  icon: GitCompare, label: "Co-Investment" },
   { href: "/dashboard/investor-compare", icon: Users, label: "Investor Compare" },
+  { href: "/dashboard/funding-trends", icon: TrendingUp, label: "Funding Trends" },
+  { href: "/dashboard/acquirer-fit", icon: Target, label: "Acquirer Fit" },
+  { href: "/dashboard/market-concentration", icon: PieChart, label: "Market HHI" },
+  { href: "/dashboard/deal-flow", icon: Kanban, label: "Deal Flow" },
 ];
 
 const ADMIN_TOOLS = [
@@ -195,6 +199,10 @@ const ADMIN_VIZ_HREFS = new Set([
   "/dashboard/ip-dependency",
   "/dashboard/co-investment",
   "/dashboard/investor-compare",
+  "/dashboard/funding-trends",
+  "/dashboard/acquirer-fit",
+  "/dashboard/market-concentration",
+  "/dashboard/deal-flow",
 ])
 
 interface SidebarProps {
