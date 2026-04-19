@@ -1,21 +1,28 @@
 import { auth } from '@/auth'
 import { sql } from '@/lib/db'
+import { isAdmin } from '@/lib/admin'
+import { getAccessTier } from '@/lib/tiers'
 import { PremiumGate } from '@/components/dashboard/premium-gate'
 import { ReportsContent } from './content'
 
-async function checkPremium(userId: string, email: string): Promise<boolean> {
-  const adminEmails = (process.env.ADMIN_EMAILS || '').split(',').map(e => e.trim()).filter(Boolean)
-  if (adminEmails.includes(email)) return true
+async function checkPaidTier(userId: string, email: string): Promise<boolean> {
+  const admin = await isAdmin(userId, email)
+  if (admin) return true
+
   try {
-    const rows = await sql`SELECT is_admin FROM profiles WHERE id = ${userId}`
-    if ((rows[0] as { is_admin?: boolean } | undefined)?.is_admin === true) return true
-  } catch { /* DB unavailable */ }
-  return false
+    const rows = await sql`SELECT product_id FROM subscriptions WHERE user_id = ${userId} AND status = 'active'`
+    const productId = (rows[0]?.product_id as string) ?? null
+    const tier = getAccessTier(productId, false)
+    // Any paid tier (analyst, investor, strategist) gets access
+    return tier !== 'explorer'
+  } catch {
+    return false
+  }
 }
 
 export default async function ReportsPage() {
   const session = await auth()
-  const isPremium = await checkPremium(session?.user?.id ?? '', session?.user?.email ?? '')
+  const isPremium = await checkPaidTier(session?.user?.id ?? '', session?.user?.email ?? '')
 
   return (
     <PremiumGate
