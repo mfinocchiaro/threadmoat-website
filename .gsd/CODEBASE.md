@@ -1,7 +1,7 @@
 # Codebase Map
 
-Generated: 2026-04-11T20:02:59Z | Files: 412 | Described: 0/412
-<!-- gsd:codebase-meta {"generatedAt":"2026-04-11T20:02:59Z","fingerprint":"54c530b2cab4c5477e240c077b73d68df02c0619","fileCount":412,"truncated":false} -->
+Generated: 2026-04-19T18:19:21Z | Files: 444 | Described: 0/444
+<!-- gsd:codebase-meta {"generatedAt":"2026-04-19T18:19:21Z","fingerprint":"e1dde8b01bb2f996e3030b8e8a15121db9ad030e","fileCount":444,"truncated":false} -->
 
 ### (root)/
 - `.gitignore`
@@ -36,6 +36,25 @@ Generated: 2026-04-11T20:02:59Z | Files: 412 | Described: 0/412
 - `app/[locale]/about/opengraph-image.tsx`
 - `app/[locale]/about/page.tsx`
 
+### app/[locale]/companies/
+- `app/[locale]/companies/opengraph-image.tsx`
+- `app/[locale]/companies/page.tsx`
+
+### app/[locale]/companies/[id]/
+- `app/[locale]/companies/[id]/opengraph-image.tsx`
+- `app/[locale]/companies/[id]/page.tsx`
+
+### app/[locale]/demo/
+- `app/[locale]/demo/page.tsx`
+
+### app/[locale]/insights/
+- `app/[locale]/insights/opengraph-image.tsx`
+- `app/[locale]/insights/page.tsx`
+
+### app/[locale]/insights/[slug]/
+- `app/[locale]/insights/[slug]/opengraph-image.tsx`
+- `app/[locale]/insights/[slug]/page.tsx`
+
 ### app/[locale]/pricing/
 - `app/[locale]/pricing/opengraph-image.tsx`
 - `app/[locale]/pricing/page.tsx`
@@ -54,6 +73,12 @@ Generated: 2026-04-11T20:02:59Z | Files: 412 | Described: 0/412
 ### app/api/admin/crm-export/
 - `app/api/admin/crm-export/route.ts`
 
+### app/api/admin/funnel/
+- `app/api/admin/funnel/route.ts`
+
+### app/api/admin/users/
+- `app/api/admin/users/route.ts`
+
 ### app/api/ai/narrative/
 - `app/api/ai/narrative/route.ts`
 
@@ -66,11 +91,17 @@ Generated: 2026-04-11T20:02:59Z | Files: 412 | Described: 0/412
 ### app/api/companies/
 - `app/api/companies/route.ts`
 
+### app/api/demo-request/
+- `app/api/demo-request/route.ts`
+
 ### app/api/funding/
 - `app/api/funding/route.ts`
 
 ### app/api/investors/
 - `app/api/investors/route.ts`
+
+### app/api/newsletter/subscribe/
+- `app/api/newsletter/subscribe/route.ts`
 
 ### app/api/profile/
 - `app/api/profile/route.ts`
@@ -118,6 +149,16 @@ Generated: 2026-04-11T20:02:59Z | Files: 412 | Described: 0/412
 - `app/dashboard/loading.tsx`
 - `app/dashboard/page.tsx`
 
+### app/dashboard/acquirer-fit/
+- `app/dashboard/acquirer-fit/page.tsx`
+
+### app/dashboard/admin/
+- `app/dashboard/admin/coupons-section.tsx`
+- `app/dashboard/admin/crm-export-button.tsx`
+- `app/dashboard/admin/funnel-chart.tsx`
+- `app/dashboard/admin/page.tsx`
+- `app/dashboard/admin/users-table.tsx`
+
 ### app/dashboard/analytics/
 - `app/dashboard/analytics/page.tsx`
 - `app/dashboard/analytics/startup-grid.tsx`
@@ -144,6 +185,9 @@ Generated: 2026-04-11T20:02:59Z | Files: 412 | Described: 0/412
 ### app/dashboard/co-investment/
 - `app/dashboard/co-investment/page.tsx`
 
+### app/dashboard/company/[id]/
+- `app/dashboard/company/[id]/page.tsx`
+
 ### app/dashboard/compare/
 - `app/dashboard/compare/page.tsx`
 
@@ -157,6 +201,9 @@ Generated: 2026-04-11T20:02:59Z | Files: 412 | Described: 0/412
 ### app/dashboard/customers/
 - `app/dashboard/customers/page.tsx`
 
+### app/dashboard/deal-flow/
+- `app/dashboard/deal-flow/page.tsx`
+
 ### app/dashboard/distribution/
 - `app/dashboard/distribution/page.tsx`
 
@@ -165,6 +212,9 @@ Generated: 2026-04-11T20:02:59Z | Files: 412 | Described: 0/412
 
 ### app/dashboard/financial-heatmap/
 - `app/dashboard/financial-heatmap/page.tsx`
+
+### app/dashboard/funding-trends/
+- `app/dashboard/funding-trends/page.tsx`
 
 ### app/dashboard/growth-momentum/
 - `app/dashboard/growth-momentum/page.tsx`
@@ -202,6 +252,9 @@ Generated: 2026-04-11T20:02:59Z | Files: 412 | Described: 0/412
 
 ### app/dashboard/marimekko/
 - `app/dashboard/marimekko/page.tsx`
+
+### app/dashboard/market-concentration/
+- `app/dashboard/market-concentration/page.tsx`
 
 ### app/dashboard/market-momentum/
 - `app/dashboard/market-momentum/page.tsx`
@@ -313,26 +366,7 @@ Generated: 2026-04-11T20:02:59Z | Files: 412 | Described: 0/412
 - `components/checkout/manage-subscription-button.tsx`
 
 ### components/dashboard/
-- `components/dashboard/chart-card.tsx`
-- `components/dashboard/config-panel.tsx`
-- `components/dashboard/dashboard-client.tsx`
-- `components/dashboard/filter-onboarding-guide.tsx`
-- `components/dashboard/filter-toolbar-popover.tsx`
-- `components/dashboard/filter-toolbar.tsx`
-- `components/dashboard/focus-prompt.tsx`
-- `components/dashboard/free-user-guard.tsx`
-- `components/dashboard/layout-client.tsx`
-- `components/dashboard/nav.tsx`
-- `components/dashboard/onboarding-wizard.tsx`
-- `components/dashboard/paywall.tsx`
-- `components/dashboard/premium-gate.tsx`
-- `components/dashboard/shortlist-panel.tsx`
-- `components/dashboard/sidebar-shell.tsx`
-- `components/dashboard/sidebar.tsx`
-- `components/dashboard/thesis-indicator.tsx`
-- `components/dashboard/thesis-results.tsx`
-- `components/dashboard/topbar.tsx`
-- `components/dashboard/viz-page-shell.tsx`
+- *(23 files: 23 .tsx)*
 
 ### components/dashboard/thesis-steps/
 - `components/dashboard/thesis-steps/isv-step.tsx`
@@ -349,6 +383,7 @@ Generated: 2026-04-11T20:02:59Z | Files: 412 | Described: 0/412
 ### components/homepage/
 - `components/homepage/homepage-dashboard-section.tsx`
 - `components/homepage/homepage-dashboard.tsx`
+- `components/homepage/newsletter-signup.tsx`
 
 ### components/ui/
 - *(58 files: 57 .tsx, 1 .ts)*
@@ -356,6 +391,9 @@ Generated: 2026-04-11T20:02:59Z | Files: 412 | Described: 0/412
 ### components/widgets/
 - `components/widgets/kpi-card.tsx`
 - `components/widgets/widget-card.tsx`
+
+### content/insights/
+- `content/insights/plm-startup-landscape-2026.mdx`
 
 ### contexts/
 - `contexts/company-data-context.tsx`
@@ -375,6 +413,7 @@ Generated: 2026-04-11T20:02:59Z | Files: 412 | Described: 0/412
 
 ### hooks/
 - `hooks/use-idle-timeout.ts`
+- `hooks/use-journey-progress.ts`
 - `hooks/use-lazy-mount.ts`
 - `hooks/use-mobile.ts`
 - `hooks/use-page-view-tracker.ts`
@@ -387,7 +426,7 @@ Generated: 2026-04-11T20:02:59Z | Files: 412 | Described: 0/412
 - `i18n/routing.ts`
 
 ### lib/
-- *(29 files: 28 .ts, 1 .tsx)*
+- *(32 files: 30 .ts, 2 .tsx)*
 
 ### lib/supabase/
 - `lib/supabase/client.ts`

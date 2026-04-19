@@ -1,18 +1,18 @@
 # GSD State
 
-**Active Milestone:** M018: M018
-**Active Slice:** S01: Company Search & Profile
-**Phase:** planning
-**Requirements Status:** 4 active · 12 validated · 0 deferred · 0 out of scope
+**Active Milestone:** M020: Growth Platform — SEO, Admin, Conversion & Analysis Expansion
+**Active Slice:** S02: Admin Dashboard & Operational Tooling
+**Phase:** evaluating-gates
+**Requirements Status:** 2 active · 14 validated · 0 deferred · 0 out of scope
 
 ## Milestone Registry
 - ✅ **M001:** v1.1 UX & Data Polish
-- ✅ **M002:** M002: v1.2 Onboarding Fix, Cleanup & Chart Verification
-- ✅ **M003:** M003: v1.3 Tier Fixes, Upgrade CTAs & UAT Completion
-- ✅ **M004:** M004: v1.4 Verification & Sign-Off
-- ✅ **M005:** M005: Intelligence Workbench — AI Narratives, Company Shortlist & Custom Report Builder
-- ✅ **M006:** M006: Heatmap Analytics Suite — Market Momentum, Industry Penetration, Customer Profile & IP Dependency
-- ✅ **M007:** M007: Theme-aware colors + data sync + cell drilldown
+- ✅ **M002:** v1.2 Onboarding Fix, Cleanup & Chart Verification
+- ✅ **M003:** v1.3 Tier Fixes, Upgrade CTAs & UAT Completion
+- ✅ **M004:** v1.4 Verification & Sign-Off
+- ✅ **M005:** Intelligence Workbench — AI Narratives, Company Shortlist & Custom Report Builder
+- ✅ **M006:** Heatmap Analytics Suite — Market Momentum, Industry Penetration, Customer Profile & IP Dependency
+- ✅ **M007:** Theme-aware colors + data sync + cell drilldown
 - ✅ **M008:** Production Polish & Performance
 - ✅ **M009:** Performance Audit & Bundle Optimization
 - ✅ **M010:** Homepage Speed Index & Deferred Chart Loading
@@ -23,7 +23,9 @@
 - ✅ **M015:** Dashboard Performance Optimization — Red-Tier Pages
 - ✅ **M016:** Site Review Fixes — Pricing, Translations, Sidebar & UX Polish
 - ✅ **M017:** Subcategory Filter — Secondary Drill-Down Under Investment List
-- 🔄 **M018:** M018
+- ✅ **M018:** Company Profiles, Scenario Narratives & Guided Journey
+- ✅ **M019:** Monetization & Free Tier — Permanent Recon, Company Limits, Upgrade CTAs & Plan Transitions
+- 🔄 **M020:** Growth Platform — SEO, Admin, Conversion & Analysis Expansion
 
 ## Recent Decisions
 - None recorded
@@ -32,4 +34,4 @@
 - None
 
 ## Next Action
-Slice S01 has a plan file but no tasks. Add tasks to the plan.
+Evaluate 2 quality gate(s) for S02 before execution.
