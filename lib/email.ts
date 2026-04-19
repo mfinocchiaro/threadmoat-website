@@ -220,14 +220,16 @@ export async function sendAdminPurchaseNotification(
     from: FROM_EMAIL,
     to: adminEmails,
     subject: `New purchase: ${productName} — ${amountFormatted}`,
-    html: `
-      <h2>New ThreadMoat Purchase</h2>
-      <p><strong>Product:</strong> ${productName}</p>
-      <p><strong>Amount:</strong> ${amountFormatted}</p>
-      <p><strong>Customer:</strong> ${customerName || 'N/A'} (${customerEmail})</p>
-      <p><strong>Action needed:</strong> Send watermarked report to ${customerEmail}</p>
-      <p><em>Sent at ${new Date().toISOString()}</em></p>
-    `,
+    html: emailWrapper(`
+      <h3 style="color:#e5e5e5;font-size:18px;margin:0 0 16px;">New Purchase</h3>
+      <table style="width:100%;border-collapse:collapse;margin:16px 0;">
+        <tr><td style="color:#737373;font-size:13px;padding:8px 0;border-bottom:1px solid #262626;">Product</td><td style="color:#e5e5e5;font-size:13px;padding:8px 0;border-bottom:1px solid #262626;text-align:right;">${productName}</td></tr>
+        <tr><td style="color:#737373;font-size:13px;padding:8px 0;border-bottom:1px solid #262626;">Amount</td><td style="color:#e5e5e5;font-size:13px;padding:8px 0;border-bottom:1px solid #262626;text-align:right;">${amountFormatted}</td></tr>
+        <tr><td style="color:#737373;font-size:13px;padding:8px 0;border-bottom:1px solid #262626;">Customer</td><td style="color:#e5e5e5;font-size:13px;padding:8px 0;border-bottom:1px solid #262626;text-align:right;">${customerName || 'N/A'} (${customerEmail})</td></tr>
+      </table>
+      <p style="color:#f59e0b;font-size:14px;line-height:24px;"><strong>Action needed:</strong> Send watermarked report to ${customerEmail}</p>
+      <p style="color:#737373;font-size:12px;line-height:20px;">Sent at ${new Date().toISOString()}</p>
+    `),
   })
 
   if (error) {
