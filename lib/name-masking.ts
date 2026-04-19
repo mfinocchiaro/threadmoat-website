@@ -6,7 +6,7 @@ import { Company } from '@/lib/company-data'
  * Strategist and Admin see names. Analyst sees investment list rollups.
  */
 export function canSeeCompanyNames(tier: AccessTier): boolean {
-  return tier === 'admin' || tier === 'strategist'
+  return tier === 'admin' || tier === 'strategist' || tier === 'investor'
 }
 
 /**

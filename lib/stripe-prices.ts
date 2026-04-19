@@ -7,16 +7,19 @@
  *
  * Products:
  *   Analyst    — one-time $4,999 purchase (1 report + 10 charts)
+ *   Investor   — annual $8,999 subscription (analyst + investor views)
  *   Strategist — annual €18,999 subscription (4 reports + 25+ charts)
  *
  * Env vars:
  *   STRIPE_PRICE_ANALYST             — Price ID for Analyst one-time purchase
+ *   STRIPE_PRICE_INVESTOR_ANNUAL     — Price ID for Investor annual subscription
  *   STRIPE_PRICE_STRATEGIST_ANNUAL   — Price ID for Strategist annual subscription
  */
 
 /** Stripe Price IDs keyed by internal product identifier */
 export const STRIPE_PRICES: Record<string, string> = {
   analyst: process.env.STRIPE_PRICE_ANALYST || '',
+  investor_annual: process.env.STRIPE_PRICE_INVESTOR_ANNUAL || '',
   strategist_annual: process.env.STRIPE_PRICE_STRATEGIST_ANNUAL || '',
 }
 
@@ -30,6 +33,7 @@ export const STRIPE_PRICES: Record<string, string> = {
  */
 const INTERNAL_PRODUCT_IDS: Record<string, string> = {
   analyst: 'analyst_annual',
+  investor_annual: 'investor_annual',
   strategist_annual: 'strategist_annual',
 }
 
