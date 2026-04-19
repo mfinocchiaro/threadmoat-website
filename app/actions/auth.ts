@@ -8,7 +8,7 @@ import type { RegisterData } from '@/lib/auth-schema'
 import { rateLimit } from '@/lib/rate-limit'
 import { validateCoupon, redeemCoupon } from '@/lib/coupons'
 import { createExplorerTrial } from '@/lib/explorer-trial'
-import { sendVerificationEmail, sendPasswordResetEmail } from '@/lib/email'
+import { sendVerificationEmail, sendPasswordResetEmail, sendAdminSignupNotification } from '@/lib/email'
 
 type ActionResult = { success: true; emailSent?: boolean } | { success: false; error: string }
 
@@ -162,6 +162,11 @@ export async function registerUser(data: RegisterData): Promise<ActionResult> {
       // Redirect to success page with a warning so they can retry.
       emailSent = false
     }
+
+    // Notify admins of new signup (fire-and-forget)
+    sendAdminSignupNotification(email, fullName, company, profileType).catch(err => {
+      console.error('[admin signup notification] Failed:', err)
+    })
 
     return { success: true, emailSent }
   } catch (err) {

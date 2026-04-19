@@ -145,6 +145,36 @@ export async function sendReceiptEmail(
   }
 }
 
+export async function sendAdminSignupNotification(
+  userEmail: string,
+  userName: string | undefined,
+  company: string | undefined,
+  profileType: string | undefined
+) {
+  const adminEmails = (process.env.ADMIN_EMAILS || '').split(',').filter(Boolean)
+  if (adminEmails.length === 0) return
+
+  const { error } = await getResend().emails.send({
+    from: FROM_EMAIL,
+    to: adminEmails,
+    subject: `New signup: ${userName || userEmail}`,
+    html: emailWrapper(`
+      <h3 style="color:#e5e5e5;font-size:18px;margin:0 0 16px;">New User Signup</h3>
+      <table style="width:100%;border-collapse:collapse;margin:16px 0;">
+        <tr><td style="color:#737373;font-size:13px;padding:8px 0;border-bottom:1px solid #262626;">Name</td><td style="color:#e5e5e5;font-size:13px;padding:8px 0;border-bottom:1px solid #262626;text-align:right;">${userName || 'N/A'}</td></tr>
+        <tr><td style="color:#737373;font-size:13px;padding:8px 0;border-bottom:1px solid #262626;">Email</td><td style="color:#e5e5e5;font-size:13px;padding:8px 0;border-bottom:1px solid #262626;text-align:right;">${userEmail}</td></tr>
+        <tr><td style="color:#737373;font-size:13px;padding:8px 0;border-bottom:1px solid #262626;">Company</td><td style="color:#e5e5e5;font-size:13px;padding:8px 0;border-bottom:1px solid #262626;text-align:right;">${company || 'N/A'}</td></tr>
+        <tr><td style="color:#737373;font-size:13px;padding:8px 0;border-bottom:1px solid #262626;">Profile</td><td style="color:#e5e5e5;font-size:13px;padding:8px 0;border-bottom:1px solid #262626;text-align:right;">${profileType || 'N/A'}</td></tr>
+      </table>
+      <p style="color:#737373;font-size:12px;line-height:20px;">Signed up at ${new Date().toISOString()}</p>
+    `),
+  })
+
+  if (error) {
+    console.error('[Resend] Admin signup notification failed:', error)
+  }
+}
+
 export async function sendAdminPurchaseNotification(
   customerEmail: string,
   customerName: string | undefined,
