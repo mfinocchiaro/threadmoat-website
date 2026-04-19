@@ -104,7 +104,8 @@ export async function POST(request: Request) {
         const customerId = invoice.customer as string
         console.error(`Payment failed for customer ${customerId}, invoice ${invoice.id}`)
         // Mark subscription as past_due if applicable
-        if ((invoice as any).subscription) {
+        const isSubscriptionInvoice = invoice.parent?.type === 'subscription_details'
+        if (isSubscriptionInvoice) {
           const rows = await sql`SELECT id FROM profiles WHERE stripe_customer_id = ${customerId}`
           if (rows[0]) {
             await sql`
@@ -117,6 +118,20 @@ export async function POST(request: Request) {
       }
       case 'invoice.payment_succeeded': {
         const invoice = event.data.object as Stripe.Invoice
+
+        // Recover subscription status from past_due → active when payment succeeds
+        const isPaidSubscriptionInvoice = invoice.parent?.type === 'subscription_details'
+        if (isPaidSubscriptionInvoice) {
+          const customerId = invoice.customer as string
+          const rows = await sql`SELECT id FROM profiles WHERE stripe_customer_id = ${customerId}`
+          if (rows[0]) {
+            await sql`
+              UPDATE subscriptions SET status = 'active', updated_at = NOW()
+              WHERE user_id = ${rows[0].id as string} AND status = 'past_due'
+            `
+          }
+        }
+
         if (!invoice.customer_email) break
 
         const amountFormatted = new Intl.NumberFormat('en-US', {
@@ -150,8 +165,8 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session, stripe:
   const productId = session.metadata?.product_id
 
   if (!userId) {
-    console.error('Missing user ID in checkout session')
-    return
+    // Throw so the webhook returns 500 and Stripe retries — prevents silent data loss
+    throw new Error(`Missing user_id in checkout session metadata (session: ${session.id})`)
   }
 
   // One-time payment (e.g. market report purchase)

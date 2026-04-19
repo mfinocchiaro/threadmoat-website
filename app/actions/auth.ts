@@ -349,7 +349,8 @@ export async function resetPassword(token: string, newPassword: string): Promise
 
     await sql`
       UPDATE users
-      SET password_hash = ${passwordHash}, reset_token = NULL, reset_token_expires = NULL
+      SET password_hash = ${passwordHash}, reset_token = NULL, reset_token_expires = NULL,
+          session_version = COALESCE(session_version, 0) + 1
       WHERE id = ${rows[0].id as string}
     `
     return { success: true }

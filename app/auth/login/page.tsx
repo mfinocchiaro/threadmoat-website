@@ -41,7 +41,11 @@ export default function LoginPage() {
     })
 
     if (result?.error) {
-      setError('Invalid email or password')
+      if (result.code === 'email_not_verified') {
+        setError('EMAIL_NOT_VERIFIED')
+      } else {
+        setError('Invalid email or password')
+      }
       setIsLoading(false)
     } else {
       // Hard navigation so the server sees the fresh session cookie
@@ -108,13 +112,21 @@ export default function LoginPage() {
                   </div>
                   {error && (
                     <div className="space-y-1">
-                      <p className="text-sm text-red-500">{error}</p>
-                      <p className="text-xs text-muted-foreground">
-                        If you haven&apos;t verified your email yet,{' '}
-                        <Link href="/auth/sign-up-success" className="underline underline-offset-4">
-                          click here to resend the verification email
-                        </Link>.
-                      </p>
+                      {error === 'EMAIL_NOT_VERIFIED' ? (
+                        <>
+                          <p className="text-sm text-amber-600 dark:text-amber-400">
+                            Your email address has not been verified yet.
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            Please check your inbox for the verification link, or{' '}
+                            <Link href="/auth/sign-up-success" className="underline underline-offset-4 text-amber-600 dark:text-amber-400">
+                              resend the verification email
+                            </Link>.
+                          </p>
+                        </>
+                      ) : (
+                        <p className="text-sm text-red-500">{error}</p>
+                      )}
                     </div>
                   )}
                   <Button type="submit" className="w-full" disabled={isLoading}>
