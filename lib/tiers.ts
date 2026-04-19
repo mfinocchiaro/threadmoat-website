@@ -31,23 +31,27 @@ export const EXPLORER_PATHS = new Set([
   '/dashboard/map',
 ])
 
-/** Tier 2: Analyst — 13 visual analytics graphs */
+/** Tier 2: Analyst — visual analytics graphs + report generator */
 export const ANALYST_PATHS = new Set([
-  '/dashboard/quadrant',          // Magic Quadrant positioning
-  '/dashboard/bubbles',           // Bubble Chart (scatter plot)
-  '/dashboard/landscape',         // Full Landscape (grouped tiles)
-  '/dashboard/bar-chart',         // Top Rankings bar chart
-  '/dashboard/treemap',           // Category Treemap
-  '/dashboard/timeline',          // Founding Timeline
-  '/dashboard/sunburst',          // Industry Sunburst
-  '/dashboard/metros',            // Metro Area Analysis
-  '/dashboard/radar',             // Radar Chart comparison
-  '/dashboard/periodic-table',    // Periodic Table (company tiles)
-  '/dashboard/slope',             // Slope Chart (moved from Strategist)
-  '/dashboard/chord',             // Chord Diagram (moved from Strategist)
-  '/dashboard/wordcloud',         // Word Cloud (moved from Strategist)
-  '/dashboard/marimekko',         // Marimekko (moved from Strategist)
-  '/dashboard/sankey',            // Sankey Flow (moved from Strategist)
+  '/dashboard/quadrant',              // Magic Quadrant positioning
+  '/dashboard/bubbles',               // Bubble Chart (scatter plot)
+  '/dashboard/landscape',             // Full Landscape (grouped tiles)
+  '/dashboard/bar-chart',             // Top Rankings bar chart
+  '/dashboard/treemap',               // Category Treemap
+  '/dashboard/timeline',              // Founding Timeline
+  '/dashboard/sunburst',              // Industry Sunburst
+  '/dashboard/metros',                // Metro Area Analysis
+  '/dashboard/radar',                 // Radar Chart comparison
+  '/dashboard/periodic-table',        // Periodic Table (company tiles)
+  '/dashboard/slope',                 // Slope Chart
+  '/dashboard/chord',                 // Chord Diagram
+  '/dashboard/wordcloud',             // Word Cloud
+  '/dashboard/marimekko',             // Marimekko
+  '/dashboard/sankey',                // Sankey Flow
+  '/dashboard/reports',               // IC-Memo Report Generator (moved from Admin)
+  '/dashboard/acquirer-fit',          // Acquirer Fit Scoring
+  '/dashboard/market-concentration',  // Market Concentration HHI
+  '/dashboard/deal-flow',             // Deal Flow Pipeline
 ])
 
 /** Tier 3: Strategist — full platform access (unlocked on top of Analyst) */
@@ -78,7 +82,6 @@ export const INVESTOR_PATHS = new Set([
 export const ADMIN_PATHS = new Set([
   '/dashboard/financial-heatmap',
   '/dashboard/correlation',
-  '/dashboard/reports',
   '/dashboard/maturity-matrix',
   '/dashboard/swot',
 ])
