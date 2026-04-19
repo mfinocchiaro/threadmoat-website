@@ -205,6 +205,7 @@ interface SidebarProps {
   isAdmin?: boolean;
   isFreeUser?: boolean;
   accessTier?: AccessTier;
+  daysRemaining?: number | null;
 }
 
 function NavLink({ href, icon: Icon, label, collapsed, exact, locked }: {
@@ -325,7 +326,7 @@ function TabGroupNav({ group, collapsed, isFreeUser, accessTier = 'explorer', op
   );
 }
 
-export function Sidebar({ collapsed, onToggle, onSelectScenario, activeScenario, isAdmin = false, isFreeUser = false, accessTier = 'explorer' }: SidebarProps) {
+export function Sidebar({ collapsed, onToggle, onSelectScenario, activeScenario, isAdmin = false, isFreeUser = false, accessTier = 'explorer', daysRemaining = null }: SidebarProps) {
   const thesis = useThesisOptional();
   const hasThesis = !!thesis?.activeThesis;
   const pathname = usePathname();
@@ -483,6 +484,38 @@ export function Sidebar({ collapsed, onToggle, onSelectScenario, activeScenario,
             )}
           </nav>
         </ScrollArea>
+
+        {/* Trial countdown */}
+        {accessTier === 'explorer' && daysRemaining !== null && daysRemaining > 0 && (
+          <div className="border-t border-border px-2 py-2">
+            {collapsed ? (
+              <Tooltip delayDuration={0}>
+                <TooltipTrigger asChild>
+                  <Link
+                    href="/pricing"
+                    className="flex items-center justify-center rounded-md px-2 py-2 text-amber-500 hover:bg-amber-500/10 transition-colors"
+                  >
+                    <Clock className="h-4 w-4" />
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent side="right" className="text-xs">
+                  {daysRemaining}d left on trial
+                </TooltipContent>
+              </Tooltip>
+            ) : (
+              <Link
+                href="/pricing"
+                className="flex items-center gap-2.5 rounded-md px-3 py-2 text-sm transition-colors hover:bg-amber-500/10"
+              >
+                <Clock className="h-4 w-4 shrink-0 text-amber-500" />
+                <div className="min-w-0 flex-1">
+                  <div className="text-xs font-medium text-amber-500">{daysRemaining}d left on trial</div>
+                  <div className="text-[10px] text-muted-foreground">Upgrade to keep access</div>
+                </div>
+              </Link>
+            )}
+          </div>
+        )}
 
         {/* Bottom items */}
         <div className="border-t border-border py-2 px-2 space-y-0.5">

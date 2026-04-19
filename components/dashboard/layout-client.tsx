@@ -47,6 +47,7 @@ function LayoutInner({ user, profile, children, isAdmin, isFreeUser, isExpiredTr
       isAdmin={isAdmin}
       isFreeUser={isFreeUser}
       accessTier={accessTier}
+      daysRemaining={daysRemaining}
     >
       <Suspense><CheckoutToast /></Suspense>
       <CompanyLimitBanner />

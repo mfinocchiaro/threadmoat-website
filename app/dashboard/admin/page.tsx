@@ -4,7 +4,8 @@ import { sql } from "@/lib/db"
 import { UsersTable } from "./users-table"
 import { CouponsSection } from "./coupons-section"
 import { CrmExportButton } from "./crm-export-button"
-import { Users, Ticket, Download } from "lucide-react"
+import { FunnelChart } from "./funnel-chart"
+import { Users, Ticket, Download, TrendingUp } from "lucide-react"
 
 async function isAdmin(userId: string, email: string): Promise<boolean> {
   const rows = await sql`SELECT is_admin FROM profiles WHERE id = ${userId}`
@@ -104,6 +105,17 @@ export default async function AdminPage() {
           </div>
           <CrmExportButton />
         </div>
+      </div>
+
+      {/* Conversion Funnel */}
+      <div className="rounded-lg border border-border p-4 bg-card space-y-4">
+        <div className="flex items-center gap-2">
+          <TrendingUp className="h-4 w-4 text-muted-foreground" />
+          <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+            Conversion Funnel
+          </h3>
+        </div>
+        <FunnelChart />
       </div>
 
       {/* Users Table */}
