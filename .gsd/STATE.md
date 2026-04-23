@@ -26,6 +26,7 @@
 - ✅ **M018:** Company Profiles, Scenario Narratives & Guided Journey
 - ✅ **M019:** Monetization & Free Tier — Permanent Recon, Company Limits, Upgrade CTAs & Plan Transitions
 - 🔄 **M020:** Growth Platform — SEO, Admin, Conversion & Analysis Expansion
+- ⬜ **M021:** QA Sweep — Auth, Payments, Tier Enforcement & Security Hardening
 
 ## Recent Decisions
 - None recorded

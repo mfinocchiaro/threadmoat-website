@@ -9,6 +9,7 @@ import {
   Download, BookOpen, Users, Globe, Layers,
   MapPin, CalendarDays, ArrowRight, FileText, Target,
   TrendingUp, Building2, Briefcase, ShieldCheck, Zap,
+  Lock, BarChart2,
 } from "lucide-react"
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { buildAlternates, buildOpenGraph } from '@/lib/metadata'
@@ -298,6 +299,56 @@ export default async function ReportPage({ params }: Props) {
                 <span className="text-muted-foreground text-xs">{item}</span>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Published Reports */}
+      <section className="border-t border-border/40">
+        <div className="container mx-auto px-4 py-16">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-2xl font-bold text-center mb-2">Published Research Reports</h2>
+            <p className="text-center text-muted-foreground mb-10 max-w-xl mx-auto">
+              Subscriber-exclusive reports available for download inside the platform.
+            </p>
+            <div className="grid md:grid-cols-2 gap-4">
+              {[
+                {
+                  icon: BarChart2,
+                  title: "Industrials Tech Report — Q1 2026",
+                  date: "Q1 2026",
+                  description: "Deep-dive into 150+ industrial-tech startups: category concentration, disruption exposure scores, top-20 rankings, and investor/customer overlap analysis.",
+                },
+                {
+                  icon: TrendingUp,
+                  title: "B2B Market Pulse — Q1 2026",
+                  date: "Q1 2026",
+                  description: "Quarterly market pulse covering funding trends, sector momentum shifts, and key signals across the B2B software and industrial automation landscape.",
+                },
+              ].map(report => (
+                <div
+                  key={report.title}
+                  className="flex gap-4 rounded-xl border border-border/60 bg-card p-5"
+                >
+                  <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-muted">
+                    <report.icon className="h-5 w-5 text-muted-foreground" />
+                  </div>
+                  <div className="flex flex-1 flex-col gap-2">
+                    <div>
+                      <p className="text-sm font-semibold leading-snug">{report.title}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{report.date}</p>
+                    </div>
+                    <p className="text-xs text-muted-foreground leading-relaxed">{report.description}</p>
+                    <Link href="/pricing">
+                      <Button size="sm" variant="outline" className="w-fit mt-auto gap-1.5">
+                        <Lock className="h-3.5 w-3.5" />
+                        Subscribe to Download
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>

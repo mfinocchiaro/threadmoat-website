@@ -1,5 +1,12 @@
 {
   "mcpServers": {
+    "playwright-test": {
+      "command": "npx",
+      "args": [
+        "playwright",
+        "run-test-mcp-server"
+      ]
+    },
     "gsd-workflow": {
       "command": "/Users/mfinocchiaro/.nvm/versions/node/v22.14.0/bin/node",
       "args": [

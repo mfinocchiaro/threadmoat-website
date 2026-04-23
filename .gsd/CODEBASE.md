@@ -1,10 +1,11 @@
 # Codebase Map
 
-Generated: 2026-04-19T18:19:21Z | Files: 444 | Described: 0/444
-<!-- gsd:codebase-meta {"generatedAt":"2026-04-19T18:19:21Z","fingerprint":"e1dde8b01bb2f996e3030b8e8a15121db9ad030e","fileCount":444,"truncated":false} -->
+Generated: 2026-04-23T20:56:00Z | Files: 453 | Described: 0/453
+<!-- gsd:codebase-meta {"generatedAt":"2026-04-23T20:56:00Z","fingerprint":"8739682f10565f0b81d7056a03f7ee7639fd52bc","fileCount":453,"truncated":false} -->
 
 ### (root)/
 - `.gitignore`
+- `.mcp.json`
 - `.npmrc`
 - `auth.ts`
 - `components.json`
@@ -15,6 +16,7 @@ Generated: 2026-04-19T18:19:21Z | Files: 444 | Described: 0/444
 - `proxy.ts`
 - `ThreadMoat Website - Project Reference.md`
 - `tsconfig.json`
+- `vercel.json`
 
 ### .github/workflows/
 - `.github/workflows/sync-airtable.yml`
@@ -67,6 +69,9 @@ Generated: 2026-04-19T18:19:21Z | Files: 444 | Described: 0/444
 - `app/actions/auth.ts`
 - `app/actions/stripe.ts`
 
+### app/api/admin/analytics/
+- `app/api/admin/analytics/route.ts`
+
 ### app/api/admin/coupons/
 - `app/api/admin/coupons/route.ts`
 
@@ -90,6 +95,9 @@ Generated: 2026-04-19T18:19:21Z | Files: 444 | Described: 0/444
 
 ### app/api/companies/
 - `app/api/companies/route.ts`
+
+### app/api/cron/drip-emails/
+- `app/api/cron/drip-emails/route.ts`
 
 ### app/api/demo-request/
 - `app/api/demo-request/route.ts`
@@ -153,6 +161,7 @@ Generated: 2026-04-19T18:19:21Z | Files: 444 | Described: 0/444
 - `app/dashboard/acquirer-fit/page.tsx`
 
 ### app/dashboard/admin/
+- `app/dashboard/admin/cohort-analytics.tsx`
 - `app/dashboard/admin/coupons-section.tsx`
 - `app/dashboard/admin/crm-export-button.tsx`
 - `app/dashboard/admin/funnel-chart.tsx`
@@ -426,7 +435,7 @@ Generated: 2026-04-19T18:19:21Z | Files: 444 | Described: 0/444
 - `i18n/routing.ts`
 
 ### lib/
-- *(32 files: 30 .ts, 2 .tsx)*
+- *(34 files: 32 .ts, 2 .tsx)*
 
 ### lib/supabase/
 - `lib/supabase/client.ts`
@@ -486,7 +495,7 @@ Generated: 2026-04-19T18:19:21Z | Files: 444 | Described: 0/444
 - `public/reports/report-2026-Q1-teaser.pdf`
 
 ### scripts/
-- *(22 files: 14 .sql, 5 .py, 3 .mjs)*
+- *(24 files: 16 .sql, 5 .py, 3 .mjs)*
 
 ### scripts/.tag_clean_checkpoints/
 - `scripts/.tag_clean_checkpoints/op_model_enrichment_state.json`
