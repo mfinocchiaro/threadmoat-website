@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exported_at": "2026-04-19T15:30:17.412Z",
+  "exported_at": "2026-04-19T18:42:12.512Z",
   "milestones": [
     {
       "id": "M001",
@@ -1101,6 +1101,43 @@
         "All new pages follow existing i18n, theme, and tier-gating patterns",
         "No regression in build time or Lighthouse scores on existing pages"
       ],
+      "requirement_coverage": "Not provided.",
+      "boundary_map_markdown": "Not provided."
+    },
+    {
+      "id": "M021",
+      "title": "QA Sweep — Auth, Payments, Tier Enforcement & Security Hardening",
+      "status": "planned",
+      "depends_on": [],
+      "created_at": "2026-04-19T18:41:39.306Z",
+      "completed_at": null,
+      "vision": "Systematic audit and fix of integration issues across authentication, Stripe payments, tier enforcement, and admin operations. Protect the 20 milestones of shipped features against edge-case failures before driving new traffic.",
+      "success_criteria": [
+        "Webhook handleCheckoutCompleted returns 400 (not 200) when userId metadata is missing",
+        "Password reset invalidates existing sessions",
+        "Account deletion signs out the user immediately",
+        "Unverified login attempt returns a distinct error with resend-verification CTA",
+        "isAdmin helper extracted to single shared utility used by all 5+ call sites",
+        "CRM export writes audit log entry",
+        "Coupon redemption failure at verify-email notifies the user",
+        "All auth pages handle error states gracefully with user-friendly messages"
+      ],
+      "key_risks": [
+        {
+          "risk": "Webhook changes could break Stripe integration if not tested carefully",
+          "whyItMatters": "Payment processing is the revenue path — regressions here lose money"
+        },
+        {
+          "risk": "Session invalidation changes could log out active users unexpectedly",
+          "whyItMatters": "30-minute JWT maxAge means changes to session handling have a blast radius"
+        }
+      ],
+      "proof_strategy": [],
+      "verification_contract": "",
+      "verification_integration": "",
+      "verification_operational": "",
+      "verification_uat": "",
+      "definition_of_done": [],
       "requirement_coverage": "Not provided.",
       "boundary_map_markdown": "Not provided."
     }
@@ -2420,6 +2457,70 @@
       "integration_closure": "Not provided.",
       "observability_impact": "Not provided.",
       "sequence": 4,
+      "replan_triggered_at": null
+    },
+    {
+      "milestone_id": "M021",
+      "id": "S01",
+      "title": "Auth Flow Hardening",
+      "status": "pending",
+      "risk": "medium",
+      "depends": [],
+      "demo": "Password reset invalidates sessions. Account deletion signs out immediately. Unverified login shows resend-verification prompt instead of generic error.",
+      "created_at": "2026-04-19T18:41:58.201Z",
+      "completed_at": null,
+      "full_summary_md": "",
+      "full_uat_md": "",
+      "goal": "Fix session invalidation gaps, login error disambiguation, and account deletion cleanup",
+      "success_criteria": "Not provided.",
+      "proof_level": "Not provided.",
+      "integration_closure": "Not provided.",
+      "observability_impact": "Not provided.",
+      "sequence": 1,
+      "replan_triggered_at": null
+    },
+    {
+      "milestone_id": "M021",
+      "id": "S02",
+      "title": "Payment & Webhook Safety",
+      "status": "pending",
+      "risk": "high",
+      "depends": [
+        "S01"
+      ],
+      "demo": "Webhook returns 400 when userId missing. invoice.payment_succeeded updates subscription status.",
+      "created_at": "2026-04-19T18:41:58.201Z",
+      "completed_at": null,
+      "full_summary_md": "",
+      "full_uat_md": "",
+      "goal": "Fix silent webhook data loss and subscription status sync gaps",
+      "success_criteria": "No silent data loss paths in webhook handler. Subscription status accurately reflects Stripe state.",
+      "proof_level": "manual-verification",
+      "integration_closure": "Webhook changes are isolated to single route handler",
+      "observability_impact": "Webhook failures now return proper error codes for Stripe retry",
+      "sequence": 2,
+      "replan_triggered_at": null
+    },
+    {
+      "milestone_id": "M021",
+      "id": "S03",
+      "title": "Admin & Operational Hardening",
+      "status": "pending",
+      "risk": "low",
+      "depends": [
+        "S01"
+      ],
+      "demo": "isAdmin imported from single location. CRM export logs who triggered it. All admin emails use consistent wrapper.",
+      "created_at": "2026-04-19T18:41:58.201Z",
+      "completed_at": null,
+      "full_summary_md": "",
+      "full_uat_md": "",
+      "goal": "Extract shared isAdmin utility, add CRM export audit logging, fix email template inconsistency",
+      "success_criteria": "Single isAdmin source of truth. Audit trail for PII exports.",
+      "proof_level": "code-review",
+      "integration_closure": "Refactor touches multiple files but behavior is unchanged",
+      "observability_impact": "Audit log for CRM exports enables compliance tracking",
+      "sequence": 3,
       "replan_triggered_at": null
     }
   ],
@@ -6448,6 +6549,116 @@
         "app/dashboard/deal-flow/page.tsx",
         "contexts/deal-flow-context.tsx",
         "components/dashboard/sidebar.tsx (modified)"
+      ],
+      "observability_impact": "",
+      "full_plan_md": "",
+      "sequence": 0
+    },
+    {
+      "milestone_id": "M021",
+      "slice_id": "S01",
+      "id": "T01",
+      "title": "Disambiguate unverified login error with resend CTA",
+      "status": "pending",
+      "one_liner": "",
+      "narrative": "",
+      "verification_result": "",
+      "duration": "",
+      "completed_at": null,
+      "blocker_discovered": false,
+      "deviations": "",
+      "known_issues": "",
+      "key_files": [],
+      "key_decisions": [],
+      "full_summary_md": "",
+      "description": "When an unverified user tries to log in, return a distinct error code from the credentials provider and show a user-friendly message with a link to resend verification email",
+      "estimate": "30min",
+      "files": [
+        "auth.ts",
+        "app/auth/login/page.tsx",
+        "app/auth/error/page.tsx"
+      ],
+      "verify": "Attempt login with unverified account — see distinct error message with resend link",
+      "inputs": [
+        "auth.ts credentials provider",
+        "login page error handling"
+      ],
+      "expected_output": [
+        "Distinct error code for unverified accounts",
+        "Login page shows resend-verification CTA when appropriate"
+      ],
+      "observability_impact": "",
+      "full_plan_md": "",
+      "sequence": 0
+    },
+    {
+      "milestone_id": "M021",
+      "slice_id": "S01",
+      "id": "T02",
+      "title": "Invalidate sessions on password reset",
+      "status": "pending",
+      "one_liner": "",
+      "narrative": "",
+      "verification_result": "",
+      "duration": "",
+      "completed_at": null,
+      "blocker_discovered": false,
+      "deviations": "",
+      "known_issues": "",
+      "key_files": [],
+      "key_decisions": [],
+      "full_summary_md": "",
+      "description": "After successful password reset, update a session version counter or token generation timestamp so existing JWTs are rejected on next validation",
+      "estimate": "45min",
+      "files": [
+        "auth.ts",
+        "app/actions/auth.ts",
+        "lib/db.ts"
+      ],
+      "verify": "Reset password → existing session returns 401 on next API call",
+      "inputs": [
+        "auth.ts JWT callback",
+        "resetPassword action"
+      ],
+      "expected_output": [
+        "Session invalidation mechanism after password reset",
+        "Existing JWTs rejected after reset"
+      ],
+      "observability_impact": "",
+      "full_plan_md": "",
+      "sequence": 0
+    },
+    {
+      "milestone_id": "M021",
+      "slice_id": "S01",
+      "id": "T03",
+      "title": "Sign out user on account deletion",
+      "status": "pending",
+      "one_liner": "",
+      "narrative": "",
+      "verification_result": "",
+      "duration": "",
+      "completed_at": null,
+      "blocker_discovered": false,
+      "deviations": "",
+      "known_issues": "",
+      "key_files": [],
+      "key_decisions": [],
+      "full_summary_md": "",
+      "description": "After account deletion, clear the session cookie so the deleted user cannot make authenticated calls for the remaining JWT lifetime",
+      "estimate": "20min",
+      "files": [
+        "app/dashboard/settings/delete-account-button.tsx",
+        "app/actions/auth.ts"
+      ],
+      "verify": "Delete account → immediately redirected to home, no authenticated API calls possible",
+      "inputs": [
+        "deleteAccount action",
+        "delete-account-button component"
+      ],
+      "expected_output": [
+        "Client-side signout after deletion",
+        "Clean redirect to homepage"
       ],
       "observability_impact": "",
       "full_plan_md": "",
