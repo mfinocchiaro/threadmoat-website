@@ -229,6 +229,7 @@ export function SpiralTimelineChart({ data, className }: SpiralTimelineChartProp
       g.attr("transform", event.transform.toString())
     })
     svg.call(zoom)
+    svg.style("touch-action", "none")
 
     return () => {
       d3.selectAll(".spiral-tooltip").remove()

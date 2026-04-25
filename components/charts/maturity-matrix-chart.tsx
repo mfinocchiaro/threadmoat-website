@@ -140,6 +140,7 @@ export function MaturityMatrixChart({ data, className }: MaturityMatrixChartProp
       .extent([[0, 0], [width, height]])
       .on("zoom", event => g.attr("transform", event.transform))
     svg.call(zoom)
+    svg.style("touch-action", "none")
 
     const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`)
 

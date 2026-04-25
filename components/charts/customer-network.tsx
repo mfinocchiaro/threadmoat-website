@@ -179,6 +179,7 @@ export function CustomerNetwork({ data, className }: { data: Company[]; classNam
       .scaleExtent([0.2, 5])
       .on("zoom", (e) => g.attr("transform", e.transform))
     svg.call(zoom)
+    svg.style("touch-action", "none")
 
     // Size scales
     const maxCount = d3.max(nodes.filter(n => n.type === "customer"), n => (n as CustomerNode).count) || 1
