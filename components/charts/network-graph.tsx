@@ -268,6 +268,7 @@ export function NetworkGraph({ data, className, preview = false, accessTier = 'e
       .on("zoom", event => g.attr("transform", event.transform))
 
     svg.call(zoom)
+    svg.style("touch-action", "none")
     zoomRef.current = zoom
 
     // Annotation layer — drawn above all nodes so it's always visible

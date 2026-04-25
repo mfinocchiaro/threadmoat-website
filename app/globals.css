@@ -133,3 +133,17 @@
 .animate-screenshot-cycle {
   animation: screenshot-cycle 12s ease-in-out infinite;
 }
+
+/* D3 zoom-enabled SVGs: prevent browser from intercepting pinch/pan gestures.
+   Without this, iOS intercepts two-finger pinch for native page zoom instead of
+   passing the events to D3 zoom handlers. */
+svg.chart-zoom-enabled {
+  touch-action: none;
+}
+
+/* Horizontally-scrollable chart containers on mobile.
+   Allows wide charts (heatmap, bar, sankey) to scroll rather than clip. */
+.chart-scroll-x {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}

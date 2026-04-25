@@ -410,6 +410,7 @@ export function MapChart({ data = [], className, preview = false }: MapChartProp
 
     zoomRef.current = zoom;
     svg.call(zoom);
+    svg.style("touch-action", "none");
 
     // Ocean
     g.append("path")

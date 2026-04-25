@@ -201,6 +201,7 @@ export function InvestorNetwork({ className, filteredCompanyNames }: { className
       .scaleExtent([0.2, 5])
       .on("zoom", (e) => g.attr("transform", e.transform))
     svg.call(zoom)
+    svg.style("touch-action", "none")
 
     const maxCount = d3.max(nodes.filter(n => n.type === "investor"), n => (n as InvestorNode).count) || 1
     const rScale = d3.scaleSqrt().domain([1, maxCount]).range([12, 42])

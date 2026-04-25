@@ -44,7 +44,7 @@ export function HeatmapChart({ data, className }: HeatmapChartProps) {
     const axisColor = rootStyle.getPropertyValue('--muted-foreground').trim() || '#64748b'
     const borderColor = rootStyle.getPropertyValue('--border').trim() || '#1e293b'
 
-    const margin = { top: 40, right: 30, bottom: 80, left: 160 }
+    const margin = { top: 40, right: 30, bottom: 80, left: width < 480 ? 90 : 160 }
 
     const xGroups = Array.from(new Set(data.map((d) => (d[xAxis] as string) || "Unknown"))).sort()
     const yGroups = Array.from(new Set(data.map((d) => d.investmentList || "Unknown"))).sort()
@@ -54,7 +54,7 @@ export function HeatmapChart({ data, className }: HeatmapChartProps) {
 
     const svg = d3.select(svgRef.current)
     svg.selectAll("*").remove()
-    svg.attr("width", width).attr("height", height)
+    svg.attr("width", width).attr("height", height).attr("viewBox", `0 0 ${width} ${height}`)
 
     const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`)
 
@@ -176,7 +176,7 @@ export function HeatmapChart({ data, className }: HeatmapChartProps) {
           </select>
         </div>
       </div>
-      <div ref={containerRef} className="flex-1 w-full min-h-0 overflow-y-auto">
+      <div ref={containerRef} className="flex-1 w-full min-h-0 overflow-y-auto overflow-x-auto">
         <svg ref={svgRef} className="w-full" />
         <div
           ref={tooltipRef}
