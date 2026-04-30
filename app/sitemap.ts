@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next'
 import { routing } from '@/i18n/routing'
 import { getAllPosts } from '@/lib/blog'
 import { loadCompaniesFromCSV } from '@/lib/load-companies-server'
+import { getAllMarketSlugs } from '@/lib/market-pages'
 
 const BASE_URL = 'https://threadmoat.com'
 
@@ -30,6 +31,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: page === '/' ? 'weekly' : 'monthly',
       priority: page === '/' ? 1.0 : page === '/insights' || page === '/companies' ? 0.9 : 0.8,
       alternates: { languages: buildAlternateLanguages(page) },
+    })
+  }
+
+  // Market answer pages
+  for (const slug of getAllMarketSlugs()) {
+    const marketPath = `/insights/market/${slug}`
+    entries.push({
+      url: `${BASE_URL}${marketPath}`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+      alternates: { languages: buildAlternateLanguages(marketPath) },
     })
   }
 
