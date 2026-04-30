@@ -3,13 +3,14 @@ import NextLink from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { ArrowRight, Calendar, Tag, User } from 'lucide-react'
+import { ArrowRight, Calendar, Tag, User, BookOpen, ChevronRight } from 'lucide-react'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { LanguageSwitcher } from '@/components/language-switcher'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { buildAlternates, buildOpenGraph } from '@/lib/metadata'
 import { getAllPosts } from '@/lib/blog'
 import { NewsletterSignup } from '@/components/homepage/newsletter-signup'
+import { MARKET_PAGES } from '@/lib/market-pages'
 
 type Props = { params: Promise<{ locale: string }> }
 
@@ -118,6 +119,31 @@ export default async function InsightsPage({ params }: Props) {
             ))}
           </div>
         )}
+      </section>
+
+      {/* Market Guides */}
+      <section className="border-t border-border/40 bg-muted/30">
+        <div className="container mx-auto px-4 py-12 max-w-3xl">
+          <div className="flex items-center gap-2 mb-6">
+            <BookOpen className="h-5 w-5 text-primary" />
+            <h2 className="text-xl font-semibold">Market Guides</h2>
+          </div>
+          <p className="text-sm text-muted-foreground mb-6">
+            Deep-dive answers to common questions about industrial AI and engineering software markets.
+          </p>
+          <div className="grid gap-2 sm:grid-cols-2">
+            {MARKET_PAGES.map((p) => (
+              <Link
+                key={p.slug}
+                href={`/insights/market/${p.slug}`}
+                className="flex items-center justify-between py-2.5 px-3 rounded-md hover:bg-background border border-transparent hover:border-border/40 transition-colors group"
+              >
+                <span className="text-sm font-medium">{p.shortTitle}</span>
+                <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors shrink-0" />
+              </Link>
+            ))}
+          </div>
+        </div>
       </section>
 
       {/* Newsletter */}

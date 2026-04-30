@@ -9,6 +9,7 @@ import { LanguageSwitcher } from '@/components/language-switcher'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { buildAlternates, buildOpenGraph } from '@/lib/metadata'
 import { loadCompaniesFromCSV } from '@/lib/load-companies-server'
+import { JsonLd, directoryItemListJsonLd } from '@/lib/json-ld'
 
 const PAGE_SIZE = 20
 
@@ -22,18 +23,18 @@ export async function generateMetadata({ params }: Props) {
   return {
     title: 'Company Directory | ThreadMoat',
     description:
-      'Explore 500+ startups in the industrial AI and engineering software landscape. Browse companies by category, location, and sector focus.',
+      'Explore 600+ startups in the industrial AI and engineering software landscape (Q1 2026). Browse companies by category, location, and sector focus.',
     alternates: buildAlternates(locale, '/companies'),
     openGraph: buildOpenGraph(
       'Company Directory | ThreadMoat',
-      'Explore 500+ startups in the industrial AI and engineering software landscape.',
+      'Explore 600+ startups in the industrial AI and engineering software landscape (Q1 2026).',
       locale,
       '/companies'
     ),
     twitter: {
       card: 'summary_large_image' as const,
       title: 'Company Directory | ThreadMoat',
-      description: 'Explore 500+ startups in industrial AI and engineering software.',
+      description: 'Explore 600+ startups in industrial AI and engineering software (Q1 2026).',
     },
   }
 }
@@ -55,6 +56,7 @@ export default async function CompaniesPage({ params, searchParams }: Props) {
 
   return (
     <div className="min-h-screen bg-background">
+      <JsonLd data={directoryItemListJsonLd(sorted, locale)} />
       {/* Header */}
       <header className="border-b border-border/40 bg-background/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
@@ -89,7 +91,7 @@ export default async function CompaniesPage({ params, searchParams }: Props) {
       <section className="container mx-auto px-4 py-16 text-center">
         <h1 className="text-4xl font-bold tracking-tight sm:text-5xl mb-4">Company Directory</h1>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          Explore {allCompanies.length}+ startups reshaping industrial AI and engineering software.
+          Explore {allCompanies.length}+ startups reshaping industrial AI and engineering software (as of Q1 2026).
           Sign in for detailed analytics, competitive scoring, and investment intelligence.
         </p>
       </section>

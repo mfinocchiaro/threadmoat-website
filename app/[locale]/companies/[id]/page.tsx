@@ -6,13 +6,14 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import {
   ArrowLeft, ArrowRight, MapPin, Calendar, Building2,
-  Globe, Users, Tag, Lock, ExternalLink,
+  Globe, Users, Tag, Lock, ExternalLink, TrendingUp,
 } from 'lucide-react'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { LanguageSwitcher } from '@/components/language-switcher'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { buildAlternates, buildOpenGraph } from '@/lib/metadata'
 import { loadCompaniesFromCSV } from '@/lib/load-companies-server'
+import { JsonLd, companyJsonLd } from '@/lib/json-ld'
 
 type Props = { params: Promise<{ locale: string; id: string }> }
 
@@ -54,6 +55,11 @@ export default async function CompanyTeaserPage({ params }: Props) {
   if (!company) notFound()
 
   // Public-safe fields only
+  const fundingLabel = company.latestFundingRound &&
+    !['Undisclosed or unknown', 'Unknown', 'N/A', ''].includes(company.latestFundingRound)
+    ? company.latestFundingRound
+    : ''
+
   const details = [
     { icon: MapPin, label: 'Location', value: company.hqLocation },
     { icon: Globe, label: 'Country', value: company.country },
@@ -61,10 +67,31 @@ export default async function CompanyTeaserPage({ params }: Props) {
     { icon: Users, label: 'Headcount', value: company.headcount > 0 ? `~${company.headcount}` : '' },
     { icon: Building2, label: 'Discipline', value: company.discipline },
     { icon: Tag, label: 'Sector Focus', value: company.sectorFocus },
+    { icon: TrendingUp, label: 'Funding Stage', value: fundingLabel },
   ].filter((d) => d.value)
+
+  // Semantic answer snippet — visible to crawlers without login
+  const answerSnippet = [
+    `${company.name} is ${company.discipline ? `a ${company.discipline} company` : 'an engineering software company'}`,
+    company.categoryTags.length > 0 ? `specializing in ${company.categoryTags.slice(0, 3).join(', ')}` : null,
+    company.hqLocation ? `headquartered in ${company.hqLocation}` : null,
+    company.founded > 0 ? `founded in ${company.founded}` : null,
+    fundingLabel ? `with ${fundingLabel} funding` : null,
+  ].filter(Boolean).join(', ') + '.'
 
   return (
     <div className="min-h-screen bg-background">
+      <JsonLd data={companyJsonLd({
+        id: company.id,
+        name: company.name,
+        url: company.url,
+        hqLocation: company.hqLocation,
+        country: company.country,
+        founded: company.founded > 0 ? company.founded : undefined,
+        discipline: company.discipline,
+        categoryTags: company.categoryTags,
+        locale,
+      })} />
       {/* Header */}
       <header className="border-b border-border/40 bg-background/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
@@ -96,7 +123,7 @@ export default async function CompanyTeaserPage({ params }: Props) {
         </Link>
 
         {/* Company Header */}
-        <div className="flex items-start gap-4 mb-8">
+        <div className="flex items-start gap-4 mb-6">
           <Image
             src={`/logos/${company.id}.png`}
             alt={company.name}
@@ -120,6 +147,9 @@ export default async function CompanyTeaserPage({ params }: Props) {
             )}
           </div>
         </div>
+
+        {/* Public answer snippet — semantic summary for crawlers */}
+        <p className="text-sm text-muted-foreground leading-relaxed mb-8">{answerSnippet}</p>
 
         {/* Public Details */}
         <Card className="mb-8">

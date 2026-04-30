@@ -90,6 +90,79 @@ export function productJsonLd() {
   }
 }
 
+export function companyJsonLd(opts: {
+  id: string
+  name: string
+  url?: string
+  hqLocation?: string
+  country?: string
+  founded?: number
+  discipline?: string
+  categoryTags?: string[]
+  locale?: string
+}) {
+  const prefix = opts.locale && opts.locale !== 'en' ? `/${opts.locale}` : ''
+  const obj: Record<string, unknown> = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: opts.name,
+    url: opts.url || `${BASE_URL}${prefix}/companies/${opts.id}`,
+    sameAs: opts.url ? [opts.url] : undefined,
+    description: [
+      opts.discipline,
+      opts.categoryTags?.slice(0, 3).join(', '),
+      opts.hqLocation ? `Based in ${opts.hqLocation}` : undefined,
+      opts.founded ? `Founded ${opts.founded}` : undefined,
+    ].filter(Boolean).join('. '),
+    foundingDate: opts.founded ? String(opts.founded) : undefined,
+    location: opts.hqLocation ? {
+      '@type': 'Place',
+      name: opts.hqLocation,
+      address: { '@type': 'PostalAddress', addressCountry: opts.country },
+    } : undefined,
+    knowsAbout: opts.categoryTags,
+  }
+  // Strip undefined fields
+  return Object.fromEntries(Object.entries(obj).filter(([, v]) => v !== undefined))
+}
+
+export function directoryItemListJsonLd(companies: Array<{
+  id: string
+  name: string
+  hqLocation?: string
+  discipline?: string
+  locale?: string
+}>, locale = 'en') {
+  const prefix = locale !== 'en' ? `/${locale}` : ''
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'ThreadMoat Industrial AI & Engineering Software Company Directory',
+    description: 'Curated directory of 600+ startups in industrial AI, PLM, CAD, simulation, IoT, and manufacturing software.',
+    url: `${BASE_URL}${prefix}/companies`,
+    numberOfItems: companies.length,
+    itemListElement: companies.slice(0, 50).map((c, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: c.name,
+      url: `${BASE_URL}${prefix}/companies/${c.id}`,
+      description: [c.discipline, c.hqLocation].filter(Boolean).join(', '),
+    })),
+  }
+}
+
+export function faqJsonLd(faqs: Array<{ question: string; answer: string }>) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map(f => ({
+      '@type': 'Question',
+      name: f.question,
+      acceptedAnswer: { '@type': 'Answer', text: f.answer },
+    })),
+  }
+}
+
 export function articleJsonLd(opts: {
   title: string
   description: string
