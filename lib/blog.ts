@@ -12,6 +12,7 @@ export interface BlogPost {
   author: string
   locale: string
   tags: string[]
+  answerBlock?: string
   content: string
 }
 
@@ -23,6 +24,7 @@ export interface BlogPostMeta {
   author: string
   locale: string
   tags: string[]
+  answerBlock?: string
 }
 
 function parseMdxFile(filePath: string): BlogPost | null {
@@ -38,6 +40,7 @@ function parseMdxFile(filePath: string): BlogPost | null {
       author: data.author ?? 'ThreadMoat Research',
       locale: data.locale ?? 'en',
       tags: Array.isArray(data.tags) ? data.tags : [],
+      answerBlock: data.answerBlock,
       content,
     }
   } catch {

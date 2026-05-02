@@ -10,6 +10,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { buildAlternates, buildOpenGraph } from '@/lib/metadata'
 import { JsonLd, articleJsonLd, breadcrumbListJsonLd } from '@/lib/json-ld'
 import { getPostBySlug, getAllSlugs } from '@/lib/blog'
+import { AnswerBlock } from '@/components/answer-block'
 import { MDXRemote } from 'next-mdx-remote/rsc'
 
 type Props = { params: Promise<{ locale: string; slug: string }> }
@@ -127,6 +128,8 @@ export default async function InsightPost({ params }: Props) {
             )}
           </div>
         </header>
+
+        {post.answerBlock && <AnswerBlock answer={post.answerBlock} />}
 
         <div className="prose prose-neutral dark:prose-invert max-w-none">
           <MDXRemote source={post.content} />
