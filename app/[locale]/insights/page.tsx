@@ -49,19 +49,18 @@ export default async function InsightsPage({ params }: Props) {
       {/* Header */}
       <header className="border-b border-border/40 bg-background/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
-          <Link href="/" className="flex items-center gap-2">
+          <div className="flex items-center gap-2">
             <Image src="/logo.png" alt="ThreadMoat" width={160} height={42} className="h-10 w-auto" unoptimized />
-          </Link>
+          </div>
           <nav className="flex items-center gap-8">
-            <Link href="/report" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              {tCommon('nav.marketReport')}
-            </Link>
+            <a href="/#services" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{tCommon('nav.services')}</a>
+            <a href="/#expertise" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{tCommon('nav.expertise')}</a>
             <Link href="/insights" className="text-sm text-foreground font-medium transition-colors">
               Insights
             </Link>
-            <Link href="/about" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              {tCommon('nav.about')}
-            </Link>
+            <Link href="/report" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{tCommon('nav.marketReport')}</Link>
+            <Link href="/about" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{tCommon('nav.about')}</Link>
+            <Link href="/about#contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{tCommon('nav.contactUs')}</Link>
           </nav>
           <div className="flex items-center gap-3">
             <LanguageSwitcher />
@@ -69,6 +68,9 @@ export default async function InsightsPage({ params }: Props) {
             <NextLink href="/auth/login">
               <Button variant="ghost" size="sm">{tCommon('nav.signIn')}</Button>
             </NextLink>
+            <Button asChild size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
+              <a href="https://calendly.com/mfinocchiaro/15min" target="_blank" rel="noopener noreferrer">{tCommon('nav.scheduleCall')}</a>
+            </Button>
           </div>
         </div>
       </header>
@@ -89,7 +91,18 @@ export default async function InsightsPage({ params }: Props) {
           <div className="grid gap-8 max-w-3xl mx-auto">
             {posts.map((post) => (
               <Link key={post.slug} href={`/insights/${post.slug}`}>
-                <Card className="hover:border-primary/40 transition-colors cursor-pointer">
+                <Card className="hover:border-primary/40 transition-colors cursor-pointer overflow-hidden">
+                  {post.image && (
+                    <div className="relative w-full h-40 bg-muted">
+                      <Image
+                        src={post.image}
+                        alt={post.title}
+                        fill
+                        className="object-cover"
+                        unoptimized
+                      />
+                    </div>
+                  )}
                   <CardContent className="p-6">
                     <h2 className="text-xl font-semibold mb-2 group-hover:text-primary">{post.title}</h2>
                     <p className="text-muted-foreground mb-4 line-clamp-2">{post.description}</p>

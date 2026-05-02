@@ -13,6 +13,7 @@ export interface BlogPost {
   locale: string
   tags: string[]
   answerBlock?: string
+  image?: string
   content: string
 }
 
@@ -25,6 +26,7 @@ export interface BlogPostMeta {
   locale: string
   tags: string[]
   answerBlock?: string
+  image?: string
 }
 
 function parseMdxFile(filePath: string): BlogPost | null {
@@ -41,6 +43,7 @@ function parseMdxFile(filePath: string): BlogPost | null {
       locale: data.locale ?? 'en',
       tags: Array.isArray(data.tags) ? data.tags : [],
       answerBlock: data.answerBlock,
+      image: data.image,
       content,
     }
   } catch {
