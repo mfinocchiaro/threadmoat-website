@@ -170,15 +170,18 @@ export function articleJsonLd(opts: {
   date: string
   author?: string
   locale?: string
+  image?: string
 }) {
   const prefix = opts.locale && opts.locale !== 'en' ? `/${opts.locale}` : ''
   return {
     '@context': 'https://schema.org',
-    '@type': 'Article',
+    '@type': 'NewsArticle',
     headline: opts.title,
     description: opts.description,
     url: `${BASE_URL}${prefix}/insights/${opts.slug}`,
     datePublished: opts.date,
+    dateModified: opts.date,
+    image: opts.image ? { '@type': 'ImageObject', url: opts.image } : undefined,
     author: {
       '@type': 'Person',
       name: opts.author ?? 'ThreadMoat Research',
@@ -188,6 +191,28 @@ export function articleJsonLd(opts: {
       name: 'ThreadMoat',
       logo: { '@type': 'ImageObject', url: `${BASE_URL}/logo.png` },
     },
+  }
+}
+
+export function breadcrumbListJsonLd(items: Array<{ name: string; url: string }>, locale = 'en') {
+  const prefix = locale !== 'en' ? `/${locale}` : ''
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: `${BASE_URL}${prefix}/`,
+      },
+      ...items.map((item, i) => ({
+        '@type': 'ListItem',
+        position: i + 2,
+        name: item.name,
+        item: item.url.startsWith('http') ? item.url : `${BASE_URL}${prefix}${item.url}`,
+      })),
+    ],
   }
 }
 

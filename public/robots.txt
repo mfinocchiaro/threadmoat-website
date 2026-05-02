@@ -1,0 +1,17 @@
+# Robots.txt for ThreadMoat
+
+User-agent: *
+Allow: /
+Disallow: /auth/
+Disallow: /dashboard/
+Disallow: /admin/
+Disallow: /api/
+Disallow: /companies/
+Disallow: /*.json
+Disallow: /*.xml
+
+# Sitemaps - only public content
+Sitemap: https://threadmoat.com/sitemap.xml
+
+# Bot crawl-delay (optional, respect crawl budget)
+Crawl-delay: 1

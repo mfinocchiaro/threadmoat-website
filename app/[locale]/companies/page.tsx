@@ -36,6 +36,12 @@ export async function generateMetadata({ params }: Props) {
       title: 'Company Directory | ThreadMoat',
       description: 'Explore 600+ startups in industrial AI and engineering software (Q1 2026).',
     },
+    robots: {
+      index: false,
+      follow: false,
+      noindex: true,
+      nofollow: true,
+    },
   }
 }
 

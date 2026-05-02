@@ -42,6 +42,12 @@ export async function generateMetadata({ params }: Props) {
       title,
       description,
     },
+    robots: {
+      index: false,
+      follow: false,
+      noindex: true,
+      nofollow: true,
+    },
   }
 }
 
