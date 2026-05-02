@@ -11,6 +11,7 @@ export interface MarketPage {
   definition: string
   faqs: MarketPageFaq[]
   relatedDiscipline: string
+  relatedBlogPosts?: Array<{ slug: string; title: string }>
 }
 
 export const MARKET_PAGES: MarketPage[] = [
@@ -45,6 +46,10 @@ export const MARKET_PAGES: MarketPage[] = [
       },
     ],
     relatedDiscipline: 'PLM / PDM',
+    relatedBlogPosts: [
+      { slug: 'ai-trends-plm-digital-thread', title: 'Top 5 AI Trends Transforming PLM and the Digital Thread in 2026' },
+      { slug: 'industrial-ai-shadow-ecosystem', title: 'The $1.57 Billion Shadow Ecosystem' },
+    ],
   },
   {
     slug: 'cad-cae-software',
@@ -77,6 +82,11 @@ export const MARKET_PAGES: MarketPage[] = [
       },
     ],
     relatedDiscipline: 'CAD / CAE',
+    relatedBlogPosts: [
+      { slug: 'ai-trends-engineering-simulation', title: 'Top 5 AI Trends Transforming Engineering Simulation in 2026' },
+      { slug: 'design-intelligence-signals', title: '5 Signals That Matter for Design Intelligence' },
+      { slug: 'industrial-ai-shadow-ecosystem', title: 'The $1.57 Billion Shadow Ecosystem' },
+    ],
   },
   {
     slug: 'industrial-iot',
@@ -105,10 +115,14 @@ export const MARKET_PAGES: MarketPage[] = [
       {
         question: 'What startups are building Industrial IoT platforms?',
         answer:
-          'ThreadMoat tracks 600+ industrial AI and engineering software startups including numerous IIoT platform builders. The space includes companies focused on edge AI, OT/IT convergence, industrial data infrastructure, and vertical-specific connectivity solutions for sectors like energy, automotive, and aerospace.',
+          'ThreadMoat tracks 600+ industrial AI and engineering software startups including numerous IIoT and manufacturing AI builders. The space includes companies focused on predictive maintenance, digital twins, production optimization, and vertical-specific solutions for sectors like aerospace, automotive, and electronics.',
       },
     ],
     relatedDiscipline: 'IoT / Connectivity',
+    relatedBlogPosts: [
+      { slug: 'ai-trends-manufacturing-2026', title: 'Top 5 AI Trends Transforming Manufacturing in 2026' },
+      { slug: 'industrial-ai-shadow-ecosystem', title: 'The $1.57 Billion Shadow Ecosystem' },
+    ],
   },
   {
     slug: 'ai-manufacturing',
@@ -141,6 +155,10 @@ export const MARKET_PAGES: MarketPage[] = [
       },
     ],
     relatedDiscipline: 'AI / ML Applications',
+    relatedBlogPosts: [
+      { slug: 'ai-trends-manufacturing-2026', title: 'Top 5 AI Trends Transforming Manufacturing in 2026' },
+      { slug: 'industrial-ai-shadow-ecosystem', title: 'The $1.57 Billion Shadow Ecosystem' },
+    ],
   },
   {
     slug: 'digital-twin',
@@ -173,6 +191,10 @@ export const MARKET_PAGES: MarketPage[] = [
       },
     ],
     relatedDiscipline: 'Digital Twin',
+    relatedBlogPosts: [
+      { slug: 'ai-trends-manufacturing-2026', title: 'Top 5 AI Trends Transforming Manufacturing in 2026' },
+      { slug: 'industrial-ai-shadow-ecosystem', title: 'The $1.57 Billion Shadow Ecosystem' },
+    ],
   },
   {
     slug: 'engineering-simulation',
@@ -205,6 +227,10 @@ export const MARKET_PAGES: MarketPage[] = [
       },
     ],
     relatedDiscipline: 'Simulation / CAE',
+    relatedBlogPosts: [
+      { slug: 'ai-trends-engineering-simulation', title: 'Top 5 AI Trends Transforming Engineering Simulation in 2026' },
+      { slug: 'design-intelligence-signals', title: '5 Signals That Matter for Design Intelligence' },
+    ],
   },
   {
     slug: 'manufacturing-execution-systems',
@@ -237,6 +263,10 @@ export const MARKET_PAGES: MarketPage[] = [
       },
     ],
     relatedDiscipline: 'MES / Operations',
+    relatedBlogPosts: [
+      { slug: 'ai-trends-manufacturing-2026', title: 'Top 5 AI Trends Transforming Manufacturing in 2026' },
+      { slug: 'industrial-ai-shadow-ecosystem', title: 'The $1.57 Billion Shadow Ecosystem' },
+    ],
   },
   {
     slug: 'supply-chain-intelligence',
@@ -269,6 +299,10 @@ export const MARKET_PAGES: MarketPage[] = [
       },
     ],
     relatedDiscipline: 'Supply Chain / Logistics',
+    relatedBlogPosts: [
+      { slug: 'ai-trends-plm-digital-thread', title: 'Top 5 AI Trends Transforming PLM and the Digital Thread in 2026' },
+      { slug: 'industrial-ai-shadow-ecosystem', title: 'The $1.57 Billion Shadow Ecosystem' },
+    ],
   },
   {
     slug: 'quality-management-systems',
@@ -301,6 +335,10 @@ export const MARKET_PAGES: MarketPage[] = [
       },
     ],
     relatedDiscipline: 'Quality / Compliance',
+    relatedBlogPosts: [
+      { slug: 'ai-trends-manufacturing-2026', title: 'Top 5 AI Trends Transforming Manufacturing in 2026' },
+      { slug: 'industrial-ai-shadow-ecosystem', title: 'The $1.57 Billion Shadow Ecosystem' },
+    ],
   },
   {
     slug: 'industrial-robotics-software',
@@ -333,6 +371,10 @@ export const MARKET_PAGES: MarketPage[] = [
       },
     ],
     relatedDiscipline: 'Robotics / Automation',
+    relatedBlogPosts: [
+      { slug: 'ai-trends-manufacturing-2026', title: 'Top 5 AI Trends Transforming Manufacturing in 2026' },
+      { slug: 'design-intelligence-signals', title: '5 Signals That Matter for Design Intelligence' },
+    ],
   },
 ]
 
