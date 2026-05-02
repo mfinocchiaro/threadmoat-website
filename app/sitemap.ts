@@ -1,7 +1,6 @@
 import type { MetadataRoute } from 'next'
 import { routing } from '@/i18n/routing'
 import { getAllPosts } from '@/lib/blog'
-import { loadCompaniesFromCSV } from '@/lib/load-companies-server'
 import { getAllMarketSlugs } from '@/lib/market-pages'
 
 const BASE_URL = 'https://threadmoat.com'
@@ -57,23 +56,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
       alternates: { languages: buildAlternateLanguages(postPath) },
     })
-  }
-
-  // Company directory pages
-  try {
-    const companies = await loadCompaniesFromCSV()
-    for (const company of companies) {
-      const companyPath = `/companies/${company.id}`
-      entries.push({
-        url: `${BASE_URL}${companyPath}`,
-        lastModified: new Date(),
-        changeFrequency: 'monthly',
-        priority: 0.5,
-        alternates: { languages: buildAlternateLanguages(companyPath) },
-      })
-    }
-  } catch {
-    // If CSV fails to load, skip company entries
   }
 
   return entries
