@@ -59,6 +59,7 @@ export default async function HomePage({ params }: Props) {
           <nav className="flex items-center gap-8">
             <a href="#services" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{tCommon('nav.services')}</a>
             <a href="#expertise" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{tCommon('nav.expertise')}</a>
+            <Link href="/insights" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Insights</Link>
             <Link href="/report" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{tCommon('nav.marketReport')}</Link>
             <Link href="/about" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{tCommon('nav.about')}</Link>
             <Link href="/about#contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{tCommon('nav.contactUs')}</Link>
@@ -88,18 +89,28 @@ export default async function HomePage({ params }: Props) {
             unoptimized
           />
           <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-sm text-purple-100">
-            <span className="flex items-center gap-1.5">
+            <a
+              href="https://www.demystifyingplm.com/conferences"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 hover:opacity-80 transition-opacity cursor-pointer"
+            >
               <span className="text-purple-300 text-xs font-semibold uppercase">Past Event</span>
               <span className="text-purple-300 mx-1">&middot;</span>
               <MapPin className="h-3.5 w-3.5 text-purple-300" />
               <strong>Warwick, UK</strong>
-            </span>
-            <span className="hidden sm:flex items-center gap-1.5">
+            </a>
+            <a
+              href="https://www.demystifyingplm.com/conferences"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden sm:flex items-center gap-1.5 hover:opacity-80 transition-opacity cursor-pointer"
+            >
               <span className="text-purple-300 text-xs font-semibold uppercase">Past Event</span>
               <span className="text-purple-300 mx-1">&middot;</span>
               <MapPin className="h-3.5 w-3.5 text-purple-300" />
               <strong>Miami, FL</strong>
-            </span>
+            </a>
             <span className="hidden md:flex items-center gap-1.5">
               <span className="text-purple-300 text-xs font-semibold uppercase">TBD</span>
               <span className="text-purple-300 mx-1">&middot;</span>
