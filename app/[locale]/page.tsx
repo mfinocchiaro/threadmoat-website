@@ -13,6 +13,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { buildAlternates, buildOpenGraph } from '@/lib/metadata'
 import { JsonLd, organizationJsonLd, webSiteJsonLd } from '@/lib/json-ld'
 import { NewsletterSignup } from '@/components/homepage/newsletter-signup'
+import { getAllPosts } from '@/lib/blog'
 
 type Props = { params: Promise<{ locale: string }> }
 
@@ -37,6 +38,7 @@ export default async function HomePage({ params }: Props) {
   setRequestLocale(locale)
   const t = await getTranslations('Home')
   const tCommon = await getTranslations('Common')
+  const posts = getAllPosts(locale).slice(0, 3)
 
   return (
     <div className="min-h-screen bg-background">
@@ -87,18 +89,22 @@ export default async function HomePage({ params }: Props) {
           />
           <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-sm text-purple-100">
             <span className="flex items-center gap-1.5">
+              <span className="text-purple-300 text-xs font-semibold uppercase">Past Event</span>
+              <span className="text-purple-300 mx-1">&middot;</span>
               <MapPin className="h-3.5 w-3.5 text-purple-300" />
               <strong>Warwick, UK</strong>
-              <span className="text-purple-300 mx-1">&middot;</span>
-              <CalendarDays className="h-3.5 w-3.5 text-purple-300" />
-              Mar 25
             </span>
             <span className="hidden sm:flex items-center gap-1.5">
+              <span className="text-purple-300 text-xs font-semibold uppercase">Past Event</span>
+              <span className="text-purple-300 mx-1">&middot;</span>
               <MapPin className="h-3.5 w-3.5 text-purple-300" />
               <strong>Miami, FL</strong>
+            </span>
+            <span className="hidden md:flex items-center gap-1.5">
+              <span className="text-purple-300 text-xs font-semibold uppercase">TBD</span>
               <span className="text-purple-300 mx-1">&middot;</span>
-              <CalendarDays className="h-3.5 w-3.5 text-purple-300" />
-              Apr 13
+              <MapPin className="h-3.5 w-3.5 text-purple-300" />
+              <strong>Frankfurt</strong>
             </span>
           </div>
           <a
@@ -107,7 +113,7 @@ export default async function HomePage({ params }: Props) {
             rel="noopener noreferrer"
             className="rounded-full bg-purple-600 hover:bg-purple-500 px-4 py-1.5 text-xs font-semibold text-white transition-colors"
           >
-            Register Now!
+            Learn More
           </a>
         </div>
       </div>
@@ -363,6 +369,41 @@ export default async function HomePage({ params }: Props) {
           </Button>
         </Link>
       </section>
+
+      {/* Featured Insights */}
+      {posts.length > 0 && (
+        <section className="border-t border-border/40 bg-muted/30">
+          <div className="container mx-auto px-4 py-24">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold mb-4">Featured Insights</h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto">
+                Analysis and perspectives on the industrial AI startup landscape.
+              </p>
+            </div>
+            <div className="grid gap-6 md:grid-cols-3 max-w-5xl mx-auto">
+              {posts.map((post) => (
+                <Link key={post.slug} href={`/insights/${post.slug}`}>
+                  <Card className="hover:border-primary/40 transition-colors cursor-pointer h-full">
+                    <CardContent className="p-6 flex flex-col h-full">
+                      <h3 className="text-lg font-semibold mb-2 group-hover:text-primary line-clamp-2">{post.title}</h3>
+                      <p className="text-sm text-muted-foreground mb-4 line-clamp-3 flex-1">{post.description}</p>
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <span>{new Date(post.date).toLocaleDateString(locale, { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+                        <span className="text-primary font-medium">→</span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+            <div className="text-center mt-8">
+              <Link href="/insights">
+                <Button variant="outline">View all insights <ArrowRight className="h-4 w-4 ml-2" /></Button>
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Newsletter */}
       <section className="border-t border-border/40 bg-muted/30">
