@@ -44,10 +44,11 @@ export default async function ReportPage({ params }: Props) {
     const title = t(`chapters.ch${chapterNum}`)
     const desc = t(`chapters.ch${chapterNum}d`)
 
-    // Extract part number from title for display (e.g., "Part 5" → "5")
+    // Extract part number from title for display (e.g., "Part 1: Title" → "1")
     let displayNum: string | number = chapterNum
     if (title.startsWith('Part ')) {
-      displayNum = title.replace('Part ', '')
+      const match = title.match(/Part\s+(\d+)/)
+      if (match) displayNum = match[1]
     } else if (title.includes('Appendix')) {
       displayNum = title.includes('Appendix A') ? 'A' : 'B'
     } else if (title === 'Executive Summary') {
