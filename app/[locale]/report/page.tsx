@@ -39,10 +39,23 @@ export default async function ReportPage({ params }: Props) {
   const t = await getTranslations('Report')
   const tCommon = await getTranslations('Common')
 
-  const REPORT_TOC = Array.from({ length: 18 }, (_, i) => ({
-    part: t(`chapters.ch${i + 1}`),
-    desc: t(`chapters.ch${i + 1}d`),
-  }))
+  const REPORT_TOC = Array.from({ length: 18 }, (_, i) => {
+    const chapterNum = i + 1
+    const title = t(`chapters.ch${chapterNum}`)
+    const desc = t(`chapters.ch${chapterNum}d`)
+
+    // Extract part number from title for display (e.g., "Part 5" → "5")
+    let displayNum: string | number = chapterNum
+    if (title.startsWith('Part ')) {
+      displayNum = title.replace('Part ', '')
+    } else if (title.includes('Appendix')) {
+      displayNum = title.includes('Appendix A') ? 'A' : 'B'
+    } else if (title === 'Executive Summary') {
+      displayNum = '0'
+    }
+
+    return { part: title, desc, displayNum }
+  })
 
   const HERO_STATS = [
     { value: "600", label: t('stats.startupsTracked'), icon: Building2 },
@@ -252,7 +265,7 @@ export default async function ReportPage({ params }: Props) {
                 className="flex items-start gap-3 rounded-lg border border-border/30 bg-card/50 px-4 py-3 hover:bg-muted/40 transition-colors"
               >
                 <span className="text-xs font-semibold text-primary bg-primary/10 rounded px-2 py-0.5 shrink-0 mt-0.5">
-                  {i + 1}
+                  {item.displayNum}
                 </span>
                 <div>
                   <p className="text-sm font-medium">{item.part}</p>

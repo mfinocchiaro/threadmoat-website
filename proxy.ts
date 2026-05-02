@@ -12,7 +12,7 @@ const allLocalePattern = routing.locales.join('|')
 const localePrefixRegex = new RegExp(`^/(${allLocalePattern})(/|$)`)
 
 // Paths that should be handled by next-intl (public pages)
-const PUBLIC_PAGES = ['/', '/pricing', '/about', '/report']
+const PUBLIC_PAGES = ['/', '/pricing', '/about', '/report', '/insights']
 
 function isPublicPage(pathname: string): boolean {
   // Strip locale prefix if present
