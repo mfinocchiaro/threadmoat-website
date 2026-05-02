@@ -8,7 +8,7 @@ import { ThemeToggle } from '@/components/theme-toggle'
 import { LanguageSwitcher } from '@/components/language-switcher'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { buildAlternates, buildOpenGraph } from '@/lib/metadata'
-import { JsonLd, articleJsonLd } from '@/lib/json-ld'
+import { JsonLd, articleJsonLd, breadcrumbListJsonLd } from '@/lib/json-ld'
 import { getPostBySlug, getAllSlugs } from '@/lib/blog'
 import { MDXRemote } from 'next-mdx-remote/rsc'
 
@@ -53,14 +53,20 @@ export default async function InsightPost({ params }: Props) {
   return (
     <div className="min-h-screen bg-background">
       <JsonLd
-        data={articleJsonLd({
-          title: post.title,
-          description: post.description,
-          slug: post.slug,
-          date: post.date,
-          author: post.author,
-          locale,
-        })}
+        data={[
+          articleJsonLd({
+            title: post.title,
+            description: post.description,
+            slug: post.slug,
+            date: post.date,
+            author: post.author,
+            locale,
+          }),
+          breadcrumbListJsonLd([
+            { name: 'Insights', url: '/insights' },
+            { name: post.title, url: `/insights/${post.slug}` },
+          ], locale),
+        ]}
       />
 
       {/* Header */}

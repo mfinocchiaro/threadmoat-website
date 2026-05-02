@@ -11,6 +11,7 @@ import { buildAlternates, buildOpenGraph } from '@/lib/metadata'
 import { getAllPosts } from '@/lib/blog'
 import { NewsletterSignup } from '@/components/homepage/newsletter-signup'
 import { MARKET_PAGES } from '@/lib/market-pages'
+import { JsonLd, breadcrumbListJsonLd } from '@/lib/json-ld'
 
 type Props = { params: Promise<{ locale: string }> }
 
@@ -43,6 +44,8 @@ export default async function InsightsPage({ params }: Props) {
 
   return (
     <div className="min-h-screen bg-background">
+      <JsonLd data={breadcrumbListJsonLd([{ name: 'Insights', url: '/insights' }], locale)} />
+
       {/* Header */}
       <header className="border-b border-border/40 bg-background/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
