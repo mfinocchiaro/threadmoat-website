@@ -135,6 +135,27 @@ export default async function MarketAnswerPage({ params }: Props) {
           </CardContent>
         </Card>
 
+        {/* Related blog articles */}
+        {page.relatedBlogPosts && page.relatedBlogPosts.length > 0 && (
+          <section className="mb-10">
+            <h2 className="text-lg font-semibold mb-4">Related Blog Articles</h2>
+            <div className="space-y-3">
+              {page.relatedBlogPosts.map((post) => (
+                <Link
+                  key={post.slug}
+                  href={`/insights/${post.slug}`}
+                  className="flex items-start justify-between gap-3 py-3 px-3 rounded-md hover:bg-muted/50 transition-colors group"
+                >
+                  <div className="flex-1">
+                    <p className="text-sm font-medium group-hover:text-foreground">{post.title}</p>
+                  </div>
+                  <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors flex-shrink-0 mt-0.5" />
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
+
         {/* Related market guides */}
         {otherPages.length > 0 && (
           <section>
