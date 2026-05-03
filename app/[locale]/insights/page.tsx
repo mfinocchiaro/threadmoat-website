@@ -75,55 +75,15 @@ export default async function InsightsPage({ params }: Props) {
         </div>
       </header>
 
-      {/* Hero */}
-      <section className="container mx-auto px-4 py-16 text-center">
-        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl mb-4">Insights</h1>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          Research, analysis, and perspectives on the industrial AI and engineering software landscape.
+      {/* Coming Soon */}
+      <section className="container mx-auto px-4 py-24 text-center">
+        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl mb-4">Insights Coming Soon</h1>
+        <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
+          We're building our insights library. In the meantime, check out our latest analysis on <a href="https://demystifyingplm.com/insights" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Demystifying PLM</a>.
         </p>
-      </section>
-
-      {/* Posts */}
-      <section className="container mx-auto px-4 pb-24">
-        {posts.length === 0 ? (
-          <p className="text-center text-muted-foreground py-12">No posts yet. Check back soon.</p>
-        ) : (
-          <div className="grid gap-8 max-w-3xl mx-auto">
-            {posts.map((post) => (
-              <a key={post.slug} href={`https://demystifyingplm.com/insights/${post.slug}`} target="_blank" rel="noopener noreferrer">
-                <Card className="hover:border-primary/40 transition-colors cursor-pointer">
-                  <CardContent className="p-6">
-                    <h2 className="text-xl font-semibold mb-2 group-hover:text-primary">{post.title}</h2>
-                    <p className="text-muted-foreground mb-4 line-clamp-2">{post.description}</p>
-                    <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-                      <span className="flex items-center gap-1.5">
-                        <Calendar className="h-3.5 w-3.5" />
-                        {new Date(post.date).toLocaleDateString(locale, {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric',
-                        })}
-                      </span>
-                      <span className="flex items-center gap-1.5">
-                        <User className="h-3.5 w-3.5" />
-                        {post.author}
-                      </span>
-                      {post.tags.length > 0 && (
-                        <span className="flex items-center gap-1.5">
-                          <Tag className="h-3.5 w-3.5" />
-                          {post.tags.slice(0, 3).join(', ')}
-                        </span>
-                      )}
-                    </div>
-                    <div className="mt-4 flex items-center gap-1 text-sm text-primary font-medium">
-                      Read on Demystifying PLM <ArrowRight className="h-3.5 w-3.5" />
-                    </div>
-                  </CardContent>
-                </Card>
-              </a>
-            ))}
-          </div>
-        )}
+        <Link href="/insights/market" className="inline-flex items-center gap-2 text-primary hover:underline font-medium">
+          Explore Market Guides <ChevronRight className="h-4 w-4" />
+        </Link>
       </section>
 
       {/* Market Guides */}
