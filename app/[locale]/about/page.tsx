@@ -97,7 +97,7 @@ export default async function AboutPage({ params }: Props) {
                 </div>
               ))}
             </div>
-            <p className="text-xs text-muted-foreground mt-2">Data as of Q1 2026</p>
+            <p className="text-xs text-muted-foreground mt-2">{tCommon('dataTimestamp')}</p>
           </div>
           <div className="shrink-0 md:w-[480px] relative overflow-hidden rounded-lg border border-border/40 shadow-lg">
             <div className="flex animate-screenshot-cycle" style={{ width: "300%" }}>

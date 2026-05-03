@@ -5,3 +5,7 @@
 {"id":"efd4880b-47b9-4d43-952f-97a34077114f","ts":"2026-05-03T07:24:02.796Z","severity":"info","message":"Auto-mode started. Will loop until milestone complete.","source":"notify","read":false}
 {"id":"5a6d7259-3dcc-4e21-9106-5b1dab881fa6","ts":"2026-05-03T07:24:02.796Z","severity":"info","message":"Dynamic routing: disabled — all tasks will use claude-code/claude-opus-4-7","source":"notify","read":false}
 {"id":"7ccbc4a1-efc8-498e-b5e2-8cffeb4d8273","ts":"2026-05-03T07:24:02.798Z","severity":"info","message":"Pre-flight: 23 milestones queued. All have full context.","source":"notify","read":false}
+{"id":"33b14198-341a-4ffa-8931-d80f08903d0c","ts":"2026-05-03T07:24:03.541Z","severity":"info","message":"Pre-dispatch: pre-dispatch: created gsd snapshot after 675m of uncommitted changes","source":"notify","read":false}
+{"id":"61df93ca-6184-45de-a1b1-255311ee8298","ts":"2026-05-03T07:24:07.942Z","severity":"warning","message":"Auto-mode paused due to provider error: Credit balance is too low","source":"notify","read":false}
+{"id":"719f0a84-ea11-43b2-8549-55b8f539ed95","ts":"2026-05-03T07:24:07.954Z","severity":"warning","message":"Auto-mode paused due to provider errorProvider error: : Credit balance is too low","source":"notify","read":false}
+{"id":"ed88d481-c519-48f3-b6cc-eda8d60ad4c5","ts":"2026-05-03T07:24:08.523Z","severity":"info","message":"Auto-mode paused (Escape). Type to interact, or /gsd auto to resume.","source":"notify","read":false}
