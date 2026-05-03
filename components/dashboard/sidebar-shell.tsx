@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { Sidebar } from "./sidebar";
 import { TopBar } from "./topbar";
-import { FilterToolbar } from "./filter-toolbar";
+import { CollapsibleFilterBar } from "./collapsible-filter-bar";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import type { Session } from "next-auth";
 import type { AccessTier } from "@/lib/tiers";
@@ -107,7 +107,7 @@ export function SidebarShell({
           ⚠ Research estimates only — figures are educated approximations from public sources and may contain errors. Not investment advice. Always conduct your own due diligence.
         </div>
         <div className="flex-1 overflow-y-auto overflow-x-auto">
-          {!pathname.startsWith("/dashboard/settings") && <FilterToolbar />}
+          {!pathname.startsWith("/dashboard/settings") && <CollapsibleFilterBar />}
           <div className="mx-auto px-3 sm:px-6 py-4 sm:py-6 max-w-full">{children}</div>
         </div>
       </div>
