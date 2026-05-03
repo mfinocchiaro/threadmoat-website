@@ -28,8 +28,13 @@ interface FilterState {
 interface FilterContextType {
   filters: FilterState
   setFilters: React.Dispatch<React.SetStateAction<FilterState>>
+  sidebarFilters: FilterState
+  setSidebarFilters: React.Dispatch<React.SetStateAction<FilterState>>
+  topFilters: FilterState
+  setTopFilters: React.Dispatch<React.SetStateAction<FilterState>>
   isSidebarOpen: boolean
   filterCompany: (company: Company) => boolean
+  getComposedFilters: () => FilterState
   activeFilterCount: number
   clearAllFilters: () => void
   removeFilter: (type: string, value: string) => void
@@ -109,95 +114,140 @@ export function getOceanType(company: Company): "red" | "blue" {
 
 export function FilterProvider({ children }: { children: ReactNode }) {
   const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS)
+  const [sidebarFilters, setSidebarFilters] = useState<FilterState>(DEFAULT_FILTERS)
+  const [topFilters, setTopFilters] = useState<FilterState>(DEFAULT_FILTERS)
 
-  const filterCompany = (company: Company) => {
-    if (filters.search) {
-      const search = filters.search.toLowerCase()
+  const getComposedFilters = useCallback((): FilterState => {
+    // Sidebar = hypothesis (primary selection)
+    // Top = refinement (narrows down sidebar results)
+    // For arrays: intersection (AND logic)
+    // For scalars: top takes precedence (refinement)
+
+    const mergeArrays = (sidebar: string[], top: string[]): string[] => {
+      if (sidebar.length === 0) return top
+      if (top.length === 0) return sidebar
+      return sidebar.filter(item => top.includes(item))
+    }
+
+    return {
+      search: topFilters.search || sidebarFilters.search,
+      investmentLists: mergeArrays(sidebarFilters.investmentLists, topFilters.investmentLists),
+      industries: mergeArrays(sidebarFilters.industries, topFilters.industries),
+      countries: mergeArrays(sidebarFilters.countries, topFilters.countries),
+      subsegments: mergeArrays(sidebarFilters.subsegments, topFilters.subsegments),
+      subcategories: mergeArrays(sidebarFilters.subcategories, topFilters.subcategories),
+      lifecycle: mergeArrays(sidebarFilters.lifecycle, topFilters.lifecycle),
+      fundingRound: mergeArrays(sidebarFilters.fundingRound, topFilters.fundingRound),
+      deploymentModel: mergeArrays(sidebarFilters.deploymentModel, topFilters.deploymentModel),
+      operatingModel: mergeArrays(sidebarFilters.operatingModel, topFilters.operatingModel),
+      categoryTags: mergeArrays(sidebarFilters.categoryTags, topFilters.categoryTags),
+      differentiationTags: mergeArrays(sidebarFilters.differentiationTags, topFilters.differentiationTags),
+      investmentTheses: mergeArrays(sidebarFilters.investmentTheses, topFilters.investmentTheses),
+      metrics: topFilters.metrics || sidebarFilters.metrics,
+      oceanStrategy: topFilters.oceanStrategy !== "all" ? topFilters.oceanStrategy : sidebarFilters.oceanStrategy,
+      sizeCategory: mergeArrays(sidebarFilters.sizeCategory, topFilters.sizeCategory),
+      ecosystemFlags: mergeArrays(sidebarFilters.ecosystemFlags, topFilters.ecosystemFlags),
+      fundingRange: ([sidebarFilters.fundingRange[0] || 0, sidebarFilters.fundingRange[1] || 0] as [number, number]).every(x => x === 0)
+        ? topFilters.fundingRange
+        : ([topFilters.fundingRange[0] || 0, topFilters.fundingRange[1] || 0] as [number, number]).every(x => x === 0)
+        ? sidebarFilters.fundingRange
+        : [
+            Math.max(sidebarFilters.fundingRange[0], topFilters.fundingRange[0]),
+            Math.min(sidebarFilters.fundingRange[1], topFilters.fundingRange[1]),
+          ] as [number, number],
+    }
+  }, [sidebarFilters, topFilters])
+
+  const filterCompany = useCallback((company: Company) => {
+    const activeFilters = getComposedFilters()
+
+    if (activeFilters.search) {
+      const search = activeFilters.search.toLowerCase()
       const matchesSearch =
         company.name.toLowerCase().includes(search) ||
         company.tags?.some(t => t.toLowerCase().includes(search))
       if (!matchesSearch) return false
     }
 
-    if (filters.investmentLists.length > 0) {
-      if (!filters.investmentLists.includes(company.investmentList)) return false
+    if (activeFilters.investmentLists.length > 0) {
+      if (!activeFilters.investmentLists.includes(company.investmentList)) return false
     }
 
-    if (filters.industries.length > 0) {
-      const hasIndustry = company.industriesServed?.some(ind => filters.industries.includes(ind))
+    if (activeFilters.industries.length > 0) {
+      const hasIndustry = company.industriesServed?.some(ind => activeFilters.industries.includes(ind))
       if (!hasIndustry) return false
     }
 
-    if (filters.countries.length > 0) {
-      if (!filters.countries.includes(company.country)) return false
+    if (activeFilters.countries.length > 0) {
+      if (!activeFilters.countries.includes(company.country)) return false
     }
 
-    if (filters.subsegments.length > 0) {
-      if (!company.subsegment || !filters.subsegments.includes(company.subsegment)) return false
+    if (activeFilters.subsegments.length > 0) {
+      if (!company.subsegment || !activeFilters.subsegments.includes(company.subsegment)) return false
     }
 
-    if (filters.subcategories.length > 0) {
-      if (!company.subcategories || !filters.subcategories.includes(company.subcategories)) return false
+    if (activeFilters.subcategories.length > 0) {
+      if (!company.subcategories || !activeFilters.subcategories.includes(company.subcategories)) return false
     }
 
-    if (filters.lifecycle.length > 0) {
+    if (activeFilters.lifecycle.length > 0) {
       const phase = company.lifecyclePhase || company.startupLifecyclePhase
-      if (!phase || !filters.lifecycle.includes(phase)) return false
+      if (!phase || !activeFilters.lifecycle.includes(phase)) return false
     }
 
-    if (filters.fundingRound.length > 0) {
+    if (activeFilters.fundingRound.length > 0) {
       const round = company.latestFundingRound
-      if (!round || !filters.fundingRound.includes(round)) return false
+      if (!round || !activeFilters.fundingRound.includes(round)) return false
     }
 
-    if (filters.deploymentModel.length > 0) {
-      const hasModel = company.deploymentModel?.some(t => filters.deploymentModel.includes(t))
+    if (activeFilters.deploymentModel.length > 0) {
+      const hasModel = company.deploymentModel?.some(t => activeFilters.deploymentModel.includes(t))
       if (!hasModel) return false
     }
 
-    if (filters.operatingModel.length > 0) {
-      const hasTag = company.operatingModelTags?.some(t => filters.operatingModel.includes(t))
+    if (activeFilters.operatingModel.length > 0) {
+      const hasTag = company.operatingModelTags?.some(t => activeFilters.operatingModel.includes(t))
       if (!hasTag) return false
     }
 
-    if (filters.categoryTags.length > 0) {
-      const hasTag = company.categoryTags?.some(t => filters.categoryTags.includes(t))
+    if (activeFilters.categoryTags.length > 0) {
+      const hasTag = company.categoryTags?.some(t => activeFilters.categoryTags.includes(t))
       if (!hasTag) return false
     }
 
-    if (filters.differentiationTags.length > 0) {
-      const hasTag = company.differentiationTags?.some(t => filters.differentiationTags.includes(t))
+    if (activeFilters.differentiationTags.length > 0) {
+      const hasTag = company.differentiationTags?.some(t => activeFilters.differentiationTags.includes(t))
       if (!hasTag) return false
     }
 
-    if (filters.investmentTheses.length > 0) {
-      const hasThesis = company.investmentTheses?.some(t => filters.investmentTheses.includes(t))
+    if (activeFilters.investmentTheses.length > 0) {
+      const hasThesis = company.investmentTheses?.some(t => activeFilters.investmentTheses.includes(t))
       if (!hasThesis) return false
     }
 
-    if (filters.oceanStrategy !== "all") {
-      if (getOceanType(company) !== filters.oceanStrategy) return false
+    if (activeFilters.oceanStrategy !== "all") {
+      if (getOceanType(company) !== activeFilters.oceanStrategy) return false
     }
 
-    if (filters.sizeCategory.length > 0) {
-      if (!company.startupSizeCategory || !filters.sizeCategory.includes(company.startupSizeCategory)) return false
+    if (activeFilters.sizeCategory.length > 0) {
+      if (!company.startupSizeCategory || !activeFilters.sizeCategory.includes(company.startupSizeCategory)) return false
     }
 
-    if (filters.ecosystemFlags.length > 0) {
-      const hasFlag = filters.ecosystemFlags.some(flag => {
+    if (activeFilters.ecosystemFlags.length > 0) {
+      const hasFlag = activeFilters.ecosystemFlags.some(flag => {
         const def = ECOSYSTEM_FLAGS[flag]
         return def && company[def.field] === true
       })
       if (!hasFlag) return false
     }
 
-    if (filters.fundingRange[0] !== 0 || filters.fundingRange[1] !== 0) {
+    if (activeFilters.fundingRange[0] !== 0 || activeFilters.fundingRange[1] !== 0) {
       const funding = company.totalFunding || 0
-      if (funding < filters.fundingRange[0] || funding > filters.fundingRange[1]) return false
+      if (funding < activeFilters.fundingRange[0] || funding > activeFilters.fundingRange[1]) return false
     }
 
     return true
-  }
+  }, [getComposedFilters])
 
   const activeFilterCount = useMemo(() =>
     filters.investmentLists.length +
@@ -267,7 +317,7 @@ export function FilterProvider({ children }: { children: ReactNode }) {
   }, [setFilters])
 
   return (
-    <FilterContext.Provider value={{ filters, setFilters, filterCompany, isSidebarOpen: true, activeFilterCount, clearAllFilters, removeFilter }}>
+    <FilterContext.Provider value={{ filters, setFilters, filterCompany, isSidebarOpen: true, activeFilterCount, clearAllFilters, removeFilter, sidebarFilters, setSidebarFilters, topFilters, setTopFilters, getComposedFilters }}>
       {children}
     </FilterContext.Provider>
   )

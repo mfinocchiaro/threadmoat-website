@@ -53,15 +53,15 @@ interface FilterDropdownProps {
 }
 
 export function FilterDropdown({ label, filterKey, options, showColorDot }: FilterDropdownProps) {
-  const { filters, setFilters } = useFilter()
+  const { topFilters, setTopFilters } = useFilter()
   const [expanded, setExpanded] = React.useState(false)
   const maxVisible = 20
-  const activeValues = (filters[filterKey as keyof typeof filters] as string[]) || []
+  const activeValues = (topFilters[filterKey as keyof typeof topFilters] as string[]) || []
   const count = activeValues.length
 
   const toggle = React.useCallback(
     (value: string) => {
-      setFilters(prev => {
+      setTopFilters(prev => {
         const current = (prev[filterKey as keyof typeof prev] as string[]) || []
         const next = current.includes(value)
           ? current.filter(v => v !== value)
@@ -69,12 +69,12 @@ export function FilterDropdown({ label, filterKey, options, showColorDot }: Filt
         return { ...prev, [filterKey]: next }
       })
     },
-    [filterKey, setFilters]
+    [filterKey, setTopFilters]
   )
 
   const clearCategory = React.useCallback(() => {
-    setFilters(prev => ({ ...prev, [filterKey]: [] }))
-  }, [filterKey, setFilters])
+    setTopFilters(prev => ({ ...prev, [filterKey]: [] }))
+  }, [filterKey, setTopFilters])
 
   const visible = expanded ? options : options.slice(0, maxVisible)
   const hasMore = options.length > maxVisible
@@ -148,10 +148,10 @@ function formatFundingShort(v: number): string {
 }
 
 export function FundingRangeDropdown({ min, max }: { min: number; max: number }) {
-  const { filters, setFilters } = useFilter()
-  const isActive = filters.fundingRange[0] !== 0 || filters.fundingRange[1] !== 0
-  const effectiveLo = isActive ? filters.fundingRange[0] : min
-  const effectiveHi = isActive ? filters.fundingRange[1] : max
+  const { topFilters, setTopFilters } = useFilter()
+  const isActive = topFilters.fundingRange[0] !== 0 || topFilters.fundingRange[1] !== 0
+  const effectiveLo = isActive ? topFilters.fundingRange[0] : min
+  const effectiveHi = isActive ? topFilters.fundingRange[1] : max
 
   if (max <= 0) return null
 
@@ -176,7 +176,7 @@ export function FundingRangeDropdown({ min, max }: { min: number; max: number })
             </span>
             {isActive && (
               <button
-                onClick={() => setFilters(prev => ({ ...prev, fundingRange: [0, 0] as [number, number] }))}
+                onClick={() => setTopFilters(prev => ({ ...prev, fundingRange: [0, 0] as [number, number] }))}
                 className="text-xs text-muted-foreground hover:text-foreground"
               >
                 Clear
@@ -193,7 +193,7 @@ export function FundingRangeDropdown({ min, max }: { min: number; max: number })
               step={Math.max(100000, Math.round((max - min) / 100))}
               value={[effectiveLo, effectiveHi]}
               onValueChange={([lo, hi]) =>
-                setFilters(prev => ({ ...prev, fundingRange: [lo, hi] as [number, number] }))
+                setTopFilters(prev => ({ ...prev, fundingRange: [lo, hi] as [number, number] }))
               }
               className="flex-1"
             />
@@ -210,9 +210,9 @@ export function FundingRangeDropdown({ min, max }: { min: number; max: number })
 /* ---- Ocean Strategy dropdown ---- */
 
 export function OceanStrategyDropdown() {
-  const { filters, setFilters } = useFilter()
+  const { topFilters, setTopFilters } = useFilter()
   const { companies } = useCompanyData()
-  const isActive = filters.oceanStrategy !== "all"
+  const isActive = topFilters.oceanStrategy !== "all"
 
   const oceanCounts = React.useMemo(() => {
     let red = 0, blue = 0
@@ -231,12 +231,12 @@ export function OceanStrategyDropdown() {
             <Badge
               variant="secondary"
               className={`ml-0.5 h-4 min-w-[16px] px-1 text-[10px] font-semibold ${
-                filters.oceanStrategy === "red"
+                topFilters.oceanStrategy === "red"
                   ? "bg-red-600/20 text-red-400"
                   : "bg-blue-600/20 text-blue-400"
               }`}
             >
-              {filters.oceanStrategy === "red" ? "R" : "B"}
+              {topFilters.oceanStrategy === "red" ? "R" : "B"}
             </Badge>
           )}
           <ChevronDown className="h-3 w-3 opacity-50" />
@@ -253,12 +253,12 @@ export function OceanStrategyDropdown() {
               { key: "red" as const, label: "Red Ocean", color: "rgb(220, 38, 38)", count: oceanCounts.red },
               { key: "blue" as const, label: "Blue Ocean", color: "rgb(37, 99, 235)", count: oceanCounts.blue },
             ]).map(({ key, label, color, count }) => {
-              const active = filters.oceanStrategy === key
+              const active = topFilters.oceanStrategy === key
               return (
                 <button
                   key={key}
                   onClick={() =>
-                    setFilters(prev => ({
+                    setTopFilters(prev => ({
                       ...prev,
                       oceanStrategy: prev.oceanStrategy === key ? "all" : key,
                     }))

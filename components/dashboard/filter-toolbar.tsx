@@ -281,14 +281,14 @@ function ActiveFilterChips() {
 /* ---- Main toolbar ---- */
 
 export function FilterToolbar() {
-  const { filters, setFilters, activeFilterCount } = useFilter()
+  const { topFilters, setTopFilters, activeFilterCount } = useFilter()
   const { options, isLoading } = useFilterOptions()
   const subcategoryOptions = useSubcategoryOptions()
   const { companies } = useCompanyData()
 
   const searchResults = React.useMemo(() => {
-    if (!filters.search) return []
-    const q = filters.search.toLowerCase()
+    if (!topFilters.search) return []
+    const q = topFilters.search.toLowerCase()
     return companies
       .filter(c =>
         c.name?.toLowerCase().includes(q) ||
@@ -296,7 +296,7 @@ export function FilterToolbar() {
         c.categoryTags?.some(t => t.toLowerCase().includes(q))
       )
       .slice(0, 10)
-  }, [companies, filters.search])
+  }, [companies, topFilters.search])
 
   if (isLoading) {
     return (
@@ -391,19 +391,19 @@ export function FilterToolbar() {
           <Search className="absolute left-2 top-1.5 h-3.5 w-3.5 text-muted-foreground" />
           <Input
             placeholder="Search companies, investors..."
-            value={filters.search}
+            value={topFilters.search}
             onChange={e =>
-              setFilters(prev => ({ ...prev, search: e.target.value }))
+              setTopFilters(prev => ({ ...prev, search: e.target.value }))
             }
             className="h-7 pl-7 text-xs"
           />
-          {filters.search && (
+          {topFilters.search && (
             <div className="absolute top-full right-0 mt-2 w-64 bg-background border border-border rounded-md shadow-lg z-50 max-h-64 overflow-y-auto p-1">
               {searchResults.map(c => (
                 <Link
                   key={c.id}
                   href={`/dashboard/company/${c.id}`}
-                  onClick={() => setFilters(prev => ({ ...prev, search: "" }))}
+                  onClick={() => setTopFilters(prev => ({ ...prev, search: "" }))}
                   className="flex items-center gap-2 px-2 py-1.5 text-xs rounded-sm hover:bg-muted transition-colors cursor-pointer"
                 >
                   <span className="font-medium">{c.name}</span>
