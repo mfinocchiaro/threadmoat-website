@@ -29,5 +29,10 @@
     "de": "Deutsch",
     "pt": "Português",
     "switchLanguage": "Mudar idioma"
-  }
+  },
+  "newsletter": {
+    "stayInformed": "Mantenha-se informado",
+    "subtitle": "Receba inteligência de mercado em sua caixa de entrada."
+  },
+  "dataTimestamp": "Dados atualizados em Q1 2026"
 }

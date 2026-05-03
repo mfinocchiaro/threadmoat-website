@@ -65,7 +65,14 @@ export function getAllPosts(locale: string): BlogPostMeta[] {
     }
   }
 
-  return posts.sort((a, b) => (b.date > a.date ? 1 : -1))
+  posts.sort((a, b) => (b.date > a.date ? 1 : -1))
+
+  // English fallback: all content is in English
+  if (posts.length === 0 && locale !== 'en') {
+    return getAllPosts('en')
+  }
+
+  return posts
 }
 
 /** Get all unique slugs across all locales (for generateStaticParams) */

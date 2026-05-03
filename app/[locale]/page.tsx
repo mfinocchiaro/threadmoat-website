@@ -259,7 +259,7 @@ export default async function HomePage({ params }: Props) {
             <div><p className="text-4xl font-bold text-primary">200+</p><p className="text-sm text-muted-foreground mt-1">{t('profiles.founderInterviews')}</p></div>
             <NextLink href="/landscape" className="hover:opacity-80 transition-opacity"><p className="text-4xl font-bold text-primary">9</p><p className="text-sm text-muted-foreground mt-1 underline underline-offset-2">{t('profiles.investmentDomains')}</p></NextLink>
           </div>
-          <p className="text-xs text-muted-foreground mt-4 text-center">Data as of Q1 2026</p>
+          <p className="text-xs text-muted-foreground mt-4 text-center">{tCommon('dataTimestamp')}</p>
         </div>
       </section>
 
@@ -419,9 +419,9 @@ export default async function HomePage({ params }: Props) {
       {/* Newsletter */}
       <section className="border-t border-border/40 bg-muted/30">
         <div className="container mx-auto px-4 py-10 text-center">
-          <h3 className="text-lg font-semibold mb-2">Stay Informed</h3>
+          <h3 className="text-lg font-semibold mb-2">{tCommon('newsletter.stayInformed')}</h3>
           <p className="text-sm text-muted-foreground mb-4">
-            Get market insights and analysis on the industrial AI startup landscape.
+            {tCommon('newsletter.subtitle')}
           </p>
           <div className="flex justify-center">
             <NewsletterSignup />

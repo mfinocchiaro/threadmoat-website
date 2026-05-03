@@ -19,6 +19,16 @@ function buildAlternateLanguages(pagePath: string): Record<string, string> {
   return languages
 }
 
+function buildBlogPostAlternates(postPath: string): Record<string, string> {
+  const canonical = `${BASE_URL}${postPath}`  // always English URL
+  const languages: Record<string, string> = {}
+  for (const locale of routing.locales) {
+    languages[locale] = canonical  // all locales point to English
+  }
+  languages['x-default'] = canonical
+  return languages
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const entries: MetadataRoute.Sitemap = []
 
@@ -54,7 +64,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(post.date),
       changeFrequency: 'monthly',
       priority: 0.7,
-      alternates: { languages: buildAlternateLanguages(postPath) },
+      alternates: { languages: buildBlogPostAlternates(postPath) },
     })
   }
 

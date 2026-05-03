@@ -9,7 +9,7 @@ import { ThemeToggle } from '@/components/theme-toggle'
 import { LanguageSwitcher } from '@/components/language-switcher'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { buildAlternates, buildOpenGraph } from '@/lib/metadata'
-import { JsonLd, faqJsonLd, organizationJsonLd } from '@/lib/json-ld'
+import { JsonLd, faqJsonLd, organizationJsonLd, breadcrumbListJsonLd, articleJsonLd } from '@/lib/json-ld'
 import { getMarketPage, getAllMarketSlugs, MARKET_PAGES } from '@/lib/market-pages'
 
 type Props = { params: Promise<{ locale: string; topic: string }> }
@@ -48,7 +48,22 @@ export default async function MarketAnswerPage({ params }: Props) {
 
   return (
     <div className="min-h-screen bg-background">
-      <JsonLd data={[faqJsonLd(page.faqs), organizationJsonLd()]} />
+      <JsonLd data={[
+        faqJsonLd(page.faqs),
+        organizationJsonLd(),
+        breadcrumbListJsonLd([
+          { name: 'Insights', url: '/insights' },
+          { name: page.shortTitle, url: `/insights/market/${topic}` },
+        ], locale),
+        ...(page.datePublished ? [articleJsonLd({
+          title: page.title,
+          description: page.description,
+          slug: `market/${topic}`,
+          date: page.datePublished,
+          author: 'ThreadMoat Research',
+          locale,
+        })] : []),
+      ]} />
 
       {/* Header */}
       <header className="border-b border-border/40 bg-background/80 backdrop-blur-sm sticky top-0 z-50">
@@ -100,6 +115,14 @@ export default async function MarketAnswerPage({ params }: Props) {
           <h2 className="text-xl font-semibold mb-3">What is {page.shortTitle}?</h2>
           <p className="text-muted-foreground leading-relaxed">{page.definition}</p>
         </section>
+
+        {/* Body content */}
+        {page.body && (
+          <section
+            className="mb-10 prose prose-neutral dark:prose-invert max-w-none text-sm leading-relaxed"
+            dangerouslySetInnerHTML={{ __html: page.body }}
+          />
+        )}
 
         {/* FAQ */}
         <section className="mb-10">

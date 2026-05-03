@@ -1,2 +1,7 @@
 {"id":"4c441fa8-63f4-4197-82bc-369421de015d","ts":"2026-04-19T12:23:34.469Z","severity":"info","message":"Claude Code MCP prepared at /Users/mfinocchiaro/Dropbox/Private/Obsidian/Projects/threadmoat-website/.mcp.json","source":"notify","read":false}
 {"id":"af335186-3b08-4930-8533-4789a3b3d979","ts":"2026-04-23T09:12:43.599Z","severity":"info","message":"Claude Code MCP prepared at /Users/mfinocchiaro/Dropbox/Private/Obsidian/Projects/threadmoat-website/.mcp.json","source":"notify","read":false}
+{"id":"7fe5a3dd-120f-4422-a968-c1d3078144dd","ts":"2026-05-03T07:24:02.258Z","severity":"info","message":"MCP client ready — 2 server(s) configured","source":"notify","read":false}
+{"id":"04394aa6-fb0a-4a73-8a7c-b6dd73ca4671","ts":"2026-05-03T07:24:02.738Z","severity":"warning","message":"[db] FTS5 unavailable — memory queries will use LIKE fallback: no such module: fts5","source":"workflow-logger","read":false}
+{"id":"efd4880b-47b9-4d43-952f-97a34077114f","ts":"2026-05-03T07:24:02.796Z","severity":"info","message":"Auto-mode started. Will loop until milestone complete.","source":"notify","read":false}
+{"id":"5a6d7259-3dcc-4e21-9106-5b1dab881fa6","ts":"2026-05-03T07:24:02.796Z","severity":"info","message":"Dynamic routing: disabled — all tasks will use claude-code/claude-opus-4-7","source":"notify","read":false}
+{"id":"7ccbc4a1-efc8-498e-b5e2-8cffeb4d8273","ts":"2026-05-03T07:24:02.798Z","severity":"info","message":"Pre-flight: 23 milestones queued. All have full context.","source":"notify","read":false}
