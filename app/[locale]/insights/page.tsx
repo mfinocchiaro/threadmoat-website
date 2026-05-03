@@ -90,7 +90,7 @@ export default async function InsightsPage({ params }: Props) {
         ) : (
           <div className="grid gap-8 max-w-3xl mx-auto">
             {posts.map((post) => (
-              <Link key={post.slug} href={`/insights/${post.slug}`}>
+              <a key={post.slug} href={`https://demystifyingplm.com/insights/${post.slug}`} target="_blank" rel="noopener noreferrer">
                 <Card className="hover:border-primary/40 transition-colors cursor-pointer overflow-hidden">
                   {post.image && (
                     <div className="relative w-full h-40 bg-muted">
@@ -127,11 +127,11 @@ export default async function InsightsPage({ params }: Props) {
                       )}
                     </div>
                     <div className="mt-4 flex items-center gap-1 text-sm text-primary font-medium">
-                      Read more <ArrowRight className="h-3.5 w-3.5" />
+                      Read on Demystifying PLM <ArrowRight className="h-3.5 w-3.5" />
                     </div>
                   </CardContent>
                 </Card>
-              </Link>
+              </a>
             ))}
           </div>
         )}
