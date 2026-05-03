@@ -91,16 +91,7 @@ export default async function InsightsPage({ params }: Props) {
           <div className="grid gap-8 max-w-3xl mx-auto">
             {posts.map((post) => (
               <a key={post.slug} href={`https://demystifyingplm.com/insights/${post.slug}`} target="_blank" rel="noopener noreferrer">
-                <Card className="hover:border-primary/40 transition-colors cursor-pointer overflow-hidden">
-                  {post.image && (
-                    <div className="w-full h-40 bg-muted overflow-hidden">
-                      <img
-                        src={post.image}
-                        alt={post.title}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  )}
+                <Card className="hover:border-primary/40 transition-colors cursor-pointer">
                   <CardContent className="p-6">
                     <h2 className="text-xl font-semibold mb-2 group-hover:text-primary">{post.title}</h2>
                     <p className="text-muted-foreground mb-4 line-clamp-2">{post.description}</p>
