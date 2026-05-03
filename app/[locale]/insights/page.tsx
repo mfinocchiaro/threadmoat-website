@@ -93,13 +93,11 @@ export default async function InsightsPage({ params }: Props) {
               <a key={post.slug} href={`https://demystifyingplm.com/insights/${post.slug}`} target="_blank" rel="noopener noreferrer">
                 <Card className="hover:border-primary/40 transition-colors cursor-pointer overflow-hidden">
                   {post.image && (
-                    <div className="relative w-full h-40 bg-muted">
-                      <Image
+                    <div className="w-full h-40 bg-muted overflow-hidden">
+                      <img
                         src={post.image}
                         alt={post.title}
-                        fill
-                        className="object-cover"
-                        unoptimized
+                        className="w-full h-full object-cover"
                       />
                     </div>
                   )}
