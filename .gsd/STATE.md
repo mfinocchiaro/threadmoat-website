@@ -29,6 +29,7 @@
 - ⬜ **M021:** QA Sweep — Auth, Payments, Tier Enforcement & Security Hardening
 - ⬜ **M022:** AEO Optimization — Schema, Answer Cards, Market Pages & Multilingual Hygiene
 - ⬜ **M023:** AEO Issues 1-4: Language Routing, Stats, Schema, Translations
+- ⬜ **M024:** Dashboard Filter Architecture: Collapsible Refinement, Reactivity, and Pinning
 
 ## Recent Decisions
 - None recorded
