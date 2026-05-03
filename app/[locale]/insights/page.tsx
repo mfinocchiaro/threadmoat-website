@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: Props) {
     title: 'Insights | ThreadMoat',
     description:
       'Analysis and research on the industrial AI and engineering software startup landscape. Market trends, funding analysis, and strategic intelligence.',
-    alternates: buildAlternates(locale, '/insights'),
+    alternates: buildAlternates('en', '/insights'),
     openGraph: buildOpenGraph(
       'Insights | ThreadMoat',
       'Analysis and research on the industrial AI and engineering software startup landscape.',
@@ -165,9 +165,9 @@ export default async function InsightsPage({ params }: Props) {
       {/* Newsletter */}
       <section className="border-t border-border/40 bg-muted/30">
         <div className="container mx-auto px-4 py-10 text-center">
-          <h3 className="text-lg font-semibold mb-2">Stay Informed</h3>
+          <h3 className="text-lg font-semibold mb-2">{tCommon('newsletter.stayInformed')}</h3>
           <p className="text-sm text-muted-foreground mb-4">
-            Get market insights delivered to your inbox.
+            {tCommon('newsletter.subtitle')}
           </p>
           <div className="flex justify-center">
             <NewsletterSignup />

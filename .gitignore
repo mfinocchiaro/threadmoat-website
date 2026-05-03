@@ -66,3 +66,7 @@ tmp/
 .gsd/browser-state/
 .gsd/browser-baselines/
 .bg-shell/
+
+# ── GSD baseline (auto-generated) ──
+.gsd-id
+.mcp.json
