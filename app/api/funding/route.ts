@@ -8,6 +8,14 @@ import { rateLimit } from '@/lib/rate-limit'
 // Cloud SaaS benchmark: $200K ARR/employee is the industry "good" threshold (Bessemer/BVP standard)
 const CLOUD_ARR_BENCHMARK = 200_000
 
+interface CachedFunding {
+  data: Array<Record<string, any>>
+  timestamp: number
+}
+
+const CACHE_DURATION_MS = 5 * 60 * 1000 // 5 minutes
+let fundingCache: CachedFunding | null = null
+
 function normalizeCompanyName(name: string): string {
   return name.trim().replace(/[\u00A0\u2013\u2014]/g, ' ').replace(/\s+/g, ' ').toLowerCase()
 }
@@ -71,6 +79,13 @@ export async function GET() {
   const rl = await rateLimit(`api:funding:${session.user.id}`, 30, 60 * 1000)
   if (!rl.allowed) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+  }
+
+  // Return cached data if available
+  if (fundingCache && Date.now() - fundingCache.timestamp < CACHE_DURATION_MS) {
+    return NextResponse.json({ success: true, count: fundingCache.data.length, data: fundingCache.data }, {
+      headers: { 'Cache-Control': 's-maxage=300, stale-while-revalidate=600' }
+    })
   }
 
   try {
@@ -160,7 +175,15 @@ export async function GET() {
         }
       })
 
-    return NextResponse.json({ success: true, count: funding.length, data: funding })
+    // Update cache
+    fundingCache = {
+      data: funding,
+      timestamp: Date.now(),
+    }
+
+    return NextResponse.json({ success: true, count: funding.length, data: funding }, {
+      headers: { 'Cache-Control': 's-maxage=300, stale-while-revalidate=600' }
+    })
   } catch (error) {
     return NextResponse.json(
       { success: false, error: 'Failed to load funding data' },

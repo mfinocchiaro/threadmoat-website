@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import { Company, formatCurrency } from "@/lib/company-data"
 import { getCustomerLogoUrl, parseKnownCustomers } from "@/lib/customer-logos"
 import { normalizeLogoName } from "@/lib/utils"
@@ -21,11 +22,13 @@ function CustomerChip({ name }: { name: string }) {
   return (
     <div className="flex items-center gap-1 rounded border border-border bg-muted/40 px-1.5 py-0.5 max-w-[140px]">
       {logoUrl && (
-        <img
+        <Image
           src={logoUrl}
           alt=""
-          style={{ width: 13, height: 13, objectFit: "contain", flexShrink: 0, display: "block" }}
-          onError={e => { e.currentTarget.style.display = "none" }}
+          width={13}
+          height={13}
+          className="flex-shrink-0"
+          style={{ objectFit: "contain" }}
         />
       )}
       <span className="text-[10px] text-foreground/80 truncate leading-tight">{name}</span>
@@ -55,13 +58,14 @@ export function CompanyHoverCard({ company, onClose, className }: CompanyHoverCa
       {/* ── Header: startup logo + name + location ── */}
       <div className="flex items-start gap-2.5 p-3 border-b border-border">
         <div className="w-9 h-9 shrink-0 rounded bg-muted border border-border overflow-hidden flex items-center justify-center relative">
-          <img
+          <Image
             src={logoPath}
             alt={company.name}
+            width={36}
+            height={36}
             className="w-full h-full object-contain p-0.5"
-            onError={e => { e.currentTarget.style.display = "none" }}
           />
-          {/* initials always rendered underneath — visible if img hides itself */}
+          {/* initials fallback — visible if image fails to load */}
           <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-muted-foreground -z-10">
             {initials}
           </span>

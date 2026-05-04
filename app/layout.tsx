@@ -8,8 +8,8 @@ import { STARTUPS_DISPLAY, YEARS_EXPERIENCE_DISPLAY, FOUNDER_INTERVIEWS_DISPLAY 
 import { generateOGImageUrl } from '@/lib/metadata'
 import './globals.css'
 
-const _geist = Geist({ subsets: ["latin"] });
-const _geistMono = Geist_Mono({ subsets: ["latin"] });
+const geist = Geist({ subsets: ["latin"], variable: '--font-geist' });
+const geistMono = Geist_Mono({ subsets: ["latin"], variable: '--font-geist-mono' });
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://threadmoat.com'),
@@ -56,7 +56,7 @@ export default async function RootLayout({
   const locale = cookieStore.get('NEXT_LOCALE')?.value || 'en'
 
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning className={`${geist.variable} ${geistMono.variable}`}>
       <body className="font-sans antialiased">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <main>{children}</main>

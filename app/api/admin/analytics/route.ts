@@ -117,5 +117,7 @@ export async function GET(req: NextRequest) {
       paid: Number(paidUsers[0]?.count ?? 0),
     },
     tierDistribution,
+  }, {
+    headers: { 'Cache-Control': 's-maxage=60, stale-while-revalidate=300' }
   })
 }
