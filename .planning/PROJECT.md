@@ -22,13 +22,14 @@ Converting visitors into paying dashboard subscribers through compelling market 
 - ✓ SEO (sitemap, OG images, meta tags, robots.txt) — v1.0
 - ✓ React Email templates (welcome, receipt, verification, password-reset) — v1.0
 - ✓ Subscriber onboarding wizard (tier-aware, 3 steps) — v1.0
+- ✓ Dashboard filter architecture (collapsible, hierarchy, wizard, pinning) — M024
+- ✓ v1.1 UX & Data Polish (compact filter toolbar, Stripe coupon, French review, CSV refresh) — v1.1
+- ✓ Admin features (dashboard, user management, data analytics) — admin-features
 
 ### Active
 
-- [ ] Compact sticky filter toolbar replacing dialog overlay (filters all charts)
-- [ ] Stripe upgrade coupon ($4,999 credit for report→subscription upgrades)
-- [ ] French translation careful review pass
-- [ ] CSV data refresh from corrected dataset (when available from other GSD project)
+- [ ] Enhanced AEO/SEO (advanced schema, market content expansion, answer pages)
+- [ ] Performance optimization (bundle size, Core Web Vitals, caching)
 
 ### Out of Scope
 

@@ -10,7 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { LanguageSwitcher } from "@/components/language-switcher"
 import { getTranslations, setRequestLocale } from 'next-intl/server'
-import { buildAlternates, buildOpenGraph } from '@/lib/metadata'
+import { buildAlternates, buildOpenGraph, generateOGImageUrl } from '@/lib/metadata'
 import { JsonLd, organizationJsonLd, webSiteJsonLd } from '@/lib/json-ld'
 import { NewsletterSignup } from '@/components/homepage/newsletter-signup'
 import { getAllPosts } from '@/lib/blog'
@@ -21,15 +21,17 @@ type Props = { params: Promise<{ locale: string }> }
 export async function generateMetadata({ params }: Props) {
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'Home' })
+  const ogImageUrl = generateOGImageUrl(t('meta.title'))
   return {
     title: t('meta.title'),
     description: t('meta.description'),
     alternates: buildAlternates(locale, '/'),
-    openGraph: buildOpenGraph(t('meta.title'), t('meta.description'), locale, '/'),
+    openGraph: buildOpenGraph(t('meta.title'), t('meta.description'), locale, '/', ogImageUrl),
     twitter: {
       card: 'summary_large_image',
       title: t('meta.title'),
       description: t('meta.description'),
+      images: [ogImageUrl],
     },
   }
 }

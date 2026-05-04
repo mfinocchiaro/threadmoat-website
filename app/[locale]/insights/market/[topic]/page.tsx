@@ -8,7 +8,7 @@ import { ChevronRight, ArrowRight, BookOpen } from 'lucide-react'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { LanguageSwitcher } from '@/components/language-switcher'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
-import { buildAlternates, buildOpenGraph } from '@/lib/metadata'
+import { buildAlternates, buildOpenGraph, generateOGImageUrl } from '@/lib/metadata'
 import { JsonLd, faqJsonLd, organizationJsonLd, breadcrumbListJsonLd, articleJsonLd } from '@/lib/json-ld'
 import { getMarketPage, getAllMarketSlugs, MARKET_PAGES } from '@/lib/market-pages'
 import { STARTUPS_DISPLAY } from '@/lib/site-stats'
@@ -25,15 +25,17 @@ export async function generateMetadata({ params }: Props) {
   const { locale, topic } = await params
   const page = getMarketPage(topic)
   if (!page) return {}
+  const ogImageUrl = generateOGImageUrl(page.title, 'blog')
   return {
     title: `${page.title} | ThreadMoat`,
     description: page.description,
     alternates: buildAlternates(locale, `/insights/market/${topic}`),
-    openGraph: buildOpenGraph(page.title, page.description, locale, `/insights/market/${topic}`),
+    openGraph: buildOpenGraph(page.title, page.description, locale, `/insights/market/${topic}`, ogImageUrl, 'article'),
     twitter: {
       card: 'summary_large_image' as const,
       title: page.title,
       description: page.description,
+      images: [ogImageUrl],
     },
   }
 }

@@ -7,16 +7,17 @@ import { ArrowRight, Calendar, Tag, User, BookOpen, ChevronRight } from 'lucide-
 import { ThemeToggle } from '@/components/theme-toggle'
 import { LanguageSwitcher } from '@/components/language-switcher'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
-import { buildAlternates, buildOpenGraph } from '@/lib/metadata'
+import { buildAlternates, buildOpenGraph, generateOGImageUrl } from '@/lib/metadata'
 import { getAllPosts } from '@/lib/blog'
 import { NewsletterSignup } from '@/components/homepage/newsletter-signup'
 import { MARKET_PAGES } from '@/lib/market-pages'
-import { JsonLd, breadcrumbListJsonLd } from '@/lib/json-ld'
+import { JsonLd, breadcrumbListJsonLd, collectionPageJsonLd } from '@/lib/json-ld'
 
 type Props = { params: Promise<{ locale: string }> }
 
 export async function generateMetadata({ params }: Props) {
   const { locale } = await params
+  const ogImageUrl = generateOGImageUrl('Insights | ThreadMoat', 'blog')
   return {
     title: 'Insights | ThreadMoat',
     description:
@@ -26,12 +27,14 @@ export async function generateMetadata({ params }: Props) {
       'Insights | ThreadMoat',
       'Analysis and research on the industrial AI and engineering software startup landscape.',
       locale,
-      '/insights'
+      '/insights',
+      ogImageUrl
     ),
     twitter: {
       card: 'summary_large_image' as const,
       title: 'Insights | ThreadMoat',
       description: 'Analysis and research on the industrial AI and engineering software startup landscape.',
+      images: [ogImageUrl],
     },
   }
 }
@@ -44,7 +47,10 @@ export default async function InsightsPage({ params }: Props) {
 
   return (
     <div className="min-h-screen bg-background">
-      <JsonLd data={breadcrumbListJsonLd([{ name: 'Insights', url: '/insights' }], locale)} />
+      <JsonLd data={[
+        breadcrumbListJsonLd([{ name: 'Insights', url: '/insights' }], locale),
+        collectionPageJsonLd(posts, locale),
+      ]} />
 
       {/* Header */}
       <header className="border-b border-border/40 bg-background/80 backdrop-blur-sm sticky top-0 z-50">
