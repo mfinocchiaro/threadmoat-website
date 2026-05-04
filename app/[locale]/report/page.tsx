@@ -14,6 +14,7 @@ import {
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { buildAlternates, buildOpenGraph } from '@/lib/metadata'
 import { JsonLd, productJsonLd } from '@/lib/json-ld'
+import { STARTUPS_DISPLAY, VC_FUNDING_DISPLAY, INVESTORS_DISPLAY, FOUNDER_INTERVIEWS_DISPLAY, INCUMBENT_VENDORS } from '@/lib/site-stats'
 
 type Props = { params: Promise<{ locale: string }> }
 
@@ -59,12 +60,12 @@ export default async function ReportPage({ params }: Props) {
   })
 
   const HERO_STATS = [
-    { value: "600", label: t('stats.startupsTracked'), icon: Building2 },
-    { value: "$15.6B", label: t('stats.vcFunding'), icon: TrendingUp },
-    { value: "2,400+", label: t('stats.investorsMapped'), icon: Users },
+    { value: STARTUPS_DISPLAY, label: t('stats.startupsTracked'), icon: Building2 },
+    { value: VC_FUNDING_DISPLAY, label: t('stats.vcFunding'), icon: TrendingUp },
+    { value: INVESTORS_DISPLAY, label: t('stats.investorsMapped'), icon: Users },
     { value: "43", label: t('stats.countriesCovered'), icon: Globe },
-    { value: "200+", label: t('stats.founderInterviews'), icon: Briefcase },
-    { value: "31", label: t('stats.incumbentVendors'), icon: Layers },
+    { value: FOUNDER_INTERVIEWS_DISPLAY, label: t('stats.founderInterviews'), icon: Briefcase },
+    { value: INCUMBENT_VENDORS.toString(), label: t('stats.incumbentVendors'), icon: Layers },
   ]
 
   const WHO_IS_THIS_FOR = [
@@ -217,9 +218,9 @@ export default async function ReportPage({ params }: Props) {
                 Market State Report 1Q2026
               </p>
               <div className="flex flex-wrap gap-x-4 gap-y-1 mt-4 text-sm">
-                <span><span className="text-purple-400 font-semibold">600</span> <span className="text-purple-200">Startups</span></span>
-                <span><span className="text-purple-400 font-semibold">31</span> <span className="text-purple-200">Incumbents</span></span>
-                <span><span className="text-purple-400 font-semibold">$15.6B</span> <span className="text-purple-200">VC Mapped</span></span>
+                <span><span className="text-purple-400 font-semibold">{STARTUPS_DISPLAY}</span> <span className="text-purple-200">Startups</span></span>
+                <span><span className="text-purple-400 font-semibold">{INCUMBENT_VENDORS}</span> <span className="text-purple-200">Incumbents</span></span>
+                <span><span className="text-purple-400 font-semibold">{VC_FUNDING_DISPLAY}</span> <span className="text-purple-200">VC Mapped</span></span>
               </div>
               <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-sm">
                 <span><span className="text-purple-400 font-semibold">2,400+</span> <span className="text-purple-200">Investors</span></span>

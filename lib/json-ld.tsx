@@ -1,3 +1,5 @@
+import { STARTUPS_DISPLAY } from '@/lib/site-stats'
+
 const BASE_URL = 'https://threadmoat.com'
 
 export function organizationJsonLd() {
@@ -8,7 +10,7 @@ export function organizationJsonLd() {
     url: BASE_URL,
     logo: `${BASE_URL}/logo.png`,
     description:
-      'Industrial AI & Engineering Software Intelligence platform covering 500+ startups across PLM, CAD, simulation, IoT, and manufacturing.',
+      `Industrial AI & Engineering Software Intelligence platform covering ${STARTUPS_DISPLAY} startups across PLM, CAD, simulation, IoT, and manufacturing.`,
     sameAs: [
       'https://www.linkedin.com/company/threadmoat',
     ],
@@ -138,7 +140,7 @@ export function directoryItemListJsonLd(companies: Array<{
     '@context': 'https://schema.org',
     '@type': 'ItemList',
     name: 'ThreadMoat Industrial AI & Engineering Software Company Directory',
-    description: 'Curated directory of 600+ startups in industrial AI, PLM, CAD, simulation, IoT, and manufacturing software.',
+    description: `Curated directory of ${STARTUPS_DISPLAY} startups in industrial AI, PLM, CAD, simulation, IoT, and manufacturing software.`,
     url: `${BASE_URL}${prefix}/companies`,
     numberOfItems: companies.length,
     itemListElement: companies.slice(0, 50).map((c, i) => ({

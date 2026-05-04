@@ -11,6 +11,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { buildAlternates, buildOpenGraph } from '@/lib/metadata'
 import { JsonLd, faqJsonLd, organizationJsonLd, breadcrumbListJsonLd, articleJsonLd } from '@/lib/json-ld'
 import { getMarketPage, getAllMarketSlugs, MARKET_PAGES } from '@/lib/market-pages'
+import { STARTUPS_DISPLAY } from '@/lib/site-stats'
 
 type Props = { params: Promise<{ locale: string; topic: string }> }
 
@@ -142,7 +143,7 @@ export default async function MarketAnswerPage({ params }: Props) {
           <CardContent className="p-6">
             <h2 className="text-lg font-semibold mb-2">Explore the {page.shortTitle} Startup Landscape</h2>
             <p className="text-sm text-muted-foreground mb-4">
-              ThreadMoat tracks 600+ industrial AI and engineering software startups (Q1 2026), including companies in{' '}
+              ThreadMoat tracks {STARTUPS_DISPLAY} industrial AI and engineering software startups (Q1 2026), including companies in{' '}
               {page.relatedDiscipline}. Access competitive scoring, funding data, investor networks, and 30+ interactive analytics dashboards.
             </p>
             <div className="flex items-center gap-3">

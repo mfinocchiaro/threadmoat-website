@@ -1,8 +1,8 @@
 # GSD State
 
-**Active Milestone:** M020: Growth Platform — SEO, Admin, Conversion & Analysis Expansion
-**Active Slice:** S02: Admin Dashboard & Operational Tooling
-**Phase:** executing
+**Active Milestone:** M024: Dashboard Filter Architecture
+**Active Slice:** Pending
+**Phase:** planning
 **Requirements Status:** 2 active · 14 validated · 0 deferred · 0 out of scope
 
 ## Milestone Registry
@@ -25,10 +25,10 @@
 - ✅ **M017:** Subcategory Filter — Secondary Drill-Down Under Investment List
 - ✅ **M018:** Company Profiles, Scenario Narratives & Guided Journey
 - ✅ **M019:** Monetization & Free Tier — Permanent Recon, Company Limits, Upgrade CTAs & Plan Transitions
-- 🔄 **M020:** Growth Platform — SEO, Admin, Conversion & Analysis Expansion
-- ⬜ **M021:** QA Sweep — Auth, Payments, Tier Enforcement & Security Hardening
-- ⬜ **M022:** AEO Optimization — Schema, Answer Cards, Market Pages & Multilingual Hygiene
-- ⬜ **M023:** AEO Issues 1-4: Language Routing, Stats, Schema, Translations
+- ✅ **M020:** Growth Platform — SEO, Admin, Conversion & Analysis Expansion
+- ✅ **M021:** QA Sweep — Auth, Payments, Tier Enforcement & Security Hardening
+- ✅ **M022:** AEO Optimization — Schema, Answer Cards, Market Pages & Multilingual Hygiene
+- ✅ **M023:** AEO Issues 1-4: Language Routing, Stats, Schema, Translations
 - ⬜ **M024:** Dashboard Filter Architecture: Collapsible Refinement, Reactivity, and Pinning
 
 ## Recent Decisions

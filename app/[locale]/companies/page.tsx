@@ -10,6 +10,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { buildAlternates, buildOpenGraph } from '@/lib/metadata'
 import { loadCompaniesFromCSV } from '@/lib/load-companies-server'
 import { JsonLd, directoryItemListJsonLd } from '@/lib/json-ld'
+import { STARTUPS_DISPLAY } from '@/lib/site-stats'
 
 const PAGE_SIZE = 20
 
@@ -20,21 +21,23 @@ type Props = {
 
 export async function generateMetadata({ params }: Props) {
   const { locale } = await params
+  const mainDesc = `Explore ${STARTUPS_DISPLAY} startups in the industrial AI and engineering software landscape (Q1 2026). Browse companies by category, location, and sector focus.`
+  const shortDesc = `Explore ${STARTUPS_DISPLAY} startups in the industrial AI and engineering software landscape (Q1 2026).`
+  const twitterDesc = `Explore ${STARTUPS_DISPLAY} startups in industrial AI and engineering software (Q1 2026).`
   return {
     title: 'Company Directory | ThreadMoat',
-    description:
-      'Explore 600+ startups in the industrial AI and engineering software landscape (Q1 2026). Browse companies by category, location, and sector focus.',
+    description: mainDesc,
     alternates: buildAlternates(locale, '/companies'),
     openGraph: buildOpenGraph(
       'Company Directory | ThreadMoat',
-      'Explore 600+ startups in the industrial AI and engineering software landscape (Q1 2026).',
+      shortDesc,
       locale,
       '/companies'
     ),
     twitter: {
       card: 'summary_large_image' as const,
       title: 'Company Directory | ThreadMoat',
-      description: 'Explore 600+ startups in industrial AI and engineering software (Q1 2026).',
+      description: twitterDesc,
     },
     robots: {
       index: false,
