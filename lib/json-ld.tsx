@@ -218,6 +218,73 @@ export function breadcrumbListJsonLd(items: Array<{ name: string; url: string }>
   }
 }
 
+export function datasetJsonLd() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Dataset',
+    name: 'Industrial AI & Engineering Software Startups Database',
+    description: `Comprehensive intelligence on ${STARTUPS_DISPLAY} industrial AI and engineering software startups across PLM, CAD, CAE, simulation, IoT, manufacturing, and related domains.`,
+    url: `${BASE_URL}/dashboard`,
+    identifier: 'threadmoat-startup-database',
+    keywords: ['Industrial AI', 'Engineering Software', 'PLM', 'CAD', 'Manufacturing', 'Startups'],
+    creator: {
+      '@type': 'Organization',
+      name: 'ThreadMoat',
+      url: BASE_URL,
+    },
+    datePublished: '2024-01-01',
+    dateModified: new Date().toISOString().split('T')[0],
+  }
+}
+
+export function serviceJsonLd() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: 'ThreadMoat Intelligence Platform',
+    description: 'Market intelligence platform with competitive scoring, funding data, investor networks, and 30+ interactive analytics dashboards for the industrial AI and engineering software landscape.',
+    provider: {
+      '@type': 'Organization',
+      name: 'ThreadMoat',
+      url: BASE_URL,
+      logo: `${BASE_URL}/logo.png`,
+    },
+    areaServed: {
+      '@type': 'Country',
+      name: 'Worldwide',
+    },
+    serviceType: 'Market Intelligence & Competitive Analysis',
+    url: `${BASE_URL}/pricing`,
+    hasOfferCatalog: {
+      '@type': 'OfferCatalog',
+      name: 'ThreadMoat Plans',
+      itemListElement: [
+        {
+          '@type': 'Offer',
+          name: 'Explorer',
+          price: '0',
+          priceCurrency: 'USD',
+          description: '30-day free trial access',
+        },
+        {
+          '@type': 'Offer',
+          name: 'Analyst',
+          price: '49',
+          priceCurrency: 'USD',
+          description: 'Annual plan with full analytics access',
+        },
+        {
+          '@type': 'Offer',
+          name: 'Strategist',
+          price: '249',
+          priceCurrency: 'USD',
+          description: 'Full access with AI narratives and custom reports',
+        },
+      ],
+    },
+  }
+}
+
 export function JsonLd({ data }: { data: Record<string, unknown> | Record<string, unknown>[] }) {
   return (
     <script

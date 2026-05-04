@@ -2,6 +2,7 @@
   "nav": {
     "services": "Servicios",
     "expertise": "Experiencia",
+    "insights": "Insights",
     "marketReport": "Informe de mercado",
     "about": "Acerca de",
     "contactUs": "Cont\u00e1ctenos",
@@ -10,6 +11,16 @@
     "getStarted": "Comenzar",
     "viewPricing": "Ver precios",
     "registerNow": "\u00a1Reg\u00edstrese ahora!"
+  },
+  "insights": {
+    "latestInsights": "\u00daltimas perspectivas",
+    "exploreMarketGuides": "Explorar gu\u00edas de mercado",
+    "marketGuides": "Gu\u00edas de mercado",
+    "whatIs": "\u00bfQu\u00e9 es {topic}?",
+    "frequentlyAskedQuestions": "Preguntas frecuentes",
+    "relatedArticles": "Art\u00edculos relacionados",
+    "relatedMarketGuides": "Gu\u00edas de mercado relacionadas",
+    "marketGuide": "Gu\u00eda de mercado"
   },
   "footer": {
     "copyright": "\u00a9 {year} ThreadMoat. Todos los derechos reservados.",

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { ArrowRight } from "lucide-react"
 import { STARTUPS_DISPLAY } from "@/lib/site-stats"
+import { JsonLd, datasetJsonLd } from "@/lib/json-ld"
 
 const DOMAINS = [
   {
@@ -74,6 +75,7 @@ const DOMAINS = [
 export default function PublicLandscapePage() {
   return (
     <div className="min-h-screen bg-background">
+      <JsonLd data={datasetJsonLd()} />
       {/* Header */}
       <header className="border-b border-border/40">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
