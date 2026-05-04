@@ -68,6 +68,18 @@ Converting visitors into paying dashboard subscribers through compelling market 
 | Skip Asian languages | Different infrastructure requirements | — Pending |
 | Add Portuguese | Brazil industrial market, 270M speakers | ✓ Good |
 
+## Current State (M024)
+
+**Shipped:** M024 — Dashboard Filter Architecture (2026-05-04)
+- Collapsible filter bar reducing dashboard clutter
+- Two-layer filter hierarchy (sidebar hypothesis → top refinement)
+- First-time user onboarding wizard explaining filter system
+- Startup pinning (max 10) with persistent breadcrumb navigation
+- All 4 dashboard scenarios (Startup, VC, OEM, ISV) verified functional
+- Build: 0 TypeScript errors, 0 hydration warnings
+
+**Next:** Ready for M025 planning or new initiative definition
+
 ## Evolution
 
 This document evolves at phase transitions and milestone boundaries.
@@ -86,4 +98,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-24 after v1.0 milestone*
+*Last updated: 2026-05-04 after M024 milestone completion*
