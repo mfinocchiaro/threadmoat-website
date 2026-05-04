@@ -1,8 +1,8 @@
 # GSD State
 
 **Active Milestone:** M027 — Search Indexing & Analytics
-**Phase:** Defining requirements
-**Requirements Status:** 0 active · 0 validated · 0 deferred · 0 out of scope
+**Phase:** Roadmap Complete
+**Requirements Status:** 23 active · 0 validated · 9 deferred to v1.1+ · 0 out of scope
 
 ## Milestone Registry
 - ✅ **M001:** v1.1 UX & Data Polish
