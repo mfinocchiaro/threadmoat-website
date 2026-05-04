@@ -3,6 +3,7 @@ import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { ArrowRight } from "lucide-react"
+import { STARTUPS_DISPLAY } from "@/lib/site-stats"
 
 const DOMAINS = [
   {
@@ -96,7 +97,7 @@ export default function PublicLandscapePage() {
           <p className="text-muted-foreground mt-3 text-base leading-relaxed">
             ThreadMoat maps the engineering software ecosystem across nine domains spanning design,
             simulation, manufacturing, operations, supply chain, AEC, and research systems.
-            Each of our 600+ tracked startups is categorized within one primary investment domain.
+            Each of our {STARTUPS_DISPLAY} tracked startups is categorized within one primary investment domain.
           </p>
         </div>
 
@@ -134,7 +135,7 @@ export default function PublicLandscapePage() {
         <div className="flex flex-col items-center gap-4 pt-12 pb-8 text-center">
           <p className="text-muted-foreground max-w-lg">
             Subscribers get full analytics across all 9 domains — company scores, funding data, competitive
-            positioning, and interactive visualizations for 600+ startups.
+            positioning, and interactive visualizations for {STARTUPS_DISPLAY} startups.
           </p>
           <div className="flex gap-3">
             <Link href="/pricing">

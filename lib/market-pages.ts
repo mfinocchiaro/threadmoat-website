@@ -1,3 +1,5 @@
+import { STARTUPS_DISPLAY, VC_FUNDING_DISPLAY } from '@/lib/site-stats'
+
 export interface MarketPageFaq {
   question: string
   answer: string
@@ -163,7 +165,7 @@ export const MARKET_PAGES: MarketPage[] = [
       {
         question: 'What startups are building Industrial IoT platforms?',
         answer:
-          'ThreadMoat tracks 600+ industrial AI and engineering software startups including numerous IIoT and manufacturing AI builders. The space includes companies focused on predictive maintenance, digital twins, production optimization, and vertical-specific solutions for sectors like aerospace, automotive, and electronics.',
+          `ThreadMoat tracks ${STARTUPS_DISPLAY} industrial AI and engineering software startups including numerous IIoT and manufacturing AI builders. The space includes companies focused on predictive maintenance, digital twins, production optimization, and vertical-specific solutions for sectors like aerospace, automotive, and electronics.`,
       },
       {
         question: 'What is OPC-UA?',
@@ -216,7 +218,7 @@ export const MARKET_PAGES: MarketPage[] = [
       {
         question: 'How much investment is flowing into AI manufacturing startups?',
         answer:
-          'ThreadMoat tracks over $15B in venture funding across 600+ industrial AI and engineering software startups as of Q1 2026. AI-in-manufacturing represents one of the largest verticals in this space, attracting investment from both generalist VCs and deep industrial-focused funds.',
+          `ThreadMoat tracks over ${VC_FUNDING_DISPLAY} in venture funding across ${STARTUPS_DISPLAY} industrial AI and engineering software startups as of Q1 2026. AI-in-manufacturing represents one of the largest verticals in this space, attracting investment from both generalist VCs and deep industrial-focused funds.`,
       },
       {
         question: 'What challenges do manufacturers face when adopting AI?',

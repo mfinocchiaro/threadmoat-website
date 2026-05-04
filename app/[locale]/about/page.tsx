@@ -10,6 +10,7 @@ import { FaYoutube, FaSpotify, FaApple, FaAmazon, FaDeezer, FaLinkedin } from "r
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { buildAlternates, buildOpenGraph } from '@/lib/metadata'
 import { JsonLd, organizationJsonLd } from '@/lib/json-ld'
+import { STARTUPS_DISPLAY } from '@/lib/site-stats'
 
 type Props = { params: Promise<{ locale: string }> }
 
@@ -86,7 +87,7 @@ export default async function AboutPage({ params }: Props) {
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-2">
               {[
-                { stat: "600+", label: t('about.startupsTracked') },
+                { stat: STARTUPS_DISPLAY, label: t('about.startupsTracked') },
                 { stat: ">$15B", label: t('about.vcFunding') },
                 { stat: "43", label: t('about.countries') },
                 { stat: "10", label: t('about.marketSubsegments') },

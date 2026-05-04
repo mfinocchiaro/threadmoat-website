@@ -14,6 +14,7 @@ import { buildAlternates, buildOpenGraph } from '@/lib/metadata'
 import { JsonLd, organizationJsonLd, webSiteJsonLd } from '@/lib/json-ld'
 import { NewsletterSignup } from '@/components/homepage/newsletter-signup'
 import { getAllPosts } from '@/lib/blog'
+import { STARTUPS_DISPLAY, YEARS_EXPERIENCE_DISPLAY, FOUNDER_INTERVIEWS_DISPLAY } from '@/lib/site-stats'
 
 type Props = { params: Promise<{ locale: string }> }
 
@@ -254,9 +255,9 @@ export default async function HomePage({ params }: Props) {
             ))}
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-3xl mx-auto mt-16 text-center">
-            <div><p className="text-4xl font-bold text-primary">35+</p><p className="text-sm text-muted-foreground mt-1">{t('profiles.yearsExperience')}</p></div>
-            <div><p className="text-4xl font-bold text-primary">600+</p><p className="text-sm text-muted-foreground mt-1">{t('profiles.startupsInDb')}</p></div>
-            <div><p className="text-4xl font-bold text-primary">200+</p><p className="text-sm text-muted-foreground mt-1">{t('profiles.founderInterviews')}</p></div>
+            <div><p className="text-4xl font-bold text-primary">{YEARS_EXPERIENCE_DISPLAY}</p><p className="text-sm text-muted-foreground mt-1">{t('profiles.yearsExperience')}</p></div>
+            <div><p className="text-4xl font-bold text-primary">{STARTUPS_DISPLAY}</p><p className="text-sm text-muted-foreground mt-1">{t('profiles.startupsInDb')}</p></div>
+            <div><p className="text-4xl font-bold text-primary">{FOUNDER_INTERVIEWS_DISPLAY}</p><p className="text-sm text-muted-foreground mt-1">{t('profiles.founderInterviews')}</p></div>
             <NextLink href="/landscape" className="hover:opacity-80 transition-opacity"><p className="text-4xl font-bold text-primary">9</p><p className="text-sm text-muted-foreground mt-1 underline underline-offset-2">{t('profiles.investmentDomains')}</p></NextLink>
           </div>
           <p className="text-xs text-muted-foreground mt-4 text-center">{tCommon('dataTimestamp')}</p>

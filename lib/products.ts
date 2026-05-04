@@ -1,3 +1,5 @@
+import { STARTUPS_DISPLAY } from '@/lib/site-stats'
+
 export interface Product {
   id: string
   name: string
@@ -13,13 +15,13 @@ export const PRODUCTS: Product[] = [
     id: "analyst",
     name: "ThreadMoat Analyst",
     description:
-      "One-time purchase — quarterly market report + 10 interactive analytics charts covering 600+ companies in Industrial AI & Engineering Software.",
+      `One-time purchase — quarterly market report + 10 interactive analytics charts covering ${STARTUPS_DISPLAY} companies in Industrial AI & Engineering Software.`,
     priceInCents: 499900, // $4,999
     mode: "payment",
     features: [
       "1 quarterly Market State Report",
       "10 interactive analytics charts",
-      "600+ startups tracked weekly",
+      `${STARTUPS_DISPLAY} startups tracked weekly`,
       "60-min analyst briefing",
     ],
   },
