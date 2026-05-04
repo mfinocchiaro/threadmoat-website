@@ -7,7 +7,7 @@ import { ArrowLeft, Calendar, User, Tag } from 'lucide-react'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { LanguageSwitcher } from '@/components/language-switcher'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
-import { buildAlternates, buildOpenGraph } from '@/lib/metadata'
+import { buildAlternates, buildOpenGraph, generateOGImageUrl } from '@/lib/metadata'
 import { JsonLd, articleJsonLd, breadcrumbListJsonLd } from '@/lib/json-ld'
 import { getPostBySlug, getAllSlugs } from '@/lib/blog'
 import { AnswerBlock } from '@/components/answer-block'
@@ -24,13 +24,14 @@ export async function generateMetadata({ params }: Props) {
   const post = getPostBySlug(slug)
   if (!post || post.locale !== locale) return {}
 
+  const ogImageUrl = generateOGImageUrl(post.title, 'blog')
+
   return {
     title: `${post.title} | ThreadMoat Insights`,
     description: post.description,
     alternates: buildAlternates(locale, `/insights/${slug}`),
     openGraph: {
-      ...buildOpenGraph(post.title, post.description, locale, `/insights/${slug}`),
-      type: 'article',
+      ...buildOpenGraph(post.title, post.description, locale, `/insights/${slug}`, ogImageUrl, 'article'),
       publishedTime: post.date,
       authors: [post.author],
       tags: post.tags,
@@ -39,6 +40,7 @@ export async function generateMetadata({ params }: Props) {
       card: 'summary_large_image' as const,
       title: post.title,
       description: post.description,
+      images: [ogImageUrl],
     },
   }
 }

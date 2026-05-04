@@ -5,6 +5,7 @@ import { ThemeProvider } from '@/components/theme-provider'
 import { Toaster } from '@/components/ui/toaster'
 import { cookies } from 'next/headers'
 import { STARTUPS_DISPLAY, YEARS_EXPERIENCE_DISPLAY, FOUNDER_INTERVIEWS_DISPLAY } from '@/lib/site-stats'
+import { generateOGImageUrl } from '@/lib/metadata'
 import './globals.css'
 
 const _geist = Geist({ subsets: ["latin"] });
@@ -14,6 +15,27 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://threadmoat.com'),
   title: 'ThreadMoat - Industrial AI & Engineering Software Intelligence',
   description: `Navigate the future of Industrial AI & Engineering Software. Access ${STARTUPS_DISPLAY} startup profiles, ${YEARS_EXPERIENCE_DISPLAY} years of PLM market expertise, and ${FOUNDER_INTERVIEWS_DISPLAY} founder interviews.`,
+  openGraph: {
+    title: 'ThreadMoat - Industrial AI & Engineering Software Intelligence',
+    description: `Navigate the future of Industrial AI & Engineering Software. Access ${STARTUPS_DISPLAY} startup profiles, ${YEARS_EXPERIENCE_DISPLAY} years of PLM market expertise.`,
+    url: 'https://threadmoat.com',
+    siteName: 'ThreadMoat',
+    images: [
+      {
+        url: generateOGImageUrl('ThreadMoat - Industrial AI & Engineering Software Intelligence'),
+        width: 1200,
+        height: 630,
+        alt: 'ThreadMoat',
+      },
+    ],
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'ThreadMoat - Industrial AI & Engineering Software Intelligence',
+    description: `Navigate the future of Industrial AI & Engineering Software. Access ${STARTUPS_DISPLAY} startup profiles.`,
+    images: [generateOGImageUrl('ThreadMoat - Industrial AI & Engineering Software Intelligence')],
+  },
   icons: {
     icon: [
       { url: '/icon-32x32.png', sizes: '32x32', type: 'image/png' },

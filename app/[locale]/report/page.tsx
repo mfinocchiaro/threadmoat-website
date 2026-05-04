@@ -12,7 +12,7 @@ import {
   Lock, BarChart2,
 } from "lucide-react"
 import { getTranslations, setRequestLocale } from 'next-intl/server'
-import { buildAlternates, buildOpenGraph } from '@/lib/metadata'
+import { buildAlternates, buildOpenGraph, generateOGImageUrl } from '@/lib/metadata'
 import { JsonLd, productJsonLd } from '@/lib/json-ld'
 import { STARTUPS_DISPLAY, VC_FUNDING_DISPLAY, INVESTORS_DISPLAY, FOUNDER_INTERVIEWS_DISPLAY, INCUMBENT_VENDORS } from '@/lib/site-stats'
 
@@ -21,15 +21,17 @@ type Props = { params: Promise<{ locale: string }> }
 export async function generateMetadata({ params }: Props) {
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'Report' })
+  const ogImageUrl = generateOGImageUrl(t('meta.title'), 'report')
   return {
     title: t('meta.title'),
     description: t('meta.description'),
     alternates: buildAlternates(locale, '/report'),
-    openGraph: buildOpenGraph(t('meta.title'), t('meta.description'), locale, '/report'),
+    openGraph: buildOpenGraph(t('meta.title'), t('meta.description'), locale, '/report', ogImageUrl),
     twitter: {
       card: 'summary_large_image',
       title: t('meta.title'),
       description: t('meta.description'),
+      images: [ogImageUrl],
     },
   }
 }

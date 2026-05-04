@@ -237,6 +237,29 @@ export function datasetJsonLd() {
   }
 }
 
+export function collectionPageJsonLd(posts: Array<{ title: string; description: string; slug: string; date: string }>, locale = 'en') {
+  const prefix = locale !== 'en' ? `/${locale}` : ''
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'ThreadMoat Insights - Market Intelligence & Analysis',
+    description: 'Curated collection of market research, analysis, and insights on industrial AI and engineering software startups.',
+    url: `${BASE_URL}${prefix}/insights`,
+    mainEntity: {
+      '@type': 'ItemList',
+      numberOfItems: posts.length,
+      itemListElement: posts.slice(0, 20).map((post, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        name: post.title,
+        description: post.description,
+        url: `${BASE_URL}${prefix}/insights/${post.slug}`,
+        datePublished: post.date,
+      })),
+    },
+  }
+}
+
 export function serviceJsonLd() {
   return {
     '@context': 'https://schema.org',

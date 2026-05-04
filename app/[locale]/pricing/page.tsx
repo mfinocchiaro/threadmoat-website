@@ -8,7 +8,7 @@ import { Check, Calendar, MapPin, CalendarDays, BookOpen, Download, Castle, Flam
 import { ThemeToggle } from "@/components/theme-toggle"
 import { LanguageSwitcher } from "@/components/language-switcher"
 import { getTranslations, setRequestLocale } from 'next-intl/server'
-import { buildAlternates, buildOpenGraph } from '@/lib/metadata'
+import { buildAlternates, buildOpenGraph, generateOGImageUrl } from '@/lib/metadata'
 import { JsonLd, productJsonLd, serviceJsonLd } from '@/lib/json-ld'
 
 // Update this date each week after the Monday refresh
@@ -19,15 +19,17 @@ type Props = { params: Promise<{ locale: string }> }
 export async function generateMetadata({ params }: Props) {
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'Pricing' })
+  const ogImageUrl = generateOGImageUrl(t('meta.title'), 'report')
   return {
     title: t('meta.title'),
     description: t('meta.description'),
     alternates: buildAlternates(locale, '/pricing'),
-    openGraph: buildOpenGraph(t('meta.title'), t('meta.description'), locale, '/pricing'),
+    openGraph: buildOpenGraph(t('meta.title'), t('meta.description'), locale, '/pricing', ogImageUrl),
     twitter: {
       card: 'summary_large_image',
       title: t('meta.title'),
       description: t('meta.description'),
+      images: [ogImageUrl],
     },
   }
 }
