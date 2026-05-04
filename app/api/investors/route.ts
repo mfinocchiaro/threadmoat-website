@@ -6,6 +6,28 @@ import path from 'path'
 import { rateLimit } from '@/lib/rate-limit'
 import { INVESTOR_META } from '@/lib/investor-meta'
 
+interface CachedInvestors {
+  data: Array<{
+    id: string
+    name: string
+    startupNames: string[]
+    startupCount: number
+    investmentLists: string[]
+    linkedInProfile: string
+    email: string
+    notes: string
+    contacts: string
+    investorType: string
+    hq: string
+    description: string
+  }>
+  startupInvestmentMap: Record<string, string>
+  timestamp: number
+}
+
+const CACHE_DURATION_MS = 5 * 60 * 1000 // 5 minutes
+let investorCache: CachedInvestors | null = null
+
 export async function GET() {
   const session = await auth()
   if (!session?.user?.id) {
@@ -15,6 +37,13 @@ export async function GET() {
   const rl = await rateLimit(`api:investors:${session.user.id}`, 30, 60 * 1000)
   if (!rl.allowed) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+  }
+
+  // Return cached data if available
+  if (investorCache && Date.now() - investorCache.timestamp < CACHE_DURATION_MS) {
+    return NextResponse.json({ success: true, count: investorCache.data.length, data: investorCache.data, startupInvestmentMap: investorCache.startupInvestmentMap }, {
+      headers: { 'Cache-Control': 's-maxage=300, stale-while-revalidate=600' }
+    })
   }
 
   try {
@@ -106,7 +135,16 @@ export async function GET() {
         return inv
       })
 
-    return NextResponse.json({ success: true, count: investors.length, data: investors, startupInvestmentMap })
+    // Update cache
+    investorCache = {
+      data: investors,
+      startupInvestmentMap,
+      timestamp: Date.now(),
+    }
+
+    return NextResponse.json({ success: true, count: investors.length, data: investors, startupInvestmentMap }, {
+      headers: { 'Cache-Control': 's-maxage=300, stale-while-revalidate=600' }
+    })
   } catch (error) {
     return NextResponse.json(
       { success: false, error: 'Failed to load investor data' },

@@ -14,14 +14,34 @@ const nextConfig = {
     ignoreBuildErrors: false,
   },
   images: {
-    unoptimized: true,
+    remotePatterns: [
+      { protocol: 'https', hostname: 'threadmoat.vercel.app' },
+      { protocol: 'https', hostname: 'flagcdn.com' },
+      { protocol: 'https', hostname: '*.licdn.com' },
+      { protocol: 'https', hostname: 'www.google.com' },
+    ],
   },
   // Ensure the CSV data file is bundled with the analytics serverless function on Vercel
   outputFileTracingIncludes: {
     '/dashboard/analytics': ['./app/dashboard/analytics/*.csv'],
   },
+  experimental: {
+    optimizePackageImports: ['d3', 'recharts', 'lucide-react', '@radix-ui/react-icons'],
+  },
   async headers() {
     return [
+      {
+        source: '/(icon|apple-icon|favicon)(.png|.svg)',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
+        ],
+      },
+      {
+        source: '/api/og/:path*',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=86400' },
+        ],
+      },
       {
         source: '/auth/:path*',
         headers: [

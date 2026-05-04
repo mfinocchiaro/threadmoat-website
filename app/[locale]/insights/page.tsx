@@ -155,9 +155,11 @@ export default async function InsightsPage({ params }: Props) {
                   </div>
                 </div>
                 <div className="hidden sm:block w-48 h-48 flex-shrink-0 overflow-hidden bg-muted">
-                  <img
+                  <Image
                     src={article.image}
                     alt={article.title}
+                    width={192}
+                    height={192}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                   />
                 </div>

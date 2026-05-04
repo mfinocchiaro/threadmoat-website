@@ -5,6 +5,8 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
+  --font-geist: 'Geist', system-ui, sans-serif;
+  --font-geist-mono: 'Geist Mono', monospace;
   --background: oklch(0.98 0.005 270);
   --foreground: oklch(0.13 0.04 270);
   --card: oklch(1 0 0);

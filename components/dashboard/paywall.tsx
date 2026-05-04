@@ -1,3 +1,4 @@
+import Image from "next/image"
 import Link from "next/link"
 import { Lock } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -9,8 +10,7 @@ export function Paywall({ user }: { user: { email?: string | null } }) {
       <header className="border-b border-border/40">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
           <Link href="/dashboard" className="flex items-center gap-2">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="https://threadmoat.vercel.app/finocchiaro-logo.png" alt="ThreadMoat" className="h-8 w-auto" />
+            <Image src="https://threadmoat.vercel.app/finocchiaro-logo.png" alt="ThreadMoat" width={160} height={32} className="h-8 w-auto" />
           </Link>
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <span>{user.email}</span>
