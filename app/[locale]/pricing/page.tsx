@@ -9,7 +9,7 @@ import { ThemeToggle } from "@/components/theme-toggle"
 import { LanguageSwitcher } from "@/components/language-switcher"
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { buildAlternates, buildOpenGraph } from '@/lib/metadata'
-import { JsonLd, productJsonLd } from '@/lib/json-ld'
+import { JsonLd, productJsonLd, serviceJsonLd } from '@/lib/json-ld'
 
 // Update this date each week after the Monday refresh
 const LAST_UPDATED = "March 11, 2026"
@@ -77,7 +77,7 @@ export default async function PricingPage({ params }: Props) {
 
   return (
     <div className="min-h-screen bg-background">
-      <JsonLd data={productJsonLd()} />
+      <JsonLd data={[productJsonLd(), serviceJsonLd()]} />
       {/* Header */}
       <header className="border-b border-border/40">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">

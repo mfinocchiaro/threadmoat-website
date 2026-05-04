@@ -74,7 +74,7 @@ export default async function MarketAnswerPage({ params }: Props) {
           </Link>
           <nav className="flex items-center gap-8">
             <Link href="/insights" className="text-sm text-foreground font-medium transition-colors">
-              Insights
+              {tCommon('nav.insights')}
             </Link>
             <Link href="/companies" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               Companies
@@ -105,7 +105,7 @@ export default async function MarketAnswerPage({ params }: Props) {
         <div className="mb-8">
           <div className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary mb-4">
             <BookOpen className="h-3 w-3" />
-            Market Guide
+            {tCommon('insights.marketGuide')}
           </div>
           <h1 className="text-3xl font-bold tracking-tight sm:text-4xl mb-4">{page.title}</h1>
           <p className="text-muted-foreground leading-relaxed">{page.description}</p>
@@ -113,7 +113,7 @@ export default async function MarketAnswerPage({ params }: Props) {
 
         {/* Definition */}
         <section className="mb-10">
-          <h2 className="text-xl font-semibold mb-3">What is {page.shortTitle}?</h2>
+          <h2 className="text-xl font-semibold mb-3">{tCommon('insights.whatIs', { topic: page.shortTitle })}</h2>
           <p className="text-muted-foreground leading-relaxed">{page.definition}</p>
         </section>
 
@@ -127,7 +127,7 @@ export default async function MarketAnswerPage({ params }: Props) {
 
         {/* FAQ */}
         <section className="mb-10">
-          <h2 className="text-xl font-semibold mb-5">Frequently Asked Questions</h2>
+          <h2 className="text-xl font-semibold mb-5">{tCommon('insights.frequentlyAskedQuestions')}</h2>
           <div className="space-y-6">
             {page.faqs.map((faq) => (
               <div key={faq.question} className="border-b border-border/40 pb-6 last:border-0">
@@ -162,7 +162,7 @@ export default async function MarketAnswerPage({ params }: Props) {
         {/* Related blog articles */}
         {page.relatedBlogPosts && page.relatedBlogPosts.length > 0 && (
           <section className="mb-10">
-            <h2 className="text-lg font-semibold mb-4">Related Articles</h2>
+            <h2 className="text-lg font-semibold mb-4">{tCommon('insights.relatedArticles')}</h2>
             <div className="space-y-3">
               {page.relatedBlogPosts.map((post) => (
                 <a
@@ -185,7 +185,7 @@ export default async function MarketAnswerPage({ params }: Props) {
         {/* Related market guides */}
         {otherPages.length > 0 && (
           <section>
-            <h2 className="text-lg font-semibold mb-4">Related Market Guides</h2>
+            <h2 className="text-lg font-semibold mb-4">{tCommon('insights.relatedMarketGuides')}</h2>
             <div className="space-y-2">
               {otherPages.map((p) => (
                 <Link

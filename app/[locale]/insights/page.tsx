@@ -56,7 +56,7 @@ export default async function InsightsPage({ params }: Props) {
             <a href="/#services" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{tCommon('nav.services')}</a>
             <a href="/#expertise" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{tCommon('nav.expertise')}</a>
             <Link href="/insights" className="text-sm text-foreground font-medium transition-colors">
-              Insights
+              {tCommon('nav.insights')}
             </Link>
             <Link href="/report" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{tCommon('nav.marketReport')}</Link>
             <Link href="/about" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{tCommon('nav.about')}</Link>
@@ -78,7 +78,7 @@ export default async function InsightsPage({ params }: Props) {
       {/* Articles */}
       <section className="container mx-auto px-4 py-16 max-w-4xl">
         <div className="mb-12">
-          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl mb-4">Latest Insights</h1>
+          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl mb-4">{tCommon('insights.latestInsights')}</h1>
           <p className="text-muted-foreground leading-relaxed">
             Deep-dive research on AI trends, market dynamics, and engineering software innovation. Published on <a href="https://demystifyingplm.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Demystifying PLM</a>.
           </p>
@@ -162,7 +162,7 @@ export default async function InsightsPage({ params }: Props) {
 
         <div className="text-center pt-6 border-t border-border/40">
           <Link href="/insights/market" className="inline-flex items-center gap-2 text-primary hover:underline font-medium">
-            Explore Market Guides <ChevronRight className="h-4 w-4" />
+            {tCommon('insights.exploreMarketGuides')} <ChevronRight className="h-4 w-4" />
           </Link>
         </div>
       </section>
@@ -172,7 +172,7 @@ export default async function InsightsPage({ params }: Props) {
         <div className="container mx-auto px-4 py-12 max-w-3xl">
           <div className="flex items-center gap-2 mb-6">
             <BookOpen className="h-5 w-5 text-primary" />
-            <h2 className="text-xl font-semibold">Market Guides</h2>
+            <h2 className="text-xl font-semibold">{tCommon('insights.marketGuides')}</h2>
           </div>
           <p className="text-sm text-muted-foreground mb-6">
             Deep-dive answers to common questions about industrial AI and engineering software markets.
