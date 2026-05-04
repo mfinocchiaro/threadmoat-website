@@ -223,9 +223,9 @@ export default async function ReportPage({ params }: Props) {
                 <span><span className="text-purple-400 font-semibold">{VC_FUNDING_DISPLAY}</span> <span className="text-purple-200">VC Mapped</span></span>
               </div>
               <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-sm">
-                <span><span className="text-purple-400 font-semibold">2,400+</span> <span className="text-purple-200">Investors</span></span>
+                <span><span className="text-purple-400 font-semibold">{INVESTORS_DISPLAY}</span> <span className="text-purple-200">Investors</span></span>
                 <span><span className="text-purple-400 font-semibold">43</span> <span className="text-purple-200">Countries</span></span>
-                <span><span className="text-purple-400 font-semibold">200+</span> <span className="text-purple-200">Interviews</span></span>
+                <span><span className="text-purple-400 font-semibold">{FOUNDER_INTERVIEWS_DISPLAY}</span> <span className="text-purple-200">Interviews</span></span>
               </div>
               <div className="border-t border-purple-700/50 mt-6 pt-4">
                 <p className="text-purple-300 text-xs">ThreadMoat Research — Michael Finocchiaro — March 2026</p>
