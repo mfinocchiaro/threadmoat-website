@@ -75,15 +75,96 @@ export default async function InsightsPage({ params }: Props) {
         </div>
       </header>
 
-      {/* Coming Soon */}
-      <section className="container mx-auto px-4 py-24 text-center">
-        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl mb-4">Insights Coming Soon</h1>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
-          We're building our insights library. In the meantime, check out our latest analysis on <a href="https://demystifyingplm.com/insights" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Demystifying PLM</a>.
-        </p>
-        <Link href="/insights/market" className="inline-flex items-center gap-2 text-primary hover:underline font-medium">
-          Explore Market Guides <ChevronRight className="h-4 w-4" />
-        </Link>
+      {/* Articles */}
+      <section className="container mx-auto px-4 py-16 max-w-4xl">
+        <div className="mb-12">
+          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl mb-4">Latest Insights</h1>
+          <p className="text-muted-foreground leading-relaxed">
+            Deep-dive research on AI trends, market dynamics, and engineering software innovation. Published on <a href="https://demystifyingplm.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Demystifying PLM</a>.
+          </p>
+        </div>
+
+        {/* Articles Grid */}
+        <div className="grid gap-6 mb-12">
+          {[
+            {
+              title: 'The $1.57 Billion Shadow Ecosystem',
+              description: 'Validation of direct contact with founders and analysis of where they are taking the market',
+              date: '20 April 2026',
+              url: 'https://demystifyingplm.com/insights/157-billion-shadow-ecosystem',
+              image: 'https://media.licdn.com/dms/image/v2/D4E12AQE94k7MRFTMKw/article-cover_image-shrink_720_1280/B4EZ2qYCOYHMAI-/0/1776679921021?e=1779321600&v=beta&t=dEYdDIYgEkzjOKPDErLlbJkcO36ErCG2g7P-hQVCK8A',
+            },
+            {
+              title: 'Top 5 AI Trends Transforming Manufacturing in 2026',
+              description: 'Authority about trends and major players in the Manufacturing space of Industrial AI startups',
+              date: '5 Feb 2026',
+              url: 'https://demystifyingplm.com/insights/top-5-ai-trends-manufacturing',
+              image: 'https://media.licdn.com/dms/image/v2/D4E12AQGZ1mnle8ammg/article-cover_image-shrink_720_1280/B4EZxKDVo9JAAI-/0/1770768919173?e=1779321600&v=beta&t=CvDAYYn5BkSqrbH_JsA0L5U7_ENsnRZH6vPw2b611-k',
+            },
+            {
+              title: 'Top 5 AI Trends Transforming PLM and the Digital Thread in 2026',
+              description: 'Authority about trends and major players in the PLM/MBSE/Digital thread space of Engineering startups',
+              date: '9 Feb 2026',
+              url: 'https://demystifyingplm.com/insights/top-5-ai-trends-plm-digital-thread',
+              image: 'https://media.licdn.com/dms/image/v2/D4E12AQF06ySjIfKJjQ/article-cover_image-shrink_720_1280/B4EZw.iIcNJoAM-/0/1770575664274?e=1779321600&v=beta&t=oJXQgLbmRTYUkfz0sRFZp13N7-1a1Ek3YFgzyGcBF8U',
+            },
+            {
+              title: 'Top 5 AI Trends Transforming Engineering Simulation in 2026',
+              description: 'Authority about trends and major players in the CAE/CFD/FEA/QC space of Simulation startups',
+              date: '11 Feb 2026',
+              url: 'https://demystifyingplm.com/insights/top-5-ai-trends-engineering-simulation',
+              image: 'https://media.licdn.com/dms/image/v2/D4E12AQETTytBv8XjiQ/article-cover_image-shrink_720_1280/B4EZxKAYp3GkAI-/0/1770768143872?e=1779321600&v=beta&t=6CWBZ3nnXAozb3wQRjfALDjDrEZ8sxJrRpmxSPcyQOs',
+            },
+            {
+              title: '5 Signals That Matter for Design Intelligence Right Now',
+              description: 'Authority about trends and major players in the CAD space of engineering startups',
+              date: '3 Feb 2026',
+              url: 'https://demystifyingplm.com/insights/5-signals-design-intelligence',
+              image: 'https://media.licdn.com/dms/image/v2/D4E12AQER-FNdPHN4Bw/article-cover_image-shrink_720_1280/B4EZxKC7uwHQAI-/0/1770768813494?e=1779321600&v=beta&t=_vJZVvlqpSzOm4bAEKcGCJ8H6iynp6z2cqfPWa2UE',
+            },
+          ].map((article) => (
+            <a
+              key={article.title}
+              href={article.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group rounded-lg border border-border/40 overflow-hidden hover:shadow-lg transition-shadow"
+            >
+              <div className="flex gap-6">
+                <div className="flex-1 p-6 flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center gap-2 mb-3">
+                      <Calendar className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-xs text-muted-foreground">{article.date}</span>
+                    </div>
+                    <h3 className="text-lg font-semibold group-hover:text-primary transition-colors mb-2">
+                      {article.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {article.description}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2 text-primary pt-4">
+                    Read Article <ArrowRight className="h-4 w-4" />
+                  </div>
+                </div>
+                <div className="hidden sm:block w-48 h-48 flex-shrink-0 overflow-hidden bg-muted">
+                  <img
+                    src={article.image}
+                    alt={article.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                  />
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+
+        <div className="text-center pt-6 border-t border-border/40">
+          <Link href="/insights/market" className="inline-flex items-center gap-2 text-primary hover:underline font-medium">
+            Explore Market Guides <ChevronRight className="h-4 w-4" />
+          </Link>
+        </div>
       </section>
 
       {/* Market Guides */}
