@@ -94,14 +94,14 @@ export function BarChart({ data, className }: BarChartProps) {
                                 if (metric === "totalFunding") return `$${(value / 1e6).toFixed(0)}M`;
                                 return value.toString();
                             }}
-                            stroke="hsl(var(--muted-foreground))"
+                            stroke="hsl(var(--foreground))"
                             fontSize={11}
                         />
                         <YAxis
                             dataKey="initials"
                             type="category"
                             width={50}
-                            tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }}
+                            tick={{ fontSize: 10, fill: "hsl(var(--foreground))" }}
                         />
                         <Tooltip
                             content={({ active, payload }) => {

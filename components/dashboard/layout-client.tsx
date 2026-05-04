@@ -7,6 +7,7 @@ import { PlanProvider } from "@/contexts/plan-context"
 import { CompanyDataProvider } from "@/contexts/company-data-context"
 import { FilterProvider } from "@/contexts/filter-context"
 import { ShortlistProvider } from "@/contexts/shortlist-context"
+import { PinnedStartupsProvider } from "@/contexts/pinned-startups-context"
 import { SidebarShell } from "./sidebar-shell"
 import { FreeUserGuard } from "./free-user-guard"
 import { CompanyLimitBanner } from "./company-limit-banner"
@@ -15,6 +16,7 @@ import { useIdleTimeout } from "@/hooks/use-idle-timeout"
 import { usePageViewTracker } from "@/hooks/use-page-view-tracker"
 import type { AccessTier } from "@/lib/tiers"
 import { OnboardingWizard } from "./onboarding-wizard"
+import { PinnedBreadcrumb } from "./pinned-breadcrumb"
 
 interface Profile {
   full_name?: string
@@ -50,6 +52,7 @@ function LayoutInner({ user, profile, children, isAdmin, isFreeUser, isExpiredTr
       daysRemaining={daysRemaining}
     >
       <Suspense><CheckoutToast /></Suspense>
+      <PinnedBreadcrumb />
       <CompanyLimitBanner />
       {accessTier !== 'admin' ? (
         <FreeUserGuard accessTier={accessTier} isExpiredTrial={isExpiredTrial} daysRemaining={daysRemaining}>
@@ -94,20 +97,22 @@ export function DashboardLayoutClient({
       <ScenarioProvider initialScenario={initialScenario}>
         <CompanyDataProvider>
           <ShortlistProvider>
-          <FilterProvider>
-            <LayoutInner
-              user={user}
-              profile={profile}
-              isAdmin={isAdmin}
-              isFreeUser={isFreeUser}
-              isExpiredTrial={isExpiredTrial}
-              daysRemaining={daysRemaining}
-              accessTier={accessTier}
-              showOnboarding={showOnboarding}
-            >
-              {children}
-            </LayoutInner>
-          </FilterProvider>
+            <FilterProvider>
+              <PinnedStartupsProvider>
+                <LayoutInner
+                  user={user}
+                  profile={profile}
+                  isAdmin={isAdmin}
+                  isFreeUser={isFreeUser}
+                  isExpiredTrial={isExpiredTrial}
+                  daysRemaining={daysRemaining}
+                  accessTier={accessTier}
+                  showOnboarding={showOnboarding}
+                >
+                  {children}
+                </LayoutInner>
+              </PinnedStartupsProvider>
+            </FilterProvider>
           </ShortlistProvider>
         </CompanyDataProvider>
       </ScenarioProvider>

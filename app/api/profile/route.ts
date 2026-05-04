@@ -8,6 +8,7 @@ const ProfileUpdateSchema = z.object({
   full_name: z.string().max(100).nullable().optional(),
   company: z.string().max(100).nullable().optional(),
   title: z.string().max(100).nullable().optional(),
+  wizard_completed_at: z.string().datetime().nullable().optional(),
 })
 
 export async function POST(req: NextRequest) {
@@ -23,7 +24,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid input' }, { status: 400 })
   }
 
-  const { profile_type, full_name, company, title } = data
+  const { profile_type, full_name, company, title, wizard_completed_at } = data
 
   try {
     await sql`
@@ -32,7 +33,8 @@ export async function POST(req: NextRequest) {
         profile_type = ${profile_type ?? null},
         full_name    = ${full_name ?? null},
         company      = ${company ?? null},
-        title        = ${title ?? null}
+        title        = ${title ?? null},
+        wizard_completed_at = ${wizard_completed_at ?? null}
       WHERE id = ${session.user.id}
     `
     return NextResponse.json({ ok: true })

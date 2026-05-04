@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { useCompanyData } from "@/contexts/company-data-context"
 import { Skeleton } from "@/components/ui/skeleton"
 import { formatCurrency } from "@/lib/company-data"
+import { PinButton } from "@/components/dashboard/pin-button"
 
 /**
  * Narrative priorities based on User Profile.
@@ -90,6 +91,7 @@ export default function CompanyProfilePage() {
             <div className="flex items-center gap-3">
               <h1 className="text-3xl font-bold tracking-tight">{company.name}</h1>
               <Badge variant="outline" className="font-medium">{company.startupSizeCategory}</Badge>
+              <PinButton startupId={company.id} startupName={company.name} size="md" variant="outline" />
             </div>
             <p className="text-muted-foreground text-lg max-w-2xl">
               {company.strengths || "No description available."}

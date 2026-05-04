@@ -21,7 +21,7 @@
 - [ ] **S03: Onboarding Wizard: Filter Hierarchy Guidance** `risk:Low - additive feature; wizard can be skipped` `depends:[S02]`
   > After this: First-time user sees step-by-step wizard: (1) Set hypothesis in sidebar, (2) See results, (3) Use top filters to narrow, (4) Pin results for comparison
 
-- [ ] **S04: Startup Pinning & Breadcrumb Trail** `risk:Medium - UI pattern unfamiliar; needs careful UX design` `depends:[S01]`
+- [ ] **S04: S04** `risk:Medium - UI pattern unfamiliar; needs careful UX design` `depends:[]`
   > After this: Hover over startup name → 'Pin' button appears. Click to add to pinned list. Pinned list appears as persistent breadcrumb bar at top. Click breadcrumb to jump to that startup's profile.
 
 ## Boundary Map

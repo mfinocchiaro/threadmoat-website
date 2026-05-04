@@ -41,7 +41,7 @@ New 'pinned-startups' context created. Breadcrumb bar rendered above dashboard c
   - Files: `app/dashboard/layout.tsx`
   - Verify: Breadcrumb renders in correct position. Responsive on mobile. No layout shift when pins added/removed.
 
-- [ ] **T05: Manual testing: pin startups across dashboards** `est:1.5h`
+- [x] **T05: Manual testing: pin startups across dashboards** `est:1.5h`
   Test workflow: (1) Pin 5 startups across different dashboard pages, (2) Verify breadcrumb persists, (3) Click breadcrumb items to navigate, (4) Unpin from breadcrumb, (5) Reload page and verify state. Test on mobile.
   - Verify: All 5 pins persist across pages. Breadcrumb navigation works. Unpin from breadcrumb works. Mobile layout responsive. No console errors.
 

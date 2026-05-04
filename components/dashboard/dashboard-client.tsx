@@ -17,6 +17,7 @@ import { ConfigPanel } from "@/components/dashboard/config-panel"
 import { ScenarioNarrative } from "@/components/dashboard/scenario-narrative"
 import { usePlan } from "@/contexts/plan-context"
 import { maskCompanies } from "@/lib/name-masking"
+import { FilterHierarchyWizard } from "@/components/dashboard/filter-hierarchy-wizard"
 
 const SCENARIO_THESIS: Record<string, ThesisType> = {
   startup_founder: "founder",
@@ -66,9 +67,17 @@ function DashboardInner({ companies, isLoading, profileType, onSelectProfile, is
 }) {
   const { applyThesis } = useThesis()
   const { isFreeUser, accessTier } = usePlan()
+  const [wizardOpen, setWizardOpen] = useState(false)
 
   // Mask company names for Analyst tier (Strategist + Admin see real names)
   const maskedCompanies = useMemo(() => maskCompanies(companies, accessTier), [companies, accessTier])
+
+  // Show wizard on first dashboard load (new users)
+  useEffect(() => {
+    if (profileType && !localStorage.getItem('filter-wizard-completed')) {
+      setWizardOpen(true)
+    }
+  }, [profileType])
 
   const handleSelectProfile = useCallback((key: string) => {
     onSelectProfile(key)
@@ -82,8 +91,26 @@ function DashboardInner({ companies, isLoading, profileType, onSelectProfile, is
 
   const scenarioData = FOCUS_SCENARIOS.find(s => s.key === profileType)
 
+  const handleWizardComplete = useCallback(() => {
+    localStorage.setItem('filter-wizard-completed', 'true')
+    setWizardOpen(false)
+
+    // Sync to user profile
+    fetch('/api/profile', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ wizard_completed_at: new Date().toISOString() }),
+    }).catch(err => console.error('[wizard complete sync]', err))
+  }, [])
+
   return (
     <>
+      <FilterHierarchyWizard
+        open={wizardOpen}
+        onOpenChange={setWizardOpen}
+        onComplete={handleWizardComplete}
+      />
+
       <div className="mb-4 space-y-4">
         <h2 className="text-lg font-semibold">
           {scenarioData?.label ?? "Dashboard"}
