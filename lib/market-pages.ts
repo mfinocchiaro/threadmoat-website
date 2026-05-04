@@ -13,7 +13,7 @@ export interface MarketPage {
   definition: string
   faqs: MarketPageFaq[]
   relatedDiscipline: string
-  relatedBlogPosts?: Array<{ slug: string; title: string }>
+  relatedBlogPosts?: Array<{ slug: string; title: string; url?: string }>
   body?: string
   datePublished?: string
 }
@@ -73,8 +73,8 @@ export const MARKET_PAGES: MarketPage[] = [
     ],
     relatedDiscipline: 'PLM / PDM',
     relatedBlogPosts: [
-      { slug: 'ai-trends-plm-digital-thread', title: 'Top 5 AI Trends Transforming PLM and the Digital Thread in 2026' },
-      { slug: 'industrial-ai-shadow-ecosystem', title: 'The $1.57 Billion Shadow Ecosystem' },
+      { slug: 'ai-trends-plm-digital-thread', title: 'Top 5 AI Trends Transforming PLM and the Digital Thread in 2026', url: 'https://demystifyingplm.com/insights/top-5-ai-trends-plm-digital-thread' },
+      { slug: 'industrial-ai-shadow-ecosystem', title: 'The $1.57 Billion Shadow Ecosystem', url: 'https://demystifyingplm.com/insights/157-billion-shadow-ecosystem' },
     ],
   },
   {
@@ -131,9 +131,9 @@ export const MARKET_PAGES: MarketPage[] = [
     ],
     relatedDiscipline: 'CAD / CAE',
     relatedBlogPosts: [
-      { slug: 'ai-trends-engineering-simulation', title: 'Top 5 AI Trends Transforming Engineering Simulation in 2026' },
-      { slug: 'design-intelligence-signals', title: '5 Signals That Matter for Design Intelligence' },
-      { slug: 'industrial-ai-shadow-ecosystem', title: 'The $1.57 Billion Shadow Ecosystem' },
+      { slug: 'ai-trends-engineering-simulation', title: 'Top 5 AI Trends Transforming Engineering Simulation in 2026', url: 'https://demystifyingplm.com/insights/top-5-ai-trends-engineering-simulation' },
+      { slug: 'design-intelligence-signals', title: '5 Signals That Matter for Design Intelligence', url: 'https://demystifyingplm.com/insights/5-signals-design-intelligence' },
+      { slug: 'industrial-ai-shadow-ecosystem', title: 'The $1.57 Billion Shadow Ecosystem', url: 'https://demystifyingplm.com/insights/157-billion-shadow-ecosystem' },
     ],
   },
   {
@@ -190,8 +190,8 @@ export const MARKET_PAGES: MarketPage[] = [
     ],
     relatedDiscipline: 'IoT / Connectivity',
     relatedBlogPosts: [
-      { slug: 'ai-trends-manufacturing-2026', title: 'Top 5 AI Trends Transforming Manufacturing in 2026' },
-      { slug: 'industrial-ai-shadow-ecosystem', title: 'The $1.57 Billion Shadow Ecosystem' },
+      { slug: 'ai-trends-manufacturing-2026', title: 'Top 5 AI Trends Transforming Manufacturing in 2026', url: 'https://demystifyingplm.com/insights/top-5-ai-trends-manufacturing' },
+      { slug: 'industrial-ai-shadow-ecosystem', title: 'The $1.57 Billion Shadow Ecosystem', url: 'https://demystifyingplm.com/insights/157-billion-shadow-ecosystem' },
     ],
   },
   {
@@ -248,8 +248,8 @@ export const MARKET_PAGES: MarketPage[] = [
     ],
     relatedDiscipline: 'AI / ML Applications',
     relatedBlogPosts: [
-      { slug: 'ai-trends-manufacturing-2026', title: 'Top 5 AI Trends Transforming Manufacturing in 2026' },
-      { slug: 'industrial-ai-shadow-ecosystem', title: 'The $1.57 Billion Shadow Ecosystem' },
+      { slug: 'ai-trends-manufacturing-2026', title: 'Top 5 AI Trends Transforming Manufacturing in 2026', url: 'https://demystifyingplm.com/insights/top-5-ai-trends-manufacturing' },
+      { slug: 'industrial-ai-shadow-ecosystem', title: 'The $1.57 Billion Shadow Ecosystem', url: 'https://demystifyingplm.com/insights/157-billion-shadow-ecosystem' },
     ],
   },
   {
@@ -306,8 +306,8 @@ export const MARKET_PAGES: MarketPage[] = [
     ],
     relatedDiscipline: 'Digital Twin',
     relatedBlogPosts: [
-      { slug: 'ai-trends-manufacturing-2026', title: 'Top 5 AI Trends Transforming Manufacturing in 2026' },
-      { slug: 'industrial-ai-shadow-ecosystem', title: 'The $1.57 Billion Shadow Ecosystem' },
+      { slug: 'ai-trends-manufacturing-2026', title: 'Top 5 AI Trends Transforming Manufacturing in 2026', url: 'https://demystifyingplm.com/insights/top-5-ai-trends-manufacturing' },
+      { slug: 'industrial-ai-shadow-ecosystem', title: 'The $1.57 Billion Shadow Ecosystem', url: 'https://demystifyingplm.com/insights/157-billion-shadow-ecosystem' },
     ],
   },
   {
@@ -364,8 +364,8 @@ export const MARKET_PAGES: MarketPage[] = [
     ],
     relatedDiscipline: 'Simulation / CAE',
     relatedBlogPosts: [
-      { slug: 'ai-trends-engineering-simulation', title: 'Top 5 AI Trends Transforming Engineering Simulation in 2026' },
-      { slug: 'design-intelligence-signals', title: '5 Signals That Matter for Design Intelligence' },
+      { slug: 'ai-trends-engineering-simulation', title: 'Top 5 AI Trends Transforming Engineering Simulation in 2026', url: 'https://demystifyingplm.com/insights/top-5-ai-trends-engineering-simulation' },
+      { slug: 'design-intelligence-signals', title: '5 Signals That Matter for Design Intelligence', url: 'https://demystifyingplm.com/insights/5-signals-design-intelligence' },
     ],
   },
   {
@@ -422,8 +422,8 @@ export const MARKET_PAGES: MarketPage[] = [
     ],
     relatedDiscipline: 'MES / Operations',
     relatedBlogPosts: [
-      { slug: 'ai-trends-manufacturing-2026', title: 'Top 5 AI Trends Transforming Manufacturing in 2026' },
-      { slug: 'industrial-ai-shadow-ecosystem', title: 'The $1.57 Billion Shadow Ecosystem' },
+      { slug: 'ai-trends-manufacturing-2026', title: 'Top 5 AI Trends Transforming Manufacturing in 2026', url: 'https://demystifyingplm.com/insights/top-5-ai-trends-manufacturing' },
+      { slug: 'industrial-ai-shadow-ecosystem', title: 'The $1.57 Billion Shadow Ecosystem', url: 'https://demystifyingplm.com/insights/157-billion-shadow-ecosystem' },
     ],
   },
   {
@@ -480,8 +480,8 @@ export const MARKET_PAGES: MarketPage[] = [
     ],
     relatedDiscipline: 'Supply Chain / Logistics',
     relatedBlogPosts: [
-      { slug: 'ai-trends-plm-digital-thread', title: 'Top 5 AI Trends Transforming PLM and the Digital Thread in 2026' },
-      { slug: 'industrial-ai-shadow-ecosystem', title: 'The $1.57 Billion Shadow Ecosystem' },
+      { slug: 'ai-trends-plm-digital-thread', title: 'Top 5 AI Trends Transforming PLM and the Digital Thread in 2026', url: 'https://demystifyingplm.com/insights/top-5-ai-trends-plm-digital-thread' },
+      { slug: 'industrial-ai-shadow-ecosystem', title: 'The $1.57 Billion Shadow Ecosystem', url: 'https://demystifyingplm.com/insights/157-billion-shadow-ecosystem' },
     ],
   },
   {
@@ -538,8 +538,8 @@ export const MARKET_PAGES: MarketPage[] = [
     ],
     relatedDiscipline: 'Quality / Compliance',
     relatedBlogPosts: [
-      { slug: 'ai-trends-manufacturing-2026', title: 'Top 5 AI Trends Transforming Manufacturing in 2026' },
-      { slug: 'industrial-ai-shadow-ecosystem', title: 'The $1.57 Billion Shadow Ecosystem' },
+      { slug: 'ai-trends-manufacturing-2026', title: 'Top 5 AI Trends Transforming Manufacturing in 2026', url: 'https://demystifyingplm.com/insights/top-5-ai-trends-manufacturing' },
+      { slug: 'industrial-ai-shadow-ecosystem', title: 'The $1.57 Billion Shadow Ecosystem', url: 'https://demystifyingplm.com/insights/157-billion-shadow-ecosystem' },
     ],
   },
   {
@@ -596,8 +596,8 @@ export const MARKET_PAGES: MarketPage[] = [
     ],
     relatedDiscipline: 'Robotics / Automation',
     relatedBlogPosts: [
-      { slug: 'ai-trends-manufacturing-2026', title: 'Top 5 AI Trends Transforming Manufacturing in 2026' },
-      { slug: 'design-intelligence-signals', title: '5 Signals That Matter for Design Intelligence' },
+      { slug: 'ai-trends-manufacturing-2026', title: 'Top 5 AI Trends Transforming Manufacturing in 2026', url: 'https://demystifyingplm.com/insights/top-5-ai-trends-manufacturing' },
+      { slug: 'design-intelligence-signals', title: '5 Signals That Matter for Design Intelligence', url: 'https://demystifyingplm.com/insights/5-signals-design-intelligence' },
     ],
   },
   {
