@@ -8,6 +8,7 @@ import { useLayout } from "@/contexts/layout-context";
 import { KPICard } from "@/components/widgets/kpi-card";
 import { WidgetCard } from "@/components/widgets/widget-card";
 import { AdminAnalyticsSection } from "./admin-analytics";
+import { PinButton } from "@/components/dashboard/pin-button";
 
 const LandscapeChart = dynamic(() => import("@/components/charts/landscape-chart").then(m => m.LandscapeChart), { ssr: false, loading: () => <div className="w-full min-h-[500px] rounded-lg bg-muted animate-pulse" /> });
 const BarChart = dynamic(() => import("@/components/charts/bar-chart").then(m => m.BarChart), { ssr: false, loading: () => <div className="w-full min-h-[300px] rounded-lg bg-muted animate-pulse" /> });
@@ -81,7 +82,8 @@ export function StartupDashboard({ data, isLoading, isAdmin = false }: { data: C
                     </div>
                     <div className="space-y-2 max-h-[500px] overflow-y-auto">
                         {matches.map(({ company: c, score }) => (
-                            <div key={c.id} className="flex items-center gap-3 p-2.5 rounded-lg border text-sm">
+                            <div key={c.id} className="flex items-center gap-2 p-2.5 rounded-lg border text-sm">
+                                <PinButton startupId={c.id} startupName={c.name} size="sm" variant="ghost" />
                                 <div className="flex-1 min-w-0">
                                     <span className="font-medium">{c.name}</span>
                                     <p className="text-xs text-muted-foreground truncate mt-0.5">

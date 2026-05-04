@@ -17,6 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import { Radar, ShoppingCart, Handshake, AlertCircle } from "lucide-react";
 import { useMemo, useState } from "react";
 import { ScoredCompany } from "@/contexts/thesis-context";
+import { PinButton } from "@/components/dashboard/pin-button";
 
 const SCENARIO = "oem_enterprise";
 
@@ -103,7 +104,8 @@ export function OEMDashboard({ data, isLoading, isAdmin = false }: { data: Compa
                 <WidgetCard title={drillTitle[drillDown] ?? ""} subtitle={`${drillData.length} companies`}>
                     <div className="space-y-2 max-h-[400px] overflow-y-auto">
                         {drillData.map(({ company: c, score }) => (
-                            <div key={c.id} className="flex items-center gap-3 p-2.5 rounded-lg border text-sm">
+                            <div key={c.id} className="flex items-center gap-2 p-2.5 rounded-lg border text-sm">
+                                <PinButton startupId={c.id} startupName={c.name} size="sm" variant="ghost" />
                                 <div className="flex-1 min-w-0">
                                     <span className="font-medium">{c.name}</span>
                                     <p className="text-xs text-muted-foreground truncate mt-0.5">{c.subsegment || c.investmentList}{c.country ? ` · ${c.country}` : ""}</p>
@@ -120,11 +122,12 @@ export function OEMDashboard({ data, isLoading, isAdmin = false }: { data: Compa
                 <WidgetCard title="Threat Radar" subtitle="Replacement candidates with highest scores">
                     <div className="space-y-3">
                         {threats.map(({ company: t }) => (
-                            <div key={t.id} className="flex items-center gap-4 p-3 rounded-lg border">
+                            <div key={t.id} className="flex items-center gap-3 p-3 rounded-lg border">
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center gap-2">
                                         <span className="font-medium truncate">{t.name}</span>
                                         <Badge variant="destructive">Threat</Badge>
+                                        <PinButton startupId={t.id} startupName={t.name} size="sm" variant="ghost" />
                                     </div>
                                     <p className="text-xs text-muted-foreground mt-1 truncate">{t.subsegment || t.investmentList}</p>
                                 </div>
@@ -142,9 +145,12 @@ export function OEMDashboard({ data, isLoading, isAdmin = false }: { data: Compa
                 <WidgetCard title="Acquisition Shortlist" subtitle="High tech-differentiation companies filling your gaps">
                     <div className="space-y-3">
                         {acquisitionTargets.map(({ company: t }) => (
-                            <div key={t.id} className="flex items-center gap-4 p-3 rounded-lg border">
+                            <div key={t.id} className="flex items-center gap-3 p-3 rounded-lg border">
                                 <div className="flex-1 min-w-0">
-                                    <span className="font-medium truncate">{t.name}</span>
+                                    <div className="flex items-center gap-2">
+                                        <span className="font-medium truncate">{t.name}</span>
+                                        <PinButton startupId={t.id} startupName={t.name} size="sm" variant="ghost" />
+                                    </div>
                                     <p className="text-xs text-muted-foreground mt-1 truncate">{t.latestFundingRound} · Tech: {t.techDifferentiation?.toFixed(1)}/10</p>
                                 </div>
                                 <Badge variant="outline">{t.investmentList}</Badge>

@@ -8,6 +8,7 @@ import { useLayout } from "@/contexts/layout-context";
 import { KPICard } from "@/components/widgets/kpi-card";
 import { WidgetCard } from "@/components/widgets/widget-card";
 import { AdminAnalyticsSection } from "./admin-analytics";
+import { PinButton } from "@/components/dashboard/pin-button";
 import { AlertTriangle, BarChart3, Target, CheckCircle2, DollarSign, TrendingUp, X, Settings2 } from "lucide-react";
 import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card";
 import { Badge } from "@/components/ui/badge";
@@ -110,7 +111,8 @@ export function VCDashboard({ data, isLoading, isAdmin = false }: { data: Compan
                     </div>
                     <div className="space-y-2 max-h-[500px] overflow-y-auto">
                         {matches.map(({ company: c, score }) => (
-                            <div key={c.id} className="flex items-center gap-3 p-2.5 rounded-lg border text-sm">
+                            <div key={c.id} className="flex items-center gap-2 p-2.5 rounded-lg border text-sm">
+                                <PinButton startupId={c.id} startupName={c.name} size="sm" variant="ghost" />
                                 <div className="flex-1 min-w-0">
                                     <span className="font-medium">{c.name}</span>
                                     <p className="text-xs text-muted-foreground truncate mt-0.5">
@@ -131,10 +133,13 @@ export function VCDashboard({ data, isLoading, isAdmin = false }: { data: Compan
                         {redFlags.map(r => (
                             <HoverCard key={r.company.id} openDelay={200} closeDelay={100}>
                                 <HoverCardTrigger asChild>
-                                    <div className="flex items-start gap-3 p-2 bg-red-50/10 border border-red-200/20 rounded cursor-default">
+                                    <div className="flex items-start gap-2 p-2 bg-red-50/10 border border-red-200/20 rounded cursor-default">
                                         <AlertTriangle className="size-4 text-red-500 mt-0.5 shrink-0" />
-                                        <div className="min-w-0">
-                                            <div className="text-sm font-semibold truncate">{r.company.name}</div>
+                                        <div className="min-w-0 flex-1">
+                                            <div className="flex items-center gap-2">
+                                                <div className="text-sm font-semibold truncate">{r.company.name}</div>
+                                                <PinButton startupId={r.company.id} startupName={r.company.name} size="sm" variant="ghost" />
+                                            </div>
                                             <div className="text-xs text-muted-foreground">
                                                 Efficiency: {r.company.fundingEfficiency?.toFixed(1)}/10 · {formatCurrency(r.company.totalFunding || 0)}
                                             </div>
