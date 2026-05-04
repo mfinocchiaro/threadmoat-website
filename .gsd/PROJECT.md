@@ -49,19 +49,30 @@ Converting visitors into paying dashboard subscribers through compelling market 
 - Agent updater tool — separate GSD project
 - Dashboard content translation — English-only dashboard acceptable for B2B
 
+## Current Milestone: M027 — Search Indexing & Analytics
+
+**Goal:** Build internal SEO observability — keyword rankings, CTR, impression trends, crawl signals — so the team can validate the AEO/SEO work from M025/M026.
+
+**Target Features:**
+- Google Search Console data integration with daily sync
+- SEO dashboard with rankings, traffic trends, CTR analysis
+- Keyword performance validation and content gap detection
+
 ## Context
 
 - **Tech stack:** Next.js 16, NextAuth, Stripe (live), Resend, React Email, D3, Recharts, three.js/react-three-fiber, Tailwind CSS, shadcn/ui, next-intl, Vercel AI SDK v6 (ai + @ai-sdk/anthropic), jsPDF + jspdf-autotable + html-to-image
 - **Database:** Neon (Postgres)
 - **Data:** 1400+ startups, investors from CSV files, heatmap enrichment sidecar
 - **Scale:** 296 TypeScript files, 44K+ lines, 341 commits, 104 routes (87 app routes + 17 static)
-- **Current state:** v1.3 — M008 Production Polish & Performance complete
+- **Current state:** v1.4 — M025 Enhanced AEO/SEO + M026 Performance Optimization complete
 - **Hosting:** Vercel
 - **Tiers:** Recon (free) → Analyst ($4,999 one-time) → Strategist (€18,999/yr) → Advisory (custom)
 - **M005:** Filter onboarding, AI narrative engine (Claude Sonnet 4.5), company shortlist with amber highlights, custom report builder with PDF export
 - **M006:** 4 heatmaps (Market Momentum, Industry Penetration, Customer Profile, IP Dependency) — delivered ad-hoc, superseded
 - **M007:** All 26 charts theme-aware (light/dark via CSS custom properties), 7 heatmap drilldowns, fresh data sync
 - **M008:** PDF renderer (tables/nested lists/code blocks), CSV parse cache, LLM token logging, zero build warnings
+- **M025:** Dynamic OG images, JSON-LD schema coverage (CollectionPage, Product, DirectoryItemList, Dataset), 5 new blog posts (total 10)
+- **M026:** Image optimization enabled (WebP/AVIF), CSV API caching (sub-50ms), admin users pagination, Geist fonts wired
 
 ## Constraints
 
