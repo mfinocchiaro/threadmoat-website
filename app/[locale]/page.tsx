@@ -439,9 +439,9 @@ export default async function HomePage({ params }: Props) {
           <div className="flex gap-4">
             <Link href="/pricing" className="hover:text-foreground">{tCommon('footer.pricing')}</Link>
             <Link href="/about" className="hover:text-foreground">{tCommon('footer.about')}</Link>
-            <Link href="/privacy" className="hover:text-foreground">{tCommon('footer.privacy')}</Link>
-            <Link href="/terms" className="hover:text-foreground">{tCommon('footer.terms')}</Link>
-            <Link href="/contact" className="hover:text-foreground">{tCommon('footer.contact')}</Link>
+            <Link href="/privacy" className="hover:text-foreground">Privacy Policy</Link>
+            <Link href="/terms" className="hover:text-foreground">Terms & Conditions</Link>
+            <Link href="/contact" className="hover:text-foreground">Contact</Link>
             <NextLink href="/auth/login" className="hover:text-foreground">{tCommon('footer.signIn')}</NextLink>
           </div>
         </div>
