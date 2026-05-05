@@ -70,7 +70,7 @@ See: `milestones/v1.0-ROADMAP.md` for full details.
 
 ---
 
-## 🚀 M027: Search Indexing & Analytics (Upcoming)
+## 🚧 M027: Search Indexing & Analytics (In Progress)
 
 **Vision:** Build internal SEO observability for ThreadMoat. Integrate Google Search Console data with daily syncs, position tracking, and striking distance opportunity scoring to surface high-impact keyword optimization targets.
 
@@ -82,9 +82,9 @@ See: `milestones/v1.0-ROADMAP.md` for full details.
 5. ✅ All data freshness and anonymization transparency built in
 6. ✅ `npm run build` — 0 errors
 
-### Slices
+## Phases (M027)
 
-#### S01: OAuth + Technical Spikes
+### Phase 1: OAuth + Technical Spikes
 **Goal:** Establish GSC OAuth integration, validate technical approach, submit verification to Google.
 
 **Requirements:** FOUND-01, SPIKE-01, SPIKE-02, SPIKE-03, SPIKE-04, INTEG-01, INTEG-03
@@ -108,7 +108,7 @@ See: `milestones/v1.0-ROADMAP.md` for full details.
 
 ---
 
-#### S02: Sync Engine + Schema
+### Phase 2: Sync Engine + Schema
 **Goal:** Build Postgres schema, implement daily sync logic, set up caching and idempotent upserts.
 
 **Requirements:** FOUND-02, FOUND-03, FOUND-04, FOUND-05, INTEG-02, PERF-02
@@ -132,7 +132,7 @@ See: `milestones/v1.0-ROADMAP.md` for full details.
 
 ---
 
-#### S03: Core Dashboard Views
+### Phase 3: Core Dashboard Views
 **Goal:** Build query/page lists, position charts, period-over-period comparison, data quality indicators.
 
 **Requirements:** QUERY-01, QUERY-02, QUERY-03, QUERY-04, QUERY-05, POS-01, POS-02, PERF-01, QUAL-01, QUAL-02, QUAL-03, QUAL-04
@@ -159,7 +159,7 @@ See: `milestones/v1.0-ROADMAP.md` for full details.
 
 ---
 
-#### S04: Striking Distance Report
+### Phase 4: Striking Distance Report
 **Goal:** Implement opportunity scoring for keywords in positions 8-20 with high impressions and underperforming CTR.
 
 **Requirements:** STRIKE-01, STRIKE-02, STRIKE-03
@@ -181,7 +181,7 @@ See: `milestones/v1.0-ROADMAP.md` for full details.
 
 ---
 
-#### S05: Polish + Pre-launch Hardening
+### Phase 5: Polish + Pre-launch Hardening
 **Goal:** Edge cases, documentation, monitoring, analytics event logging.
 
 **Requirements:** General hardening, no new feature requirements
@@ -204,34 +204,34 @@ See: `milestones/v1.0-ROADMAP.md` for full details.
 
 ---
 
-### Cross-Slice Dependencies
+### Cross-Phase Dependencies
 
 ```
-S01 (OAuth + Spikes)
+Phase 1 (OAuth + Spikes)
   ↓ (OAuth approval + PT timezone validation)
-S02 (Sync + Schema)
+Phase 2 (Sync + Schema)
   ↓ (Schema ready, data flowing)
-S03 (Core Dashboard)
+Phase 3 (Core Dashboard)
   ↓ (Query/page analytics complete)
-S04 (Striking Distance)
+Phase 4 (Striking Distance)
   ↓ (All features validated)
-S05 (Polish + Pre-launch)
+Phase 5 (Polish + Pre-launch)
 ```
 
-No parallel slices. Sequential execution ensures OAuth verification completes before production rollout.
+No parallel phases. Sequential execution ensures OAuth verification completes before production rollout.
 
 ---
 
 ### Timeline (Estimated)
 
-| Slice | Phase | Duration | Notes |
-|-------|-------|----------|-------|
-| S01 | 1 | 5-7 days | OAuth spike only; verification submission happens Day 1, approval happens in parallel over 4-6 weeks |
-| S02 | 2 | 4-5 days | Schema, Cron, caching — straightforward engineering |
-| S03 | 3 | 6-8 days | Dashboard views (4 components), period comparison, transparency UI |
-| S04 | 4 | 3-4 days | Materialized view + dashboard page (smaller scope than S03) |
-| S05 | 5 | 2-3 days | Polish, edge cases, hardening |
-| **Total** | **1-5** | **20-27 days** | Plus 4-6 week OAuth approval gate |
+| Phase | Duration | Notes |
+|-------|----------|-------|
+| 1 | 5-7 days | OAuth spike only; verification submission happens Day 1, approval happens in parallel over 4-6 weeks |
+| 2 | 4-5 days | Schema, Cron, caching — straightforward engineering |
+| 3 | 6-8 days | Dashboard views (4 components), period comparison, transparency UI |
+| 4 | 3-4 days | Materialized view + dashboard page (smaller scope than Phase 3) |
+| 5 | 2-3 days | Polish, edge cases, hardening |
+| **Total** | **20-27 days** | Plus 4-6 week OAuth approval gate |
 
 **Go-live gate:** OAuth approval from Google + all S01-S05 complete.
 
