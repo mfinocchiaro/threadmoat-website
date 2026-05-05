@@ -1,43 +1,55 @@
 # GSD State
 
-**Active Milestone:** M027 — Search Indexing & Analytics
-**Phase:** Phase 1 (OAuth + Technical Spikes) — Planning Complete, Ready to Execute
-**Requirements Status:** 23 active · 0 validated · 9 deferred to v1.1+ · 0 out of scope
-**Phase 1 Task Plans:** 4 plans created (P1-T01 through P1-T04)
+**Active Milestone:** M027 — Search Indexing & Analytics  
+**Phase:** Phase 2 (Sync Engine + Schema) — Ready to Execute  
+**Requirements Status:** 23 active · 0 validated · 9 deferred to v1.1+ · 0 out of scope  
+**Phase 2 Task Plans:** 3 plans created (P2-T01 through P2-T03)
 
 ## Milestone Registry
-- ✅ **M001:** v1.1 UX & Data Polish
-- ✅ **M002:** v1.2 Onboarding Fix, Cleanup & Chart Verification
-- ✅ **M003:** v1.3 Tier Fixes, Upgrade CTAs & UAT Completion
-- ✅ **M004:** v1.4 Verification & Sign-Off
-- ✅ **M005:** Intelligence Workbench — AI Narratives, Company Shortlist & Custom Report Builder
-- ✅ **M006:** Heatmap Analytics Suite — Market Momentum, Industry Penetration, Customer Profile & IP Dependency
-- ✅ **M007:** Theme-aware colors + data sync + cell drilldown
-- ✅ **M008:** Production Polish & Performance
-- ✅ **M009:** Performance Audit & Bundle Optimization
-- ✅ **M010:** Homepage Speed Index & Deferred Chart Loading
-- ✅ **M011:** Mobile Responsive Dashboard
-- ✅ **M012:** Dashboard Analytics & Usage Tracking
-- ✅ **M013:** Investor-Side Views & Analysis Pages
-- ✅ **M014:** Authenticated Dashboard Lighthouse & Performance Testing
-- ✅ **M015:** Dashboard Performance Optimization — Red-Tier Pages
-- ✅ **M016:** Site Review Fixes — Pricing, Translations, Sidebar & UX Polish
-- ✅ **M017:** Subcategory Filter — Secondary Drill-Down Under Investment List
-- ✅ **M018:** Company Profiles, Scenario Narratives & Guided Journey
-- ✅ **M019:** Monetization & Free Tier — Permanent Recon, Company Limits, Upgrade CTAs & Plan Transitions
-- ✅ **M020:** Growth Platform — SEO, Admin, Conversion & Analysis Expansion
-- ✅ **M021:** QA Sweep — Auth, Payments, Tier Enforcement & Security Hardening
-- ✅ **M022:** AEO Optimization — Schema, Answer Cards, Market Pages & Multilingual Hygiene
-- ✅ **M023:** AEO Issues 1-4: Language Routing, Stats, Schema, Translations
-- ✅ **M024:** Dashboard Filter Architecture: Collapsible Refinement, Reactivity, and Pinning (completed 2026-05-04)
-- ✅ **M025:** Enhanced AEO/SEO — OG Images, Schema Coverage, Content Velocity (completed 2026-05-05)
-- ✅ **M026:** Performance Optimization — Image Optimization, API Caching, Pagination, Font Fixes (completed 2026-05-05)
+- ✅ **M001–M026:** All complete (26 milestones)
+- 🚀 **M027:** Search Indexing & Analytics
+  - ✅ Phase 1 (OAuth + Technical Spikes) — Complete
+  - 📋 Phase 2 (Sync Engine + Schema) — Planning complete, Ready to Execute
+  - 🔮 Phase 3+ — TBD (Dashboard, Reporting, Ops)
+
+## M027 Status
+
+### Phase 1 Completed ✅
+- P1-T01: Google OAuth2 setup + auth flow + token encryption
+- P1-T02: PT timezone validation (empirically confirmed)
+- P1-T03: 50K rows/day cap testing + Vercel Cron reliability
+- P1-T04: OAuth verification submitted to Google (awaiting approval, 4-6 weeks)
+
+### Phase 2 Ready to Execute 📋
+- **P2-T01** (1–2 days): GSC schema design + Neon migration
+  - Normalized schema: `gsc_properties`, `gsc_daily_rankings`
+  - Indexes for rankings, trends, filters
+  
+- **P2-T02** (2–3 days): Daily sync job + error handling
+  - Vercel Cron for daily data pull (3-day lookback window)
+  - Transaction-based storage, rollback on error
+  - Token refresh, rate limiting, error recovery
+  
+- **P2-T03** (1–2 days): Query APIs
+  - `/api/admin/gsc/rankings` — Filter by query/page, sort by CTR/clicks
+  - `/api/admin/gsc/trends` — Time-series data for charts
+  - Pagination, aggregates, auth enforcement
+
+**Duration:** 5–7 days total execution
 
 ## Recent Decisions
-- M025 & M026 marked complete after execution and archival (2026-05-05)
+- Phase 2 uses normalized schema (3NF) instead of denormalized
+- Sync window: 3-day lookback (handles GSC corrections + missed syncs)
+- Data retention: 180 days (6 months rolling window)
+- Cron schedule: 06:00 UTC daily (10 PM PT previous day)
 
 ## Blockers
-- None
+- None (Phase 1 complete, assumptions validated)
 
 ## Next Action
-Ready for new milestone. Run `/gsd:new-milestone` to begin next phase planning.
+Ready to execute Phase 2. Start with P2-T01 (schema design).
+Run `/gsd:execute-phase` or start P2-T01 directly.
+
+---
+
+*Last updated: 2026-05-05 after Phase 2 planning*
