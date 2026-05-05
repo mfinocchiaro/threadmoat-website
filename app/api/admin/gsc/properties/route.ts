@@ -16,6 +16,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    console.log('[GSC Properties API] User ID:', session.user.id, 'Email:', session.user.email);
+
     // Fetch all properties for this user
     const properties = await sql`
       SELECT id, property_url, sync_status, last_synced_at
@@ -23,6 +25,8 @@ export async function GET(request: NextRequest) {
       WHERE user_id = ${session.user.id}
       ORDER BY last_synced_at DESC NULLS LAST
     `;
+
+    console.log('[GSC Properties API] Found properties:', properties?.length || 0);
 
     return NextResponse.json({
       properties: properties || [],

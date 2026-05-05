@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { PropertySelector } from '@/app/components/gsc/selectors';
 import { DateRangePicker } from '@/app/components/gsc/selectors';
 import { TrendsChart } from '@/app/components/gsc/trends-chart';
@@ -22,13 +23,19 @@ export default function GSCDashboard() {
     const fetchProperties = async () => {
       try {
         const res = await fetch('/api/admin/gsc/properties');
+        if (!res.ok) {
+          throw new Error(`API returned ${res.status}`);
+        }
         const data = await res.json();
+        console.log('GSC properties fetched:', data);
         setProperties(data.properties || []);
         if (data.properties?.[0]) {
+          console.log('Setting propertyId to:', data.properties[0].id);
           setPropertyId(data.properties[0].id);
         }
       } catch (error) {
         console.error('Failed to fetch properties:', error);
+        setLoading(false);
       } finally {
         setLoading(false);
       }
