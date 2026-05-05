@@ -1,5 +1,9 @@
+import crypto from 'crypto'
 import NextAuth, { CredentialsSignin } from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
+import Google from 'next-auth/providers/google'
+import Microsoft from 'next-auth/providers/microsoft-entra-id'
+import Apple from 'next-auth/providers/apple'
 import { neon } from '@neondatabase/serverless'
 import bcrypt from 'bcryptjs'
 import { rateLimit } from '@/lib/rate-limit'
@@ -11,6 +15,18 @@ class EmailNotVerifiedError extends CredentialsSignin {
 export const { handlers, auth, signIn, signOut } = NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
   providers: [
+    Google({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    }),
+    Microsoft({
+      clientId: process.env.MICROSOFT_ENTRA_ID_CLIENT_ID,
+      clientSecret: process.env.MICROSOFT_ENTRA_ID_CLIENT_SECRET,
+    }),
+    Apple({
+      clientId: process.env.APPLE_CLIENT_ID,
+      clientSecret: process.env.APPLE_CLIENT_SECRET,
+    }),
     Credentials({
       credentials: {
         email: { label: 'Email', type: 'email' },
@@ -57,6 +73,32 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     error: '/auth/error',
   },
   callbacks: {
+    async signIn({ user, account }) {
+      // OAuth providers — auto-create user if they don't exist
+      if (account && user.email) {
+        const sql = neon(process.env.DATABASE_URL!)
+        const rows = await sql`SELECT id FROM users WHERE email = ${user.email.toLowerCase()}`
+
+        if (rows.length === 0) {
+          // Create new user from OAuth — auto-verify email since OAuth provider verified it
+          const userId = crypto.randomUUID()
+          try {
+            await sql`
+              INSERT INTO users (id, email, email_verified, password_hash)
+              VALUES (${userId}, ${user.email.toLowerCase()}, true, '')
+            `
+            // Create basic profile
+            await sql`
+              INSERT INTO profiles (id, full_name) VALUES (${userId}, ${user.name || user.email.split('@')[0]})
+            `
+          } catch (err) {
+            console.error('[OAuth signup] Failed to create user:', err)
+            return false
+          }
+        }
+      }
+      return true
+    },
     jwt({ token, user }) {
       if (user) {
         token.id = user.id
