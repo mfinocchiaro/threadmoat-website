@@ -11,8 +11,8 @@ export async function GET(request: NextRequest) {
     }
 
     const userId = session.user.id
-    // Get propertyUrl from query params or use default
-    const propertyUrl = request.nextUrl.searchParams.get('property') || 'https://search.google.com'
+    // Get propertyUrl from query params or use default (ThreadMoat's primary domain)
+    const propertyUrl = request.nextUrl.searchParams.get('property') || 'https://threadmoat.com/'
 
     console.log('Fetching GSC data for:', { userId, propertyUrl })
 

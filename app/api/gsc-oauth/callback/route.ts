@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'No refresh token received' }, { status: 400 })
     }
 
-    const propertyUrl = 'https://search.google.com' // default; would be set by user later
+    const propertyUrl = 'https://threadmoat.com/' // ThreadMoat's primary domain
     const expiresAt = tokens.expiry_date ? new Date(tokens.expiry_date) : new Date(Date.now() + 3600 * 1000)
 
     await storeRefreshToken(userId, propertyUrl, tokens.refresh_token, expiresAt)
