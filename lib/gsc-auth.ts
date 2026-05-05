@@ -2,10 +2,11 @@ import { sql } from './db'
 import { OAuth2Client } from 'google-auth-library'
 import crypto from 'crypto'
 
-const googleAuth = new OAuth2Client({
+// Create OAuth client without initial redirectUri — will be set per request
+const createGoogleAuth = (redirectUri: string) => new OAuth2Client({
   clientId: process.env.GOOGLE_OAUTH_CLIENT_ID,
   clientSecret: process.env.GOOGLE_OAUTH_CLIENT_SECRET,
-  redirectUri: process.env.GOOGLE_OAUTH_REDIRECT_URI,
+  redirectUri,
 })
 
 const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY!
@@ -13,17 +14,21 @@ const ENCRYPTION_IV = process.env.ENCRYPTION_IV!
 
 export async function initializeGSCTable() {
   try {
+    // Drop and recreate to fix BYTEA → TEXT column type
+    await sql`DROP TABLE IF EXISTS gsc_credentials`
+
     await sql`
       CREATE TABLE IF NOT EXISTS gsc_credentials (
         user_id UUID NOT NULL,
         property_url VARCHAR(255) NOT NULL,
-        oauth_token_encrypted BYTEA NOT NULL,
+        oauth_token_encrypted TEXT NOT NULL,
         token_expires_at TIMESTAMPTZ NOT NULL,
         created_at TIMESTAMPTZ DEFAULT now(),
         updated_at TIMESTAMPTZ DEFAULT now(),
         PRIMARY KEY (user_id, property_url)
       )
     `
+    console.log('✓ GSC table initialized with correct schema')
   } catch (error) {
     console.error('Error creating gsc_credentials table:', error)
     throw error
@@ -73,10 +78,19 @@ export async function getRefreshToken(userId: string, propertyUrl: string): Prom
       WHERE user_id = ${userId} AND property_url = ${propertyUrl}
     `
 
-    if (result.length === 0) return null
+    if (result.length === 0) {
+      console.log('No GSC credentials found for userId:', userId, 'propertyUrl:', propertyUrl)
+      return null
+    }
 
-    const encryptedToken = result[0].oauth_token_encrypted as string
-    return decryptToken(encryptedToken)
+    const encryptedToken = result[0].oauth_token_encrypted
+    if (!encryptedToken) {
+      console.warn('Stored token is null/undefined for userId:', userId)
+      return null
+    }
+
+    console.log('Decrypting token for userId:', userId)
+    return decryptToken(encryptedToken as string)
   } catch (error) {
     console.error('Error retrieving refresh token:', error)
     throw error
@@ -88,6 +102,7 @@ export async function refreshGSCToken(userId: string, propertyUrl: string): Prom
     const refreshToken = await getRefreshToken(userId, propertyUrl)
     if (!refreshToken) throw new Error('No refresh token found')
 
+    const googleAuth = createGoogleAuth('https://threadmoat.com/api/gsc-oauth/callback')
     googleAuth.setCredentials({ refresh_token: refreshToken })
     const { credentials } = await googleAuth.refreshAccessToken()
 
@@ -105,7 +120,11 @@ export async function refreshGSCToken(userId: string, propertyUrl: string): Prom
   }
 }
 
-export function getGoogleAuthUrl(state: string): string {
+export function getGoogleAuthUrl(state: string, baseUrl: string = process.env.GOOGLE_OAUTH_REDIRECT_URI!): string {
+  // Extract the base URL and construct the redirect URI
+  const redirectUri = `${baseUrl.replace(/\/$/, '')}/api/gsc-oauth/callback`
+  const googleAuth = createGoogleAuth(redirectUri)
+
   return googleAuth.generateAuthUrl({
     access_type: 'offline',
     scope: ['https://www.googleapis.com/auth/webmasters.readonly'],
@@ -114,7 +133,9 @@ export function getGoogleAuthUrl(state: string): string {
   })
 }
 
-export async function exchangeCodeForToken(code: string) {
+export async function exchangeCodeForToken(code: string, baseUrl: string = process.env.GOOGLE_OAUTH_REDIRECT_URI!): Promise<any> {
+  const redirectUri = `${baseUrl.replace(/\/$/, '')}/api/gsc-oauth/callback`
+  const googleAuth = createGoogleAuth(redirectUri)
   const { tokens } = await googleAuth.getToken(code)
   return tokens
 }

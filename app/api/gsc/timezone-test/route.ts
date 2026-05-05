@@ -5,12 +5,15 @@ import { google } from 'googleapis'
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await auth()
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    let userId = request.nextUrl.searchParams.get('userId')
 
-    const userId = session.user.id
+    if (!userId) {
+      const session = await auth()
+      if (!session?.user?.id) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      }
+      userId = session.user.id
+    }
     // Get propertyUrl from query params or use default (ThreadMoat's primary domain)
     const propertyUrl = request.nextUrl.searchParams.get('property') || 'https://threadmoat.com/'
 
