@@ -11,15 +11,23 @@ export async function GET(request: NextRequest) {
     }
 
     const userId = session.user.id
-    const propertyUrl = 'https://search.google.com'
+    // Get propertyUrl from query params or use default
+    const propertyUrl = request.nextUrl.searchParams.get('property') || 'https://search.google.com'
+
+    console.log('Fetching GSC data for:', { userId, propertyUrl })
 
     // Get and refresh token
     const refreshToken = await getRefreshToken(userId, propertyUrl)
     if (!refreshToken) {
-      return NextResponse.json({ error: 'No GSC credentials found. Connect Google Search Console first.' }, { status: 400 })
+      return NextResponse.json({
+        error: 'No GSC credentials found for this property.',
+        hint: 'Make sure you have connected this property via /api/auth/gsc-oauth first. Try using ?property=https://yoursite.com',
+      }, { status: 400 })
     }
 
+    console.log('Refreshing GSC token...')
     const accessToken = await refreshGSCToken(userId, propertyUrl)
+    console.log('Token refreshed successfully')
 
     // Fetch last 7 days of GSC data
     const endDate = new Date()
@@ -29,10 +37,13 @@ export async function GET(request: NextRequest) {
     const endDateStr = endDate.toISOString().split('T')[0]
     const startDateStr = startDate.toISOString().split('T')[0]
 
+    console.log('Setting up API client...')
     const authClient = new google.auth.OAuth2()
     authClient.setCredentials({ access_token: accessToken })
 
     const searchconsole = google.searchconsole('v1')
+    console.log('Querying GSC API:', { siteUrl: propertyUrl, startDate: startDateStr, endDate: endDateStr })
+
     const report = await searchconsole.searchanalytics.query({
       siteUrl: propertyUrl,
       requestBody: {
@@ -44,6 +55,8 @@ export async function GET(request: NextRequest) {
       },
       auth: authClient,
     })
+
+    console.log('GSC API response received:', report.data?.rows?.length, 'rows')
 
     // Analyze timezone
     const ptFormatter = new Intl.DateTimeFormat('en-US', {
