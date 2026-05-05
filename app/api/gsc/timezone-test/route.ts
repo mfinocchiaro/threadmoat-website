@@ -57,10 +57,18 @@ export async function GET(request: NextRequest) {
     const [ptMonth, ptDay, ptYear] = ptDateNow.split('/')
     const ptDateStr = `${ptYear}-${ptMonth}-${ptDay}`
 
-    const rows = report.data.rows || []
-    const gscDates = rows.map((row: any) => row.keys[0])
+    const rows = (report.data.rows as any[]) || []
+    const gscDates = rows
+      .map((row: any) => {
+        if (Array.isArray(row.keys) && row.keys.length > 0) {
+          return String(row.keys[0])
+        }
+        return null
+      })
+      .filter((date): date is string => date !== null)
+
     const gscHasToday = gscDates.includes(ptDateStr)
-    const mostRecentGscDate = gscDates[gscDates.length - 1] || 'N/A'
+    const mostRecentGscDate = gscDates.length > 0 ? gscDates[gscDates.length - 1] : 'N/A'
 
     return NextResponse.json({
       testDate: new Date().toISOString(),
@@ -71,18 +79,25 @@ export async function GET(request: NextRequest) {
         endDate: endDateStr,
         rowCount: rows.length,
       },
-      gscDates: gscDates,
+      gscDates,
       gscHasTodaysPTData: gscHasToday,
       mostRecentGscDate,
       conclusion: gscHasToday
         ? '✅ GSC uses Pacific Time (PT dates match expected PT date)'
         : '❌ GSC may use UTC or different timezone (PT date not found in results)',
-      rows: rows.slice(0, 5), // First 5 rows for inspection
+      sampleRows: rows.slice(0, 3).map((row: any) => ({
+        date: row.keys?.[0],
+        clicks: row.clicks,
+        impressions: row.impressions,
+        ctr: row.ctr,
+        position: row.position,
+      })),
     })
   } catch (error) {
-    console.error('Timezone test error:', error)
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    console.error('Timezone test error:', errorMessage)
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Timezone test failed' },
+      { error: errorMessage, details: String(error) },
       { status: 500 }
     )
   }
