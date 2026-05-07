@@ -71,3 +71,4 @@ tmp/
 .gsd-id
 .mcp.json
 .env*.local
+client_secret_*.json
