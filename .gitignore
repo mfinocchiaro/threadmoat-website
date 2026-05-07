@@ -72,3 +72,4 @@ tmp/
 .mcp.json
 .env*.local
 client_secret_*.json
+data/*.csv
