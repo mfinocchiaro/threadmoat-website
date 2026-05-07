@@ -40,10 +40,8 @@ export async function generateMetadata({ params }: Props) {
       description: twitterDesc,
     },
     robots: {
-      index: false,
-      follow: false,
-      noindex: true,
-      nofollow: true,
+      index: true,
+      follow: true,
     },
   }
 }
