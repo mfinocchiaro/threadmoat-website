@@ -6,6 +6,7 @@ Disallow: /auth/
 Disallow: /dashboard/
 Disallow: /admin/
 Disallow: /api/
+Disallow: /companies/
 Disallow: /*.json
 Disallow: /*.xml
 
