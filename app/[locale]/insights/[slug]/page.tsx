@@ -22,16 +22,29 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props) {
   const { locale, slug } = await params
   const post = getPostBySlug(slug)
-  if (!post || post.locale !== locale) return {}
+  if (!post) return {}
+
+  // For non-English locales without a translation, redirect to English
+  if (post.locale !== locale) {
+    return {
+      robots: { index: false },
+    }
+  }
 
   const ogImageUrl = generateOGImageUrl(post.title, 'blog')
 
   return {
     title: `${post.title} | ThreadMoat Insights`,
     description: post.description,
-    alternates: buildAlternates(locale, `/insights/${slug}`),
+    alternates: {
+      canonical: `${process.env.NEXT_PUBLIC_BASE_URL}/insights/${slug}`,
+      languages: {
+        en: `${process.env.NEXT_PUBLIC_BASE_URL}/insights/${slug}`,
+        'x-default': `${process.env.NEXT_PUBLIC_BASE_URL}/insights/${slug}`,
+      },
+    },
     openGraph: {
-      ...buildOpenGraph(post.title, post.description, locale, `/insights/${slug}`, ogImageUrl, 'article'),
+      ...buildOpenGraph(post.title, post.description, 'en', `/insights/${slug}`, ogImageUrl, 'article'),
       publishedTime: post.date,
       authors: [post.author],
       tags: post.tags,
@@ -47,11 +60,18 @@ export async function generateMetadata({ params }: Props) {
 
 export default async function InsightPost({ params }: Props) {
   const { locale, slug } = await params
+  const post = getPostBySlug(slug)
+
+  if (!post) notFound()
+
+  // Redirect non-English requests to English version (all blog posts are in English)
+  if (post.locale !== locale) {
+    const { permanentRedirect } = await import('next/navigation')
+    permanentRedirect(`/insights/${slug}`)
+  }
+
   setRequestLocale(locale)
   const tCommon = await getTranslations('Common')
-
-  const post = getPostBySlug(slug)
-  if (!post || post.locale !== locale) notFound()
 
   return (
     <div className="min-h-screen bg-background">

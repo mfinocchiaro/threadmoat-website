@@ -28,6 +28,16 @@ const nextConfig = {
   experimental: {
     optimizePackageImports: ['d3', 'recharts', 'lucide-react', '@radix-ui/react-icons'],
   },
+  async redirects() {
+    return [
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'www.threadmoat.com' }],
+        destination: 'https://threadmoat.com/:path*',
+        permanent: true,
+      },
+    ]
+  },
   async headers() {
     return [
       {

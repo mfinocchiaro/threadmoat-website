@@ -5,8 +5,8 @@ import { getAllMarketSlugs } from '@/lib/market-pages'
 
 const BASE_URL = 'https://threadmoat.com'
 
-// Static public marketing pages
-const PUBLIC_PAGES = ['/', '/pricing', '/about', '/report', '/insights', '/companies']
+// Static public marketing pages (companies is behind auth, not included)
+const PUBLIC_PAGES = ['/', '/pricing', '/about', '/report', '/insights']
 
 function buildAlternateLanguages(pagePath: string): Record<string, string> {
   const languages: Record<string, string> = {}
@@ -38,7 +38,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${BASE_URL}${page === '/' ? '' : page}`,
       lastModified: new Date(),
       changeFrequency: page === '/' ? 'weekly' : 'monthly',
-      priority: page === '/' ? 1.0 : page === '/insights' || page === '/companies' ? 0.9 : 0.8,
+      priority: page === '/' ? 1.0 : page === '/insights' ? 0.9 : 0.8,
       alternates: { languages: buildAlternateLanguages(page) },
     })
   }
